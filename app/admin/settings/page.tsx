@@ -9,7 +9,8 @@ export default async function AdminSettingsPage() {
     redirect('/admin/login')
   }
 
-  let settings, menuItems
+  let settings: any = null
+  let menuItems: any[] = []
   
   try {
     settings = await prisma.siteSettings.findFirst()

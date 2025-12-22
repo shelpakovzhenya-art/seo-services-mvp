@@ -46,23 +46,39 @@ console.log('📦 Setting up database...')
 const dbPath = path.join(process.cwd(), 'prisma', 'dev.db')
 const migrationsPath = path.join(process.cwd(), 'prisma', 'migrations')
 
+// Check if we're in production (non-interactive environment)
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' || !process.stdin.isTTY
+
 if (!fs.existsSync(dbPath)) {
   try {
     // Check if migrations directory exists
     if (fs.existsSync(migrationsPath) && fs.readdirSync(migrationsPath).length > 0) {
-      // Migrations exist, deploy them
+      // Migrations exist, deploy them (works in both dev and production)
       console.log('📦 Applying existing migrations...')
       execSync('npx prisma migrate deploy', { stdio: 'inherit' })
       console.log('✅ Migrations applied')
-    } else {
-      // No migrations, create initial one
+    } else if (!isProduction) {
+      // No migrations, create initial one (only in dev)
       console.log('📦 Creating initial migration...')
       execSync('npx prisma migrate dev --name init', { stdio: 'inherit' })
       console.log('✅ Initial migration created and applied')
+    } else {
+      // Production: skip migration creation, will be handled by deploy
+      console.log('⏭️  Skipping migration creation in production')
     }
   } catch (error) {
-    console.warn('⚠️  Migration warning (will retry on dev):', error.message)
-    // Don't fail - predev will handle it
+    if (isProduction) {
+      // In production, try to deploy existing migrations
+      try {
+        console.log('📦 Attempting to deploy migrations...')
+        execSync('npx prisma migrate deploy', { stdio: 'inherit' })
+        console.log('✅ Migrations deployed')
+      } catch (deployError) {
+        console.warn('⚠️  Migration deploy warning:', deployError.message)
+      }
+    } else {
+      console.warn('⚠️  Migration warning (will retry on dev):', error.message)
+    }
   }
 } else {
   console.log('✅ Database exists')
