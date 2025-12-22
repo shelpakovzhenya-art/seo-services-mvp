@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  content     String?  @default("") // HTML content with visual editor
+  image       String?  // Image for announcement/preview
+  price       Float
+  unit        String  @default("₽/проект")
+  isActive    Boolean @default(true)
+  order       Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Page {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String?
+  h1          String?
+  content     String?  @default("")
+  parentId    String?  // For sections/subsections
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  parent      Page?    @relation("PageHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children    Page[]   @relation("PageHierarchy")
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String?
+  content     String
+  coverImage  String?
+  published   Boolean  @default(false)
+  publishedAt DateTime?
+  parentId    String?  // For sections/subsections
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  parent      BlogPost? @relation("BlogHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children    BlogPost[] @relation("BlogHierarchy")
+}
+
+model Case {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  content     String?
+  image       String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  author      String
+  text        String
+  rating      Int      @default(5)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SiteSettings {
+  id                    String   @id @default("1")
+  workSchedule          String?  @default("ПН–ПТ 9:00–17:00")
+  email                 String?  @default("shelpakovzhenya@gmail.com")
+  telegramUrl           String?
+  vkUrl                 String?
+  whatsappUrl           String?
+  maxUrl                String?
+  footerText            String?
+  globalDiscountEnabled Boolean  @default(false)
+  globalDiscountPercent Float    @default(0)
+  yandexReviewsEmbed    String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model MenuItem {
+  id        String   @id @default(cuid())
+  label     String
+  url       String
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ParserJob {
+  id          String   @id @default(cuid())
+  type        String
+  config      String?  // JSON string
+  status      String   @default("pending") // pending, running, completed, failed
+  result      String?  // JSON string
+  error       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completedAt DateTime?
+}
+
+model ParserConfig {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  config      String   // JSON string
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
