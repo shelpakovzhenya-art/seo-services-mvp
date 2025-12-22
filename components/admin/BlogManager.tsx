@@ -352,7 +352,7 @@ function BlogPostForm({
             ...formData,
             parentId: formData.parentId || null,
             publishedAt: formData.published && formData.publishedAt 
-              ? new Date(formData.publishedAt) 
+              ? new Date(formData.publishedAt).toISOString() 
               : null
           })}>Сохранить</Button>
           <Button variant="outline" onClick={onCancel}>Отмена</Button>
