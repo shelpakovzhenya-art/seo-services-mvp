@@ -223,7 +223,17 @@ function BlogPostForm({
   onCancel: () => void
 }) {
   const isNew = !post?.id
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    slug: string
+    title: string
+    excerpt: string
+    content: string
+    coverImage: string
+    published: boolean
+    publishedAt: string
+    parentId: string | null
+    order: number
+  }>({
     slug: post?.slug || '',
     title: post?.title || '',
     excerpt: post?.excerpt || '',
@@ -231,7 +241,7 @@ function BlogPostForm({
     coverImage: post?.coverImage || '',
     published: post?.published ?? false,
     publishedAt: post?.publishedAt ? new Date(post.publishedAt).toISOString().split('T')[0] : '',
-    parentId: post?.parentId || '',
+    parentId: post?.parentId || null,
     order: post?.order || 0,
   })
 
@@ -289,7 +299,7 @@ function BlogPostForm({
         <div>
           <label className="block text-sm font-medium mb-1">Родительский раздел</label>
           <select
-            value={formData.parentId}
+            value={formData.parentId || ''}
             onChange={(e) => setFormData({ ...formData, parentId: e.target.value || null })}
             className="w-full px-4 py-2 border rounded-md"
           >
