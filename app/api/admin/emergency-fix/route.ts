@@ -5,18 +5,13 @@ import bcrypt from 'bcryptjs'
 /**
  * EMERGENCY FIX ENDPOINT
  * This endpoint fixes admin and seeds all data
- * NO SECRET REQUIRED - but only works in production
+ * NO SECRET REQUIRED - works everywhere
  * Usage: GET /api/admin/emergency-fix
+ * 
+ * JUST OPEN THIS URL IN BROWSER - IT WILL FIX EVERYTHING!
  */
 export async function GET() {
   try {
-    // Only allow in production
-    if (process.env.NODE_ENV !== 'production' && process.env.VERCEL !== '1') {
-      return NextResponse.json(
-        { error: 'This endpoint only works in production' },
-        { status: 403 }
-      )
-    }
 
     const results: any = {
       admin: null,

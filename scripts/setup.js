@@ -110,22 +110,30 @@ if (isProduction && isPostgreSQL) {
 if (isProduction && isPostgreSQL) {
   console.log('🌱 Seeding database (PRODUCTION - PostgreSQL)...')
   console.log('📝 This will create admin user and all services...')
+  console.log('📝 If this fails, open /api/admin/emergency-fix after deployment')
+  
   try {
     const seedEnv = {
       ...process.env,
       NODE_ENV: 'production',
       FORCE_SEED: 'true'
     }
+    
+    // Try seed with longer timeout
     execSync('npx tsx prisma/seed.ts', { 
       stdio: 'inherit', 
       env: seedEnv, 
-      timeout: 120000,
+      timeout: 180000, // 3 minutes
       maxBuffer: 10 * 1024 * 1024 // 10MB
     })
-    console.log('✅ Database seeded successfully')
+    console.log('✅ Database seeded successfully - admin and services created!')
   } catch (error) {
-    console.warn('⚠️  Seed warning:', error.message)
-    console.log('📝 You can fix manually by opening: /api/admin/emergency-fix in browser')
+    console.error('❌ Seed failed:', error.message)
+    console.log('')
+    console.log('📝 IMPORTANT: After deployment, open this URL in browser:')
+    console.log('   /api/admin/emergency-fix')
+    console.log('   This will fix admin and load all services automatically')
+    console.log('')
     // Don't exit - continue with deployment
   }
 } else if (isSQLite && fs.existsSync(dbPath)) {

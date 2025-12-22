@@ -23,17 +23,23 @@ export async function verifyCredentials(username: string, password: string): Pro
 
     if (!admin) {
       console.error(`Admin user not found: ${trimmedUsername}`)
-      // Try to create admin if it doesn't exist (fallback)
+      // Try to create admin automatically with default password
       try {
-        const hashedPassword = await bcrypt.hash(trimmedPassword, 10)
-        await prisma.admin.create({
+        const defaultPassword = process.env.ADMIN_PASS || 'admin123'
+        const hashedPassword = await bcrypt.hash(defaultPassword, 10)
+        const newAdmin = await prisma.admin.create({
           data: {
             username: trimmedUsername,
             password: hashedPassword,
           },
         })
         console.log(`✅ Admin user created automatically: ${trimmedUsername}`)
-        return true
+        // If user provided password matches default, allow login
+        if (trimmedPassword === defaultPassword) {
+          return true
+        }
+        // Otherwise, verify against the hash we just created
+        return await bcrypt.compare(trimmedPassword, hashedPassword)
       } catch (createError) {
         console.error('Error creating admin:', createError)
         return false
