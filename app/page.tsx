@@ -6,7 +6,10 @@ import Calculator from '@/components/Calculator'
 import ReactMarkdown from 'react-markdown'
 
 export default async function HomePage() {
-  let page, services, settings, reviews
+  let page: any = null
+  let services: any[] = []
+  let settings: any = null
+  let reviews: any[] = []
   
   try {
     page = await prisma.page.findUnique({ where: { slug: 'home' } })
@@ -143,7 +146,7 @@ export default async function HomePage() {
 }
 
 export async function generateMetadata() {
-  let page
+  let page: any = null
   try {
     page = await prisma.page.findUnique({ where: { slug: 'home' } })
   } catch (error) {

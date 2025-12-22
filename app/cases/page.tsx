@@ -3,7 +3,8 @@ import ReactMarkdown from 'react-markdown'
 import Image from 'next/image'
 
 export default async function CasesPage() {
-  let page, cases
+  let page: any = null
+  let cases: any[] = []
   
   try {
     page = await prisma.page.findUnique({ where: { slug: 'cases' } })
@@ -62,7 +63,7 @@ export default async function CasesPage() {
 }
 
 export async function generateMetadata() {
-  let page
+  let page: any = null
   try {
     page = await prisma.page.findUnique({ where: { slug: 'cases' } })
   } catch (error) {

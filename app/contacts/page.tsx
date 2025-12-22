@@ -4,7 +4,8 @@ import { Mail, Clock } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 
 export default async function ContactsPage() {
-  let page, settings
+  let page: any = null
+  let settings: any = null
   
   try {
     page = await prisma.page.findUnique({ where: { slug: 'contacts' } })
@@ -61,7 +62,7 @@ export default async function ContactsPage() {
 }
 
 export async function generateMetadata() {
-  let page
+  let page: any = null
   try {
     page = await prisma.page.findUnique({ where: { slug: 'contacts' } })
   } catch (error) {

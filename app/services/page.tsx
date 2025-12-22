@@ -2,7 +2,8 @@ import { prisma } from '@/lib/prisma'
 import ReactMarkdown from 'react-markdown'
 
 export default async function ServicesPage() {
-  let page, services
+  let page: any = null
+  let services: any[] = []
   
   try {
     page = await prisma.page.findUnique({ where: { slug: 'services' } })
@@ -48,7 +49,7 @@ export default async function ServicesPage() {
 }
 
 export async function generateMetadata() {
-  let page
+  let page: any = null
   try {
     page = await prisma.page.findUnique({ where: { slug: 'services' } })
   } catch (error) {

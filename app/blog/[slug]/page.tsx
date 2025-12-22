@@ -4,7 +4,7 @@ import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  let post
+  let post: any = null
   
   try {
     post = await prisma.blogPost.findUnique({
@@ -52,7 +52,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  let post
+  let post: any = null
   
   try {
     post = await prisma.blogPost.findUnique({

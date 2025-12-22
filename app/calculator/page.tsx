@@ -4,7 +4,9 @@ import ContactForm from '@/components/ContactForm'
 import ReactMarkdown from 'react-markdown'
 
 export default async function CalculatorPage() {
-  let page, services, settings
+  let page: any = null
+  let services: any[] = []
+  let settings: any = null
   
   try {
     page = await prisma.page.findUnique({ where: { slug: 'calculator' } })
@@ -53,7 +55,7 @@ export default async function CalculatorPage() {
 }
 
 export async function generateMetadata() {
-  let page
+  let page: any = null
   try {
     page = await prisma.page.findUnique({ where: { slug: 'calculator' } })
   } catch (error) {

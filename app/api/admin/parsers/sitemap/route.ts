@@ -54,7 +54,7 @@ function parseSitemap(url: string, jobId: string) {
       // Simple regex-based extraction for MVP
       const urlRegex = /<loc>(.*?)<\/loc>/g
       const urls: string[] = []
-      let match
+      let match: RegExpExecArray | null = null
       
       while ((match = urlRegex.exec(text)) !== null) {
         urls.push(match[1])
