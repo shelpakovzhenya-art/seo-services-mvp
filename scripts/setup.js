@@ -106,15 +106,35 @@ if (isProduction && isPostgreSQL) {
   console.log('⏭️  Skipping database setup (unknown database type)')
 }
 
-// 4. Seed database (only in production with PostgreSQL, or if SQLite exists)
+// 4. Seed database (always try in production with PostgreSQL, or if SQLite exists)
 if ((isProduction && isPostgreSQL) || (isSQLite && fs.existsSync(dbPath))) {
   console.log('🌱 Seeding database...')
   try {
-    execSync('npx tsx prisma/seed.ts', { stdio: 'inherit', env: { ...process.env, NODE_ENV: isProduction ? 'production' : 'development' } })
+    // Always run seed in production to ensure menu items and settings exist
+    const seedEnv = {
+      ...process.env,
+      NODE_ENV: isProduction ? 'production' : 'development',
+      // Ensure seed runs even if data exists
+      FORCE_SEED: 'true'
+    }
+    execSync('npx tsx prisma/seed.ts', { stdio: 'inherit', env: seedEnv })
     console.log('✅ Database seeded')
   } catch (error) {
     // Seed errors are non-fatal - data might already exist
-    console.warn('⚠️  Seed completed with warnings (this is OK)')
+    console.warn('⚠️  Seed completed with warnings (this is OK):', error.message)
+    // In production, we still want to continue even if seed has warnings
+    if (isProduction) {
+      console.log('📝 Continuing deployment (seed warnings are acceptable)')
+    }
+  }
+} else if (isProduction && isPostgreSQL) {
+  // In production with PostgreSQL, always try to seed
+  console.log('🌱 Attempting to seed database (PostgreSQL production)...')
+  try {
+    execSync('npx tsx prisma/seed.ts', { stdio: 'inherit', env: { ...process.env, NODE_ENV: 'production' } })
+    console.log('✅ Database seeded')
+  } catch (error) {
+    console.warn('⚠️  Seed warning (continuing):', error.message)
   }
 } else {
   console.log('⏭️  Skipping seed (database will be created on dev)')

@@ -7,17 +7,25 @@ async function main() {
   console.log('Seeding database...')
 
   // Create admin user
+  const adminUsername = (process.env.ADMIN_USER || 'admin').trim()
   const adminPassword = process.env.ADMIN_PASS || 'admin123'
+  
+  if (!adminUsername) {
+    throw new Error('ADMIN_USER cannot be empty')
+  }
+  
   const hashedPassword = await bcrypt.hash(adminPassword, 10)
   
-  await prisma.admin.upsert({
-    where: { username: process.env.ADMIN_USER || 'admin' },
+  const admin = await prisma.admin.upsert({
+    where: { username: adminUsername },
     update: { password: hashedPassword },
     create: {
-      username: process.env.ADMIN_USER || 'admin',
+      username: adminUsername,
       password: hashedPassword,
     },
   })
+  
+  console.log(`✅ Admin user created/updated: ${admin.username}`)
 
   // Create services
   const services = [
@@ -116,33 +124,45 @@ async function main() {
     })
   }
 
-  // Create menu items
+  // Create menu items (always ensure they exist)
   const menuItems = [
-    { label: 'Главная', url: '/', order: 1 },
-    { label: 'Услуги', url: '/services', order: 2 },
-    { label: 'Контакты', url: '/contacts', order: 3 },
-    { label: 'Кейсы', url: '/cases', order: 4 },
-    { label: 'Отзывы', url: '/reviews', order: 5 },
-    { label: 'Блог', url: '/blog', order: 6 },
-    { label: 'Калькулятор', url: '/calculator', order: 7 },
+    { label: 'Главная', url: '/', order: 1, isActive: true },
+    { label: 'Услуги', url: '/services', order: 2, isActive: true },
+    { label: 'Контакты', url: '/contacts', order: 3, isActive: true },
+    { label: 'Кейсы', url: '/cases', order: 4, isActive: true },
+    { label: 'Отзывы', url: '/reviews', order: 5, isActive: true },
+    { label: 'Блог', url: '/blog', order: 6, isActive: true },
+    { label: 'Калькулятор', url: '/calculator', order: 7, isActive: true },
   ]
 
   for (const item of menuItems) {
-    const existing = await prisma.menuItem.findFirst({
-      where: { url: item.url }
-    })
-    
-    if (existing) {
-      await prisma.menuItem.update({
-        where: { id: existing.id },
-        data: item,
+    try {
+      const existing = await prisma.menuItem.findFirst({
+        where: { url: item.url }
       })
-    } else {
-      await prisma.menuItem.create({
-        data: item,
-      })
+      
+      if (existing) {
+        await prisma.menuItem.update({
+          where: { id: existing.id },
+          data: {
+            label: item.label,
+            url: item.url,
+            order: item.order,
+            isActive: item.isActive,
+          },
+        })
+      } else {
+        await prisma.menuItem.create({
+          data: item,
+        })
+      }
+    } catch (error) {
+      console.error(`Error creating menu item ${item.label}:`, error)
+      // Continue with other items
     }
   }
+  
+  console.log(`✅ Menu items created/updated: ${menuItems.length} items`)
 
   // Create site settings
   await prisma.siteSettings.upsert({

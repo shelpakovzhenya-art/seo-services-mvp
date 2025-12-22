@@ -13,11 +13,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const isValid = await verifyCredentials(username, password)
+    // Trim whitespace
+    const trimmedUsername = username.trim()
+    const trimmedPassword = password.trim()
+
+    if (!trimmedUsername || !trimmedPassword) {
+      return NextResponse.json(
+        { error: 'Заполните все поля' },
+        { status: 400 }
+      )
+    }
+
+    const isValid = await verifyCredentials(trimmedUsername, trimmedPassword)
 
     if (!isValid) {
+      // Log for debugging (remove in production if needed)
+      console.error('Login failed for username:', trimmedUsername)
       return NextResponse.json(
-        { error: 'Неверные учетные данные' },
+        { error: 'Неверные учетные данные. Проверьте логин и пароль.' },
         { status: 401 }
       )
     }
@@ -25,10 +38,10 @@ export async function POST(request: NextRequest) {
     await createSession()
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Login error:', error)
     return NextResponse.json(
-      { error: 'Ошибка при входе' },
+      { error: error?.message || 'Ошибка при входе. Попробуйте позже.' },
       { status: 500 }
     )
   }

@@ -1,6 +1,17 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 
+// Default menu items (fallback if database is empty)
+const DEFAULT_MENU_ITEMS = [
+  { id: '1', label: 'Главная', url: '/', order: 1, isActive: true },
+  { id: '2', label: 'Услуги', url: '/services', order: 2, isActive: true },
+  { id: '3', label: 'Контакты', url: '/contacts', order: 3, isActive: true },
+  { id: '4', label: 'Кейсы', url: '/cases', order: 4, isActive: true },
+  { id: '5', label: 'Отзывы', url: '/reviews', order: 5, isActive: true },
+  { id: '6', label: 'Блог', url: '/blog', order: 6, isActive: true },
+  { id: '7', label: 'Калькулятор', url: '/calculator', order: 7, isActive: true },
+]
+
 export default async function Footer() {
   let settings: any = null
   let menuItems: any[] = []
@@ -11,10 +22,17 @@ export default async function Footer() {
       where: { isActive: true },
       orderBy: { order: 'asc' }
     })
+    
+    // If no menu items in database, use default
+    if (menuItems.length === 0) {
+      console.warn('No menu items found in database, using default menu')
+      menuItems = DEFAULT_MENU_ITEMS
+    }
   } catch (error) {
     console.error('Error loading footer data:', error)
     settings = null
-    menuItems = []
+    // Use default menu on error
+    menuItems = DEFAULT_MENU_ITEMS
   }
 
   const currentYear = new Date().getFullYear()
