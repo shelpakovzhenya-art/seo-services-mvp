@@ -110,36 +110,23 @@ if (isProduction && isPostgreSQL) {
 if (isProduction && isPostgreSQL) {
   console.log('🌱 Seeding database (PRODUCTION - PostgreSQL)...')
   console.log('📝 This will create admin user and all services...')
-  let retries = 3
-  let seeded = false
-  
-  while (retries > 0 && !seeded) {
-    try {
-      const seedEnv = {
-        ...process.env,
-        NODE_ENV: 'production',
-        FORCE_SEED: 'true'
-      }
-      execSync('npx tsx prisma/seed.ts', { 
-        stdio: 'inherit', 
-        env: seedEnv, 
-        timeout: 120000,
-        maxBuffer: 10 * 1024 * 1024 // 10MB
-      })
-      console.log('✅ Database seeded successfully')
-      seeded = true
-    } catch (error) {
-      retries--
-      console.warn(`⚠️  Seed attempt failed (${3 - retries}/3):`, error.message)
-      if (retries > 0) {
-        console.log('🔄 Retrying in 5 seconds...')
-        await new Promise(resolve => setTimeout(resolve, 5000))
-      } else {
-        console.error('❌ Failed to seed database after 3 attempts')
-        console.log('📝 You can seed manually via /api/admin/seed-data endpoint')
-        // Don't exit - continue with deployment
-      }
+  try {
+    const seedEnv = {
+      ...process.env,
+      NODE_ENV: 'production',
+      FORCE_SEED: 'true'
     }
+    execSync('npx tsx prisma/seed.ts', { 
+      stdio: 'inherit', 
+      env: seedEnv, 
+      timeout: 120000,
+      maxBuffer: 10 * 1024 * 1024 // 10MB
+    })
+    console.log('✅ Database seeded successfully')
+  } catch (error) {
+    console.warn('⚠️  Seed warning:', error.message)
+    console.log('📝 You can fix manually by opening: /api/admin/emergency-fix in browser')
+    // Don't exit - continue with deployment
   }
 } else if (isSQLite && fs.existsSync(dbPath)) {
   // Development with SQLite

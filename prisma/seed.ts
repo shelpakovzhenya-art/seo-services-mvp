@@ -257,7 +257,16 @@ SEO (Search Engine Optimization) - это комплекс мер по опти�
     })
   }
 
-  console.log('Database seeded successfully!')
+  console.log('✅ Database seeded successfully!')
+  console.log('')
+  console.log('📝 Admin credentials:')
+  console.log(`   Username: ${adminUsername}`)
+  console.log(`   Password: ${adminPassword}`)
+  console.log('')
+  console.log(`✅ Created ${services.length} services`)
+  console.log(`✅ Created ${menuItems.length} menu items`)
+  console.log(`✅ Created ${pages.length} pages`)
+  console.log('')
 }
 
 main()
