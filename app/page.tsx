@@ -152,9 +152,21 @@ export async function generateMetadata() {
   } catch (error) {
     page = null
   }
+  const { getSiteUrl } = await import('@/lib/site-url')
+  const siteUrl = getSiteUrl()
+  
   return {
     title: page?.title || 'SEO Услуги - Главная',
     description: page?.description || 'Профессиональные SEO услуги для вашего бизнеса',
+    alternates: {
+      canonical: siteUrl,
+    },
+    openGraph: {
+      title: page?.title || 'SEO Услуги - Главная',
+      description: page?.description || 'Профессиональные SEO услуги для вашего бизнеса',
+      url: siteUrl,
+      type: 'website',
+    },
   }
 }
 

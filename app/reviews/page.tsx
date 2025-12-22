@@ -70,9 +70,21 @@ export async function generateMetadata() {
   } catch (error) {
     page = null
   }
+  const { getFullUrl } = await import('@/lib/site-url')
+  const reviewsUrl = getFullUrl('/reviews')
+  
   return {
-    title: page?.title || 'Отзывы - SEO Services',
-    description: page?.description || 'Отзывы наших клиентов',
+    title: page?.title || 'Отзывы клиентов | SEO Update',
+    description: page?.description || 'Отзывы наших клиентов о работе по продвижению сайтов',
+    alternates: {
+      canonical: reviewsUrl,
+    },
+    openGraph: {
+      title: page?.title || 'Отзывы клиентов',
+      description: page?.description || 'Отзывы наших клиентов о работе по продвижению сайтов',
+      url: reviewsUrl,
+      type: 'website',
+    },
   }
 }
 

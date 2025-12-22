@@ -57,9 +57,21 @@ export default async function BlogPage() {
 }
 
 export async function generateMetadata() {
+  const { getFullUrl } = await import('@/lib/site-url')
+  const blogUrl = getFullUrl('/blog')
+  
   return {
-    title: 'Блог - SEO Services',
-    description: 'Статьи о SEO и продвижении сайтов',
+    title: 'Блог о SEO и продвижении сайтов | SEO Update',
+    description: 'Полезные статьи о SEO, продвижении сайтов, поисковой оптимизации и увеличении трафика',
+    alternates: {
+      canonical: blogUrl,
+    },
+    openGraph: {
+      title: 'Блог о SEO и продвижении сайтов',
+      description: 'Полезные статьи о SEO, продвижении сайтов, поисковой оптимизации и увеличении трафика',
+      url: blogUrl,
+      type: 'website',
+    },
   }
 }
 

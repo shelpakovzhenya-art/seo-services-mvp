@@ -68,9 +68,21 @@ export async function generateMetadata() {
   } catch (error) {
     page = null
   }
+  const { getFullUrl } = await import('@/lib/site-url')
+  const contactsUrl = getFullUrl('/contacts')
+  
   return {
-    title: page?.title || 'Контакты - SEO Services',
-    description: page?.description || 'Свяжитесь с нами',
+    title: page?.title || 'Контакты | SEO Update',
+    description: page?.description || 'Свяжитесь с нами для консультации по продвижению вашего сайта',
+    alternates: {
+      canonical: contactsUrl,
+    },
+    openGraph: {
+      title: page?.title || 'Контакты',
+      description: page?.description || 'Свяжитесь с нами для консультации по продвижению вашего сайта',
+      url: contactsUrl,
+      type: 'website',
+    },
   }
 }
 

@@ -55,9 +55,21 @@ export async function generateMetadata() {
   } catch (error) {
     page = null
   }
+  const { getFullUrl } = await import('@/lib/site-url')
+  const servicesUrl = getFullUrl('/services')
+  
   return {
-    title: page?.title || 'Услуги - SEO Services',
-    description: page?.description || 'Наши SEO услуги',
+    title: page?.title || 'SEO Услуги | SEO Update',
+    description: page?.description || 'Профессиональные SEO услуги: продвижение сайтов, оптимизация, увеличение трафика',
+    alternates: {
+      canonical: servicesUrl,
+    },
+    openGraph: {
+      title: page?.title || 'SEO Услуги',
+      description: page?.description || 'Профессиональные SEO услуги: продвижение сайтов, оптимизация, увеличение трафика',
+      url: servicesUrl,
+      type: 'website',
+    },
   }
 }
 

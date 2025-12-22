@@ -68,9 +68,24 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
   }
 
+  const { getFullUrl } = await import('@/lib/site-url')
+  const postUrl = getFullUrl(`/blog/${params.slug}`)
+
   return {
-    title: `${post.title} - SEO Services`,
+    title: `${post.title} | SEO Update`,
     description: post.excerpt || post.title,
+    alternates: {
+      canonical: postUrl,
+    },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt || post.title,
+      url: postUrl,
+      type: 'article',
+      publishedTime: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+      modifiedTime: post.updatedAt ? new Date(post.updatedAt).toISOString() : undefined,
+      images: post.coverImage ? [getFullUrl(post.coverImage)] : [],
+    },
   }
 }
 

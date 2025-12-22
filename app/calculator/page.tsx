@@ -61,9 +61,21 @@ export async function generateMetadata() {
   } catch (error) {
     page = null
   }
+  const { getFullUrl } = await import('@/lib/site-url')
+  const calculatorUrl = getFullUrl('/calculator')
+  
   return {
-    title: page?.title || 'Калькулятор стоимости - SEO Services',
-    description: page?.description || 'Рассчитайте стоимость SEO услуг',
+    title: page?.title || 'Калькулятор стоимости SEO услуг | SEO Update',
+    description: page?.description || 'Рассчитайте стоимость SEO услуг для вашего проекта',
+    alternates: {
+      canonical: calculatorUrl,
+    },
+    openGraph: {
+      title: page?.title || 'Калькулятор стоимости SEO услуг',
+      description: page?.description || 'Рассчитайте стоимость SEO услуг для вашего проекта',
+      url: calculatorUrl,
+      type: 'website',
+    },
   }
 }
 

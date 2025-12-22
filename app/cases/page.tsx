@@ -69,9 +69,21 @@ export async function generateMetadata() {
   } catch (error) {
     page = null
   }
+  const { getFullUrl } = await import('@/lib/site-url')
+  const casesUrl = getFullUrl('/cases')
+  
   return {
-    title: page?.title || 'Кейсы - SEO Services',
-    description: page?.description || 'Наши кейсы',
+    title: page?.title || 'Кейсы и примеры работ | SEO Update',
+    description: page?.description || 'Примеры успешных проектов по продвижению сайтов и увеличению трафика',
+    alternates: {
+      canonical: casesUrl,
+    },
+    openGraph: {
+      title: page?.title || 'Кейсы и примеры работ',
+      description: page?.description || 'Примеры успешных проектов по продвижению сайтов и увеличению трафика',
+      url: casesUrl,
+      type: 'website',
+    },
   }
 }
 
