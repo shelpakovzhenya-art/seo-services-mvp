@@ -200,13 +200,21 @@ function PageForm({
   onCancel: () => void
 }) {
   const isNew = !page.id
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    slug: string
+    title: string
+    description: string
+    h1: string
+    content: string
+    parentId: string | null
+    order: number
+  }>({
     slug: page.slug || '',
     title: page.title || '',
     description: page.description || '',
     h1: page.h1 || '',
     content: page.content || '',
-    parentId: page.parentId || '',
+    parentId: page.parentId || null,
     order: page.order || 0,
   })
 
@@ -238,7 +246,7 @@ function PageForm({
         <div>
           <label className="block text-sm font-medium mb-1">Родительский раздел</label>
           <select
-            value={formData.parentId}
+            value={formData.parentId ?? ''}
             onChange={(e) => setFormData({ ...formData, parentId: e.target.value || null })}
             className="w-full px-4 py-2 border rounded-md"
           >

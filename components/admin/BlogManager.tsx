@@ -299,7 +299,7 @@ function BlogPostForm({
         <div>
           <label className="block text-sm font-medium mb-1">Родительский раздел</label>
           <select
-            value={formData.parentId || ''}
+            value={formData.parentId ?? ''}
             onChange={(e) => setFormData({ ...formData, parentId: e.target.value || null })}
             className="w-full px-4 py-2 border rounded-md"
           >
