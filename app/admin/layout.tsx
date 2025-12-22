@@ -4,10 +4,8 @@ import AdminNav from '@/components/admin/AdminNav'
 
 export default async function AdminLayout({
   children,
-  login,
 }: {
   children: React.ReactNode
-  login?: React.ReactNode
 }) {
   // Don't check auth in layout - let each page handle it
   // This prevents redirect loops

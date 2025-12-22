@@ -77,7 +77,7 @@ export default function RichTextEditorClient({
       if (currentContent !== newContent && newContent.trim() !== '' && newContent !== '<p></p>') {
         const isUserEditing = editor.isFocused
         if (!isUserEditing) {
-          editor.commands.setContent(newContent, false)
+          editor.commands.setContent(newContent, { emitUpdate: false })
         }
       }
     }
