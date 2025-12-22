@@ -12,6 +12,39 @@ import bcrypt from 'bcryptjs'
  */
 export async function GET() {
   try {
+    // Check DATABASE_URL first
+    const databaseUrl = process.env.DATABASE_URL
+    if (!databaseUrl) {
+      return NextResponse.json(
+        {
+          error: 'DATABASE_URL не настроен!',
+          message: 'Добавьте DATABASE_URL в Vercel Environment Variables',
+          instructions: [
+            '1. Vercel Dashboard → Settings → Environment Variables',
+            '2. Добавьте DATABASE_URL с Connection String от вашей PostgreSQL базы',
+            '3. См. файл НАСТРОЙКА-БАЗЫ-ДАННЫХ-VERCEL.md для подробной инструкции'
+          ]
+        },
+        { status: 500 }
+      )
+    }
+
+    if (!databaseUrl.startsWith('postgresql://') && !databaseUrl.startsWith('postgres://') && !databaseUrl.startsWith('file:')) {
+      return NextResponse.json(
+        {
+          error: 'Неверный формат DATABASE_URL!',
+          message: 'DATABASE_URL должен начинаться с postgresql:// или postgres://',
+          currentFormat: databaseUrl.substring(0, 30) + '...',
+          instructions: [
+            '1. Проверьте формат DATABASE_URL в Vercel Environment Variables',
+            '2. Должен быть: postgresql://user:password@host:port/database',
+            '3. См. файл НАСТРОЙКА-БАЗЫ-ДАННЫХ-VERCEL.md'
+          ]
+        },
+        { status: 500 }
+      )
+    }
+
     console.log('🚨 EMERGENCY FIX CALLED - Fixing admin and loading all data...')
 
     const results: any = {
@@ -20,6 +53,7 @@ export async function GET() {
       menuItems: [],
       pages: [],
       settings: null,
+      databaseUrl: databaseUrl ? '✅ Настроен' : '❌ Не настроен',
     }
 
     // 1. FIX ADMIN - ALWAYS

@@ -5,6 +5,28 @@ import bcrypt from 'bcryptjs'
 
 export async function POST(request: NextRequest) {
   try {
+    // Check DATABASE_URL first
+    const databaseUrl = process.env.DATABASE_URL
+    if (!databaseUrl) {
+      return NextResponse.json(
+        { 
+          error: 'База данных не настроена. Добавьте DATABASE_URL в Vercel Environment Variables.',
+          details: 'Settings → Environment Variables → Add DATABASE_URL'
+        },
+        { status: 500 }
+      )
+    }
+
+    if (!databaseUrl.startsWith('postgresql://') && !databaseUrl.startsWith('postgres://') && !databaseUrl.startsWith('file:')) {
+      return NextResponse.json(
+        { 
+          error: 'Неверный формат DATABASE_URL. Должен начинаться с postgresql:// или postgres://',
+          details: `Текущий формат: ${databaseUrl.substring(0, 30)}...`
+        },
+        { status: 500 }
+      )
+    }
+
     const body = await request.json()
     const { username, password } = body
 
