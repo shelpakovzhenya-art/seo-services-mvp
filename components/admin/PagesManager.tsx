@@ -85,7 +85,7 @@ export default function PagesManager({ initialPages }: { initialPages: Page[] })
     }
   }
 
-  const renderPageItem = (page: Page, level: number = 0) => (
+  const renderPageItem = (page: Page, level: number = 0): JSX.Element => (
     <>
       <tr key={page.id} className={level > 0 ? 'bg-gray-50' : ''}>
         <td className="px-4 py-3">
@@ -211,7 +211,7 @@ function PageForm({
   })
 
   // Filter out current page and its children from parent options
-  const getParentOptions = () => {
+  const getParentOptions = (): Page[] => {
     if (isNew) return allPages.filter(p => !p.parentId)
     return allPages.filter(p => p.id !== page.id && !p.parentId)
   }

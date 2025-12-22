@@ -104,7 +104,7 @@ export default function BlogManager({ initialPosts }: { initialPosts: BlogPost[]
     }
   }
 
-  const renderPostItem = (post: BlogPost, level: number = 0) => (
+  const renderPostItem = (post: BlogPost, level: number = 0): JSX.Element => (
     <>
       <tr key={post.id} className={level > 0 ? 'bg-gray-50' : ''}>
         <td className="px-4 py-3">
@@ -236,7 +236,7 @@ function BlogPostForm({
   })
 
   // Filter out current post and its children from parent options
-  const getParentOptions = () => {
+  const getParentOptions = (): BlogPost[] => {
     if (isNew) return allPosts.filter(p => !p.parentId)
     return allPosts.filter(p => p.id !== post.id && !p.parentId)
   }
