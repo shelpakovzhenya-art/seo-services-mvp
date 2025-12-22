@@ -12,6 +12,7 @@ import bcrypt from 'bcryptjs'
  */
 export async function GET() {
   try {
+    console.log('🚨 EMERGENCY FIX CALLED - Fixing admin and loading all data...')
 
     const results: any = {
       admin: null,
