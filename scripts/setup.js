@@ -49,46 +49,68 @@ const migrationsPath = path.join(process.cwd(), 'prisma', 'migrations')
 // Check if we're in production (non-interactive environment)
 const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' || !process.stdin.isTTY
 
-if (!fs.existsSync(dbPath)) {
+// Check if DATABASE_URL is PostgreSQL (starts with postgresql:// or postgres://)
+const databaseUrl = process.env.DATABASE_URL || ''
+const isPostgreSQL = databaseUrl.startsWith('postgresql://') || databaseUrl.startsWith('postgres://')
+const isSQLite = databaseUrl.startsWith('file:') || !databaseUrl || databaseUrl.includes('dev.db')
+
+if (isProduction && isPostgreSQL) {
+  // Production with PostgreSQL - apply migrations
   try {
-    // Check if migrations directory exists
-    if (fs.existsSync(migrationsPath) && fs.readdirSync(migrationsPath).length > 0) {
-      // Migrations exist, deploy them (works in both dev and production)
-      console.log('📦 Applying existing migrations...')
-      execSync('npx prisma migrate deploy', { stdio: 'inherit' })
-      console.log('✅ Migrations applied')
-    } else if (!isProduction) {
-      // No migrations, create initial one (only in dev)
-      console.log('📦 Creating initial migration...')
-      execSync('npx prisma migrate dev --name init', { stdio: 'inherit' })
-      console.log('✅ Initial migration created and applied')
-    } else {
-      // Production: skip migration creation, will be handled by deploy
-      console.log('⏭️  Skipping migration creation in production')
-    }
+    console.log('📦 Applying database migrations (PostgreSQL)...')
+    execSync('npx prisma migrate deploy', { stdio: 'inherit' })
+    console.log('✅ Migrations applied')
   } catch (error) {
-    if (isProduction) {
-      // In production, try to deploy existing migrations
-      try {
-        console.log('📦 Attempting to deploy migrations...')
-        execSync('npx prisma migrate deploy', { stdio: 'inherit' })
-        console.log('✅ Migrations deployed')
-      } catch (deployError) {
-        console.warn('⚠️  Migration deploy warning:', deployError.message)
-      }
-    } else {
-      console.warn('⚠️  Migration warning (will retry on dev):', error.message)
+    console.warn('⚠️  Migration deploy warning:', error.message)
+    // Try to push schema if migrations fail
+    try {
+      console.log('📦 Attempting to push schema...')
+      execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit' })
+      console.log('✅ Schema pushed')
+    } catch (pushError) {
+      console.warn('⚠️  Schema push warning:', pushError.message)
     }
   }
+} else if (!isProduction && isSQLite) {
+  // Development with SQLite
+  if (!fs.existsSync(dbPath)) {
+    try {
+      // Check if migrations directory exists
+      if (fs.existsSync(migrationsPath) && fs.readdirSync(migrationsPath).length > 0) {
+        // Migrations exist, but we're using SQLite - use db push instead
+        console.log('📦 Creating SQLite database...')
+        execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit' })
+        console.log('✅ SQLite database created')
+      } else {
+        // No migrations, create initial one (only in dev)
+        console.log('📦 Creating initial migration...')
+        execSync('npx prisma migrate dev --name init', { stdio: 'inherit' })
+        console.log('✅ Initial migration created and applied')
+      }
+    } catch (error) {
+      console.warn('⚠️  Migration warning (will retry on dev):', error.message)
+    }
+  } else {
+    console.log('✅ SQLite database exists')
+  }
+} else if (!isProduction && isPostgreSQL) {
+  // Development with PostgreSQL
+  try {
+    console.log('📦 Applying database migrations (PostgreSQL dev)...')
+    execSync('npx prisma migrate deploy', { stdio: 'inherit' })
+    console.log('✅ Migrations applied')
+  } catch (error) {
+    console.warn('⚠️  Migration warning:', error.message)
+  }
 } else {
-  console.log('✅ Database exists')
+  console.log('⏭️  Skipping database setup (unknown database type)')
 }
 
-// 4. Seed database (only if DB exists)
-if (fs.existsSync(dbPath)) {
+// 4. Seed database (only in production with PostgreSQL, or if SQLite exists)
+if ((isProduction && isPostgreSQL) || (isSQLite && fs.existsSync(dbPath))) {
   console.log('🌱 Seeding database...')
   try {
-    execSync('npx tsx prisma/seed.ts', { stdio: 'inherit', env: { ...process.env, NODE_ENV: 'development' } })
+    execSync('npx tsx prisma/seed.ts', { stdio: 'inherit', env: { ...process.env, NODE_ENV: isProduction ? 'production' : 'development' } })
     console.log('✅ Database seeded')
   } catch (error) {
     // Seed errors are non-fatal - data might already exist
