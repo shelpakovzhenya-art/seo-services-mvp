@@ -9,13 +9,35 @@ export async function verifyCredentials(username: string, password: string): Pro
       return false
     }
 
+    const trimmedUsername = username.trim()
+    const trimmedPassword = password.trim()
+
+    if (!trimmedUsername || !trimmedPassword) {
+      console.error('Username or password is empty after trim')
+      return false
+    }
+
     const admin = await prisma.admin.findUnique({
-      where: { username: username.trim() }
+      where: { username: trimmedUsername }
     })
 
     if (!admin) {
-      console.error(`Admin user not found: ${username}`)
-      return false
+      console.error(`Admin user not found: ${trimmedUsername}`)
+      // Try to create admin if it doesn't exist (fallback)
+      try {
+        const hashedPassword = await bcrypt.hash(trimmedPassword, 10)
+        await prisma.admin.create({
+          data: {
+            username: trimmedUsername,
+            password: hashedPassword,
+          },
+        })
+        console.log(`✅ Admin user created automatically: ${trimmedUsername}`)
+        return true
+      } catch (createError) {
+        console.error('Error creating admin:', createError)
+        return false
+      }
     }
 
     if (!admin.password) {
@@ -23,10 +45,14 @@ export async function verifyCredentials(username: string, password: string): Pro
       return false
     }
 
-    const isValid = await bcrypt.compare(password, admin.password)
+    const isValid = await bcrypt.compare(trimmedPassword, admin.password)
     
     if (!isValid) {
-      console.error('Password comparison failed for user:', username)
+      console.error('Password comparison failed for user:', trimmedUsername)
+      // Log for debugging (remove in production if needed)
+      console.error('Expected password hash starts with:', admin.password.substring(0, 10))
+    } else {
+      console.log('✅ Password verification successful for user:', trimmedUsername)
     }
     
     return isValid

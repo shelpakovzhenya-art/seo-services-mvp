@@ -42,22 +42,40 @@ async function main() {
     { name: 'Написание SEO статей с помощью ИИ', description: 'Создание SEO-оптимизированных статей', price: 3000, unit: '₽/статья', order: 11 },
   ]
 
+  let createdCount = 0
+  let updatedCount = 0
+  
   for (const service of services) {
-    const existing = await prisma.service.findFirst({
-      where: { name: service.name }
-    })
-    
-    if (existing) {
-      await prisma.service.update({
-        where: { id: existing.id },
-        data: service,
+    try {
+      const existing = await prisma.service.findFirst({
+        where: { name: service.name }
       })
-    } else {
-      await prisma.service.create({
-        data: service,
-      })
+      
+      if (existing) {
+        await prisma.service.update({
+          where: { id: existing.id },
+          data: {
+            ...service,
+            isActive: true, // Ensure service is active
+          },
+        })
+        updatedCount++
+      } else {
+        await prisma.service.create({
+          data: {
+            ...service,
+            isActive: true, // Ensure service is active
+          },
+        })
+        createdCount++
+      }
+    } catch (error) {
+      console.error(`Error creating/updating service ${service.name}:`, error)
+      // Continue with other services
     }
   }
+  
+  console.log(`✅ Services: ${createdCount} created, ${updatedCount} updated (total: ${services.length})`)
 
   // Create pages
   const pages = [
