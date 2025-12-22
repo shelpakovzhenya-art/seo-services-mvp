@@ -2,7 +2,8 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 
 export default async function Footer() {
-  let settings, menuItems
+  let settings: any = null
+  let menuItems: any[] = []
   
   try {
     settings = await prisma.siteSettings.findFirst()

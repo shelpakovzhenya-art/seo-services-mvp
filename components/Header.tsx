@@ -3,7 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { MessageCircle, Mail } from 'lucide-react'
 
 export default async function Header() {
-  let settings, menuItems
+  let settings: any = null
+  let menuItems: any[] = []
   
   try {
     settings = await prisma.siteSettings.findFirst()
