@@ -37,13 +37,13 @@ export default function ContactForm() {
       const data = await response.json()
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Спасибо! Я свяжусь с вами в ближайшее время.' })
+        setMessage({ type: 'success', text: 'Спасибо! Свяжусь с вами в ближайшее время.' })
         setFormData({ name: '', phone: '', honeypot: '' })
       } else {
-        setMessage({ type: 'error', text: data.error || 'Произошла ошибка. Попробуйте ещё раз чуть позже.' })
+        setMessage({ type: 'error', text: data.error || 'Не удалось отправить заявку. Попробуйте еще раз чуть позже.' })
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Произошла ошибка. Попробуйте ещё раз чуть позже.' })
+      setMessage({ type: 'error', text: 'Не удалось отправить заявку. Попробуйте еще раз чуть позже.' })
     } finally {
       setIsSubmitting(false)
     }
@@ -104,7 +104,7 @@ export default function ContactForm() {
       )}
 
       <Button type="submit" disabled={isSubmitting} className="w-full rounded-2xl">
-        {isSubmitting ? 'Отправка...' : 'Получить разбор сайта'}
+        {isSubmitting ? 'Отправляю заявку...' : 'Отправить заявку'}
       </Button>
     </form>
   )

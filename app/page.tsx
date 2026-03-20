@@ -20,132 +20,132 @@ import { Button } from '@/components/ui/button'
 import ContactForm from '@/components/ContactForm'
 
 const defaultHomeMetadata = {
-  title: 'Shelpakov Digital',
+  title: 'SEO-продвижение сайтов под заявки | Shelpakov Digital',
   description:
-    'SEO-продвижение сайтов, SEO-аудит, коммерческие факторы и упаковка сайта под рост заявок.',
+    'SEO-продвижение сайтов, SEO-аудит, доработка структуры и коммерческих факторов для роста заявок и продаж.',
   keywords:
-    'seo-продвижение сайтов, поисковое продвижение, seo-аудит, коммерческие факторы, рост заявок',
+    'seo продвижение сайтов, seo аудит сайта, продвижение сайта в поиске, коммерческие факторы, рост заявок',
 }
 
 const trustMetrics = [
   {
-    value: 'SEO + конверсия',
-    label: 'Продвижение строится не только под позиции, но и под реальные обращения с сайта.',
+    value: 'Трафик + заявки',
+    label: 'Работаю не только над видимостью сайта, но и над тем, чтобы посетитель оставлял обращение.',
   },
   {
     value: 'B2B и услуги',
-    label: 'Лучше всего усиливаю проекты, где важны доверие, экспертность и понятный оффер.',
+    label: 'Сильнее всего раскрываются проекты, где важны доверие, экспертность и понятный оффер.',
   },
   {
     value: 'План на 90 дней',
-    label: 'После старта у проекта появляется понятная карта действий, этапов и приоритетов.',
+    label: 'После старта у вас есть понятный список задач, приоритетов и точек роста.',
   },
 ]
 
 const heroPillars = [
   {
     icon: Layers3,
-    title: 'Стратегия роста',
-    text: 'Собираю SEO, структуру сайта, контент и коммерческие факторы в единую систему.',
+    title: 'Структура без хаоса',
+    text: 'Собираю семантику, разделы и посадочные страницы в понятную систему.',
   },
   {
     icon: BadgeCheck,
-    title: 'Понятный оффер',
-    text: 'Усиливаю подачу услуг и посадочные страницы, чтобы клиент быстрее принимал решение.',
+    title: 'Оффер, который читается',
+    text: 'Усиливаю подачу услуг, чтобы клиент быстрее понимал, почему стоит обратиться именно к вам.',
   },
   {
     icon: Clock3,
     title: 'Быстрый старт',
-    text: 'После первого созвона формируем приоритеты, план работ и ближайшие точки роста.',
+    text: 'Без долгой раскачки: аудит, приоритеты и первые правки можно запустить сразу.',
   },
 ]
 
 const advantageCards = [
   {
     icon: ShieldCheck,
-    title: 'Прозрачная работа',
-    text: 'Фиксируем задачи, показываем прогресс и держим понятный темп по проекту.',
+    title: 'Прозрачный процесс',
+    text: 'Вы понимаете, что делается, зачем это делается и какой эффект ожидаем на каждом этапе.',
   },
   {
     icon: FileText,
-    title: 'Сильная коммерческая подача',
-    text: 'Усиливаю оффер, доверительные блоки, структуру страниц и понятность предложения.',
+    title: 'Коммерческая упаковка',
+    text: 'Дорабатываю не только SEO, но и доверие: оффер, преимущества, сценарий заявки, блоки убеждения.',
   },
   {
     icon: LineChart,
-    title: 'Рост в поиске и продажах',
-    text: 'Сайт получает не только SEO-основу, но и более сильную конверсионную архитектуру.',
+    title: 'Рост без пустых действий',
+    text: 'Фокус на тех изменениях, которые реально влияют на позиции, поведение пользователей и обращения.',
   },
 ]
 
 const packageCards = [
   {
     name: 'Старт',
-    price: 'от 60 000 ₽/мес',
-    accent: 'Для бизнеса, которому нужен крепкий фундамент и понятный старт продвижения.',
+    price: '15 000 ₽',
+    accent: 'Подходит, если нужно быстро навести порядок в основе проекта.',
     items: [
-      'Технический SEO-аудит и исправление критичных ошибок',
-      'Сбор и кластеризация семантического ядра',
-      'Оптимизация title, description и h1',
-      'План работ и отчетность каждый месяц',
+      'Базовый SEO-аудит сайта',
+      'Проверка индексации, метатегов и структуры',
+      'Список быстрых правок с приоритетами',
+      'Созвон и разбор дальнейших шагов',
     ],
   },
   {
     name: 'Оптимальный',
-    price: 'от 110 000 ₽/мес',
-    accent: 'Для системного роста заявок, видимости и качества посадочных страниц.',
+    price: '30 000 ₽',
+    accent: 'Для проектов, которым уже нужен системный рост и работа под заявки.',
     items: [
       'Все из тарифа «Старт»',
-      'Пересборка ключевых страниц услуг',
+      'Сбор и кластеризация семантики',
+      'Доработка ключевых страниц услуг',
       'Усиление коммерческих факторов и CTA',
-      'Контент-план и SEO-материалы',
-      'Регулярный анализ конкурентов и корректировка стратегии',
+      'План работ на ближайший период',
     ],
   },
   {
     name: 'Про',
-    price: 'от 180 000 ₽/мес',
-    accent: 'Для агрессивного роста, сильного позиционирования и расширения структуры сайта.',
+    price: '50 000 ₽',
+    accent: 'Для бизнеса, который хочет выстроить сильный сайт и двигаться быстрее конкурентов.',
     items: [
       'Все из тарифа «Оптимальный»',
-      'Полная архитектура разделов и кластеров',
-      'Глубокая работа с доверием, кейсами и упаковкой бренда',
-      'Продвинутая аналитика по конверсии и гипотезам',
-      'Приоритетное сопровождение и быстрый запуск новых страниц',
+      'Расширение структуры и новых посадочных',
+      'Глубокая работа с оффером и упаковкой',
+      'Контентные и SEO-гипотезы под рост',
+      'Приоритетное сопровождение проекта',
     ],
   },
 ]
 
 const industryBlocks = [
   'B2B-компании и экспертные услуги',
-  'Локальный бизнес с высокой конкуренцией в поиске',
-  'Сайты услуг, которым нужен сильный коммерческий каркас',
-  'Проекты, где важны доверие, кейсы и экспертный контент',
+  'Локальный бизнес с конкурентной выдачей',
+  'Сайты услуг, где мало заявок при нормальном трафике',
+  'Проекты, которым нужна сильная подача, а не просто набор страниц',
 ]
 
 const processBlocks = [
   {
     step: '01',
-    title: 'Аудит и карта роста',
-    text: 'Находим слабые места по структуре, SEO, коммерческим факторам и сценарию заявки.',
+    title: 'Смотрю, где теряются деньги',
+    text: 'Разбираю структуру сайта, спрос, слабые страницы и места, где пользователь не доходит до заявки.',
   },
   {
     step: '02',
-    title: 'Пересборка сильных страниц',
-    text: 'Усиливаем оффер, проектируем более понятные страницы услуг и формируем доверие.',
+    title: 'Собираю план без воды',
+    text: 'Формирую конкретные действия: что исправить, что усилить, что запускать в первую очередь.',
   },
   {
     step: '03',
-    title: 'Системное продвижение',
-    text: 'Соединяем SEO, контент, аналитику и работу с конверсией в единый механизм роста.',
+    title: 'Дорабатываю под рост',
+    text: 'Соединяю SEO, коммерческие факторы и контент так, чтобы сайт выглядел сильнее и продавал увереннее.',
   },
 ]
 
 const cooperationFormats = [
-  'Разовый аудит и стратегия роста',
-  'Пересборка сайта под заявки и коммерческие факторы',
-  'Комплексное SEO-сопровождение проекта',
-  'Точечные задачи: структура, тексты, контент, посадочные страницы',
+  'Разовый аудит с понятными выводами',
+  'Доработка сайта под рост заявок',
+  'Комплексное SEO-сопровождение',
+  'Точечные задачи: структура, страницы, тексты, оффер',
 ]
 
 export default async function HomePage() {
@@ -188,18 +188,17 @@ export default async function HomePage() {
                 Shelpakov Digital
               </span>
               <h1 className="mt-6 max-w-4xl text-5xl font-semibold leading-[0.98] text-white md:text-7xl">
-                SEO-продвижение сайтов, которое делает проект заметнее, убедительнее и прибыльнее.
+                Продвижение сайта, которое приводит не только трафик, но и заявки.
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl">
-                Соединяю поисковое продвижение, коммерческие факторы, упаковку оффера и структуру сайта в
-                единую систему роста. В результате сайт должен не просто собирать трафик, а вызывать доверие и
-                приводить больше обращений.
+                Помогаю бизнесу получать больше обращений из поиска: усиливаю структуру сайта, коммерческие
+                факторы, страницы услуг и общую подачу проекта.
               </p>
 
               <div className="mt-10 flex flex-wrap gap-4">
                 <a href="#contact-form">
                   <Button size="lg" className="rounded-full px-7 shadow-[0_0_40px_rgba(34,211,238,0.28)]">
-                    Получить аудит сайта
+                    Получить разбор сайта
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </a>
@@ -219,10 +218,10 @@ export default async function HomePage() {
                   Быстрый ответ по заявке
                 </span>
                 <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
-                  План работ после первого созвона
+                  План работ после созвона
                 </span>
                 <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
-                  Фокус на заявки и рост доверия
+                  Фокус на заявки, а не на отчеты
                 </span>
               </div>
 
@@ -241,41 +240,44 @@ export default async function HomePage() {
               <div className="relative flex h-full flex-col gap-5">
                 <div className="overflow-hidden rounded-[28px] border border-white/12 bg-[linear-gradient(135deg,rgba(8,16,28,0.96),rgba(12,24,42,0.92))] p-6 md:p-8">
                   <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.24em] text-cyan-200/90">
-                    <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5">Shelpakov Digital</span>
+                    <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5">
+                      Shelpakov Digital
+                    </span>
                     <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">SEO</span>
-                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Конверсия</span>
-                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Структура сайта</span>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Заявки</span>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
+                      Коммерческие факторы
+                    </span>
                   </div>
 
                   <div className="mt-8 grid gap-5 md:grid-cols-[1.1fr_0.9fr]">
                     <div>
-                      <p className="text-sm uppercase tracking-[0.28em] text-slate-400">Персональный подход</p>
+                      <p className="text-sm uppercase tracking-[0.28em] text-slate-400">Как строится работа</p>
                       <h3 className="mt-3 max-w-xl text-3xl font-semibold leading-tight text-white md:text-4xl">
-                        Стратегия, упаковка и продвижение сайта в одной системе
+                        Сначала ищем слабые места. Потом усиливаем то, что влияет на результат.
                       </h3>
                       <p className="mt-5 max-w-xl text-sm leading-7 text-slate-300 md:text-base">
-                        Работаю как стратег и исполнитель: смотрю на проект глазами SEO-специалиста, маркетолога
-                        и владельца бизнеса. На первом экране важно не просто выглядеть современно, а сразу
-                        объяснять ценность, вызывать доверие и вести к заявке.
+                        Без сложных слов и лишней суеты. Смотрю, где сайт недорабатывает по поиску, доверию и
+                        конверсии, а затем собираю понятный план правок.
                       </p>
                     </div>
 
                     <div className="rounded-[26px] border border-white/10 bg-black/20 p-5 backdrop-blur-sm">
-                      <div className="text-xs uppercase tracking-[0.24em] text-slate-500">Фокус проекта</div>
+                      <div className="text-xs uppercase tracking-[0.24em] text-slate-500">На что смотрим в первую очередь</div>
                       <div className="mt-4 space-y-4">
                         <div>
-                          <div className="text-sm text-slate-400">Основная задача</div>
+                          <div className="text-sm text-slate-400">Что получает бизнес</div>
                           <div className="mt-1 text-2xl font-semibold text-white">Больше заявок с сайта</div>
                         </div>
                         <div className="h-px bg-white/10" />
                         <div>
-                          <div className="text-sm text-slate-400">Сильная сторона</div>
-                          <div className="mt-1 text-2xl font-semibold text-white">SEO + коммерческие факторы</div>
+                          <div className="text-sm text-slate-400">Что усиливаем</div>
+                          <div className="mt-1 text-2xl font-semibold text-white">Структуру, оффер и SEO</div>
                         </div>
                         <div className="h-px bg-white/10" />
                         <div>
-                          <div className="text-sm text-slate-400">Формат работы</div>
-                          <div className="mt-1 text-2xl font-semibold text-white">Пошаговый план и приоритеты</div>
+                          <div className="text-sm text-slate-400">Как идем</div>
+                          <div className="mt-1 text-2xl font-semibold text-white">Пошагово и с приоритетами</div>
                         </div>
                       </div>
                     </div>
@@ -309,14 +311,14 @@ export default async function HomePage() {
       <section className="container mx-auto px-4 py-20">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Почему сайт работает сильнее</p>
+            <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Почему сайт начинает работать сильнее</p>
             <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">
-              Сайт должен одновременно привлекать трафик, вызывать доверие и вести к обращению
+              Хороший сайт должен быть полезен и поиску, и человеку
             </h2>
           </div>
           <p className="max-w-2xl text-sm leading-7 text-slate-400">
-            Поэтому усиливаю не один отдельный фактор, а всю систему целиком: позиционирование, SEO-структуру,
-            ключевые посадочные страницы, контент и коммерческую подачу.
+            Поэтому усиливаю не один показатель, а весь сценарий: как сайт ищут, что видит клиент, почему он
+            должен доверять и в какой момент оставляет заявку.
           </p>
         </div>
 
@@ -343,12 +345,11 @@ export default async function HomePage() {
             <div>
               <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Тарифы комплексного продвижения</p>
               <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">
-                Понятные пакеты работ для разного темпа роста
+                Понятные пакеты работ без перегруза
               </h2>
             </div>
             <p className="max-w-2xl text-sm leading-7 text-slate-400">
-              Можно стартовать с базового уровня, а можно сразу брать системное продвижение с усилением оффера,
-              структуры и контента.
+              Тариф можно выбрать под текущую задачу: от базового аудита до системной работы над ростом сайта.
             </p>
           </div>
 
@@ -363,7 +364,7 @@ export default async function HomePage() {
                 }`}
               >
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_26%)]" />
-                <div className="relative">
+                <div className="relative flex h-full flex-col">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="text-sm uppercase tracking-[0.24em] text-cyan-200">{pkg.name}</div>
@@ -386,6 +387,9 @@ export default async function HomePage() {
                       </div>
                     ))}
                   </div>
+                  <a href="#contact-form" className="mt-6">
+                    <Button className="w-full rounded-2xl">Выбрать тариф</Button>
+                  </a>
                 </div>
               </div>
             ))}
@@ -398,7 +402,7 @@ export default async function HomePage() {
           <div>
             <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Услуги и форматы работы</p>
             <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">
-              Не хаотичный список, а понятные точки входа для клиента
+              Не список ради списка, а понятные варианты для клиента
             </h2>
             <div className="mt-8 space-y-4">
               {cooperationFormats.map((item, index) => (
@@ -434,9 +438,9 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 py-20">
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
             <div className="glass-panel interactive-card p-8">
-              <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Для кого это</p>
+              <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Кому это особенно полезно</p>
               <h2 className="mt-3 text-3xl font-semibold text-white">
-                Особенно полезно тем, кому важно не просто быть в интернете, а выглядеть сильнее конкурентов
+                Если сайт уже есть, но заявок мало, обычно проблема не в чем-то одном
               </h2>
               <div className="mt-8 space-y-4">
                 {industryBlocks.map((item) => (
@@ -465,13 +469,13 @@ export default async function HomePage() {
       <section className="container mx-auto px-4 py-20">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Кейсы и доказательства</p>
+            <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Кейсы и результаты</p>
             <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">
-              Сильный сайт должен подтверждать результат, а не только обещать его
+              Сильный сайт должен подтверждать экспертность на практике
             </h2>
           </div>
           <Link href="/cases" className="inline-flex items-center gap-2 text-cyan-200 transition hover:text-white">
-            Открыть все кейсы
+            Открыть кейсы
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -486,15 +490,15 @@ export default async function HomePage() {
                 </div>
                 <h3 className="mt-6 text-3xl font-semibold text-white">{item.title}</h3>
                 <p className="mt-4 text-sm leading-7 text-slate-400">
-                  {item.description || item.content || 'Показываю, как меняются структура сайта, доверие и конверсия после правильной упаковки проекта.'}
+                  {item.description || item.content || 'Кейс показывает, как меняется сайт после грамотной доработки структуры, оффера и SEO-основы.'}
                 </p>
               </div>
             ))
           ) : (
             <div className="glass-panel p-8 lg:col-span-2">
-              <h3 className="text-2xl font-semibold text-white">Блок кейсов готов к наполнению</h3>
+              <h3 className="text-2xl font-semibold text-white">Здесь стоит показать реальные результаты</h3>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
-                Следующий шаг для усиления продаж и SEO-доверия: добавить цифры, задачи клиента, сделанные шаги и итоговый эффект от работы.
+                Лучше всего работают кейсы с цифрами, сроками, задачей клиента и итогом после внедрения правок.
               </p>
             </div>
           )}
@@ -505,9 +509,9 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 py-20">
           <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Экспертный контент</p>
+              <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Контент и экспертиза</p>
               <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">
-                Контент должен усиливать продажи, а не просто заполнять блог
+                Контент должен помогать продажам, а не просто заполнять блог
               </h2>
             </div>
             <Link href="/blog" className="inline-flex items-center gap-2 text-cyan-200 transition hover:text-white">
@@ -529,15 +533,15 @@ export default async function HomePage() {
                     {post.title}
                   </h3>
                   <p className="mt-4 text-sm leading-7 text-slate-400">
-                    {post.excerpt || 'Контент, который усиливает экспертность, доверие и видимость сайта в поиске.'}
+                    {post.excerpt || 'Материал, который усиливает экспертность бренда и помогает привлекать целевой спрос.'}
                   </p>
                 </Link>
               ))
             ) : (
               <div className="glass-panel p-7 md:col-span-3">
-                <h3 className="text-2xl font-semibold text-white">Контентный блок уже встроен в структуру</h3>
+                <h3 className="text-2xl font-semibold text-white">Блог лучше использовать как усиление доверия</h3>
                 <p className="mt-4 text-sm leading-7 text-slate-400">
-                  Его можно усиливать статьями по SEO, кейсам, аналитике рынка и ответами на частые вопросы клиентов.
+                  Хорошо работают статьи с разбором кейсов, типовых ошибок, аналитикой спроса и ответами на частые вопросы клиентов.
                 </p>
               </div>
             )}
@@ -550,7 +554,7 @@ export default async function HomePage() {
           <div>
             <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Отзывы и доверие</p>
             <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">
-              Чем подробнее подтверждение, тем выше вероятность заявки
+              Чем конкретнее подтверждение, тем выше конверсия
             </h2>
           </div>
         </div>
@@ -570,43 +574,42 @@ export default async function HomePage() {
             ))
           ) : (
             <div className="glass-panel p-7 md:col-span-3">
-              <h3 className="text-2xl font-semibold text-white">Отзывы можно усилить реальными деталями</h3>
+              <h3 className="text-2xl font-semibold text-white">Отзывы лучше показывать с деталями</h3>
               <p className="mt-4 text-sm leading-7 text-slate-400">
-                Добавьте имя клиента, компанию, задачу и конкретный результат, чтобы блок стал сильнее для продаж.
+                Имя, компания, задача и результат работают сильнее, чем общий благодарственный текст.
               </p>
             </div>
           )}
         </div>
       </section>
 
-      <section id="contact-form" className="border-t border-white/10 bg-black/10">
+      <section id="contact-form" className="scroll-mt-32 border-t border-white/10 bg-black/10">
         <div className="container mx-auto px-4 py-20">
           <div className="grid gap-8 overflow-hidden rounded-[36px] border border-white/10 bg-[linear-gradient(135deg,rgba(7,17,31,0.96),rgba(11,21,38,0.92))] lg:grid-cols-[0.9fr_1.1fr]">
             <div className="border-b border-white/10 p-8 lg:border-b-0 lg:border-r">
               <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Следующий шаг</p>
               <h2 className="mt-4 text-3xl font-semibold text-white md:text-5xl">
-                Обсудим проект и соберем понятный план роста
+                Оставьте заявку, и я подготовлю понятный разбор сайта
               </h2>
               <p className="mt-6 max-w-xl text-sm leading-7 text-slate-300">
-                После заявки покажу, что мешает сайту расти, где теряются обращения и какие действия дадут
-                заметный эффект в первую очередь.
+                Покажу, что мешает росту, где сайт недожимает по заявкам и с каких изменений стоит начать.
               </p>
 
               <div className="mt-8 space-y-4">
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <div className="flex items-center gap-3 text-white">
                     <Clock3 className="h-5 w-5 text-cyan-200" />
-                    <span className="font-medium">Быстрая реакция</span>
+                    <span className="font-medium">Быстрая обратная связь</span>
                   </div>
                   <p className="mt-2 text-sm text-slate-400">Обычно отвечаю в ближайшее время после заявки.</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <div className="flex items-center gap-3 text-white">
                     <BadgeCheck className="h-5 w-5 text-cyan-200" />
-                    <span className="font-medium">Понятный план</span>
+                    <span className="font-medium">Без общих фраз</span>
                   </div>
                   <p className="mt-2 text-sm text-slate-400">
-                    Покажу, что мешает конверсии и что можно улучшить в первую очередь.
+                    Вы получите конкретные выводы: что исправить, что усилить и куда не тратить деньги.
                   </p>
                 </div>
               </div>
@@ -635,7 +638,10 @@ export async function generateMetadata() {
   return {
     title: { absolute: title },
     description,
-    keywords: keywords.split(',').map((item) => item.trim()).filter(Boolean),
+    keywords: keywords
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean),
     alternates: {
       canonical: siteUrl,
     },
