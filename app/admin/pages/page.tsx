@@ -1,7 +1,7 @@
-import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
-import { isAuthenticated } from '@/lib/auth'
 import PagesManager from '@/components/admin/PagesManager'
+import { isAuthenticated } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
 export default async function AdminPagesPage() {
   const authenticated = await isAuthenticated()
@@ -10,11 +10,10 @@ export default async function AdminPagesPage() {
   }
 
   const pages = await prisma.page.findMany({
-    orderBy: { slug: 'asc' }
+    orderBy: { slug: 'asc' },
   })
 
-  // Serialize data to remove Date objects and make it safe for client components
-  const serializedPages = pages.map(page => ({
+  const serializedPages = pages.map((page) => ({
     id: page.id,
     slug: page.slug,
     title: page.title,
@@ -28,9 +27,8 @@ export default async function AdminPagesPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Управление страницами</h1>
+      <h1 className="mb-8 text-3xl font-bold text-slate-900">Управление страницами</h1>
       <PagesManager initialPages={serializedPages} />
     </div>
   )
 }
-

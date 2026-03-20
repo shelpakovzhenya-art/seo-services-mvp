@@ -1,22 +1,31 @@
-import { prisma } from '@/lib/prisma'
-import { redirect } from 'next/navigation'
-import { isAuthenticated } from '@/lib/auth'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { isAuthenticated } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+
+const dashboardCards = [
+  { title: 'Услуги', href: '/admin/services' },
+  { title: 'Блог', href: '/admin/blog' },
+  { title: 'Кейсы', href: '/admin/cases' },
+  { title: 'Отзывы', href: '/admin/reviews' },
+  { title: 'Страницы', href: '/admin/pages' },
+  { title: 'Настройки', href: '/admin/settings' },
+]
 
 export default async function AdminDashboard() {
-  // Check auth in page itself
   const authenticated = await isAuthenticated()
   if (!authenticated) {
     redirect('/admin/login')
   }
+
   let servicesCount = 0
   let activeServicesCount = 0
   let blogPostsCount = 0
   let publishedPostsCount = 0
   let casesCount = 0
   let reviewsCount = 0
-  
+
   try {
     servicesCount = await prisma.service.count()
     activeServicesCount = await prisma.service.count({ where: { isActive: true } })
@@ -28,64 +37,32 @@ export default async function AdminDashboard() {
     console.error('Error loading dashboard stats:', error)
   }
 
+  const values = [
+    `${activeServicesCount} / ${servicesCount}`,
+    `${publishedPostsCount} / ${blogPostsCount}`,
+    `${casesCount}`,
+    `${reviewsCount}`,
+    '—',
+    '—',
+  ]
+
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2">Услуги</h2>
-          <p className="text-3xl font-bold text-primary mb-4">
-            {activeServicesCount} / {servicesCount}
-          </p>
-          <Link href="/admin/services">
-            <Button variant="outline" className="w-full">Управление</Button>
-          </Link>
-        </div>
+      <h1 className="mb-8 text-3xl font-bold text-slate-900">Dashboard</h1>
 
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2">Блог</h2>
-          <p className="text-3xl font-bold text-primary mb-4">
-            {publishedPostsCount} / {blogPostsCount}
-          </p>
-          <Link href="/admin/blog">
-            <Button variant="outline" className="w-full">Управление</Button>
-          </Link>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2">Кейсы</h2>
-          <p className="text-3xl font-bold text-primary mb-4">{casesCount}</p>
-          <Link href="/admin/cases">
-            <Button variant="outline" className="w-full">Управление</Button>
-          </Link>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2">Отзывы</h2>
-          <p className="text-3xl font-bold text-primary mb-4">{reviewsCount}</p>
-          <Link href="/admin/reviews">
-            <Button variant="outline" className="w-full">Управление</Button>
-          </Link>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2">Страницы</h2>
-          <p className="text-3xl font-bold text-primary mb-4">—</p>
-          <Link href="/admin/pages">
-            <Button variant="outline" className="w-full">Управление</Button>
-          </Link>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2">Настройки</h2>
-          <p className="text-3xl font-bold text-primary mb-4">—</p>
-          <Link href="/admin/settings">
-            <Button variant="outline" className="w-full">Управление</Button>
-          </Link>
-        </div>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {dashboardCards.map((card, index) => (
+          <div key={card.href} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-2 text-xl font-semibold text-slate-900">{card.title}</h2>
+            <p className="mb-4 text-3xl font-bold text-cyan-700">{values[index]}</p>
+            <Link href={card.href}>
+              <Button variant="outline" className="w-full">
+                Управление
+              </Button>
+            </Link>
+          </div>
+        ))}
       </div>
     </div>
   )
 }
-

@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { Button } from '@/components/ui/button'
 import { Edit, Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const RichTextEditor = dynamic(() => import('./RichTextEditor'), {
   ssr: false,
   loading: () => (
-    <div className="border rounded-lg min-h-[300px] p-4 bg-gray-50 flex items-center justify-center">
-      <p className="text-gray-400">Загрузка редактора...</p>
+    <div className="flex min-h-[300px] items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <p className="text-slate-500">Загрузка редактора...</p>
     </div>
   ),
 })
@@ -28,20 +28,19 @@ interface Page {
 }
 
 export default function PagesManager({ initialPages }: { initialPages: Page[] }) {
-  const [pages, setPages] = useState(initialPages)
+  const [pages] = useState(initialPages)
   const [editing, setEditing] = useState<Page | null>(null)
   const [isCreating, setIsCreating] = useState(false)
 
-  // Build tree structure
   const buildTree = (items: Page[]): Page[] => {
     const map = new Map<string, Page>()
     const roots: Page[] = []
 
-    items.forEach(item => {
+    items.forEach((item) => {
       map.set(item.id, { ...item, children: [] })
     })
 
-    items.forEach(item => {
+    items.forEach((item) => {
       const node = map.get(item.id)!
       if (item.parentId && map.has(item.parentId)) {
         const parent = map.get(item.parentId)!
@@ -86,18 +85,18 @@ export default function PagesManager({ initialPages }: { initialPages: Page[] })
     }
   }
 
-  const renderPageItem = (page: Page, level: number = 0): JSX.Element => (
+  const renderPageItem = (page: Page, level = 0): JSX.Element => (
     <>
-      <tr key={page.id} className={level > 0 ? 'bg-gray-50' : ''}>
-        <td className="px-4 py-3">
-          <div className="flex items-center gap-2" style={{ paddingLeft: `${level * 24}px` }}>
-            {level > 0 && <span className="text-gray-400">└─</span>}
-            {page.slug}
+      <tr key={page.id} className={level > 0 ? 'bg-slate-50/80' : 'bg-white'}>
+        <td className="px-4 py-4 text-slate-700">
+          <div className="flex items-center gap-2" style={{ paddingLeft: `${level * 20}px` }}>
+            {level > 0 && <span className="text-slate-400">→</span>}
+            <span className="font-medium">{page.slug}</span>
           </div>
         </td>
-        <td className="px-4 py-3">{page.title}</td>
-        <td className="px-4 py-3">{page.h1 || '—'}</td>
-        <td className="px-4 py-3">
+        <td className="px-4 py-4 text-slate-900">{page.title}</td>
+        <td className="px-4 py-4 text-slate-700">{page.h1 || '—'}</td>
+        <td className="px-4 py-4">
           <div className="flex gap-2">
             <Button
               variant="ghost"
@@ -106,8 +105,9 @@ export default function PagesManager({ initialPages }: { initialPages: Page[] })
                 setIsCreating(false)
                 setEditing(page)
               }}
+              className="text-slate-700 hover:bg-slate-100 hover:text-slate-900"
             >
-              <Edit className="w-4 h-4" />
+              <Edit className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
@@ -115,8 +115,8 @@ export default function PagesManager({ initialPages }: { initialPages: Page[] })
               onClick={() => {
                 setEditing(null)
                 setIsCreating(true)
-                // Set parentId for new subsection
-                const formData = {
+                setEditing({
+                  id: '',
                   slug: `${page.slug}-subsection`,
                   title: '',
                   description: '',
@@ -124,38 +124,48 @@ export default function PagesManager({ initialPages }: { initialPages: Page[] })
                   h1: '',
                   content: '',
                   parentId: page.id,
-                }
-                setEditing({ ...formData, id: '', order: 0 } as Page)
+                  order: 0,
+                })
               }}
+              className="text-slate-700 hover:bg-slate-100 hover:text-slate-900"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="h-4 w-4" />
             </Button>
           </div>
         </td>
       </tr>
-      {page.children?.map(child => renderPageItem(child, level + 1))}
+      {page.children?.map((child) => renderPageItem(child, level + 1))}
     </>
   )
 
   return (
     <div>
-      <div className="mb-4">
-        <Button onClick={() => {
-          setEditing(null)
-          setIsCreating(true)
-          setEditing({ 
-            id: '', 
-            slug: '', 
-            title: '', 
-            description: '', 
-            keywords: '',
-            h1: '', 
-            content: '', 
-            parentId: null,
-            order: 0
-          } as Page)
-        }} className="gap-2">
-          <Plus className="w-4 h-4" />
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-slate-900">Страницы сайта</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Редактируйте SEO, заголовки и содержимое без хаоса.
+          </p>
+        </div>
+        <Button
+          onClick={() => {
+            setEditing(null)
+            setIsCreating(true)
+            setEditing({
+              id: '',
+              slug: '',
+              title: '',
+              description: '',
+              keywords: '',
+              h1: '',
+              content: '',
+              parentId: null,
+              order: 0,
+            })
+          }}
+          className="gap-2"
+        >
+          <Plus className="h-4 w-4" />
           Добавить раздел
         </Button>
       </div>
@@ -172,20 +182,20 @@ export default function PagesManager({ initialPages }: { initialPages: Page[] })
         />
       )}
 
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Slug</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Title</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">H1</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Действия</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {treePages.map((page) => renderPageItem(page))}
-          </tbody>
-        </table>
+      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[760px]">
+            <thead className="bg-slate-50 text-slate-700">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Slug</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Title</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">H1</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Действия</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">{treePages.map((page) => renderPageItem(page))}</tbody>
+          </table>
+        </div>
       </div>
     </div>
   )
@@ -203,16 +213,7 @@ function PageForm({
   onCancel: () => void
 }) {
   const isNew = !page.id
-  const [formData, setFormData] = useState<{
-    slug: string
-    title: string
-    description: string
-    keywords: string
-    h1: string
-    content: string
-    parentId: string | null
-    order: number
-  }>({
+  const [formData, setFormData] = useState({
     slug: page.slug || '',
     title: page.title || '',
     description: page.description || '',
@@ -223,107 +224,127 @@ function PageForm({
     order: page.order || 0,
   })
 
-  // Filter out current page and its children from parent options
   const getParentOptions = (): Page[] => {
-    if (isNew) return allPages.filter(p => !p.parentId)
-    return allPages.filter(p => p.id !== page.id && !p.parentId)
+    if (isNew) return allPages.filter((p) => !p.parentId)
+    return allPages.filter((p) => p.id !== page.id && !p.parentId)
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-      <h2 className="text-xl font-semibold mb-4">
+    <div className="mb-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 className="mb-4 text-xl font-semibold text-slate-900">
         {isNew ? 'Новый раздел' : `Редактировать страницу: ${page.slug}`}
       </h2>
+
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Slug (URL)</label>
+        <Field label="Slug (URL)">
           <input
             type="text"
             value={formData.slug}
             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
+            className="admin-input"
             required
             disabled={page.slug === 'home'}
             placeholder="example-page"
           />
           {page.slug === 'home' && (
-            <p className="mt-1 text-xs text-gray-500">Для главной страницы slug фиксирован и всегда равен `home`.</p>
+            <p className="mt-1 text-xs text-slate-500">
+              Для главной страницы slug фиксирован и всегда равен `home`.
+            </p>
           )}
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Родительский раздел</label>
+        </Field>
+
+        <Field label="Родительский раздел">
           <select
             value={formData.parentId ?? ''}
             onChange={(e) => setFormData({ ...formData, parentId: e.target.value || null })}
-            className="w-full px-4 py-2 border rounded-md"
+            className="admin-input"
           >
             <option value="">— Корневой раздел —</option>
-            {getParentOptions().map(p => (
-              <option key={p.id} value={p.id}>{p.title}</option>
+            {getParentOptions().map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.title}
+              </option>
             ))}
           </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Порядок сортировки</label>
+        </Field>
+
+        <Field label="Порядок сортировки">
           <input
             type="number"
             value={formData.order}
             onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
-            className="w-full px-4 py-2 border rounded-md"
+            className="admin-input"
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Title (SEO)</label>
+        </Field>
+
+        <Field label="Title (SEO)">
           <input
             type="text"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
+            className="admin-input"
             required
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Description (SEO)</label>
+        </Field>
+
+        <Field label="Description (SEO)">
           <textarea
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
-            rows={2}
+            className="admin-input min-h-[92px]"
+            rows={3}
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Keywords (SEO)</label>
+        </Field>
+
+        <Field label="Keywords (SEO)">
           <textarea
             value={formData.keywords}
             onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
-            rows={2}
+            className="admin-input min-h-[92px]"
+            rows={3}
             placeholder="seo-продвижение сайтов, seo-аудит, коммерческие факторы"
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">H1</label>
+        </Field>
+
+        <Field label="H1">
           <input
             type="text"
             value={formData.h1}
             onChange={(e) => setFormData({ ...formData, h1: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
+            className="admin-input"
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Содержание</label>
+        </Field>
+
+        <Field label="Содержимое">
           <RichTextEditor
             content={formData.content}
             onChange={(content) => setFormData({ ...formData, content })}
             placeholder="Введите содержимое страницы..."
           />
-        </div>
+        </Field>
+
         <div className="flex gap-2">
           <Button onClick={() => onSave(formData)}>Сохранить</Button>
-          <Button variant="outline" onClick={onCancel}>Отмена</Button>
+          <Button variant="outline" onClick={onCancel}>
+            Отмена
+          </Button>
         </div>
       </div>
     </div>
   )
 }
 
+function Field({
+  label,
+  children,
+}: {
+  label: string
+  children: React.ReactNode
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-slate-700">{label}</label>
+      {children}
+    </div>
+  )
+}
