@@ -16,10 +16,12 @@ const RichTextEditor = dynamic(() => import('./RichTextEditor'), {
 
 interface Case {
   id: string
+  slug?: string | null
   title: string
   description: string | null
   content: string | null
   image: string | null
+  resultImages?: string | null
   order: number
 }
 
@@ -149,16 +151,64 @@ function CaseForm({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [formData, setFormData] = useState({
+    slug: caseItem?.slug || '',
     title: caseItem?.title || '',
     description: caseItem?.description || '',
     content: caseItem?.content || '',
     image: caseItem?.image || '',
+    resultImages: caseItem?.resultImages || '',
     order: caseItem?.order || 0,
   })
 
   const handleImageUpload = async () => {
     if (!fileInputRef.current) return
     fileInputRef.current.click()
+  }
+
+  const handleResultsUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (!files.length) return
+
+    setUploading(true)
+
+    try {
+      const uploadedUrls: string[] = []
+
+      for (const file of files) {
+        const formDataUpload = new FormData()
+        formDataUpload.append('file', file)
+
+        const response = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formDataUpload,
+        })
+
+        if (!response.ok) {
+          throw new Error('Upload failed')
+        }
+
+        const { url } = await response.json()
+        uploadedUrls.push(url)
+      }
+
+      const currentImages = formData.resultImages
+        .split('\n')
+        .map((item) => item.trim())
+        .filter(Boolean)
+
+      setFormData({
+        ...formData,
+        resultImages: [...currentImages, ...uploadedUrls].join('\n'),
+      })
+    } catch (error) {
+      console.error('Error uploading result images:', error)
+      alert('Ошибка загрузки изображений результатов')
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
   }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,6 +248,16 @@ function CaseForm({
         {caseItem ? 'Редактировать кейс' : 'Новый кейс'}
       </h2>
       <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Slug кейса</label>
+          <input
+            type="text"
+            value={formData.slug}
+            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+            className="w-full px-4 py-2 border rounded-md"
+            placeholder="podocenter-kzn-seo-growth"
+          />
+        </div>
         <div>
           <label className="block text-sm font-medium mb-1">Название</label>
           <input
@@ -257,6 +317,60 @@ function CaseForm({
             onChange={handleFileChange}
             className="hidden"
           />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Скрины результатов</label>
+          <div className="space-y-3">
+            <textarea
+              value={formData.resultImages}
+              onChange={(e) => setFormData({ ...formData, resultImages: e.target.value })}
+              className="w-full px-4 py-3 border rounded-md"
+              rows={4}
+              placeholder="/uploads/result-1.jpg&#10;/uploads/result-2.jpg&#10;/uploads/result-3.jpg"
+            />
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleImageUpload}
+                disabled={uploading}
+                className="gap-2"
+              >
+                <Upload className="w-4 h-4" />
+                Загрузить анонс
+              </Button>
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium">
+                <Upload className="w-4 h-4" />
+                {uploading ? 'Загрузка...' : 'Добавить скрины результатов'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleResultsUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
+            {formData.resultImages ? (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {formData.resultImages
+                  .split('\n')
+                  .map((item) => item.trim())
+                  .filter(Boolean)
+                  .map((imageUrl) => (
+                    <img
+                      key={imageUrl}
+                      src={imageUrl}
+                      alt="Скрин результата"
+                      className="h-32 w-full rounded border object-cover"
+                    />
+                  ))}
+              </div>
+            ) : null}
+            <p className="text-xs text-gray-500">
+              Можно просто вставить ссылки по одной на строку или загрузить несколько файлов сразу.
+            </p>
+          </div>
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Содержание</label>

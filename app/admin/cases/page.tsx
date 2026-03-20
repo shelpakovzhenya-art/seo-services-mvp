@@ -16,10 +16,12 @@ export default async function AdminCasesPage() {
   // Serialize data to remove Date objects and make it safe for client components
   const serializedCases = cases.map(caseItem => ({
     id: caseItem.id,
+    slug: caseItem.slug,
     title: caseItem.title,
     description: caseItem.description,
     content: caseItem.content,
     image: caseItem.image,
+    resultImages: caseItem.resultImages,
     order: caseItem.order,
   }))
 

@@ -11,10 +11,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const caseItem = await prisma.case.create({
       data: {
+        slug: body.slug || null,
         title: body.title,
         description: body.description || null,
         content: body.content || null,
         image: body.image || null,
+        resultImages: body.resultImages || null,
         order: body.order || 0,
       },
     })

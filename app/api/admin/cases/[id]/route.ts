@@ -15,10 +15,12 @@ export async function PUT(
     const caseItem = await prisma.case.update({
       where: { id: params.id },
       data: {
+        slug: body.slug || null,
         title: body.title,
         description: body.description || null,
         content: body.content || null,
         image: body.image || null,
+        resultImages: body.resultImages || null,
         order: body.order || 0,
       },
     })

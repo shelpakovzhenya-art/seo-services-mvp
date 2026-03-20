@@ -67,10 +67,12 @@ model BlogPost {
 
 model Case {
   id          String   @id @default(cuid())
+  slug        String?  @unique
   title       String
   description String?
   content     String?
   image       String?
+  resultImages String?
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
