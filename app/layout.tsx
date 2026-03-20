@@ -9,6 +9,7 @@ const siteUrl = getSiteUrl()
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  manifest: "/site.webmanifest",
   title: {
     default: "Shelpakov Digital",
     template: "%s | Shelpakov Digital"
@@ -18,6 +19,14 @@ export const metadata: Metadata = {
   authors: [{ name: "Shelpakov Digital" }],
   creator: "Shelpakov Digital",
   publisher: "Shelpakov Digital",
+  icons: {
+    icon: [
+      { url: "/favicon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: ["/favicon-48.png"],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   formatDetection: {
     email: false,
     address: false,
