@@ -31,17 +31,15 @@ export default async function ReviewsPage() {
           {page?.h1 || 'Отзывы и подтверждение работы'}
         </h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-          {page?.description || 'Отзывы полезны тогда, когда помогают понять задачу, формат работы и качество коммуникации.'}
+          {page?.description || 'Отзывы полезны тогда, когда помогают понять подход, формат работы и качество коммуникации.'}
         </p>
       </section>
 
       {settings?.yandexReviewsEmbed ? (
         <div className="page-card mt-8" dangerouslySetInnerHTML={{ __html: settings.yandexReviewsEmbed }} />
       ) : (
-        <div className="page-card mt-8 border-yellow-200 bg-yellow-50/90">
-          <p className="text-yellow-800">
-            Подключите виджет Яндекс Отзывов в админке, чтобы добавить внешний блок доверия на эту страницу.
-          </p>
+        <div className="page-card mt-8">
+          <p className="text-slate-600">На этой странице публикуются отзывы клиентов и дополнительные сигналы доверия.</p>
         </div>
       )}
 

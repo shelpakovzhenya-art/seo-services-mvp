@@ -399,10 +399,10 @@ export default async function HomePage() {
             ))
           ) : (
             <div className="glass-panel p-8 lg:col-span-2">
-              <h3 className="text-2xl font-semibold text-slate-950">Кейсы можно показать отдельными проектами</h3>
+              <h3 className="text-2xl font-semibold text-slate-950">Кейсы с разбором задачи, работ и результата</h3>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
-                Этот блок подготовлен под реальные разборы с задачей проекта, ходом работ и итоговыми изменениями без
-                выдуманных цифр.
+                Здесь публикуются проекты, в которых видно, как структура сайта, SEO и коммерческие факторы влияют на
+                трафик, заявки и стоимость обращения.
               </p>
             </div>
           )}
@@ -478,9 +478,10 @@ export default async function HomePage() {
             ))
           ) : (
             <div className="glass-panel p-7 md:col-span-3">
-              <h3 className="text-2xl font-semibold text-slate-950">Отзывы можно показать отдельными карточками</h3>
+              <h3 className="text-2xl font-semibold text-slate-950">Отзывы клиентов и рабочий контекст проекта</h3>
               <p className="mt-4 text-sm leading-7 text-slate-600">
-                Лучше всего здесь работают реальные отзывы с именем, компанией и коротким контекстом задачи.
+                Лучше всего этот блок работает, когда в нём есть реальные отзывы с именем, компанией и коротким описанием
+                задачи, которую нужно было решить.
               </p>
             </div>
           )}

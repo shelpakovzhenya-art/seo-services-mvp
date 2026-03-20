@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import { headers } from "next/headers"
-import ContentRecommendations from "@/components/ContentRecommendations"
 import Footer from "@/components/Footer"
 import Header from "@/components/Header"
 import { getSiteUrl } from "@/lib/site-url"
@@ -78,7 +77,6 @@ export default async function RootLayout({
       <body>
         {!isAdmin && <Header />}
         <main className={isAdmin ? "" : "min-h-screen"}>{children}</main>
-        {!isAdmin && <ContentRecommendations currentPath={pathname} />}
         {!isAdmin && <Footer />}
       </body>
     </html>

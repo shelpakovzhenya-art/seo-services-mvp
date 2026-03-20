@@ -235,8 +235,8 @@ export default async function PodocenterCasePage() {
         <span className="warm-chip">Подтверждение результата</span>
         <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">Скрины роста в компактной подаче</h2>
         <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">
-          Блок сделан проще и легче: без громоздких подписей и лишней отчётной подачи. Скрины можно менять прямо из
-          админки, просто добавляя изображения результатов.
+          Здесь собраны визуальные подтверждения роста: без перегруза страницы, но с понятной опорой на реальные результаты
+          проекта.
         </p>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
