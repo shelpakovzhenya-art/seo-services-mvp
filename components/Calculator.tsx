@@ -1,152 +1,150 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
+import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { formatServicePrice } from '@/lib/service-pricing'
 
 interface Service {
-  id: string
+  id?: string
+  slug?: string
   name: string
+  description?: string
   price: number
   unit: string
+  hint?: string
+  deliverables?: string[]
 }
 
 interface CalculatorProps {
-  services?: Service[]
-  discountEnabled?: boolean
-  discountPercent?: number
+  services: Service[]
 }
 
-export default function Calculator({ 
-  services: initialServices = [],
-  discountEnabled = false,
-  discountPercent = 0
-}: CalculatorProps) {
-  const [services, setServices] = useState<Service[]>(initialServices)
-  const [selectedServices, setSelectedServices] = useState<Record<string, number>>({})
-  const [total, setTotal] = useState(0)
+export default function Calculator({ services }: CalculatorProps) {
+  const [selectedServices, setSelectedServices] = useState<string[]>([])
 
-  useEffect(() => {
-    // Fetch services if not provided
-    if (initialServices.length === 0) {
-      fetch('/api/services')
-        .then(res => res.json())
-        .then(data => {
-          if (data.services) {
-            setServices(data.services.filter((s: Service & { isActive: boolean }) => s.isActive))
-          }
-        })
-    }
-  }, [initialServices])
+  const selectedItems = useMemo(
+    () => services.filter((service) => selectedServices.includes(service.id || service.slug || service.name)),
+    [selectedServices, services]
+  )
 
-  useEffect(() => {
-    let sum = 0
-    Object.entries(selectedServices).forEach(([serviceId, quantity]) => {
-      const service = services.find(s => s.id === serviceId)
-      if (service && quantity > 0) {
-        sum += service.price * quantity
-      }
-    })
+  const total = useMemo(() => selectedItems.reduce((sum, item) => sum + item.price, 0), [selectedItems])
 
-    if (discountEnabled && discountPercent > 0) {
-      sum = sum * (1 - discountPercent / 100)
-    }
-
-    setTotal(sum)
-  }, [selectedServices, services, discountEnabled, discountPercent])
-
-  const toggleService = (serviceId: string) => {
-    setSelectedServices(prev => {
-      if (prev[serviceId]) {
-        const newState = { ...prev }
-        delete newState[serviceId]
-        return newState
-      } else {
-        return { ...prev, [serviceId]: 1 }
-      }
-    })
-  }
-
-  const updateQuantity = (serviceId: string, quantity: number) => {
-    if (quantity <= 0) {
-      const newState = { ...selectedServices }
-      delete newState[serviceId]
-      setSelectedServices(newState)
-    } else {
-      setSelectedServices(prev => ({ ...prev, [serviceId]: quantity }))
-    }
+  const toggleService = (serviceKey: string) => {
+    setSelectedServices((prev) =>
+      prev.includes(serviceKey) ? prev.filter((item) => item !== serviceKey) : [...prev, serviceKey]
+    )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
       <div className="space-y-4">
         {services.map((service) => {
-          const isSelected = !!selectedServices[service.id]
-          const quantity = selectedServices[service.id] || 0
+          const serviceKey = service.id || service.slug || service.name
+          const isSelected = selectedServices.includes(serviceKey)
 
           return (
-            <div key={service.id} className="flex items-center gap-4 p-4 border rounded-lg">
-              <input
-                type="checkbox"
-                id={`service-${service.id}`}
-                checked={isSelected}
-                onChange={() => toggleService(service.id)}
-                className="w-5 h-5"
-              />
-              <label htmlFor={`service-${service.id}`} className="flex-1 cursor-pointer">
-                <div className="font-semibold">{service.name}</div>
-                <div className="text-sm text-gray-600">
-                  {service.price.toLocaleString('ru-RU')} {service.unit}
+            <button
+              key={serviceKey}
+              type="button"
+              onClick={() => toggleService(serviceKey)}
+              className={`w-full rounded-[28px] border p-5 text-left transition ${
+                isSelected
+                  ? 'border-cyan-300 bg-cyan-50 shadow-[0_16px_40px_rgba(34,211,238,0.16)]'
+                  : 'border-orange-100 bg-white hover:border-orange-200 hover:bg-[#fffaf5]'
+              }`}
+            >
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div className="max-w-2xl">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`flex h-6 w-6 items-center justify-center rounded-full border text-xs ${
+                        isSelected
+                          ? 'border-cyan-500 bg-cyan-500 text-white'
+                          : 'border-slate-300 bg-white text-transparent'
+                      }`}
+                    >
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                    </div>
+                    <div className="text-xs uppercase tracking-[0.22em] text-orange-700">{service.unit}</div>
+                  </div>
+                  <h3 className="mt-3 text-2xl font-semibold text-slate-950">{service.name}</h3>
+                  {service.description && <p className="mt-3 text-sm leading-7 text-slate-600">{service.description}</p>}
+                  {service.hint && <p className="mt-3 text-sm leading-7 text-slate-500">{service.hint}</p>}
                 </div>
-              </label>
-              {isSelected && (
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => updateQuantity(service.id, quantity - 1)}
-                    className="w-8 h-8 rounded border hover:bg-gray-100"
-                  >
-                    −
-                  </button>
-                  <input
-                    type="number"
-                    min="1"
-                    value={quantity}
-                    onChange={(e) => updateQuantity(service.id, parseInt(e.target.value) || 0)}
-                    className="w-16 text-center border rounded"
-                  />
-                  <button
-                    onClick={() => updateQuantity(service.id, quantity + 1)}
-                    className="w-8 h-8 rounded border hover:bg-gray-100"
-                  >
-                    +
-                  </button>
+
+                <div className="min-w-[220px] rounded-[22px] border border-white/80 bg-white/80 p-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Стартовая стоимость</div>
+                  <div className="mt-2 text-3xl font-semibold text-slate-950">{formatServicePrice(service.price)}</div>
+                  <div className="mt-1 text-sm text-slate-500">{service.unit}</div>
+                </div>
+              </div>
+
+              {service.deliverables && service.deliverables.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {service.deliverables.map((item) => (
+                    <span key={item} className="rounded-full border border-orange-100 bg-white px-3 py-2 text-xs text-slate-600">
+                      {item}
+                    </span>
+                  ))}
                 </div>
               )}
-            </div>
+            </button>
           )
         })}
       </div>
 
-      <div className="mt-8 pt-6 border-t">
-        {discountEnabled && discountPercent > 0 && (
-          <div className="mb-4 text-sm text-gray-600">
-            Скидка {discountPercent}% применена
-          </div>
-        )}
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-xl font-semibold">Итого:</span>
-          <span className="text-3xl font-bold text-primary">
-            {total.toLocaleString('ru-RU')} ₽
-          </span>
+      <aside className="h-fit rounded-[32px] border border-orange-100 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+        <div className="rounded-[24px] border border-orange-100 bg-gradient-to-br from-orange-50 via-white to-cyan-50 p-5">
+          <div className="text-xs uppercase tracking-[0.22em] text-orange-700">Предварительная оценка</div>
+          <div className="mt-3 text-4xl font-semibold text-slate-950">{formatServicePrice(total)}</div>
+          <p className="mt-3 text-sm leading-7 text-slate-600">
+            Это ориентир по выбранным услугам. Точный бюджет зависит от масштаба сайта, количества разделов, состояния
+            текущей базы и объёма внедрения.
+          </p>
         </div>
-        <Link href="/calculator">
-          <Button className="w-full" size="lg">
-            Оставить заявку
+
+        <div className="mt-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-slate-950">Выбрано направлений</h3>
+            <span className="rounded-full border border-orange-100 bg-[#fffaf5] px-3 py-1 text-sm text-slate-700">
+              {selectedItems.length}
+            </span>
+          </div>
+
+          {selectedItems.length > 0 ? (
+            <div className="mt-4 space-y-3">
+              {selectedItems.map((item) => (
+                <div key={item.id || item.slug || item.name} className="rounded-2xl border border-slate-200 px-4 py-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="font-medium text-slate-950">{item.name}</div>
+                      <div className="mt-1 text-sm text-slate-500">{item.unit}</div>
+                    </div>
+                    <div className="text-right text-sm font-semibold text-slate-900">{formatServicePrice(item.price)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-4 rounded-2xl border border-dashed border-slate-300 px-4 py-5 text-sm leading-7 text-slate-500">
+              Отметьте услуги слева, и калькулятор соберёт ориентировочную стоимость под ваш формат работ.
+            </div>
+          )}
+        </div>
+
+        <div className="mt-6 space-y-3 text-sm text-slate-600">
+          <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-4">Ответим в течение дня и подскажем, с чего логичнее стартовать.</div>
+          <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-4">Если задача смешанная, покажу, что делать сейчас, а что можно отложить.</div>
+        </div>
+
+        <a href="#contact-form" className="mt-6 inline-flex w-full">
+          <Button size="lg" className="w-full rounded-full">
+            Обсудить расчёт и получить план
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
-        </Link>
-      </div>
+        </a>
+      </aside>
     </div>
   )
 }
-
-

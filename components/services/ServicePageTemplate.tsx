@@ -4,6 +4,7 @@ import { ArrowRight, Check, ChevronRight, Clock3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import ContactForm from '@/components/ContactForm'
 import { getFullUrl } from '@/lib/site-url'
+import { formatServicePrice, getServicePricing } from '@/lib/service-pricing'
 import { getRelatedServices, type ServicePageContent } from '@/lib/service-pages'
 
 type ServicePageTemplateProps = {
@@ -39,6 +40,7 @@ function VisualCard({
 export default function ServicePageTemplate({ service }: ServicePageTemplateProps) {
   const relatedServices = getRelatedServices(service.related)
   const pageUrl = getFullUrl(`/services/${service.slug}`)
+  const pricing = getServicePricing(service.slug)
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -66,6 +68,14 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
       url: getFullUrl('/'),
     },
     url: pageUrl,
+    offers: pricing
+      ? {
+          '@type': 'Offer',
+          priceCurrency: 'RUB',
+          price: pricing.priceFrom,
+          description: pricing.priceLabel,
+        }
+      : undefined,
   }
 
   const breadcrumbsSchema = {
@@ -117,6 +127,13 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                     Все SEO-услуги
                   </Button>
                 </Link>
+                {pricing && (
+                  <Link href="/calculator">
+                    <Button size="lg" variant="outline" className="rounded-full border-orange-200 bg-[#fffaf5] px-7 text-slate-900 hover:bg-orange-50">
+                      {pricing.priceLabel}
+                    </Button>
+                  </Link>
+                )}
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-600">
@@ -130,6 +147,14 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
               <div className="glass-panel p-6">
                 <div className="text-sm uppercase tracking-[0.24em] text-orange-700">Ключевая задача</div>
                 <p className="mt-3 text-base leading-8 text-slate-700">{service.intro}</p>
+                {pricing && (
+                  <div className="mt-5 rounded-[24px] border border-orange-100 bg-white/80 p-5">
+                    <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Стартовая стоимость</div>
+                    <div className="mt-2 text-3xl font-semibold text-slate-950">{formatServicePrice(pricing.priceFrom)}</div>
+                    <div className="mt-1 text-sm text-slate-500">{pricing.unit === 'month' ? 'в месяц' : 'за проект'}</div>
+                    <p className="mt-3 text-sm leading-7 text-slate-600">{pricing.calculatorHint}</p>
+                  </div>
+                )}
               </div>
               <VisualCard eyebrow="Фокус услуги" title={service.images.heroAlt} description="Основной смысл услуги, её роль в проекте и тот результат, к которому она должна привести сайт." />
             </div>
