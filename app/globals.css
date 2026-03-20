@@ -118,6 +118,25 @@
     @apply inline-flex rounded-full border border-orange-200 bg-orange-50 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.22em] text-orange-700;
   }
 
+  .hero-orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(0.5px);
+    pointer-events: none;
+  }
+
+  .float-slow {
+    animation: floatSlow 8s ease-in-out infinite;
+  }
+
+  .float-reverse {
+    animation: floatReverse 10s ease-in-out infinite;
+  }
+
+  .pulse-glow {
+    animation: pulseGlow 4.8s ease-in-out infinite;
+  }
+
   .admin-theme {
     color: #0f172a;
   }
@@ -137,5 +156,40 @@
     background: initial;
     box-shadow: none;
     border-color: initial;
+  }
+}
+
+@keyframes floatSlow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
+@keyframes floatReverse {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, 10px, 0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.95;
+    transform: scale(1.04);
   }
 }

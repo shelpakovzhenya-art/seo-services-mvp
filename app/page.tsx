@@ -215,16 +215,22 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="hero-panel rounded-[34px] border border-white/70 p-5 md:p-6">
+            <div className="hero-panel relative overflow-hidden rounded-[34px] border border-white/70 p-5 md:p-6">
+              <div className="hero-orb float-slow left-[-24px] top-10 h-28 w-28 bg-[radial-gradient(circle,rgba(255,163,102,0.34),rgba(255,163,102,0))]" />
+              <div className="hero-orb float-reverse right-10 top-[-18px] h-24 w-24 bg-[radial-gradient(circle,rgba(56,189,248,0.28),rgba(56,189,248,0))]" />
+              <div className="hero-orb pulse-glow bottom-10 right-[-12px] h-36 w-36 bg-[radial-gradient(circle,rgba(255,214,153,0.28),rgba(255,214,153,0))]" />
+              <div className="pointer-events-none absolute left-8 top-8 h-14 w-14 rotate-12 rounded-[18px] border border-cyan-200/70 bg-white/70 shadow-[0_12px_24px_rgba(56,189,248,0.12)] float-slow" />
+              <div className="pointer-events-none absolute bottom-20 left-[46%] h-4 w-24 rounded-full bg-gradient-to-r from-orange-300/60 via-cyan-300/60 to-transparent float-reverse" />
+              <div className="pointer-events-none absolute right-14 top-[46%] h-16 w-16 rounded-full border border-orange-200/80 bg-white/40 pulse-glow" />
               <div className="grid gap-4">
-                <div className="rounded-[28px] border border-white/70 bg-white/78 p-6">
+                <div className="relative rounded-[28px] border border-white/70 bg-white/78 p-6">
                   <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Что получает бизнес</p>
                   <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 md:text-4xl">
                     Не просто рост позиций, а сайт, который выглядит сильнее и продает увереннее.
                   </h2>
                   <p className="mt-4 text-base leading-7 text-slate-600">
-                    Подход по принципу сильных агентских сайтов: короткий оффер, понятная экспертиза,
-                    доказательства, услуги и следующий шаг без перегруза.
+                    В первом экране главное показать ценность, экспертность и следующий шаг без лишнего шума и
+                    перегруза.
                   </p>
                 </div>
 
