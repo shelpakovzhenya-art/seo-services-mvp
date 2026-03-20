@@ -32,31 +32,27 @@ export default async function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="relative mt-auto overflow-hidden border-t border-white/10 bg-[#050b14] text-slate-300">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(34,211,238,0.14),transparent_28%),radial-gradient(circle_at_85%_30%,rgba(59,130,246,0.14),transparent_24%)]" />
+    <footer className="relative mt-auto overflow-hidden border-t border-orange-100 bg-[#fff9f1] text-slate-600">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,185,120,0.14),transparent_28%),radial-gradient(circle_at_85%_30%,rgba(56,189,248,0.12),transparent_24%)]" />
       <div className="container relative mx-auto px-4 py-16">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div className="space-y-5">
-            <span className="inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-3 py-1 text-xs uppercase tracking-[0.28em] text-cyan-200">
-              Shelpakov Digital
-            </span>
-            <h3 className="max-w-xl text-3xl font-semibold text-white">
-              Система роста для SEO, контента и конверсии.
+            <span className="warm-chip">Shelpakov Digital</span>
+            <h3 className="max-w-xl text-3xl font-semibold text-slate-900">
+              SEO и доработка сайта под заявки, доверие и рост.
             </h3>
-            <p className="max-w-xl text-sm leading-7 text-slate-400">
+            <p className="max-w-xl text-sm leading-7 text-slate-500">
               {settings?.footerText ||
-                'Помогаю упаковать сайт так, чтобы он сильнее выглядел, лучше продвигался и приводил больше обращений.'}
+                'Помогаю сделать сайт понятнее для клиента, сильнее для поисковиков и полезнее для бизнеса.'}
             </p>
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">
-              Навигация
-            </h3>
+            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-400">Навигация</h3>
             <ul className="space-y-3">
               {menuItems.map((item) => (
                 <li key={item.id}>
-                  <Link href={item.url} className="transition hover:text-white">
+                  <Link href={item.url} className="transition hover:text-slate-900">
                     {item.label}
                   </Link>
                 </li>
@@ -65,23 +61,21 @@ export default async function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">
-              Контакты
-            </h3>
+            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-400">Контакты</h3>
             <div className="space-y-3 text-sm">
               <p>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</p>
               <a
                 href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`}
-                className="transition hover:text-white"
+                className="transition hover:text-slate-900"
               >
                 {settings?.email || 'shelpakovzhenya@gmail.com'}
               </a>
-              <p className="text-slate-500">Аудит, стратегия, упаковка сайта и рост заявок.</p>
+              <p className="text-slate-500">Аудит, стратегия, коммерческие факторы и рост заявок.</p>
             </div>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-6 text-sm text-slate-500">
+        <div className="mt-12 border-t border-orange-100 pt-6 text-sm text-slate-400">
           <p>&copy; {currentYear} Shelpakov Digital. Все права защищены.</p>
         </div>
       </div>

@@ -5,12 +5,12 @@ export default async function ReviewsPage() {
   let page: any = null
   let settings: any = null
   let reviews: any[] = []
-  
+
   try {
     page = await prisma.page.findUnique({ where: { slug: 'reviews' } })
     settings = await prisma.siteSettings.findFirst()
     reviews = await prisma.review.findMany({
-      orderBy: { order: 'asc' }
+      orderBy: { order: 'asc' },
     })
   } catch (error) {
     console.error('Error loading reviews page:', error)
@@ -20,42 +20,43 @@ export default async function ReviewsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-6">{page?.h1 || 'Отзывы'}</h1>
-      
-      {page?.description && (
-        <p className="text-xl text-gray-600 mb-8">{page.description}</p>
-      )}
+    <div className="page-shell">
+      <section className="soft-section p-8 md:p-10">
+        <span className="warm-chip">Отзывы</span>
+        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">
+          {page?.h1 || 'Отзывы и подтверждение работы'}
+        </h1>
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
+          {page?.description || 'Отзывы работают сильнее, когда в них есть конкретика: задача, процесс и результат.'}
+        </p>
+      </section>
 
       {settings?.yandexReviewsEmbed ? (
-        <div 
-          className="mb-12"
-          dangerouslySetInnerHTML={{ __html: settings.yandexReviewsEmbed }}
-        />
+        <div className="page-card mt-8" dangerouslySetInnerHTML={{ __html: settings.yandexReviewsEmbed }} />
       ) : (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-12">
-          <p className="text-yellow-800">Подключите виджет Яндекс Отзывов в админке</p>
+        <div className="page-card mt-8 border-yellow-200 bg-yellow-50/90">
+          <p className="text-yellow-800">Подключите виджет Яндекс Отзывов в админке, чтобы добавить внешний блок доверия.</p>
         </div>
       )}
 
       {reviews.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {reviews.map((review) => (
-            <div key={review.id} className="bg-white p-6 rounded-lg shadow-md">
-              <div className="flex items-center gap-1 mb-3">
+            <div key={review.id} className="page-card">
+              <div className="mb-3 flex items-center gap-1 text-xl text-orange-400">
                 {[...Array(review.rating)].map((_, i) => (
-                  <span key={i} className="text-yellow-400 text-xl">★</span>
+                  <span key={i}>★</span>
                 ))}
               </div>
-              <p className="text-gray-700 mb-4">{review.text}</p>
-              <p className="text-sm text-gray-500 font-semibold">— {review.author}</p>
+              <p className="text-slate-700">{review.text}</p>
+              <p className="mt-4 text-sm font-semibold text-slate-500">— {review.author}</p>
             </div>
           ))}
         </div>
       )}
 
       {page?.content && (
-        <div className="prose max-w-none">
+        <div className="page-card mt-8 prose max-w-none prose-slate">
           <ReactMarkdown>{page.content}</ReactMarkdown>
         </div>
       )}
@@ -72,19 +73,18 @@ export async function generateMetadata() {
   }
   const { getFullUrl } = await import('@/lib/site-url')
   const reviewsUrl = getFullUrl('/reviews')
-  
+
   return {
-    title: page?.title || 'Отзывы клиентов | SEO Update',
-    description: page?.description || 'Отзывы наших клиентов о работе по продвижению сайтов',
+    title: page?.title || 'Отзывы клиентов | Shelpakov Digital',
+    description: page?.description || 'Отзывы клиентов о работе по SEO, структуре сайта и усилению заявок.',
     alternates: {
       canonical: reviewsUrl,
     },
     openGraph: {
       title: page?.title || 'Отзывы клиентов',
-      description: page?.description || 'Отзывы наших клиентов о работе по продвижению сайтов',
+      description: page?.description || 'Отзывы клиентов о работе по SEO, структуре сайта и усилению заявок.',
       url: reviewsUrl,
       type: 'website',
     },
   }
 }
-

@@ -62,7 +62,7 @@ export default function ContactForm() {
       />
 
       <div>
-        <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-200">
+        <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-700">
           Как к вам обращаться
         </label>
         <input
@@ -71,13 +71,13 @@ export default function ContactForm() {
           required
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
+          className="w-full rounded-2xl border border-orange-100 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-200"
           placeholder="Имя"
         />
       </div>
 
       <div>
-        <label htmlFor="phone" className="mb-2 block text-sm font-medium text-slate-200">
+        <label htmlFor="phone" className="mb-2 block text-sm font-medium text-slate-700">
           Телефон или Telegram
         </label>
         <input
@@ -86,7 +86,7 @@ export default function ContactForm() {
           required
           value={formData.phone}
           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
+          className="w-full rounded-2xl border border-orange-100 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-200"
           placeholder="+7 999 000-00-00 или @telegram"
         />
       </div>
@@ -95,8 +95,8 @@ export default function ContactForm() {
         <div
           className={`rounded-2xl p-4 text-sm ${
             message.type === 'success'
-              ? 'border border-emerald-400/30 bg-emerald-400/10 text-emerald-100'
-              : 'border border-red-400/30 bg-red-400/10 text-red-100'
+              ? 'border border-emerald-200 bg-emerald-50 text-emerald-800'
+              : 'border border-red-200 bg-red-50 text-red-800'
           }`}
         >
           {message.text}

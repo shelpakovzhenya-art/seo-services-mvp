@@ -4,12 +4,12 @@ import ReactMarkdown from 'react-markdown'
 export default async function ServicesPage() {
   let page: any = null
   let services: any[] = []
-  
+
   try {
     page = await prisma.page.findUnique({ where: { slug: 'services' } })
     services = await prisma.service.findMany({
       where: { isActive: true },
-      orderBy: { order: 'asc' }
+      orderBy: { order: 'asc' },
     })
   } catch (error) {
     console.error('Error loading services page:', error)
@@ -18,21 +18,23 @@ export default async function ServicesPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-6">{page?.h1 || 'Наши услуги'}</h1>
-      
-      {page?.description && (
-        <p className="text-xl text-gray-600 mb-8">{page.description}</p>
-      )}
+    <div className="page-shell">
+      <section className="soft-section p-8 md:p-10">
+        <span className="warm-chip">Услуги</span>
+        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">
+          {page?.h1 || 'Услуги по SEO и доработке сайта'}
+        </h1>
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
+          {page?.description || 'От разового аудита до комплексной работы над сайтом, структурой и ростом заявок.'}
+        </p>
+      </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {services.map((service) => (
-          <div key={service.id} className="bg-white p-6 rounded-lg shadow-md border">
-            <h2 className="text-2xl font-semibold mb-3">{service.name}</h2>
-            {service.description && (
-              <p className="text-gray-600 mb-4">{service.description}</p>
-            )}
-            <div className="text-3xl font-bold text-primary mb-2">
+          <div key={service.id} className="page-card">
+            <h2 className="text-2xl font-semibold text-slate-950">{service.name}</h2>
+            {service.description && <p className="mt-3 text-base leading-7 text-slate-600">{service.description}</p>}
+            <div className="mt-6 text-3xl font-semibold text-cyan-700">
               {service.price.toLocaleString('ru-RU')} {service.unit}
             </div>
           </div>
@@ -40,7 +42,7 @@ export default async function ServicesPage() {
       </div>
 
       {page?.content && (
-        <div className="prose max-w-none">
+        <div className="page-card mt-8 prose max-w-none prose-slate">
           <ReactMarkdown>{page.content}</ReactMarkdown>
         </div>
       )}
@@ -57,19 +59,18 @@ export async function generateMetadata() {
   }
   const { getFullUrl } = await import('@/lib/site-url')
   const servicesUrl = getFullUrl('/services')
-  
+
   return {
-    title: page?.title || 'SEO Услуги | SEO Update',
-    description: page?.description || 'Профессиональные SEO услуги: продвижение сайтов, оптимизация, увеличение трафика',
+    title: page?.title || 'SEO-услуги | Shelpakov Digital',
+    description: page?.description || 'SEO-аудит, продвижение сайта, работа со структурой, метатегами и коммерческими факторами.',
     alternates: {
       canonical: servicesUrl,
     },
     openGraph: {
-      title: page?.title || 'SEO Услуги',
-      description: page?.description || 'Профессиональные SEO услуги: продвижение сайтов, оптимизация, увеличение трафика',
+      title: page?.title || 'SEO-услуги',
+      description: page?.description || 'SEO-аудит, продвижение сайта, работа со структурой, метатегами и коммерческими факторами.',
       url: servicesUrl,
       type: 'website',
     },
   }
 }
-
