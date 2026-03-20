@@ -246,14 +246,16 @@ export default function PodocenterCasePage() {
           {caseVisuals.map((item, index) => (
             <article
               key={item.src}
-              className={`overflow-hidden rounded-[30px] border border-orange-100 bg-white shadow-[0_22px_55px_rgba(148,107,61,0.08)] ${
+              className={`flex h-full flex-col overflow-hidden rounded-[30px] border border-orange-100 bg-white shadow-[0_22px_55px_rgba(148,107,61,0.08)] ${
                 index === 0 || index === 1 ? 'xl:col-span-1' : 'xl:col-span-1'
               }`}
             >
-              <div className="relative aspect-[16/10] w-full bg-[linear-gradient(180deg,#fffdf8,#f7fbff)]">
-                <Image src={item.src} alt={item.alt} fill className="object-cover" />
+              <div className="relative min-h-[260px] w-full overflow-hidden border-b border-orange-100 bg-[linear-gradient(180deg,#fffdf8,#f7fbff)] p-4 sm:min-h-[320px] sm:p-5">
+                <div className="relative h-full w-full overflow-hidden rounded-[22px] border border-white/80 bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+                  <Image src={item.src} alt={item.alt} fill className="object-contain p-2 sm:p-3" />
+                </div>
               </div>
-              <div className="p-6">
+              <div className="flex flex-1 flex-col p-6">
                 <h3 className="text-2xl font-semibold text-slate-950">{item.title}</h3>
                 <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
               </div>
