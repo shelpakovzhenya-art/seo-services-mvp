@@ -46,6 +46,14 @@ npm run dev
 ### База данных
 База данных настраивается автоматически при первом запуске.
 
+### Railway deploy
+1. Import the GitHub repository into Railway.
+2. Add a PostgreSQL service in the same Railway project.
+3. Ensure `DATABASE_URL` is available to the web service from Railway Postgres.
+4. Set `SITE_URL` to your Railway public domain, for example `https://your-app.up.railway.app`.
+5. Optional: set `ADMIN_USER`, `ADMIN_PASS`, and SMTP variables before the first production start.
+6. Deploy the web service. On startup, the app will sync the schema and seed the initial admin/content automatically.
+
 ### SMTP (для отправки писем)
 Скопируйте `.env.example` в `.env` и заполните настройки SMTP:
 ```env

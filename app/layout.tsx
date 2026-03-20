@@ -1,12 +1,9 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import { headers } from "next/headers"
 import { getSiteUrl } from "@/lib/site-url"
-
-const inter = Inter({ subsets: ["latin", "cyrillic"] })
 
 const siteUrl = getSiteUrl()
 
@@ -63,7 +60,7 @@ export default async function RootLayout({
 
   return (
     <html lang="ru">
-      <body className={inter.className}>
+      <body>
         {!isAdmin && <Header />}
         <main className={isAdmin ? "" : "min-h-screen"}>{children}</main>
         {!isAdmin && <Footer />}
