@@ -10,14 +10,14 @@ const siteUrl = getSiteUrl()
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "SEO Услуги - Профессиональное продвижение сайтов",
-    template: "%s | SEO Update"
+    default: "Shelpakov Digital",
+    template: "%s | Shelpakov Digital"
   },
-  description: "Профессиональные SEO услуги для вашего бизнеса. Увеличение трафика, рост позиций в поисковых системах, повышение конверсий.",
-  keywords: ["SEO", "продвижение сайтов", "поисковая оптимизация", "контекстная реклама", "SEO услуги"],
-  authors: [{ name: "SEO Update" }],
-  creator: "SEO Update",
-  publisher: "SEO Update",
+  description: "Shelpakov Digital builds SEO systems, authority content and conversion architecture for ambitious brands.",
+  keywords: ["SEO", "digital strategy", "content systems", "conversion design", "growth marketing"],
+  authors: [{ name: "Shelpakov Digital" }],
+  creator: "Shelpakov Digital",
+  publisher: "Shelpakov Digital",
   formatDetection: {
     email: false,
     address: false,
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ru_RU",
     url: siteUrl,
-    siteName: "SEO Update",
-    title: "SEO Услуги - Профессиональное продвижение сайтов",
-    description: "Профессиональные SEO услуги для вашего бизнеса",
+    siteName: "Shelpakov Digital",
+    title: "Shelpakov Digital",
+    description: "SEO systems, authority content and digital growth strategy.",
   },
   robots: {
     index: true,
@@ -42,11 +42,7 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    // Add Yandex and Google verification codes here when available
-    // yandex: "verification_code",
-    // google: "verification_code",
-  },
+  verification: {},
 }
 
 export default async function RootLayout({
@@ -68,4 +64,3 @@ export default async function RootLayout({
     </html>
   )
 }
-
