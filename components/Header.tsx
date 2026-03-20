@@ -51,7 +51,7 @@ export default async function Header() {
     },
     {
       href: settings?.maxUrl,
-      label: 'Мессенджер',
+      label: 'Messenger',
       type: 'max' as const,
     },
   ].filter((item) => item.href)
@@ -63,13 +63,7 @@ export default async function Header() {
           <div className="flex flex-wrap items-center gap-3">
             <span className="warm-chip">Shelpakov Digital</span>
             <span>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</span>
-            <span
-              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-medium ${
-                workStatus.isWorking
-                  ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                  : 'border-amber-200 bg-amber-50 text-amber-700'
-              }`}
-            >
+            <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-medium text-slate-700">
               <span className={`h-2 w-2 rounded-full ${workStatus.dotClass}`} />
               {workStatus.text}
             </span>
@@ -110,21 +104,11 @@ export default async function Header() {
         <nav className="flex items-center justify-between gap-6 py-5">
           <Link href="/" className="flex items-center gap-3">
             <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-2xl border border-cyan-200 bg-white shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
-              <Image
-                src="/favicon-48.png"
-                alt="Логотип Shelpakov Digital"
-                width={28}
-                height={28}
-                className="h-7 w-7 object-contain"
-              />
+              <Image src="/favicon-48.png" alt="Логотип Shelpakov Digital" width={28} height={28} className="h-7 w-7 object-contain" />
             </span>
             <span className="flex flex-col">
-              <span className="text-lg font-semibold uppercase tracking-[0.16em] text-slate-900">
-                Shelpakov Digital
-              </span>
-              <span className="text-xs uppercase tracking-[0.2em] text-slate-500">
-                SEO, структура сайта, заявки
-              </span>
+              <span className="text-lg font-semibold uppercase tracking-[0.16em] text-slate-900">Shelpakov Digital</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-slate-500">SEO, структура сайта, заявки</span>
             </span>
           </Link>
 

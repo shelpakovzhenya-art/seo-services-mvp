@@ -89,8 +89,7 @@ export function getWorkStatus(workSchedule?: string | null) {
 
   return {
     isWorking,
-    text: isWorking ? 'Сейчас работаю' : 'Сейчас вне графика',
-    toneClass: isWorking ? 'text-emerald-700' : 'text-amber-700',
-    dotClass: isWorking ? 'bg-emerald-500' : 'bg-amber-500',
+    text: isWorking ? 'В сети' : 'Не в сети',
+    dotClass: isWorking ? 'bg-emerald-500' : 'bg-slate-400',
   }
 }

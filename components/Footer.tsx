@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { MessageCircle, MessagesSquare, Send } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
+import { featuredReads } from '@/lib/site-recommendations'
 
 const DEFAULT_MENU_ITEMS = [
   { id: '1', label: 'Главная', url: '/', order: 1, isActive: true },
@@ -49,7 +50,7 @@ export default async function Footer() {
     },
     {
       href: settings?.maxUrl,
-      label: 'Мессенджер',
+      label: 'Messenger',
       icon: MessageCircle,
     },
   ].filter((item) => item.href)
@@ -58,12 +59,10 @@ export default async function Footer() {
     <footer className="relative mt-auto overflow-hidden border-t border-orange-100 bg-[#fff9f1] text-slate-600">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,185,120,0.14),transparent_28%),radial-gradient(circle_at_85%_30%,rgba(56,189,248,0.12),transparent_24%)]" />
       <div className="container relative mx-auto px-4 py-16">
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.75fr_0.8fr_1.1fr]">
           <div className="space-y-5">
             <span className="warm-chip">Shelpakov Digital</span>
-            <h3 className="max-w-xl text-3xl font-semibold text-slate-900">
-              SEO и доработка сайта под заявки, доверие и рост.
-            </h3>
+            <h3 className="max-w-xl text-3xl font-semibold text-slate-900">SEO и доработка сайта под заявки, доверие и рост.</h3>
             <p className="max-w-xl text-sm leading-7 text-slate-500">
               {settings?.footerText ||
                 'Помогаю сделать сайт понятнее для клиента, сильнее для поисковиков и полезнее для бизнеса.'}
@@ -107,13 +106,26 @@ export default async function Footer() {
             <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-400">Контакты</h3>
             <div className="space-y-3 text-sm">
               <p>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</p>
-              <a
-                href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`}
-                className="transition hover:text-slate-900"
-              >
+              <a href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`} className="transition hover:text-slate-900">
                 {settings?.email || 'shelpakovzhenya@gmail.com'}
               </a>
               <p className="text-slate-500">Аудит, стратегия, коммерческие факторы и рост заявок.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-400">Почитать дальше</h3>
+            <div className="space-y-4">
+              {featuredReads.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="block rounded-2xl border border-orange-100 bg-white/90 p-4 transition hover:border-cyan-200 hover:text-slate-900"
+                >
+                  <div className="text-[11px] uppercase tracking-[0.22em] text-orange-700">{item.kicker}</div>
+                  <div className="mt-2 text-sm font-medium leading-6 text-slate-800">{item.title}</div>
+                </Link>
+              ))}
             </div>
           </div>
         </div>
