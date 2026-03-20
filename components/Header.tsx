@@ -90,7 +90,7 @@ export default async function Header() {
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-orange-200 bg-white text-slate-600 transition hover:border-cyan-300 hover:text-cyan-700"
                 >
                   {item.type === 'telegram' ? (
-                    <Image src="/telegram-logo.svg" alt="Telegram" width={18} height={18} className="h-[18px] w-[18px]" />
+                    <Image src="/telegram-logo.svg" alt="Telegram" width={20} height={20} className="h-5 w-5" />
                   ) : item.type === 'vk' ? (
                     <MessagesSquare className="h-4 w-4" />
                   ) : (

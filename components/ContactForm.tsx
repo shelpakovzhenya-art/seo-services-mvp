@@ -91,7 +91,7 @@ export default function ContactForm() {
             rel="noreferrer"
             className="inline-flex items-center gap-2 font-medium text-cyan-800 transition hover:text-cyan-900"
           >
-            <Image src="/telegram-logo.svg" alt="Telegram" width={22} height={22} className="h-[22px] w-[22px]" />
+            <Image src="/telegram-logo.svg" alt="Telegram" width={24} height={24} className="h-6 w-6" />
             Написать в Telegram
           </a>
           <span className="text-slate-400">или оставьте контакт в форме ниже</span>
