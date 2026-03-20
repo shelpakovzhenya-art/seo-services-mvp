@@ -1,6 +1,9 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
+import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
+import { podocenterCase } from '@/lib/podocenter-case'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 
 export default async function CasesPage() {
@@ -18,6 +21,8 @@ export default async function CasesPage() {
     cases = []
   }
 
+  const pageContent = stripLeadingMarkdownH1(page?.content, page?.h1 || page?.title || 'Кейсы')
+
   return (
     <div className="page-shell">
       <section className="soft-section p-8 md:p-10">
@@ -27,11 +32,25 @@ export default async function CasesPage() {
         </h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
           {page?.description ||
-            'Здесь можно показать, как меняется сайт после доработки структуры, оффера и SEO-основы.'}
+            'Здесь собраны кейсы по SEO, структуре сайта и усилению коммерческих факторов: от диагностики проекта до роста видимости, трафика и заявок.'}
         </p>
       </section>
 
       <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2">
+        <Link
+          href={podocenterCase.url}
+          className="page-card overflow-hidden p-0 transition hover:-translate-y-0.5 hover:border-cyan-200"
+        >
+          <div className="p-6 md:p-8">
+            <span className="warm-chip">Новый кейс</span>
+            <h2 className="mt-5 text-2xl font-semibold text-slate-950">{podocenterCase.h1}</h2>
+            <p className="mt-3 text-base leading-7 text-slate-600">{podocenterCase.excerpt}</p>
+            <div className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
+              Открыть кейс
+            </div>
+          </div>
+        </Link>
+
         {cases.map((caseItem) => (
           <article key={caseItem.id} className="page-card overflow-hidden p-0">
             {caseItem.image && (
@@ -46,7 +65,13 @@ export default async function CasesPage() {
               )}
               {caseItem.content && (
                 <div className="prose mt-5 max-w-none prose-slate">
-                  <ReactMarkdown>{caseItem.content}</ReactMarkdown>
+                  <ReactMarkdown
+                    components={{
+                      h1: ({ children }) => <h3>{children}</h3>,
+                    }}
+                  >
+                    {caseItem.content}
+                  </ReactMarkdown>
                 </div>
               )}
             </div>
@@ -54,18 +79,15 @@ export default async function CasesPage() {
         ))}
       </div>
 
-      {cases.length === 0 && (
-        <div className="page-card mt-8">
-          <h2 className="text-2xl font-semibold text-slate-950">Кейсы появятся здесь</h2>
-          <p className="mt-3 text-base leading-7 text-slate-600">
-            Лучше всего работают кейсы с задачей клиента, перечнем правок и итогом без выдуманных цифр.
-          </p>
-        </div>
-      )}
-
-      {page?.content && (
+      {pageContent && (
         <div className="page-card mt-8 prose max-w-none prose-slate">
-          <ReactMarkdown>{page.content}</ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              h1: ({ children }) => <h2>{children}</h2>,
+            }}
+          >
+            {pageContent}
+          </ReactMarkdown>
         </div>
       )}
     </div>

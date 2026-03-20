@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 
@@ -12,6 +13,7 @@ export default function ContactForm() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const telegramHref = 'https://t.me/whoamikon'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -82,6 +84,18 @@ export default function ContactForm() {
         <label htmlFor="contact" className="mb-2 block text-sm font-medium text-slate-700">
           Телефон, Telegram или email
         </label>
+        <div className="mb-3 flex flex-wrap items-center gap-3 rounded-2xl border border-cyan-100 bg-cyan-50/70 px-4 py-3 text-sm text-slate-700">
+          <a
+            href={telegramHref}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 font-medium text-cyan-800 transition hover:text-cyan-900"
+          >
+            <Image src="/telegram-logo.svg" alt="Telegram" width={22} height={22} className="h-[22px] w-[22px]" />
+            Написать в Telegram
+          </a>
+          <span className="text-slate-400">или оставьте контакт в форме ниже</span>
+        </div>
         <input
           type="text"
           id="contact"

@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowUpRight, Mail, MessageCircle, MessagesSquare, Send } from 'lucide-react'
+import { ArrowUpRight, Mail, MessageCircle, MessagesSquare } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
+import { getWorkStatus } from '@/lib/work-status'
 
 const DEFAULT_MENU_ITEMS = [
   { id: '1', label: 'Главная', url: '/', order: 1, isActive: true },
@@ -31,26 +32,27 @@ export default async function Header() {
     menuItems = DEFAULT_MENU_ITEMS
   }
 
+  const workStatus = getWorkStatus(settings?.workSchedule)
   const socialLinks = [
     {
       href: settings?.telegramUrl,
       label: 'Telegram',
-      icon: Send,
+      type: 'telegram' as const,
     },
     {
       href: settings?.whatsappUrl,
       label: 'WhatsApp',
-      icon: MessageCircle,
+      type: 'whatsapp' as const,
     },
     {
       href: settings?.vkUrl,
       label: 'VK',
-      icon: MessagesSquare,
+      type: 'vk' as const,
     },
     {
       href: settings?.maxUrl,
       label: 'Мессенджер',
-      icon: MessageCircle,
+      type: 'max' as const,
     },
   ].filter((item) => item.href)
 
@@ -61,6 +63,16 @@ export default async function Header() {
           <div className="flex flex-wrap items-center gap-3">
             <span className="warm-chip">Shelpakov Digital</span>
             <span>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</span>
+            <span
+              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-medium ${
+                workStatus.isWorking
+                  ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                  : 'border-amber-200 bg-amber-50 text-amber-700'
+              }`}
+            >
+              <span className={`h-2 w-2 rounded-full ${workStatus.dotClass}`} />
+              {workStatus.text}
+            </span>
             <a
               href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`}
               className="inline-flex items-center gap-2 transition hover:text-slate-900"
@@ -72,22 +84,25 @@ export default async function Header() {
 
           {socialLinks.length > 0 ? (
             <div className="hidden items-center gap-2 md:flex">
-              {socialLinks.map((item) => {
-                const Icon = item.icon
-                return (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={item.label}
-                    title={item.label}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-orange-200 bg-white text-slate-600 transition hover:border-cyan-300 hover:text-cyan-700"
-                  >
-                    <Icon className="h-4 w-4" />
-                  </a>
-                )
-              })}
+              {socialLinks.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={item.label}
+                  title={item.label}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-orange-200 bg-white text-slate-600 transition hover:border-cyan-300 hover:text-cyan-700"
+                >
+                  {item.type === 'telegram' ? (
+                    <Image src="/telegram-logo.svg" alt="Telegram" width={18} height={18} className="h-[18px] w-[18px]" />
+                  ) : item.type === 'vk' ? (
+                    <MessagesSquare className="h-4 w-4" />
+                  ) : (
+                    <MessageCircle className="h-4 w-4" />
+                  )}
+                </a>
+              ))}
             </div>
           ) : null}
         </div>

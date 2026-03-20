@@ -1,4 +1,5 @@
 import ReactMarkdown from 'react-markdown'
+import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 
@@ -19,6 +20,8 @@ export default async function ReviewsPage() {
     settings = null
     reviews = []
   }
+
+  const pageContent = stripLeadingMarkdownH1(page?.content, page?.h1 || page?.title || 'Отзывы')
 
   return (
     <div className="page-shell">
@@ -58,9 +61,15 @@ export default async function ReviewsPage() {
         </div>
       )}
 
-      {page?.content && (
+      {pageContent && (
         <div className="page-card mt-8 prose max-w-none prose-slate">
-          <ReactMarkdown>{page.content}</ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              h1: ({ children }) => <h2>{children}</h2>,
+            }}
+          >
+            {pageContent}
+          </ReactMarkdown>
         </div>
       )}
     </div>

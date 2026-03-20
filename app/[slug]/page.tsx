@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { demoteHtmlHeadings } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getSiteUrl } from '@/lib/site-url'
@@ -55,6 +56,8 @@ export default async function DynamicPage({ params }: PageProps) {
     notFound()
   }
 
+  const pageContent = demoteHtmlHeadings(page.content)
+
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
       <div className="mx-auto max-w-4xl">
@@ -66,10 +69,10 @@ export default async function DynamicPage({ params }: PageProps) {
             {page.description}
           </p>
         )}
-        {page.content && (
+        {pageContent && (
           <article
             className="prose prose-invert mt-10 max-w-none prose-headings:text-white prose-p:text-slate-300 prose-li:text-slate-300"
-            dangerouslySetInnerHTML={{ __html: page.content }}
+            dangerouslySetInnerHTML={{ __html: pageContent }}
           />
         )}
       </div>

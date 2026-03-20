@@ -1,0 +1,35 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="760" rx="36" fill="#FFF9F3"/>
+  <rect x="24" y="24" width="1152" height="712" rx="28" fill="white" stroke="#F2E6D6" stroke-width="2"/>
+  <rect x="64" y="64" width="160" height="40" rx="12" fill="#FFF4E7"/>
+  <rect x="240" y="64" width="140" height="40" rx="12" fill="#F7FAFC"/>
+  <rect x="394" y="64" width="148" height="40" rx="12" fill="#F7FAFC"/>
+  <text x="84" y="90" fill="#7C4A13" font-family="Arial" font-size="18" font-weight="700">Трафик из поиска</text>
+  <text x="264" y="90" fill="#64748B" font-family="Arial" font-size="16">Google + Яндекс</text>
+  <text x="421" y="90" fill="#64748B" font-family="Arial" font-size="16">Динамика по месяцам</text>
+
+  <g opacity="0.65">
+    <path d="M90 190H1110" stroke="#E8EDF4" stroke-width="2"/>
+    <path d="M90 250H1110" stroke="#E8EDF4" stroke-width="2"/>
+    <path d="M90 310H1110" stroke="#E8EDF4" stroke-width="2"/>
+    <path d="M90 370H1110" stroke="#E8EDF4" stroke-width="2"/>
+    <path d="M90 430H1110" stroke="#E8EDF4" stroke-width="2"/>
+    <path d="M90 490H1110" stroke="#E8EDF4" stroke-width="2"/>
+  </g>
+
+  <path d="M92 462C132 430 170 446 207 390C244 336 286 401 324 342C362 283 405 358 446 276C487 194 529 339 566 250C603 162 646 209 686 110C726 157 764 178 806 141C848 104 888 165 928 126C968 87 1008 158 1050 126C1084 100 1100 118 1112 162" stroke="#6D5EF6" stroke-width="5" stroke-linecap="round"/>
+  <path d="M92 510C136 500 176 518 214 486C252 454 292 520 333 487C374 454 414 525 456 502C498 479 541 520 582 500C623 480 664 460 706 410C748 360 792 485 836 420C880 356 920 470 962 407C1004 344 1042 468 1084 385C1100 360 1108 364 1112 332" stroke="#EC4899" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 10"/>
+
+  <rect x="72" y="548" width="1056" height="144" rx="24" fill="#F8FBFF" stroke="#E7EEF7" stroke-width="2"/>
+  <text x="110" y="590" fill="#0F172A" font-family="Arial" font-size="32" font-weight="700">400 → 1 589</text>
+  <text x="110" y="622" fill="#10B981" font-family="Arial" font-size="22" font-weight="700">+297.25%</text>
+  <text x="110" y="652" fill="#64748B" font-family="Arial" font-size="20">Общий органический трафик</text>
+
+  <text x="432" y="590" fill="#0F172A" font-family="Arial" font-size="32" font-weight="700">318 → 1 244</text>
+  <text x="432" y="622" fill="#10B981" font-family="Arial" font-size="22" font-weight="700">+291.19%</text>
+  <text x="432" y="652" fill="#64748B" font-family="Arial" font-size="20">Google</text>
+
+  <text x="740" y="590" fill="#0F172A" font-family="Arial" font-size="32" font-weight="700">82 → 345</text>
+  <text x="740" y="622" fill="#10B981" font-family="Arial" font-size="22" font-weight="700">+320.73%</text>
+  <text x="740" y="652" fill="#64748B" font-family="Arial" font-size="20">Яндекс</text>
+</svg>

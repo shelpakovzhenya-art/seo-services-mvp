@@ -1,6 +1,7 @@
 import ReactMarkdown from 'react-markdown'
 import Calculator from '@/components/Calculator'
 import ContactForm from '@/components/ContactForm'
+import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
 import { servicePricing } from '@/lib/service-pricing'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
@@ -18,6 +19,8 @@ export default async function CalculatorPage() {
     console.error('Error loading calculator page:', error)
     page = null
   }
+
+  const pageContent = stripLeadingMarkdownH1(page?.content, page?.h1 || page?.title || 'Калькулятор SEO-услуг')
 
   return (
     <div className="page-shell">
@@ -86,9 +89,15 @@ export default async function CalculatorPage() {
         </div>
       </section>
 
-      {page?.content && (
+      {pageContent && (
         <div className="page-card mt-10 prose max-w-none prose-slate">
-          <ReactMarkdown>{page.content}</ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              h1: ({ children }) => <h2>{children}</h2>,
+            }}
+          >
+            {pageContent}
+          </ReactMarkdown>
         </div>
       )}
     </div>

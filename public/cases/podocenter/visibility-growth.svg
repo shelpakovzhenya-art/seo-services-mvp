@@ -1,0 +1,34 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="760" rx="36" fill="#F8FFFA"/>
+  <rect x="24" y="24" width="1152" height="712" rx="28" fill="white" stroke="#DCEFE3" stroke-width="2"/>
+  <rect x="64" y="64" width="136" height="40" rx="12" fill="#EEFDF3"/>
+  <text x="92" y="90" fill="#15803D" font-family="Arial" font-size="18" font-weight="700">Видимость</text>
+  <path d="M100 450C175 446 250 445 325 444C400 442 470 441 545 438C620 434 680 300 758 298C836 296 900 296 970 328C1032 356 1080 358 1106 356" stroke="#65C466" stroke-width="8" stroke-linecap="round"/>
+  <path d="M100 450C175 446 250 445 325 444C400 442 470 441 545 438C620 434 680 300 758 298C836 296 900 296 970 328C1032 356 1080 358 1106 356V540H100V450Z" fill="url(#paint0_linear)"/>
+  <g opacity="0.5">
+    <path d="M90 190V540" stroke="#E7EFEA" stroke-width="2"/>
+    <path d="M260 190V540" stroke="#E7EFEA" stroke-width="2"/>
+    <path d="M430 190V540" stroke="#E7EFEA" stroke-width="2"/>
+    <path d="M600 190V540" stroke="#E7EFEA" stroke-width="2"/>
+    <path d="M770 190V540" stroke="#E7EFEA" stroke-width="2"/>
+    <path d="M940 190V540" stroke="#E7EFEA" stroke-width="2"/>
+  </g>
+  <circle cx="1050" cy="240" r="112" fill="#F5F7F7"/>
+  <path d="M1050 144C1098 144 1142 175 1154 222" stroke="#84CC16" stroke-width="18" stroke-linecap="round"/>
+  <path d="M1154 222C1165 268 1148 320 1108 350" stroke="#84CC16" stroke-width="18" stroke-linecap="round"/>
+  <text x="1016" y="248" fill="#84CC16" font-family="Arial" font-size="42" font-weight="700">35%</text>
+  <text x="986" y="286" fill="#64748B" font-family="Arial" font-size="20">видимость</text>
+  <rect x="70" y="584" width="1060" height="112" rx="24" fill="#F4FBF6" stroke="#DCEFE3" stroke-width="2"/>
+  <text x="108" y="630" fill="#0F172A" font-family="Arial" font-size="28" font-weight="700">ТОП-1: 6 запросов</text>
+  <text x="108" y="666" fill="#64748B" font-family="Arial" font-size="20">Виден рост по приоритетной локальной семантике</text>
+  <text x="496" y="630" fill="#0F172A" font-family="Arial" font-size="28" font-weight="700">ТОП-10: 35 запросов</text>
+  <text x="496" y="666" fill="#64748B" font-family="Arial" font-size="20">Сайт расширил поисковое покрытие по услугам</text>
+  <text x="860" y="630" fill="#0F172A" font-family="Arial" font-size="28" font-weight="700">Рост видимости: +26</text>
+  <text x="860" y="666" fill="#64748B" font-family="Arial" font-size="20">Усиление коммерческих и инфо-кластеров</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="603" y1="286" x2="603" y2="540" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C6F6D5" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#C6F6D5" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>

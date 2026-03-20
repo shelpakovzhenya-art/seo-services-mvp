@@ -3,6 +3,14 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription } from '@/lib/seo-meta'
 
+function getFallbackCover(slug: string) {
+  const coverMap: Record<string, string> = {
+    'trebovaniya-k-sovremennomu-saitu-dlya-seo-i-konversii': '/blog/seo-site-requirements-cover.svg',
+  }
+
+  return coverMap[slug] || ''
+}
+
 export default async function BlogPage() {
   let posts: any[] = []
 
@@ -31,9 +39,9 @@ export default async function BlogPage() {
         {posts.map((post) => (
           <Link key={post.id} href={`/blog/${post.slug}`}>
             <article className="page-card overflow-hidden p-0 transition hover:-translate-y-1">
-              {post.coverImage && (
+              {(post.coverImage || getFallbackCover(post.slug)) && (
                 <div className="relative h-48 w-full">
-                  <Image src={post.coverImage} alt={post.title} fill className="object-cover" />
+                  <Image src={post.coverImage || getFallbackCover(post.slug)} alt={post.title} fill className="object-cover" />
                 </div>
               )}
               <div className="p-6">
