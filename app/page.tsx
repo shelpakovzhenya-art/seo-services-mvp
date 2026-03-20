@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -12,11 +11,8 @@ import {
   Gem,
   Layers3,
   LineChart,
-  MessageSquareText,
   Rocket,
-  Search,
   ShieldCheck,
-  Sparkles,
   Star,
 } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
@@ -34,33 +30,33 @@ const defaultHomeMetadata = {
 const trustMetrics = [
   {
     value: 'SEO + конверсия',
-    label: 'Продвигаю сайт не только под позиции, но и под реальные заявки.',
+    label: 'Продвижение строится не только под позиции, но и под реальные обращения с сайта.',
   },
   {
     value: 'B2B и услуги',
-    label: 'Сильнее всего работаю там, где важны доверие, смысл и экспертность.',
+    label: 'Лучше всего усиливаю проекты, где важны доверие, экспертность и понятный оффер.',
   },
   {
     value: 'План на 90 дней',
-    label: 'После старта проект получает понятную карту действий и приоритетов.',
+    label: 'После старта у проекта появляется понятная карта действий, этапов и приоритетов.',
   },
 ]
 
-const founderHighlights = [
+const heroPillars = [
   {
-    icon: Search,
-    title: 'Глубокий анализ спроса',
-    text: 'Разбираю поисковый спрос, поведение конкурентов и точки роста по структуре сайта.',
+    icon: Layers3,
+    title: 'Стратегия роста',
+    text: 'Собираю SEO, структуру сайта, контент и коммерческие факторы в единую систему.',
   },
   {
-    icon: Sparkles,
-    title: 'Упаковка под дорогой чек',
-    text: 'Сайт должен выглядеть убедительно, современно и дороже в восприятии, чем у конкурентов.',
+    icon: BadgeCheck,
+    title: 'Понятный оффер',
+    text: 'Усиливаю подачу услуг и посадочные страницы, чтобы клиент быстрее принимал решение.',
   },
   {
-    icon: MessageSquareText,
-    title: 'Фокус на заявку',
-    text: 'Каждый блок должен помогать посетителю быстрее понять ценность и оставить обращение.',
+    icon: Clock3,
+    title: 'Быстрый старт',
+    text: 'После первого созвона формируем приоритеты, план работ и ближайшие точки роста.',
   },
 ]
 
@@ -86,32 +82,32 @@ const packageCards = [
   {
     name: 'Старт',
     price: 'от 60 000 ₽/мес',
-    accent: 'Для бизнеса, которому нужен крепкий фундамент',
+    accent: 'Для бизнеса, которому нужен крепкий фундамент и понятный старт продвижения.',
     items: [
       'Технический SEO-аудит и исправление критичных ошибок',
-      'Сбор и кластеризация семантики',
-      'Оптимизация title, description, h1',
-      'План работ и отчётность каждый месяц',
+      'Сбор и кластеризация семантического ядра',
+      'Оптимизация title, description и h1',
+      'План работ и отчетность каждый месяц',
     ],
   },
   {
     name: 'Оптимальный',
     price: 'от 110 000 ₽/мес',
-    accent: 'Для системного роста заявок и видимости',
+    accent: 'Для системного роста заявок, видимости и качества посадочных страниц.',
     items: [
-      'Всё из тарифа «Старт»',
-      'Пересборка ключевых посадочных страниц',
+      'Все из тарифа «Старт»',
+      'Пересборка ключевых страниц услуг',
       'Усиление коммерческих факторов и CTA',
-      'Контент-план и написание SEO-материалов',
+      'Контент-план и SEO-материалы',
       'Регулярный анализ конкурентов и корректировка стратегии',
     ],
   },
   {
     name: 'Про',
     price: 'от 180 000 ₽/мес',
-    accent: 'Для агрессивного роста и сильного позиционирования',
+    accent: 'Для агрессивного роста, сильного позиционирования и расширения структуры сайта.',
     items: [
-      'Всё из тарифа «Оптимальный»',
+      'Все из тарифа «Оптимальный»',
       'Полная архитектура разделов и кластеров',
       'Глубокая работа с доверием, кейсами и упаковкой бренда',
       'Продвинутая аналитика по конверсии и гипотезам',
@@ -122,7 +118,7 @@ const packageCards = [
 
 const industryBlocks = [
   'B2B-компании и экспертные услуги',
-  'Локальный бизнес с конкуренцией в поиске',
+  'Локальный бизнес с высокой конкуренцией в поиске',
   'Сайты услуг, которым нужен сильный коммерческий каркас',
   'Проекты, где важны доверие, кейсы и экспертный контент',
 ]
@@ -195,9 +191,9 @@ export default async function HomePage() {
                 SEO-продвижение сайтов, которое делает проект заметнее, убедительнее и прибыльнее.
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl">
-                Я соединяю поисковое продвижение, коммерческие факторы, упаковку оффера и
-                структуру сайта в единую систему роста. В результате сайт должен не просто
-                собирать трафик, а вызывать доверие и приводить больше обращений.
+                Соединяю поисковое продвижение, коммерческие факторы, упаковку оффера и структуру сайта в
+                единую систему роста. В результате сайт должен не просто собирать трафик, а вызывать доверие и
+                приводить больше обращений.
               </p>
 
               <div className="mt-10 flex flex-wrap gap-4">
@@ -241,83 +237,68 @@ export default async function HomePage() {
             </div>
 
             <div className="hero-panel relative overflow-hidden rounded-[34px] border border-white/12 p-5 md:p-6">
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.2),transparent_28%)]" />
-              <div className="relative grid gap-4 xl:grid-cols-[0.92fr_1.08fr]">
-                <div className="relative overflow-hidden rounded-[28px] border border-white/12 bg-[#08101c]">
-                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,245,255,0.14),transparent_35%),radial-gradient(circle_at_bottom,rgba(77,124,255,0.18),transparent_36%)]" />
-                  <Image
-                    src="/founder-hero.svg"
-                    alt="Евгений Шелпаков работает за ноутбуком"
-                    width={700}
-                    height={900}
-                    className="h-full min-h-[520px] w-full object-cover object-center"
-                    priority
-                  />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#07111f] via-[#07111f]/90 to-transparent p-6">
-                    <div className="text-3xl font-semibold text-white">Евгений Шелпаков</div>
-                    <div className="mt-2 text-sm uppercase tracking-[0.22em] text-cyan-200">
-                      Shelpakov Digital
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_24%),radial-gradient(circle_at_80%_18%,rgba(34,211,238,0.14),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.18),transparent_30%)]" />
+              <div className="relative flex h-full flex-col gap-5">
+                <div className="overflow-hidden rounded-[28px] border border-white/12 bg-[linear-gradient(135deg,rgba(8,16,28,0.96),rgba(12,24,42,0.92))] p-6 md:p-8">
+                  <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.24em] text-cyan-200/90">
+                    <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5">Shelpakov Digital</span>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">SEO</span>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Конверсия</span>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Структура сайта</span>
+                  </div>
+
+                  <div className="mt-8 grid gap-5 md:grid-cols-[1.1fr_0.9fr]">
+                    <div>
+                      <p className="text-sm uppercase tracking-[0.28em] text-slate-400">Персональный подход</p>
+                      <h3 className="mt-3 max-w-xl text-3xl font-semibold leading-tight text-white md:text-4xl">
+                        Стратегия, упаковка и продвижение сайта в одной системе
+                      </h3>
+                      <p className="mt-5 max-w-xl text-sm leading-7 text-slate-300 md:text-base">
+                        Работаю как стратег и исполнитель: смотрю на проект глазами SEO-специалиста, маркетолога
+                        и владельца бизнеса. На первом экране важно не просто выглядеть современно, а сразу
+                        объяснять ценность, вызывать доверие и вести к заявке.
+                      </p>
                     </div>
-                    <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-200">
-                      <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5">
-                        SEO
-                      </span>
-                      <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5">
-                        Упаковка сайта
-                      </span>
-                      <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5">
-                        Конверсия
-                      </span>
+
+                    <div className="rounded-[26px] border border-white/10 bg-black/20 p-5 backdrop-blur-sm">
+                      <div className="text-xs uppercase tracking-[0.24em] text-slate-500">Фокус проекта</div>
+                      <div className="mt-4 space-y-4">
+                        <div>
+                          <div className="text-sm text-slate-400">Основная задача</div>
+                          <div className="mt-1 text-2xl font-semibold text-white">Больше заявок с сайта</div>
+                        </div>
+                        <div className="h-px bg-white/10" />
+                        <div>
+                          <div className="text-sm text-slate-400">Сильная сторона</div>
+                          <div className="mt-1 text-2xl font-semibold text-white">SEO + коммерческие факторы</div>
+                        </div>
+                        <div className="h-px bg-white/10" />
+                        <div>
+                          <div className="text-sm text-slate-400">Формат работы</div>
+                          <div className="mt-1 text-2xl font-semibold text-white">Пошаговый план и приоритеты</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4">
-                  <div className="glass-panel interactive-card p-6">
-                    <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
-                      Персональный подход
-                    </div>
-                    <div className="mt-2 text-3xl font-semibold text-white">Стратегия, смыслы и рост заявок</div>
-                    <p className="mt-4 text-sm leading-7 text-slate-300">
-                      Работаю как стратег и исполнитель: смотрю на сайт глазами SEO-специалиста,
-                      маркетолога и владельца бизнеса, которому нужен ощутимый результат, а не
-                      просто красивые отчёты.
-                    </p>
-                  </div>
-
-                  <div className="grid gap-4">
-                    {founderHighlights.map((item) => {
-                      const Icon = item.icon
-                      return (
-                        <div key={item.title} className="glass-panel interactive-card p-5">
-                          <div className="flex items-start gap-4">
-                            <div className="mt-1 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-3 text-cyan-200">
-                              <Icon className="h-5 w-5" />
-                            </div>
-                            <div>
-                              <h3 className="text-xl font-semibold text-white">{item.title}</h3>
-                              <p className="mt-2 text-sm leading-7 text-slate-400">{item.text}</p>
-                            </div>
+                <div className="grid gap-4 md:grid-cols-3">
+                  {heroPillars.map((item) => {
+                    const Icon = item.icon
+                    return (
+                      <div key={item.title} className="glass-panel interactive-card p-5">
+                        <div className="flex items-start gap-4">
+                          <div className="mt-1 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-3 text-cyan-200">
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                            <p className="mt-2 text-sm leading-7 text-slate-400">{item.text}</p>
                           </div>
                         </div>
-                      )
-                    })}
-                  </div>
-
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-3xl border border-white/10 bg-black/20 p-4">
-                      <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Фокус</div>
-                      <div className="mt-2 text-xl font-semibold text-white">SEO</div>
-                    </div>
-                    <div className="rounded-3xl border border-white/10 bg-black/20 p-4">
-                      <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Сильная сторона</div>
-                      <div className="mt-2 text-xl font-semibold text-white">Оффер</div>
-                    </div>
-                    <div className="rounded-3xl border border-white/10 bg-black/20 p-4">
-                      <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Результат</div>
-                      <div className="mt-2 text-xl font-semibold text-white">Заявки</div>
-                    </div>
-                  </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </div>
@@ -334,8 +315,8 @@ export default async function HomePage() {
             </h2>
           </div>
           <p className="max-w-2xl text-sm leading-7 text-slate-400">
-            Поэтому я усиливаю не один отдельный фактор, а всю систему целиком: позиционирование,
-            SEO-структуру, ключевые посадочные страницы, контент и коммерческую подачу.
+            Поэтому усиливаю не один отдельный фактор, а всю систему целиком: позиционирование, SEO-структуру,
+            ключевые посадочные страницы, контент и коммерческую подачу.
           </p>
         </div>
 
@@ -366,8 +347,8 @@ export default async function HomePage() {
               </h2>
             </div>
             <p className="max-w-2xl text-sm leading-7 text-slate-400">
-              Можно стартовать с базового уровня, а можно сразу брать системное продвижение с
-              усилением оффера, структуры и контента.
+              Можно стартовать с базового уровня, а можно сразу брать системное продвижение с усилением оффера,
+              структуры и контента.
             </p>
           </div>
 
@@ -431,6 +412,7 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
+
           <div className="grid gap-5 md:grid-cols-2">
             {services.map((service) => (
               <div key={service.id} className="glass-panel interactive-card p-6">
@@ -504,7 +486,7 @@ export default async function HomePage() {
                 </div>
                 <h3 className="mt-6 text-3xl font-semibold text-white">{item.title}</h3>
                 <p className="mt-4 text-sm leading-7 text-slate-400">
-                  {item.description || item.content || 'Показываю, как меняется структура сайта, доверие и конверсия после правильной упаковки проекта.'}
+                  {item.description || item.content || 'Показываю, как меняются структура сайта, доверие и конверсия после правильной упаковки проекта.'}
                 </p>
               </div>
             ))
@@ -512,8 +494,7 @@ export default async function HomePage() {
             <div className="glass-panel p-8 lg:col-span-2">
               <h3 className="text-2xl font-semibold text-white">Блок кейсов готов к наполнению</h3>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
-                Следующий шаг для усиления продаж и SEO-доверия — добавить цифры, задачи клиента,
-                сделанные шаги и итоговый эффект от работы.
+                Следующий шаг для усиления продаж и SEO-доверия: добавить цифры, задачи клиента, сделанные шаги и итоговый эффект от работы.
               </p>
             </div>
           )}
@@ -578,48 +559,46 @@ export default async function HomePage() {
           {reviews.length > 0 ? (
             reviews.map((review) => (
               <div key={review.id} className="glass-panel interactive-card p-7">
-                <div className="flex gap-1 text-cyan-200">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <span key={i}>★</span>
-                  ))}
-                </div>
+                <div className="text-sm uppercase tracking-[0.24em] text-cyan-200">{review.author}</div>
                 <p className="mt-5 text-sm leading-7 text-slate-300">{review.text}</p>
-                <p className="mt-6 text-sm text-slate-500">— {review.author}</p>
+                {(review.company || review.position) && (
+                  <div className="mt-6 text-sm text-slate-500">
+                    {[review.company, review.position].filter(Boolean).join(', ')}
+                  </div>
+                )}
               </div>
             ))
           ) : (
             <div className="glass-panel p-7 md:col-span-3">
-              <p className="text-sm leading-7 text-slate-400">
-                Сюда стоит добавлять отзывы с именем, нишей клиента и кратким описанием результата,
-                чтобы усиливать доверие и конверсию.
+              <h3 className="text-2xl font-semibold text-white">Отзывы можно усилить реальными деталями</h3>
+              <p className="mt-4 text-sm leading-7 text-slate-400">
+                Добавьте имя клиента, компанию, задачу и конкретный результат, чтобы блок стал сильнее для продаж.
               </p>
             </div>
           )}
         </div>
       </section>
 
-      <section id="contact-form" className="container mx-auto px-4 py-20">
-        <div className="glass-panel overflow-hidden">
-          <div className="grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
+      <section id="contact-form" className="border-t border-white/10 bg-black/10">
+        <div className="container mx-auto px-4 py-20">
+          <div className="grid gap-8 overflow-hidden rounded-[36px] border border-white/10 bg-[linear-gradient(135deg,rgba(7,17,31,0.96),rgba(11,21,38,0.92))] lg:grid-cols-[0.9fr_1.1fr]">
             <div className="border-b border-white/10 p-8 lg:border-b-0 lg:border-r">
               <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Следующий шаг</p>
-              <h2 className="mt-4 text-4xl font-semibold text-white">
-                Оставьте заявку и получите разбор сайта с приоритетами на рост
+              <h2 className="mt-4 text-3xl font-semibold text-white md:text-5xl">
+                Обсудим проект и соберем понятный план роста
               </h2>
-              <p className="mt-5 max-w-xl text-sm leading-7 text-slate-400">
-                Если хотите усилить SEO-продвижение сайта, коммерческие факторы и итоговую
-                конверсию, начнём с аудита. После первой связи я покажу, какие страницы, запросы и
-                блоки доверия нужно усиливать в первую очередь.
+              <p className="mt-6 max-w-xl text-sm leading-7 text-slate-300">
+                После заявки покажу, что мешает сайту расти, где теряются обращения и какие действия дадут
+                заметный эффект в первую очередь.
               </p>
-              <div className="mt-8 grid gap-4 sm:grid-cols-2">
+
+              <div className="mt-8 space-y-4">
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <div className="flex items-center gap-3 text-white">
                     <Clock3 className="h-5 w-5 text-cyan-200" />
-                    <span className="font-medium">Быстрый ответ</span>
+                    <span className="font-medium">Быстрая реакция</span>
                   </div>
-                  <p className="mt-2 text-sm text-slate-400">
-                    Обычно отвечаю в ближайшее время после заявки.
-                  </p>
+                  <p className="mt-2 text-sm text-slate-400">Обычно отвечаю в ближайшее время после заявки.</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <div className="flex items-center gap-3 text-white">
@@ -632,6 +611,7 @@ export default async function HomePage() {
                 </div>
               </div>
             </div>
+
             <div className="p-8">
               <ContactForm />
             </div>
