@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight, Mail, MessageCircle, MessagesSquare } from 'lucide-react'
+import MobileMenu from '@/components/MobileMenu'
 import { prisma } from '@/lib/prisma'
 import { getWorkStatus } from '@/lib/work-status'
 
@@ -101,7 +102,7 @@ export default async function Header() {
           ) : null}
         </div>
 
-        <nav className="flex items-center justify-between gap-6 py-5">
+        <nav className="flex items-center justify-between gap-4 py-5">
           <Link href="/" className="flex items-center gap-3">
             <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-2xl border border-cyan-200 bg-white shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
               <Image src="/favicon-48.png" alt="Логотип Shelpakov Digital" width={28} height={28} className="h-7 w-7 object-contain" />
@@ -124,11 +125,24 @@ export default async function Header() {
 
           <a
             href="#contact-form"
-            className="inline-flex items-center gap-2 rounded-full border border-cyan-300 bg-cyan-50 px-4 py-2 text-sm font-medium text-cyan-800 transition hover:bg-cyan-100"
+            className="hidden items-center gap-2 rounded-full border border-cyan-300 bg-cyan-50 px-4 py-2 text-sm font-medium text-cyan-800 transition hover:bg-cyan-100 lg:inline-flex"
           >
             Обсудить проект
             <ArrowUpRight className="h-4 w-4" />
           </a>
+
+          <MobileMenu
+            menuItems={menuItems.map((item) => ({
+              id: String(item.id),
+              label: item.label,
+              url: item.url,
+            }))}
+            email={settings?.email || 'shelpakovzhenya@gmail.com'}
+            socialLinks={socialLinks.map((item) => ({
+              href: item.href,
+              label: item.label,
+            }))}
+          />
         </nav>
       </div>
     </header>
