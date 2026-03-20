@@ -1,6 +1,6 @@
-import { prisma } from '@/lib/prisma'
-import ReactMarkdown from 'react-markdown'
 import Image from 'next/image'
+import ReactMarkdown from 'react-markdown'
+import { prisma } from '@/lib/prisma'
 
 export default async function CasesPage() {
   let page: any = null
@@ -25,7 +25,8 @@ export default async function CasesPage() {
           {page?.h1 || 'Кейсы и примеры работ'}
         </h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-          {page?.description || 'Здесь можно показать, как меняется сайт после доработки структуры, оффера и SEO-основы.'}
+          {page?.description ||
+            'Здесь можно показать, как меняется сайт после доработки структуры, оффера и SEO-основы.'}
         </p>
       </section>
 
@@ -39,7 +40,9 @@ export default async function CasesPage() {
             )}
             <div className="p-6 md:p-8">
               <h2 className="text-2xl font-semibold text-slate-950">{caseItem.title}</h2>
-              {caseItem.description && <p className="mt-3 text-base leading-7 text-slate-600">{caseItem.description}</p>}
+              {caseItem.description && (
+                <p className="mt-3 text-base leading-7 text-slate-600">{caseItem.description}</p>
+              )}
               {caseItem.content && (
                 <div className="prose mt-5 max-w-none prose-slate">
                   <ReactMarkdown>{caseItem.content}</ReactMarkdown>
@@ -54,7 +57,7 @@ export default async function CasesPage() {
         <div className="page-card mt-8">
           <h2 className="text-2xl font-semibold text-slate-950">Кейсы появятся здесь</h2>
           <p className="mt-3 text-base leading-7 text-slate-600">
-            Лучше всего работают кейсы с задачей клиента, сроками, перечнем правок и итоговым результатом.
+            Лучше всего работают кейсы с задачей клиента, перечнем правок и итогом без выдуманных цифр.
           </p>
         </div>
       )}

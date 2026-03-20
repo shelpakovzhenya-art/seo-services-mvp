@@ -18,8 +18,8 @@ export default function ServicesCatalogSection({ compact = false }: ServicesCata
               SEO-услуги, собранные в понятную систему роста
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-8 text-slate-600">
-              Вместо списка действий здесь собраны отдельные форматы SEO-работ под разные бизнес-задачи: от диагностики и
-              технической базы до контента, локального продвижения и стратегического сопровождения.
+              Вместо списка действий здесь собраны отдельные форматы SEO-работ под разные бизнес-задачи: от диагностики
+              и технической базы до контента, локального продвижения и стратегического сопровождения.
             </p>
           </div>
 
@@ -38,8 +38,8 @@ export default function ServicesCatalogSection({ compact = false }: ServicesCata
           {!compact && (
             <div className="rounded-[28px] border border-orange-100 bg-gradient-to-r from-orange-50 via-white to-cyan-50 p-6">
               <p className="text-sm leading-7 text-slate-600">
-                Формат работы и стоимость рассчитываются после анализа проекта. Это помогает не продавать лишние задачи и
-                сразу показать, где у сайта реальные точки роста.
+                Формат работ и стоимость рассчитываются после анализа проекта. Это помогает не продавать лишние задачи
+                и сразу показать, где у сайта реальные точки роста.
               </p>
               <a href="#contact-form" className="mt-4 inline-flex">
                 <Button className="rounded-full">Получить ориентир по формату работ</Button>

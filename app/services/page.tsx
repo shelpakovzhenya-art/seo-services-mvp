@@ -51,8 +51,16 @@ export default function ServicesIndexPage() {
 
   return (
     <>
-      <Script id="services-faq-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      <Script id="services-breadcrumbs-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }} />
+      <Script
+        id="services-faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <Script
+        id="services-breadcrumbs-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
+      />
 
       <div className="page-shell">
         <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500">
@@ -67,7 +75,9 @@ export default function ServicesIndexPage() {
           <div className="grid gap-8 lg:grid-cols-[1.04fr_0.96fr]">
             <div>
               <span className="warm-chip">SEO-услуги</span>
-              <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{pageTitle}</h1>
+              <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">
+                {pageTitle}
+              </h1>
               <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
                 Подберите подходящий формат работы под задачу бизнеса: от аудита и технической базы до системного
                 продвижения, контента и консультационной поддержки.
@@ -80,7 +90,11 @@ export default function ServicesIndexPage() {
                   </Button>
                 </a>
                 <Link href="/">
-                  <Button size="lg" variant="outline" className="rounded-full border-slate-300 bg-white px-7 text-slate-900 hover:bg-slate-50">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="rounded-full border-slate-300 bg-white px-7 text-slate-900 hover:bg-slate-50"
+                  >
                     Вернуться на главную
                   </Button>
                 </Link>
@@ -97,7 +111,8 @@ export default function ServicesIndexPage() {
                   Если проекту нужен системный рост, логичнее смотреть в сторону комплексного SEO-продвижения.
                 </div>
                 <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
-                  Если есть конкретное ограничение, можно выбрать точечную услугу: техническое SEO, контент, локальное SEO или консалтинг.
+                  Если есть конкретное ограничение, можно выбрать точечную услугу: техническое SEO, контент, локальное
+                  SEO или консалтинг.
                 </div>
               </div>
             </div>
@@ -129,13 +144,19 @@ export default function ServicesIndexPage() {
           <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
             <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Консультация</p>
-              <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">Получить консультацию по выбору услуги</h2>
+              <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
+                Получить консультацию по выбору услуги
+              </h2>
               <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">
                 Коротко опишите задачу, и я подскажу, с какого формата работ логичнее начать именно в вашем проекте.
               </p>
               <div className="mt-8 space-y-4">
-                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">Ответим в течение дня.</div>
-                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">Покажем точки роста и следующий шаг без лишних обязательств.</div>
+                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
+                  Ответим в течение дня.
+                </div>
+                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
+                  Покажем точки роста и следующий шаг без лишних обязательств.
+                </div>
               </div>
             </div>
             <div className="p-8">

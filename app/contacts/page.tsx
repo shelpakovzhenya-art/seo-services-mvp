@@ -1,7 +1,7 @@
-import { prisma } from '@/lib/prisma'
-import ContactForm from '@/components/ContactForm'
-import { Mail, Clock } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import { Clock, Mail } from 'lucide-react'
+import ContactForm from '@/components/ContactForm'
+import { prisma } from '@/lib/prisma'
 
 export default async function ContactsPage() {
   let page: any = null
@@ -24,7 +24,8 @@ export default async function ContactsPage() {
           {page?.h1 || 'Связаться по проекту'}
         </h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-          {page?.description || 'Если хотите обсудить сайт, аудит или продвижение, оставьте заявку или напишите напрямую.'}
+          {page?.description ||
+            'Если хотите обсудить сайт, аудит или продвижение, оставьте заявку или напишите напрямую.'}
         </p>
       </section>
 

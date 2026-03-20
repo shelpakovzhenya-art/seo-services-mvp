@@ -1,5 +1,16 @@
 import Link from 'next/link'
-import { ArrowRight, BarChart3, Building2, Check, Clock3, FileText, Gem, LineChart, Rocket, ShieldCheck } from 'lucide-react'
+import {
+  ArrowRight,
+  BarChart3,
+  Building2,
+  Check,
+  Clock3,
+  FileText,
+  Gem,
+  LineChart,
+  Rocket,
+  ShieldCheck,
+} from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { Button } from '@/components/ui/button'
 import ContactForm from '@/components/ContactForm'
@@ -50,7 +61,8 @@ const packageCards = [
   {
     name: 'Старт',
     price: '15 000 ₽',
-    accent: 'Когда нужно быстро понять слабые места сайта и получить понятный список первых шагов.',
+    accent:
+      'Когда нужно быстро понять слабые места сайта и получить понятный список первых шагов.',
     icon: Rocket,
     items: [
       'Базовый SEO-аудит сайта',
@@ -62,7 +74,8 @@ const packageCards = [
   {
     name: 'Оптимальный',
     price: '30 000 ₽',
-    accent: 'Когда проекту уже нужен рабочий план усиления ключевых страниц, спроса и коммерческой подачи.',
+    accent:
+      'Когда проекту уже нужен рабочий план усиления ключевых страниц, спроса и коммерческой подачи.',
     icon: Gem,
     items: [
       'Всё из тарифа «Старт»',
@@ -74,7 +87,8 @@ const packageCards = [
   {
     name: 'Про',
     price: '50 000 ₽',
-    accent: 'Когда нужен более глубокий контур роста: структура, контентные гипотезы и сопровождение проекта.',
+    accent:
+      'Когда нужен более глубокий контур роста: структура, контентные гипотезы и сопровождение проекта.',
     icon: BarChart3,
     items: [
       'Всё из тарифа «Оптимальный»',
@@ -137,21 +151,33 @@ export default async function HomePage() {
     <div className="overflow-hidden">
       <section className="section-grid relative border-b border-orange-100">
         <div className="container relative mx-auto px-4 pb-20 pt-16 md:pb-24 md:pt-20">
-          <div className="hero-panel relative overflow-hidden rounded-[40px] border border-white/70 px-6 py-8 md:px-10 md:py-10">
-            <div className="hero-orb float-slow left-[-24px] top-10 h-28 w-28 bg-[radial-gradient(circle,rgba(255,163,102,0.34),rgba(255,163,102,0))]" />
-            <div className="hero-orb float-reverse right-10 top-[-18px] h-24 w-24 bg-[radial-gradient(circle,rgba(56,189,248,0.28),rgba(56,189,248,0))]" />
-            <div className="hero-orb pulse-glow bottom-10 right-[-12px] h-36 w-36 bg-[radial-gradient(circle,rgba(255,214,153,0.28),rgba(255,214,153,0))]" />
-            <div className="pointer-events-none absolute left-8 top-8 h-14 w-14 rotate-12 rounded-[18px] border border-cyan-200/70 bg-white/70 shadow-[0_12px_24px_rgba(56,189,248,0.12)] float-slow" />
-            <div className="pointer-events-none absolute bottom-20 right-24 h-4 w-24 rounded-full bg-gradient-to-r from-orange-300/60 via-cyan-300/60 to-transparent float-reverse" />
+          <div className="hero-panel hero-sheen relative overflow-hidden rounded-[40px] border border-white/70 px-6 py-8 md:px-10 md:py-10 lg:px-12 lg:py-12">
+            <div className="hero-grid-mask" />
+            <div className="hero-orb float-slow left-[-30px] top-10 h-28 w-28 bg-[radial-gradient(circle,rgba(255,163,102,0.34),rgba(255,163,102,0))]" />
+            <div className="hero-orb float-reverse right-10 top-[-16px] h-24 w-24 bg-[radial-gradient(circle,rgba(56,189,248,0.28),rgba(56,189,248,0))]" />
+            <div className="hero-orb pulse-glow bottom-8 right-[-20px] h-40 w-40 bg-[radial-gradient(circle,rgba(255,214,153,0.3),rgba(255,214,153,0))]" />
+            <div className="hero-fragment drift-right right-[7%] top-[14%] hidden md:flex">
+              <span className="hero-fragment-line w-16" />
+              <span className="hero-fragment-line w-8" />
+            </div>
+            <div className="hero-fragment drift-left left-[56%] top-[26%] hidden lg:flex">
+              <span className="hero-fragment-dot" />
+              <span className="hero-fragment-line w-20" />
+            </div>
+            <div className="hero-fragment float-slow bottom-[20%] right-[18%] hidden md:flex">
+              <span className="hero-fragment-line w-10" />
+              <span className="hero-fragment-line w-24" />
+            </div>
+            <div className="hero-beam drift-right" />
 
             <div className="relative max-w-5xl">
               <span className="warm-chip">SEO-продвижение под заявки</span>
-              <h1 className="mt-6 max-w-5xl text-5xl font-semibold leading-[0.98] text-slate-950 md:text-7xl">
+              <h1 className="mt-6 max-w-5xl text-5xl font-semibold leading-[0.98] tracking-[-0.03em] text-slate-950 md:text-7xl">
                 SEO и структура сайта, которые помогают получать больше обращений, а не просто расти по позициям.
               </h1>
               <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600 md:text-xl">
-                Помогаю бизнесу усиливать сайт под поиск и под клиента: дорабатываю ключевые страницы, оффер, структуру,
-                коммерческие факторы и логику заявки, чтобы органика становилась каналом роста.
+                Помогаю бизнесу усиливать сайт под поиск и под клиента: дорабатываю ключевые страницы, оффер,
+                структуру, коммерческие факторы и логику заявки, чтобы органика становилась каналом роста.
               </p>
 
               <div className="mt-10 flex flex-wrap gap-4">
@@ -173,14 +199,23 @@ export default async function HomePage() {
               </div>
 
               <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate-600">
-                <span className="rounded-full border border-orange-200 bg-white px-4 py-2">Быстрый ответ по заявке</span>
-                <span className="rounded-full border border-orange-200 bg-white px-4 py-2">План работ после созвона</span>
-                <span className="rounded-full border border-orange-200 bg-white px-4 py-2">Фокус на заявках и доверии</span>
+                <span className="rounded-full border border-orange-200 bg-white/90 px-4 py-2 shadow-sm">
+                  Быстрый ответ по заявке
+                </span>
+                <span className="rounded-full border border-orange-200 bg-white/90 px-4 py-2 shadow-sm">
+                  План работ после созвона
+                </span>
+                <span className="rounded-full border border-orange-200 bg-white/90 px-4 py-2 shadow-sm">
+                  Фокус на заявках и доверии
+                </span>
               </div>
 
               <div className="mt-10 grid gap-4 md:grid-cols-3">
                 {trustMetrics.map((metric) => (
-                  <div key={metric.value} className="rounded-[24px] border border-orange-100 bg-white/80 p-5 backdrop-blur-sm">
+                  <div
+                    key={metric.value}
+                    className="rounded-[24px] border border-orange-100 bg-white/82 p-5 shadow-[0_18px_35px_rgba(138,103,63,0.06)] backdrop-blur-sm"
+                  >
                     <div className="text-2xl font-semibold text-slate-950">{metric.value}</div>
                     <div className="mt-2 text-sm leading-6 text-slate-600">{metric.label}</div>
                   </div>
@@ -200,7 +235,8 @@ export default async function HomePage() {
             </h2>
           </div>
           <p className="max-w-2xl text-sm leading-7 text-slate-600">
-            Поэтому работа строится вокруг связки: спрос, структура, коммерческие блоки, тексты, доверие и путь к заявке.
+            Поэтому работа строится вокруг связки: спрос, структура, коммерческие блоки, тексты, доверие и путь
+            к заявке.
           </p>
         </div>
 
@@ -224,7 +260,7 @@ export default async function HomePage() {
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Тарифы</p>
               <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">
-                Форматы работы под разную задачу
+                Форматы работ под разную задачу
               </h2>
             </div>
             <p className="max-w-2xl text-sm leading-7 text-slate-600">
@@ -256,7 +292,10 @@ export default async function HomePage() {
 
                   <div className="mt-6 flex-1 space-y-3">
                     {pkg.items.map((item) => (
-                      <div key={item} className="flex items-start gap-3 rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">
+                      <div
+                        key={item}
+                        className="flex items-start gap-3 rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3"
+                      >
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan-700" />
                         <span className="text-sm leading-6 text-slate-700">{item}</span>
                       </div>
@@ -285,7 +324,10 @@ export default async function HomePage() {
               </h2>
               <div className="mt-8 space-y-4">
                 {industryBlocks.map((item) => (
-                  <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-slate-700">
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-slate-700"
+                  >
                     {item}
                   </div>
                 ))}
@@ -331,15 +373,18 @@ export default async function HomePage() {
                 </div>
                 <h3 className="mt-6 text-3xl font-semibold text-slate-950">{item.title}</h3>
                 <p className="mt-4 text-sm leading-7 text-slate-600">
-                  {item.description || item.content || 'Разбор проекта, в котором доработка структуры, контента и ключевых страниц усилила органический потенциал сайта.'}
+                  {item.description ||
+                    item.content ||
+                    'Разбор проекта, в котором доработка структуры, контента и ключевых страниц усилила органический потенциал сайта.'}
                 </p>
               </div>
             ))
           ) : (
             <div className="glass-panel p-8 lg:col-span-2">
-              <h3 className="text-2xl font-semibold text-slate-950">Кейсы появятся здесь отдельными карточками</h3>
+              <h3 className="text-2xl font-semibold text-slate-950">Кейсы можно показать отдельными проектами</h3>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
-                Этот блок подготовлен для реальных кейсов с задачей проекта, ходом работ и итоговыми изменениями без выдуманных цифр.
+                Этот блок подготовлен под реальные разборы с задачей проекта, ходом работ и итоговыми изменениями без
+                выдуманных цифр.
               </p>
             </div>
           )}
@@ -372,15 +417,17 @@ export default async function HomePage() {
                   <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Материал</div>
                   <h3 className="mt-4 text-2xl font-semibold text-slate-950">{post.title}</h3>
                   <p className="mt-4 text-sm leading-7 text-slate-600">
-                    {post.excerpt || 'Материал, который помогает клиенту лучше понять подход, ошибки и точки роста сайта.'}
+                    {post.excerpt ||
+                      'Материал, который помогает клиенту лучше понять подход, ошибки и точки роста сайта.'}
                   </p>
                 </Link>
               ))
             ) : (
               <div className="glass-panel p-7 md:col-span-3">
-                <h3 className="text-2xl font-semibold text-slate-950">Блог усилит доверие и поисковое покрытие</h3>
+                <h3 className="text-2xl font-semibold text-slate-950">Блог усиливает доверие и поисковое покрытие</h3>
                 <p className="mt-4 text-sm leading-7 text-slate-600">
-                  Здесь можно показывать экспертные материалы: разборы ошибок, практику по SEO и ответы на частые вопросы клиентов.
+                  Здесь лучше всего работают экспертные материалы: разборы ошибок, практика по SEO и ответы на частые
+                  вопросы клиентов.
                 </p>
               </div>
             )}
@@ -413,9 +460,9 @@ export default async function HomePage() {
             ))
           ) : (
             <div className="glass-panel p-7 md:col-span-3">
-              <h3 className="text-2xl font-semibold text-slate-950">Отзывы можно показать отдельными блоками</h3>
+              <h3 className="text-2xl font-semibold text-slate-950">Отзывы можно показать отдельными карточками</h3>
               <p className="mt-4 text-sm leading-7 text-slate-600">
-                Лучше всего здесь будут работать реальные отзывы с именем, компанией и коротким контекстом задачи.
+                Лучше всего здесь работают реальные отзывы с именем, компанией и коротким контекстом задачи.
               </p>
             </div>
           )}
@@ -447,7 +494,9 @@ export default async function HomePage() {
                     <ShieldCheck className="h-5 w-5 text-cyan-700" />
                     <span className="font-medium">Конкретные выводы</span>
                   </div>
-                  <p className="mt-2 text-sm text-slate-600">Без общих фраз: только понятные точки роста и следующий шаг.</p>
+                  <p className="mt-2 text-sm text-slate-600">
+                    Без общих фраз: только понятные точки роста и следующий шаг.
+                  </p>
                 </div>
               </div>
             </div>

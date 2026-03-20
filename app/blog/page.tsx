@@ -1,6 +1,6 @@
-import { prisma } from '@/lib/prisma'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
+import { prisma } from '@/lib/prisma'
 
 export default async function BlogPage() {
   let posts: any[] = []
@@ -38,9 +38,7 @@ export default async function BlogPage() {
                 <h2 className="text-2xl font-semibold text-slate-950">{post.title}</h2>
                 {post.excerpt && <p className="mt-3 text-slate-600">{post.excerpt}</p>}
                 {post.publishedAt && (
-                  <p className="mt-4 text-sm text-slate-400">
-                    {new Date(post.publishedAt).toLocaleDateString('ru-RU')}
-                  </p>
+                  <p className="mt-4 text-sm text-slate-400">{new Date(post.publishedAt).toLocaleDateString('ru-RU')}</p>
                 )}
               </div>
             </article>

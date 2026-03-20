@@ -1,5 +1,5 @@
-import { prisma } from '@/lib/prisma'
 import ReactMarkdown from 'react-markdown'
+import { prisma } from '@/lib/prisma'
 
 export default async function ReviewsPage() {
   let page: any = null
@@ -27,7 +27,8 @@ export default async function ReviewsPage() {
           {page?.h1 || 'Отзывы и подтверждение работы'}
         </h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-          {page?.description || 'Отзывы работают сильнее, когда в них есть конкретика: задача, процесс и результат.'}
+          {page?.description ||
+            'Отзывы работают сильнее, когда в них есть конкретика: задача, процесс и результат.'}
         </p>
       </section>
 
@@ -35,7 +36,9 @@ export default async function ReviewsPage() {
         <div className="page-card mt-8" dangerouslySetInnerHTML={{ __html: settings.yandexReviewsEmbed }} />
       ) : (
         <div className="page-card mt-8 border-yellow-200 bg-yellow-50/90">
-          <p className="text-yellow-800">Подключите виджет Яндекс Отзывов в админке, чтобы добавить внешний блок доверия.</p>
+          <p className="text-yellow-800">
+            Подключите виджет Яндекс Отзывов в админке, чтобы добавить внешний блок доверия.
+          </p>
         </div>
       )}
 
