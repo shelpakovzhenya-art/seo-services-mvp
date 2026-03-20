@@ -37,6 +37,7 @@ model Page {
   slug        String   @unique
   title       String
   description String?
+  keywords    String?
   h1          String?
   content     String?  @default("")
   parentId    String?  // For sections/subsections

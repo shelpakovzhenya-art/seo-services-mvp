@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 
 export default function AdminLoginPage() {
   const router = useRouter()
-  const [formData, setFormData] = useState({ username: '', password: '' })
+  const [formData, setFormData] = useState({ username: '', password: '', remember: true })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -61,6 +61,8 @@ export default function AdminLoginPage() {
             <input
               type="text"
               id="username"
+              name="username"
+              autoComplete="username"
               required
               value={formData.username}
               onChange={(e) => setFormData({ ...formData, username: e.target.value })}
@@ -74,12 +76,23 @@ export default function AdminLoginPage() {
             <input
               type="password"
               id="password"
+              name="password"
+              autoComplete="current-password"
               required
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
+          <label className="flex items-center gap-2 text-sm text-gray-600">
+            <input
+              type="checkbox"
+              checked={formData.remember}
+              onChange={(e) => setFormData({ ...formData, remember: e.target.checked })}
+              className="h-4 w-4"
+            />
+            Запомнить меня на этом устройстве
+          </label>
           {error && (
             <div className="bg-red-50 text-red-800 p-3 rounded-md text-sm">
               {error}

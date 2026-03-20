@@ -68,13 +68,13 @@ export async function verifyCredentials(username: string, password: string): Pro
   }
 }
 
-export async function createSession() {
+export async function createSession(rememberForDays = 7) {
   const cookieStore = await cookies()
   cookieStore.set('admin-auth', 'authenticated', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7 // 7 days
+    maxAge: 60 * 60 * 24 * rememberForDays
   })
 }
 

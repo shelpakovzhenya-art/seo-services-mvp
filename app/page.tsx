@@ -20,6 +20,14 @@ import { prisma } from '@/lib/prisma'
 import { Button } from '@/components/ui/button'
 import ContactForm from '@/components/ContactForm'
 
+const defaultHomeMetadata = {
+  title: 'Shelpakov Digital',
+  description:
+    'SEO-продвижение сайтов, SEO-аудит, коммерческие факторы и упаковка сайта под рост заявок.',
+  keywords:
+    'seo-продвижение сайтов, поисковое продвижение, seo-аудит, коммерческие факторы, рост заявок',
+}
+
 const trustMetrics = [
   { value: 'SEO + GEO', label: 'Продвижение под классический поиск и новую AI-выдачу' },
   { value: 'B2B / Экспертность', label: 'Упор на сложные ниши, дорогие услуги и сильное позиционирование' },
@@ -500,18 +508,28 @@ export default async function HomePage() {
 export async function generateMetadata() {
   const { getSiteUrl } = await import('@/lib/site-url')
   const siteUrl = getSiteUrl()
+  const homePage = await prisma.page.findUnique({
+    where: { slug: 'home' },
+  })
+  const title = homePage?.title || defaultHomeMetadata.title
+  const description = homePage?.description || defaultHomeMetadata.description
+  const keywords = homePage?.keywords || defaultHomeMetadata.keywords
 
   return {
-    title: 'Shelpakov Digital',
-    description:
+    title: { absolute: title },
+    /* description:
       'SEO-продвижение сайтов, SEO-аудит, коммерческие факторы и упаковка сайта под рост заявок.',
+    */ description,
+    keywords: keywords.split(',').map((item) => item.trim()).filter(Boolean),
     alternates: {
       canonical: siteUrl,
     },
     openGraph: {
-      title: 'Shelpakov Digital',
+      /* title: 'Shelpakov Digital',
       description:
         'Продвижение, коммерческие факторы, экспертный контент и упаковка сайта под рост заявок.',
+      */ title,
+      description,
       url: siteUrl,
       type: 'website',
     },

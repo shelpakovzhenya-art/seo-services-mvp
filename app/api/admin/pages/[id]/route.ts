@@ -15,8 +15,10 @@ export async function PUT(
     const page = await prisma.page.update({
       where: { id: params.id },
       data: {
+        slug: body.slug,
         title: body.title,
         description: body.description || null,
+        keywords: body.keywords || null,
         h1: body.h1 || null,
         content: body.content || null,
         parentId: body.parentId || null,

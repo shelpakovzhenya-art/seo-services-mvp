@@ -19,6 +19,7 @@ export default async function AdminPagesPage() {
     slug: page.slug,
     title: page.title,
     description: page.description,
+    keywords: page.keywords,
     h1: page.h1,
     content: page.content,
     parentId: page.parentId,

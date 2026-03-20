@@ -19,6 +19,7 @@ interface Page {
   slug: string
   title: string
   description: string | null
+  keywords?: string | null
   h1: string | null
   content: string | null
   parentId: string | null
@@ -119,6 +120,7 @@ export default function PagesManager({ initialPages }: { initialPages: Page[] })
                   slug: `${page.slug}-subsection`,
                   title: '',
                   description: '',
+                  keywords: '',
                   h1: '',
                   content: '',
                   parentId: page.id,
@@ -146,6 +148,7 @@ export default function PagesManager({ initialPages }: { initialPages: Page[] })
             slug: '', 
             title: '', 
             description: '', 
+            keywords: '',
             h1: '', 
             content: '', 
             parentId: null,
@@ -204,6 +207,7 @@ function PageForm({
     slug: string
     title: string
     description: string
+    keywords: string
     h1: string
     content: string
     parentId: string | null
@@ -212,6 +216,7 @@ function PageForm({
     slug: page.slug || '',
     title: page.title || '',
     description: page.description || '',
+    keywords: page.keywords || '',
     h1: page.h1 || '',
     content: page.content || '',
     parentId: page.parentId || null,
@@ -230,19 +235,21 @@ function PageForm({
         {isNew ? 'Новый раздел' : `Редактировать страницу: ${page.slug}`}
       </h2>
       <div className="space-y-4">
-        {isNew && (
-          <div>
-            <label className="block text-sm font-medium mb-1">Slug (URL)</label>
-            <input
-              type="text"
-              value={formData.slug}
-              onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-              className="w-full px-4 py-2 border rounded-md"
-              required
-              placeholder="example-page"
-            />
-          </div>
-        )}
+        <div>
+          <label className="block text-sm font-medium mb-1">Slug (URL)</label>
+          <input
+            type="text"
+            value={formData.slug}
+            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+            className="w-full px-4 py-2 border rounded-md"
+            required
+            disabled={page.slug === 'home'}
+            placeholder="example-page"
+          />
+          {page.slug === 'home' && (
+            <p className="mt-1 text-xs text-gray-500">Для главной страницы slug фиксирован и всегда равен `home`.</p>
+          )}
+        </div>
         <div>
           <label className="block text-sm font-medium mb-1">Родительский раздел</label>
           <select
@@ -282,6 +289,16 @@ function PageForm({
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             className="w-full px-4 py-2 border rounded-md"
             rows={2}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Keywords (SEO)</label>
+          <textarea
+            value={formData.keywords}
+            onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
+            className="w-full px-4 py-2 border rounded-md"
+            rows={2}
+            placeholder="seo-продвижение сайтов, seo-аудит, коммерческие факторы"
           />
         </div>
         <div>

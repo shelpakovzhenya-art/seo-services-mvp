@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { username, password } = body
+    const { username, password, remember } = body
 
     if (!username || !password) {
       return NextResponse.json(
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    await createSession()
+    await createSession(remember ? 30 : 7)
     console.log('✅ Login successful for:', trimmedUsername)
 
     return NextResponse.json({ success: true })
