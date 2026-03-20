@@ -14,8 +14,8 @@ export const metadata: Metadata = {
     default: "Shelpakov Digital",
     template: "%s | Shelpakov Digital"
   },
-  description: "Shelpakov Digital builds SEO systems, authority content and conversion architecture for ambitious brands.",
-  keywords: ["SEO", "digital strategy", "content systems", "conversion design", "growth marketing"],
+  description: "SEO-продвижение сайтов, SEO-аудит, контент, коммерческие факторы и рост заявок для бизнеса.",
+  keywords: ["SEO-продвижение сайтов", "поисковое продвижение", "SEO-аудит", "коммерческие факторы", "рост заявок"],
   authors: [{ name: "Shelpakov Digital" }],
   creator: "Shelpakov Digital",
   publisher: "Shelpakov Digital",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: "Shelpakov Digital",
     title: "Shelpakov Digital",
-    description: "SEO systems, authority content and digital growth strategy.",
+    description: "SEO-продвижение сайтов, SEO-аудит и упаковка сайта под рост заявок.",
   },
   robots: {
     index: true,

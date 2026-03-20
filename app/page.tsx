@@ -139,10 +139,10 @@ export default async function HomePage() {
                 Shelpakov Digital
               </span>
               <h1 className="mt-6 max-w-4xl text-5xl font-semibold leading-[1.02] text-white md:text-7xl">
-                Продвижение и упаковка сайта, которые приводят не просто трафик, а заявки.
+                SEO-продвижение сайтов и упаковка, которые приводят не просто трафик, а заявки.
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl">
-                Я собираю SEO, коммерческие факторы, экспертный контент и структуру сайта в единую систему роста. Сайт должен выглядеть дорого, вызывать доверие и вести клиента к контакту.
+                Я соединяю поисковое продвижение сайтов, SEO-аудит, коммерческие факторы, экспертный контент и структуру сайта в единую систему роста. Сайт должен лучше ранжироваться, вызывать доверие и приводить больше обращений.
               </p>
               <div className="mt-10 flex flex-wrap gap-4">
                 <a href="#contact-form">
@@ -241,7 +241,7 @@ export default async function HomePage() {
             </h2>
           </div>
           <p className="max-w-2xl text-sm leading-7 text-slate-400">
-            Основная проблема была в том, что сайт выглядел как шаблонный MVP: слабое первое впечатление, мало доверительных блоков, недостаточно прямых коммерческих сигналов и нет ясного сценария для клиента.
+            Основная проблема была в том, что сайт выглядел как шаблонный MVP: слабое первое впечатление, мало доверительных блоков, недостаточно прямых коммерческих сигналов и нет ясного сценария для клиента. Для SEO и конверсии это означает слабую релевантность, низкое доверие и потерю части заявок.
           </p>
         </div>
 
@@ -289,9 +289,9 @@ export default async function HomePage() {
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
             <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Услуги и форматы работы</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">
-              Не просто список услуг, а понятные точки входа для клиента
-            </h2>
+              <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">
+                Не просто список услуг, а понятные точки входа для клиента
+              </h2>
             <div className="mt-8 space-y-4">
               {cooperationFormats.map((item) => (
                 <div key={item} className="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-slate-300">
@@ -353,9 +353,9 @@ export default async function HomePage() {
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.28em] text-cyan-200">Кейсы и доказательства</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">
-              Сильный сайт должен показывать результат, а не только обещать его
-            </h2>
+              <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">
+                Сильный сайт должен показывать результат, а не только обещать его
+              </h2>
           </div>
           <Link href="/cases" className="inline-flex items-center gap-2 text-cyan-200 transition hover:text-white">
             Открыть все кейсы
@@ -468,7 +468,7 @@ export default async function HomePage() {
                 Оставьте заявку и получите разбор сайта с приоритетами на рост
               </h2>
               <p className="mt-5 max-w-xl text-sm leading-7 text-slate-400">
-                Если хотите, чтобы сайт выглядел сильнее, собирал больше доверия и приводил больше обращений, начнём с аудита. После первой связи я покажу, какие страницы и коммерческие факторы нужно усиливать в первую очередь.
+                Если хотите усилить SEO-продвижение сайта, коммерческие факторы и итоговую конверсию, начнём с аудита. После первой связи я покажу, какие страницы, запросы и блоки доверия нужно усиливать в первую очередь.
               </p>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -504,7 +504,7 @@ export async function generateMetadata() {
   return {
     title: 'Shelpakov Digital',
     description:
-      'Продвижение, коммерческие факторы, экспертный контент и упаковка сайта под рост заявок.',
+      'SEO-продвижение сайтов, SEO-аудит, коммерческие факторы и упаковка сайта под рост заявок.',
     alternates: {
       canonical: siteUrl,
     },
