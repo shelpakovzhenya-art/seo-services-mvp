@@ -41,17 +41,17 @@ export default async function Footer() {
               Shelpakov Digital
             </span>
             <h3 className="max-w-xl text-3xl font-semibold text-white">
-              Growth architecture for SEO, content systems and conversion.
+              Система роста для SEO, контента и конверсии.
             </h3>
             <p className="max-w-xl text-sm leading-7 text-slate-400">
               {settings?.footerText ||
-                'We design digital growth systems for ambitious brands: strategy, search visibility, commercial content and conversion-focused landing structures.'}
+                'Помогаю упаковать сайт так, чтобы он сильнее выглядел, лучше продвигался и приводил больше обращений.'}
             </p>
           </div>
 
           <div>
             <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">
-              Navigation
+              Навигация
             </h3>
             <ul className="space-y-3">
               {menuItems.map((item) => (
@@ -66,23 +66,23 @@ export default async function Footer() {
 
           <div>
             <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">
-              Contact
+              Контакты
             </h3>
             <div className="space-y-3 text-sm">
-              <p>{settings?.workSchedule || 'Mon-Fri 09:00-17:00'}</p>
+              <p>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</p>
               <a
                 href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`}
                 className="transition hover:text-white"
               >
                 {settings?.email || 'shelpakovzhenya@gmail.com'}
               </a>
-              <p className="text-slate-500">Strategy calls, audit sessions, growth plans.</p>
+              <p className="text-slate-500">Аудит, стратегия, упаковка сайта и рост заявок.</p>
             </div>
           </div>
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-6 text-sm text-slate-500">
-          <p>&copy; {currentYear} Shelpakov Digital. All rights reserved.</p>
+          <p>&copy; {currentYear} Shelpakov Digital. Все права защищены.</p>
         </div>
       </div>
     </footer>

@@ -1,0 +1,38 @@
+<svg width="900" height="1100" viewBox="0 0 900 1100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1100" fill="#07111F"/>
+  <circle cx="713" cy="177" r="158" fill="url(#paint0_radial)"/>
+  <circle cx="248" cy="300" r="210" fill="url(#paint1_radial)"/>
+  <path d="M629 182C744.98 182 839 276.02 839 392V1100H419V392C419 276.02 513.02 182 629 182Z" fill="url(#paint2_linear)"/>
+  <path d="M250 298C250 179.813 345.813 84 464 84C582.187 84 678 179.813 678 298C678 416.187 582.187 512 464 512C345.813 512 250 416.187 250 298Z" fill="#D9C7BE"/>
+  <path d="M317 264C317 180.605 384.605 113 468 113C551.395 113 619 180.605 619 264V320H317V264Z" fill="#1B202A"/>
+  <path d="M300 717C300 606.543 389.543 517 500 517H558C668.457 517 758 606.543 758 717V1100H300V717Z" fill="#111827"/>
+  <path d="M318 636C346 589 409 550 484 550C559 550 630 590 666 641L598 783H385L318 636Z" fill="#185A60"/>
+  <rect x="388" y="706" width="360" height="232" rx="26" fill="#0B1220" stroke="#4FD1E6" stroke-opacity="0.35" stroke-width="4"/>
+  <rect x="409" y="727" width="318" height="161" rx="16" fill="#0F1B31"/>
+  <path d="M529 759L582 812L529 865" stroke="#56E0F4" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M608 865H660" stroke="#56E0F4" stroke-width="18" stroke-linecap="round"/>
+  <rect x="478" y="937" width="179" height="18" rx="9" fill="#1B2C46"/>
+  <path d="M386 774C386 740.863 412.863 714 446 714H492V805H386V774Z" fill="#101725"/>
+  <rect x="355" y="225" width="93" height="116" rx="46.5" stroke="#18202E" stroke-width="12"/>
+  <rect x="487" y="225" width="93" height="116" rx="46.5" stroke="#18202E" stroke-width="12"/>
+  <path d="M448 279H487" stroke="#18202E" stroke-width="12" stroke-linecap="round"/>
+  <path d="M460 352C485.341 372.8 510.682 372.8 536.023 352" stroke="#9D7367" stroke-width="10" stroke-linecap="round"/>
+  <path d="M324 1100C345.531 1038.12 404.355 994 473.5 994H622.5C691.645 994 750.469 1038.12 772 1100H324Z" fill="#0A101C"/>
+  <text x="74" y="944" fill="#E6F8FF" font-family="Segoe UI, Arial, sans-serif" font-size="42" font-weight="600">Евгений Шелпаков</text>
+  <text x="74" y="991" fill="#7FAFC1" font-family="Segoe UI, Arial, sans-serif" font-size="26">Shelpakov Digital</text>
+  <text x="74" y="1033" fill="#7FAFC1" font-family="Segoe UI, Arial, sans-serif" font-size="26">SEO • Структура сайта • Конверсия</text>
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(713 177) rotate(90) scale(158)">
+      <stop stop-color="#31D5F0" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#31D5F0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="paint1_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(248 300) rotate(90) scale(210)">
+      <stop stop-color="#2D5BFF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#2D5BFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="paint2_linear" x1="629" y1="182" x2="629" y2="1100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101A2D"/>
+      <stop offset="1" stop-color="#0A111E"/>
+    </linearGradient>
+  </defs>
+</svg>

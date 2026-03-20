@@ -45,7 +45,7 @@ export default async function Header() {
             <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-cyan-200">
               Shelpakov Digital
             </span>
-            <span>{settings?.workSchedule || 'Mon-Fri 09:00-17:00'}</span>
+            <span>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</span>
             <a
               href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`}
               className="inline-flex items-center gap-2 transition hover:text-white"
@@ -115,7 +115,7 @@ export default async function Header() {
                 Shelpakov Digital
               </span>
               <span className="text-xs uppercase tracking-[0.24em] text-slate-400">
-                SEO systems for growth
+                SEO, структура сайта, заявки
               </span>
             </span>
           </Link>
@@ -137,7 +137,7 @@ export default async function Header() {
             href="#contact-form"
             className="inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-cyan-300/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:border-cyan-200 hover:bg-cyan-300/15"
           >
-            Discuss project
+            Обсудить проект
             <ArrowUpRight className="h-4 w-4" />
           </a>
         </nav>

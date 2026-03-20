@@ -37,13 +37,13 @@ export default function ContactForm() {
       const data = await response.json()
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Thank you. We will contact you shortly.' })
+        setMessage({ type: 'success', text: 'Спасибо! Я свяжусь с вами в ближайшее время.' })
         setFormData({ name: '', phone: '', honeypot: '' })
       } else {
-        setMessage({ type: 'error', text: data.error || 'Something went wrong. Please try again later.' })
+        setMessage({ type: 'error', text: data.error || 'Произошла ошибка. Попробуйте ещё раз чуть позже.' })
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Something went wrong. Please try again later.' })
+      setMessage({ type: 'error', text: 'Произошла ошибка. Попробуйте ещё раз чуть позже.' })
     } finally {
       setIsSubmitting(false)
     }
@@ -63,7 +63,7 @@ export default function ContactForm() {
 
       <div>
         <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-200">
-          Name
+          Как к вам обращаться
         </label>
         <input
           type="text"
@@ -72,13 +72,13 @@ export default function ContactForm() {
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
-          placeholder="Your name"
+          placeholder="Имя"
         />
       </div>
 
       <div>
         <label htmlFor="phone" className="mb-2 block text-sm font-medium text-slate-200">
-          Phone or Telegram
+          Телефон или Telegram
         </label>
         <input
           type="tel"
@@ -87,7 +87,7 @@ export default function ContactForm() {
           value={formData.phone}
           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
-          placeholder="+7 or @telegram"
+          placeholder="+7 999 000-00-00 или @telegram"
         />
       </div>
 
@@ -104,7 +104,7 @@ export default function ContactForm() {
       )}
 
       <Button type="submit" disabled={isSubmitting} className="w-full rounded-2xl">
-        {isSubmitting ? 'Sending...' : 'Send request'}
+        {isSubmitting ? 'Отправка...' : 'Получить разбор сайта'}
       </Button>
     </form>
   )
