@@ -14,7 +14,7 @@ function JsonLd({ data, id }: { data: object; id: string }) {
   return <Script id={id} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
 }
 
-function PlaceholderImage({
+function VisualCard({
   eyebrow,
   title,
   description,
@@ -39,6 +39,7 @@ function PlaceholderImage({
 export default function ServicePageTemplate({ service }: ServicePageTemplateProps) {
   const relatedServices = getRelatedServices(service.related)
   const pageUrl = getFullUrl(`/services/${service.slug}`)
+
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -51,6 +52,7 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
       },
     })),
   }
+
   const serviceSchema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -65,6 +67,7 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
     },
     url: pageUrl,
   }
+
   const breadcrumbsSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -95,7 +98,7 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
         </nav>
 
         <section className="soft-section overflow-hidden p-8 md:p-10">
-          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr]">
             <div>
               <span className="warm-chip">{service.label}</span>
               <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{service.h1}</h1>
@@ -111,7 +114,7 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                 </a>
                 <Link href="/services">
                   <Button size="lg" variant="outline" className="rounded-full border-slate-300 bg-white px-7 text-slate-900 hover:bg-slate-50">
-                    Посмотреть все SEO-услуги
+                    Все SEO-услуги
                   </Button>
                 </Link>
               </div>
@@ -123,16 +126,12 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
               </div>
             </div>
 
-            <div className="grid gap-4">
+            <div className="space-y-4">
               <div className="glass-panel p-6">
-                <div className="text-sm uppercase tracking-[0.24em] text-orange-700">Подзаголовок</div>
+                <div className="text-sm uppercase tracking-[0.24em] text-orange-700">Ключевая задача</div>
                 <p className="mt-3 text-base leading-8 text-slate-700">{service.intro}</p>
               </div>
-              <PlaceholderImage
-                eyebrow="Hero image"
-                title={service.images.heroAlt}
-                description={`Плейсхолдер для ${service.images.hero}. Можно заменить реальным visual без изменения структуры страницы.`}
-              />
+              <VisualCard eyebrow="Фокус услуги" title={service.images.heroAlt} description="Основной смысл услуги, её роль в проекте и тот результат, к которому она должна привести сайт." />
             </div>
           </div>
         </section>
@@ -176,7 +175,7 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
         <section className="mt-10 rounded-[32px] border border-orange-100 bg-gradient-to-r from-orange-50 via-white to-cyan-50 p-8 md:p-10">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Микро-CTA</p>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Быстрый вход</p>
               <h2 className="mt-3 text-3xl font-semibold text-slate-950">Нужен понятный ориентир без долгого созвона?</h2>
             </div>
             <a href="#contact-form">
@@ -184,7 +183,8 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
             </a>
           </div>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600">
-            Достаточно коротко описать задачу, сайт и текущую ситуацию. В ответ покажу, где есть реальный потенциал, и подскажу, какой формат работы будет уместен именно для вашего проекта.
+            Достаточно коротко описать задачу, сайт и текущую ситуацию. В ответ покажу, где у проекта основной потенциал и
+            какой формат работы будет уместен именно сейчас.
           </p>
         </section>
 
@@ -206,11 +206,7 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
           </div>
 
           <div className="space-y-6">
-            <PlaceholderImage
-              eyebrow="Process image"
-              title={service.images.processAlt}
-              description={`Плейсхолдер для ${service.images.process}. Можно заменить визуалом процесса или схемой этапов.`}
-            />
+            <VisualCard eyebrow="Процесс работы" title={service.images.processAlt} description="Этапы реализации, по которым услуга переходит от анализа к внедрению и контролю результата." />
             <div className="page-card">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Что получает клиент</p>
               <h2 className="mt-3 text-3xl font-semibold text-slate-950">Результат на уровне процесса и сайта</h2>
@@ -241,18 +237,15 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
           </div>
 
           <div className="space-y-6">
-            <PlaceholderImage
-              eyebrow="Results image"
-              title={service.images.resultsAlt}
-              description={`Плейсхолдер для ${service.images.results}. Здесь можно разместить визуал результата без выдуманных цифр.`}
-            />
+            <VisualCard eyebrow="Ожидаемый эффект" title={service.images.resultsAlt} description="Итоговое усиление структуры, индексации, подачи и тех зон сайта, которые помогают проекту расти стабильнее." />
             <div className="rounded-[30px] border border-orange-100 bg-gradient-to-r from-white via-orange-50 to-white p-6">
               <div className="flex items-center gap-3 text-slate-900">
                 <Clock3 className="h-5 w-5 text-cyan-700" />
                 <span className="font-medium">{service.ctas.fast}</span>
               </div>
               <p className="mt-3 text-sm leading-7 text-slate-600">
-                Если задача срочная, можно быстро обсудить текущую ситуацию, получить первичный ориентир и решить, нужен ли проекту аудит, системное продвижение или точечная экспертиза.
+                Если задача срочная, можно быстро обсудить текущую ситуацию, получить первичный ориентир и понять, нужен ли
+                проекту аудит, системное продвижение или точечная экспертиза.
               </p>
               <a href="#contact-form" className="mt-5 inline-flex">
                 <Button className="rounded-full">Обсудить проект сегодня</Button>
@@ -262,7 +255,7 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
         </section>
 
         <section className="mt-10 page-card">
-          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">SEO-блок</p>
+          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Экспертный блок</p>
           <h2 className="mt-3 text-3xl font-semibold text-slate-950">{service.seoBlockTitle}</h2>
           <div className="mt-6 grid gap-4 lg:grid-cols-3">
             {service.seoParagraphs.map((paragraph) => (
@@ -316,17 +309,18 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
         <section id="contact-form" className="mt-10 scroll-mt-32 soft-section overflow-hidden">
           <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
             <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">CTA</p>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Консультация</p>
               <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{service.ctas.rational}</h2>
               <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">
-                Опишите сайт, задачу и текущую ситуацию. Я помогу понять, какой формат работ подойдёт, покажу точки роста и скажу, с чего логичнее начать без лишних обязательств.
+                Опишите сайт, задачу и текущую ситуацию. Я помогу понять, какой формат работ подойдёт, покажу точки роста и
+                скажу, с чего логичнее начать.
               </p>
               <div className="mt-8 space-y-4">
                 <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
                   Ответим в течение дня и подскажем, нужен ли проекту аудит, сопровождение или точечная задача.
                 </div>
                 <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
-                  Без фиксации на одном сценарии: сначала разбираем задачу, потом предлагаем уместный формат работы.
+                  Без лишних обязательств: сначала разбираем задачу, потом предлагаем уместный формат работы.
                 </div>
               </div>
             </div>

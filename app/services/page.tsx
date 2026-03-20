@@ -66,11 +66,11 @@ export default function ServicesIndexPage() {
         <section className="soft-section p-8 md:p-10">
           <div className="grid gap-8 lg:grid-cols-[1.04fr_0.96fr]">
             <div>
-              <span className="warm-chip">Индексная страница услуг</span>
+              <span className="warm-chip">SEO-услуги</span>
               <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{pageTitle}</h1>
               <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
-                Здесь собраны основные SEO-направления под разные задачи бизнеса: от диагностики и техбазы до контента,
-                локального продвижения и стратегической поддержки команды.
+                Подберите подходящий формат работы под задачу бизнеса: от аудита и технической базы до системного
+                продвижения, контента и консультационной поддержки.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <a href="#contact-form">
@@ -88,16 +88,16 @@ export default function ServicesIndexPage() {
             </div>
 
             <div className="glass-panel p-6">
-              <div className="text-sm uppercase tracking-[0.24em] text-orange-700">Как пользоваться страницей</div>
+              <div className="text-sm uppercase tracking-[0.24em] text-orange-700">Какой формат выбрать</div>
               <div className="mt-4 space-y-3">
                 <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
-                  Если нужно понять текущее состояние сайта, чаще всего стартуют с SEO-аудита или консультации.
+                  Если нужно понять текущее состояние сайта, обычно начинают с SEO-аудита или консультации.
                 </div>
                 <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
                   Если проекту нужен системный рост, логичнее смотреть в сторону комплексного SEO-продвижения.
                 </div>
                 <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
-                  Если есть конкретное ограничение, можно выбрать точечную услугу: техбаза, контент, локальное SEO или Link Building.
+                  Если есть конкретное ограничение, можно выбрать точечную услугу: техническое SEO, контент, локальное SEO или консалтинг.
                 </div>
               </div>
             </div>
@@ -128,15 +128,14 @@ export default function ServicesIndexPage() {
         <section id="contact-form" className="mt-10 scroll-mt-32 soft-section overflow-hidden">
           <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
             <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Финальный CTA</p>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Консультация</p>
               <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">Получить консультацию по выбору услуги</h2>
               <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">
-                Коротко опишите задачу, и я подскажу, с какой страницы или формата работ логичнее начать. Без обязательств и
-                без попытки продать лишнее.
+                Коротко опишите задачу, и я подскажу, с какого формата работ логичнее начать именно в вашем проекте.
               </p>
               <div className="mt-8 space-y-4">
                 <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">Ответим в течение дня.</div>
-                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">Покажем точки роста и возможный формат работ.</div>
+                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">Покажем точки роста и следующий шаг без лишних обязательств.</div>
               </div>
             </div>
             <div className="p-8">
