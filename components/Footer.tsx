@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { MessageCircle, MessagesSquare, Send } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 
 const DEFAULT_MENU_ITEMS = [
@@ -30,6 +31,28 @@ export default async function Footer() {
   }
 
   const currentYear = new Date().getFullYear()
+  const socialLinks = [
+    {
+      href: settings?.telegramUrl,
+      label: 'Telegram',
+      icon: Send,
+    },
+    {
+      href: settings?.whatsappUrl,
+      label: 'WhatsApp',
+      icon: MessageCircle,
+    },
+    {
+      href: settings?.vkUrl,
+      label: 'VK',
+      icon: MessagesSquare,
+    },
+    {
+      href: settings?.maxUrl,
+      label: 'Мессенджер',
+      icon: MessageCircle,
+    },
+  ].filter((item) => item.href)
 
   return (
     <footer className="relative mt-auto overflow-hidden border-t border-orange-100 bg-[#fff9f1] text-slate-600">
@@ -45,6 +68,26 @@ export default async function Footer() {
               {settings?.footerText ||
                 'Помогаю сделать сайт понятнее для клиента, сильнее для поисковиков и полезнее для бизнеса.'}
             </p>
+            {socialLinks.length > 0 ? (
+              <div className="flex flex-wrap gap-3 pt-2">
+                {socialLinks.map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={item.label}
+                      className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-cyan-300 hover:text-cyan-700"
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{item.label}</span>
+                    </a>
+                  )
+                })}
+              </div>
+            ) : null}
           </div>
 
           <div>

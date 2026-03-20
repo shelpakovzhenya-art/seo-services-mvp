@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { ArrowUpRight, Mail, MessageCircle, MessagesSquare, Send } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
-import { ArrowUpRight, Mail } from 'lucide-react'
 
 const DEFAULT_MENU_ITEMS = [
   { id: '1', label: 'Главная', url: '/', order: 1, isActive: true },
@@ -31,10 +31,33 @@ export default async function Header() {
     menuItems = DEFAULT_MENU_ITEMS
   }
 
+  const socialLinks = [
+    {
+      href: settings?.telegramUrl,
+      label: 'Telegram',
+      icon: Send,
+    },
+    {
+      href: settings?.whatsappUrl,
+      label: 'WhatsApp',
+      icon: MessageCircle,
+    },
+    {
+      href: settings?.vkUrl,
+      label: 'VK',
+      icon: MessagesSquare,
+    },
+    {
+      href: settings?.maxUrl,
+      label: 'Мессенджер',
+      icon: MessageCircle,
+    },
+  ].filter((item) => item.href)
+
   return (
     <header className="sticky top-0 z-50 border-b border-orange-100/80 bg-[#fffaf4]/88 backdrop-blur-xl">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between py-3 text-xs text-slate-500">
+        <div className="flex items-center justify-between gap-4 py-3 text-xs text-slate-500">
           <div className="flex flex-wrap items-center gap-3">
             <span className="warm-chip">Shelpakov Digital</span>
             <span>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</span>
@@ -46,6 +69,27 @@ export default async function Header() {
               {settings?.email || 'shelpakovzhenya@gmail.com'}
             </a>
           </div>
+
+          {socialLinks.length > 0 ? (
+            <div className="hidden items-center gap-2 md:flex">
+              {socialLinks.map((item) => {
+                const Icon = item.icon
+                return (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={item.label}
+                    title={item.label}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-orange-200 bg-white text-slate-600 transition hover:border-cyan-300 hover:text-cyan-700"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                )
+              })}
+            </div>
+          ) : null}
         </div>
 
         <nav className="flex items-center justify-between gap-6 py-5">
