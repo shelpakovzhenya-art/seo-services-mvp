@@ -12,6 +12,7 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { Button } from '@/components/ui/button'
 import ContactForm from '@/components/ContactForm'
 import ServicesCatalogSection from '@/components/services/ServicesCatalogSection'
@@ -19,7 +20,7 @@ import ServicesCatalogSection from '@/components/services/ServicesCatalogSection
 const defaultHomeMetadata = {
   title: 'SEO-продвижение сайтов под заявки | Shelpakov Digital',
   description:
-    'SEO-продвижение, аудит, усиление структуры сайта и коммерческих факторов для роста заявок и органического канала.',
+    'SEO-продвижение, аудит и доработка структуры сайта под заявки, доверие и рост органического трафика для услуг, B2B-проектов и локального бизнеса.',
   keywords:
     'seo продвижение сайтов, seo аудит, техническое seo, коммерческие факторы, рост заявок, органический трафик',
 }
@@ -522,15 +523,15 @@ export async function generateMetadata() {
   const siteUrl = getSiteUrl()
 
   return {
-    title: page?.title || defaultHomeMetadata.title,
-    description: page?.description || defaultHomeMetadata.description,
+    title: normalizeMetaTitle(page?.title, defaultHomeMetadata.title),
+    description: normalizeMetaDescription(page?.description, defaultHomeMetadata.description),
     keywords: page?.keywords || defaultHomeMetadata.keywords,
     alternates: {
       canonical: siteUrl,
     },
     openGraph: {
-      title: page?.title || defaultHomeMetadata.title,
-      description: page?.description || defaultHomeMetadata.description,
+      title: normalizeMetaTitle(page?.title, defaultHomeMetadata.title),
+      description: normalizeMetaDescription(page?.description, defaultHomeMetadata.description),
       url: siteUrl,
       type: 'website',
     },

@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getSiteUrl } from '@/lib/site-url'
 
 type PageProps = {
@@ -23,10 +24,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const siteUrl = getSiteUrl()
+  const fallbackTitle = `${page.h1 || page.title} | Shelpakov Digital`
+  const fallbackDescription =
+    'Страница Shelpakov Digital о SEO, структуре сайта и усилении проекта под рост органического трафика, доверия и заявок.'
+  const title = normalizeMetaTitle(page.title, fallbackTitle)
+  const description = normalizeMetaDescription(page.description, fallbackDescription)
 
   return {
-    title: { absolute: page.title },
-    description: page.description || undefined,
+    title: { absolute: title },
+    description,
     keywords: page.keywords
       ? page.keywords.split(',').map((item) => item.trim()).filter(Boolean)
       : undefined,
@@ -34,8 +40,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       canonical: `${siteUrl}/${page.slug}`,
     },
     openGraph: {
-      title: page.title,
-      description: page.description || undefined,
+      title,
+      description,
       url: `${siteUrl}/${page.slug}`,
       type: 'website',
     },

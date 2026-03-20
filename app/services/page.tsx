@@ -10,7 +10,7 @@ import { serviceIndexFaq, servicePages } from '@/lib/service-pages'
 
 const pageTitle = 'SEO-услуги для роста органики, структуры сайта и заявок'
 const pageDescription =
-  'SEO-услуги под разные задачи бизнеса: SEO-продвижение, аудит, техническое SEO, локальное продвижение, Ecommerce, B2B, контент, Link Building и консалтинг.'
+  'SEO-услуги под разные задачи бизнеса: продвижение, аудит, техническое SEO, локальная оптимизация, контент, консалтинг и развитие коммерческих страниц.'
 
 export const metadata: Metadata = {
   title: pageTitle,

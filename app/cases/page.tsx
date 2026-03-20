@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import { prisma } from '@/lib/prisma'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 
 export default async function CasesPage() {
   let page: any = null
@@ -80,16 +81,21 @@ export async function generateMetadata() {
   }
   const { getFullUrl } = await import('@/lib/site-url')
   const casesUrl = getFullUrl('/cases')
+  const fallbackTitle = 'Кейсы по SEO и структуре сайта | Shelpakov Digital'
+  const fallbackDescription =
+    'Кейсы по SEO, структуре сайта и коммерческим факторам: как меняется проект после доработки страниц, логики спроса, конверсии и пути клиента к заявке.'
+  const title = normalizeMetaTitle(page?.title, fallbackTitle)
+  const description = normalizeMetaDescription(page?.description, fallbackDescription)
 
   return {
-    title: page?.title || 'Кейсы и примеры работ | Shelpakov Digital',
-    description: page?.description || 'Примеры работ по SEO, структуре сайта и усилению коммерческих факторов.',
+    title,
+    description,
     alternates: {
       canonical: casesUrl,
     },
     openGraph: {
-      title: page?.title || 'Кейсы и примеры работ',
-      description: page?.description || 'Примеры работ по SEO, структуре сайта и усилению коммерческих факторов.',
+      title,
+      description,
       url: casesUrl,
       type: 'website',
     },

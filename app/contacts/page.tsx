@@ -2,6 +2,7 @@ import ReactMarkdown from 'react-markdown'
 import { Clock, Mail } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import { prisma } from '@/lib/prisma'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 
 export default async function ContactsPage() {
   let page: any = null
@@ -72,16 +73,21 @@ export async function generateMetadata() {
   }
   const { getFullUrl } = await import('@/lib/site-url')
   const contactsUrl = getFullUrl('/contacts')
+  const fallbackTitle = 'Контакты | Shelpakov Digital'
+  const fallbackDescription =
+    'Свяжитесь со мной, чтобы обсудить SEO-продвижение, аудит сайта, структуру страниц, коммерческие факторы и точки роста вашего проекта без лишних обязательств.'
+  const title = normalizeMetaTitle(page?.title, fallbackTitle)
+  const description = normalizeMetaDescription(page?.description, fallbackDescription)
 
   return {
-    title: page?.title || 'Контакты | Shelpakov Digital',
-    description: page?.description || 'Свяжитесь, чтобы обсудить аудит сайта, продвижение и точки роста проекта.',
+    title,
+    description,
     alternates: {
       canonical: contactsUrl,
     },
     openGraph: {
-      title: page?.title || 'Контакты',
-      description: page?.description || 'Свяжитесь, чтобы обсудить аудит сайта, продвижение и точки роста проекта.',
+      title,
+      description,
       url: contactsUrl,
       type: 'website',
     },

@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
+import { normalizeMetaDescription } from '@/lib/seo-meta'
 
 export default async function BlogPage() {
   let posts: any[] = []
@@ -19,9 +20,10 @@ export default async function BlogPage() {
     <div className="page-shell">
       <section className="soft-section p-8 md:p-10">
         <span className="warm-chip">Блог</span>
-        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">Материалы по SEO и сайту</h1>
+        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">Материалы по SEO и развитию сайта</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-          Статьи, которые помогают разобраться в продвижении, структуре сайта и типовых ошибках.
+          Публикую разборы по SEO, структуре сайта, коммерческим факторам и контенту, которые помогают принимать
+          взвешенные решения по проекту.
         </p>
       </section>
 
@@ -46,9 +48,7 @@ export default async function BlogPage() {
         ))}
       </div>
 
-      {posts.length === 0 && (
-        <div className="page-card mt-8 text-center text-slate-500">Пока нет опубликованных статей.</div>
-      )}
+      {posts.length === 0 && <div className="page-card mt-8 text-center text-slate-500">Пока опубликованных статей нет.</div>}
     </div>
   )
 }
@@ -56,16 +56,21 @@ export default async function BlogPage() {
 export async function generateMetadata() {
   const { getFullUrl } = await import('@/lib/site-url')
   const blogUrl = getFullUrl('/blog')
+  const title = 'Блог о SEO и развитии сайта | Shelpakov Digital'
+  const description = normalizeMetaDescription(
+    null,
+    'Экспертные статьи о SEO, структуре сайта, коммерческих факторах и контенте: с практическими выводами для бизнеса, маркетинга и роста заявок.'
+  )
 
   return {
-    title: 'Блог о SEO и развитии сайта | Shelpakov Digital',
-    description: 'Статьи о SEO, структуре сайта, продвижении и повышении конверсии.',
+    title,
+    description,
     alternates: {
       canonical: blogUrl,
     },
     openGraph: {
-      title: 'Блог о SEO и развитии сайта',
-      description: 'Статьи о SEO, структуре сайта, продвижении и повышении конверсии.',
+      title,
+      description,
       url: blogUrl,
       type: 'website',
     },

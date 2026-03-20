@@ -1,5 +1,6 @@
 import ReactMarkdown from 'react-markdown'
 import { prisma } from '@/lib/prisma'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 
 export default async function ReviewsPage() {
   let page: any = null
@@ -27,8 +28,7 @@ export default async function ReviewsPage() {
           {page?.h1 || 'Отзывы и подтверждение работы'}
         </h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-          {page?.description ||
-            'Отзывы работают сильнее, когда в них есть конкретика: задача, процесс и результат.'}
+          {page?.description || 'Отзывы полезны тогда, когда помогают понять задачу, формат работы и качество коммуникации.'}
         </p>
       </section>
 
@@ -37,7 +37,7 @@ export default async function ReviewsPage() {
       ) : (
         <div className="page-card mt-8 border-yellow-200 bg-yellow-50/90">
           <p className="text-yellow-800">
-            Подключите виджет Яндекс Отзывов в админке, чтобы добавить внешний блок доверия.
+            Подключите виджет Яндекс Отзывов в админке, чтобы добавить внешний блок доверия на эту страницу.
           </p>
         </div>
       )}
@@ -76,16 +76,21 @@ export async function generateMetadata() {
   }
   const { getFullUrl } = await import('@/lib/site-url')
   const reviewsUrl = getFullUrl('/reviews')
+  const fallbackTitle = 'Отзывы клиентов | Shelpakov Digital'
+  const fallbackDescription =
+    'Отзывы клиентов о работе над SEO, структурой сайта и упаковкой оффера помогают понять подход, формат коммуникации и ожидания по проекту.'
+  const title = normalizeMetaTitle(page?.title, fallbackTitle)
+  const description = normalizeMetaDescription(page?.description, fallbackDescription)
 
   return {
-    title: page?.title || 'Отзывы клиентов | Shelpakov Digital',
-    description: page?.description || 'Отзывы клиентов о работе по SEO, структуре сайта и усилению заявок.',
+    title,
+    description,
     alternates: {
       canonical: reviewsUrl,
     },
     openGraph: {
-      title: page?.title || 'Отзывы клиентов',
-      description: page?.description || 'Отзывы клиентов о работе по SEO, структуре сайта и усилению заявок.',
+      title,
+      description,
       url: reviewsUrl,
       type: 'website',
     },

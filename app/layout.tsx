@@ -1,21 +1,30 @@
 import type { Metadata } from "next"
-import "./globals.css"
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
 import { headers } from "next/headers"
+import Footer from "@/components/Footer"
+import Header from "@/components/Header"
 import { getSiteUrl } from "@/lib/site-url"
+import "./globals.css"
 
 const siteUrl = getSiteUrl()
+const defaultDescription =
+  "SEO-продвижение, аудит и доработка структуры сайта под рост заявок, доверия и органического трафика для услуг, B2B-проектов и экспертных ниш."
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   manifest: "/site.webmanifest",
   title: {
-    default: "Shelpakov Digital",
-    template: "%s | Shelpakov Digital"
+    default: "SEO-продвижение сайтов | Shelpakov Digital",
+    template: "%s | Shelpakov Digital",
   },
-  description: "SEO-продвижение сайтов, SEO-аудит, контент, коммерческие факторы и рост заявок для бизнеса.",
-  keywords: ["SEO-продвижение сайтов", "поисковое продвижение", "SEO-аудит", "коммерческие факторы", "рост заявок"],
+  description: defaultDescription,
+  keywords: [
+    "seo-продвижение сайтов",
+    "поисковое продвижение",
+    "seo-аудит",
+    "структура сайта",
+    "коммерческие факторы",
+    "рост заявок",
+  ],
   authors: [{ name: "Shelpakov Digital" }],
   creator: "Shelpakov Digital",
   publisher: "Shelpakov Digital",
@@ -37,8 +46,8 @@ export const metadata: Metadata = {
     locale: "ru_RU",
     url: siteUrl,
     siteName: "Shelpakov Digital",
-    title: "Shelpakov Digital",
-    description: "SEO-продвижение сайтов, SEO-аудит и упаковка сайта под рост заявок.",
+    title: "SEO-продвижение сайтов | Shelpakov Digital",
+    description: defaultDescription,
   },
   robots: {
     index: true,
@@ -46,9 +55,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   verification: {},
