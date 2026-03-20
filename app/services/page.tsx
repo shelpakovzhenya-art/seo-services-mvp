@@ -1,76 +1,150 @@
-import { prisma } from '@/lib/prisma'
-import ReactMarkdown from 'react-markdown'
+import type { Metadata } from 'next'
+import Script from 'next/script'
+import Link from 'next/link'
+import { ArrowRight, ChevronRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import ServicesCatalogSection from '@/components/services/ServicesCatalogSection'
+import ContactForm from '@/components/ContactForm'
+import { getFullUrl } from '@/lib/site-url'
+import { serviceIndexFaq, servicePages } from '@/lib/service-pages'
 
-export default async function ServicesPage() {
-  let page: any = null
-  let services: any[] = []
+const pageTitle = 'SEO-услуги для роста органики, структуры сайта и заявок'
+const pageDescription =
+  'SEO-услуги под разные задачи бизнеса: SEO-продвижение, аудит, техническое SEO, локальное продвижение, Ecommerce, B2B, контент, Link Building и консалтинг.'
 
-  try {
-    page = await prisma.page.findUnique({ where: { slug: 'services' } })
-    services = await prisma.service.findMany({
-      where: { isActive: true },
-      orderBy: { order: 'asc' },
-    })
-  } catch (error) {
-    console.error('Error loading services page:', error)
-    page = null
-    services = []
+export const metadata: Metadata = {
+  title: pageTitle,
+  description: pageDescription,
+  alternates: {
+    canonical: getFullUrl('/services'),
+  },
+  openGraph: {
+    title: pageTitle,
+    description: pageDescription,
+    url: getFullUrl('/services'),
+    type: 'website',
+  },
+}
+
+export default function ServicesIndexPage() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: serviceIndexFaq.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  }
+
+  const breadcrumbsSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: getFullUrl('/') },
+      { '@type': 'ListItem', position: 2, name: 'Услуги', item: getFullUrl('/services') },
+    ],
   }
 
   return (
-    <div className="page-shell">
-      <section className="soft-section p-8 md:p-10">
-        <span className="warm-chip">Услуги</span>
-        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">
-          {page?.h1 || 'Услуги по SEO и доработке сайта'}
-        </h1>
-        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-          {page?.description || 'От разового аудита до комплексной работы над сайтом, структурой и ростом заявок.'}
-        </p>
-      </section>
+    <>
+      <Script id="services-faq-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <Script id="services-breadcrumbs-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }} />
 
-      <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {services.map((service) => (
-          <div key={service.id} className="page-card">
-            <h2 className="text-2xl font-semibold text-slate-950">{service.name}</h2>
-            {service.description && <p className="mt-3 text-base leading-7 text-slate-600">{service.description}</p>}
-            <div className="mt-6 text-3xl font-semibold text-cyan-700">
-              {service.price.toLocaleString('ru-RU')} {service.unit}
+      <div className="page-shell">
+        <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+          <Link href="/" className="transition hover:text-slate-900">
+            Главная
+          </Link>
+          <ChevronRight className="h-4 w-4" />
+          <span className="text-slate-900">Услуги</span>
+        </nav>
+
+        <section className="soft-section p-8 md:p-10">
+          <div className="grid gap-8 lg:grid-cols-[1.04fr_0.96fr]">
+            <div>
+              <span className="warm-chip">Индексная страница услуг</span>
+              <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{pageTitle}</h1>
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+                Здесь собраны основные SEO-направления под разные задачи бизнеса: от диагностики и техбазы до контента,
+                локального продвижения и стратегической поддержки команды.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <a href="#contact-form">
+                  <Button size="lg" className="rounded-full px-7">
+                    Получить ориентир по услуге
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </a>
+                <Link href="/">
+                  <Button size="lg" variant="outline" className="rounded-full border-slate-300 bg-white px-7 text-slate-900 hover:bg-slate-50">
+                    Вернуться на главную
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="glass-panel p-6">
+              <div className="text-sm uppercase tracking-[0.24em] text-orange-700">Как пользоваться страницей</div>
+              <div className="mt-4 space-y-3">
+                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
+                  Если нужно понять текущее состояние сайта, чаще всего стартуют с SEO-аудита или консультации.
+                </div>
+                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
+                  Если проекту нужен системный рост, логичнее смотреть в сторону комплексного SEO-продвижения.
+                </div>
+                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
+                  Если есть конкретное ограничение, можно выбрать точечную услугу: техбаза, контент, локальное SEO или Link Building.
+                </div>
+              </div>
             </div>
           </div>
-        ))}
+        </section>
+
+        <ServicesCatalogSection />
+
+        <section className="page-card">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">FAQ</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">Частые вопросы по SEO-услугам</h2>
+            </div>
+            <div className="text-sm text-slate-500">Всего направлений: {servicePages.length}</div>
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {serviceIndexFaq.map((item) => (
+              <div key={item.question} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+                <h3 className="text-lg font-semibold text-slate-950">{item.question}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{item.answer}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="contact-form" className="mt-10 scroll-mt-32 soft-section overflow-hidden">
+          <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
+            <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Финальный CTA</p>
+              <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">Получить консультацию по выбору услуги</h2>
+              <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">
+                Коротко опишите задачу, и я подскажу, с какой страницы или формата работ логичнее начать. Без обязательств и
+                без попытки продать лишнее.
+              </p>
+              <div className="mt-8 space-y-4">
+                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">Ответим в течение дня.</div>
+                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">Покажем точки роста и возможный формат работ.</div>
+              </div>
+            </div>
+            <div className="p-8">
+              <ContactForm />
+            </div>
+          </div>
+        </section>
       </div>
-
-      {page?.content && (
-        <div className="page-card mt-8 prose max-w-none prose-slate">
-          <ReactMarkdown>{page.content}</ReactMarkdown>
-        </div>
-      )}
-    </div>
+    </>
   )
-}
-
-export async function generateMetadata() {
-  let page: any = null
-  try {
-    page = await prisma.page.findUnique({ where: { slug: 'services' } })
-  } catch (error) {
-    page = null
-  }
-  const { getFullUrl } = await import('@/lib/site-url')
-  const servicesUrl = getFullUrl('/services')
-
-  return {
-    title: page?.title || 'SEO-услуги | Shelpakov Digital',
-    description: page?.description || 'SEO-аудит, продвижение сайта, работа со структурой, метатегами и коммерческими факторами.',
-    alternates: {
-      canonical: servicesUrl,
-    },
-    openGraph: {
-      title: page?.title || 'SEO-услуги',
-      description: page?.description || 'SEO-аудит, продвижение сайта, работа со структурой, метатегами и коммерческими факторами.',
-      url: servicesUrl,
-      type: 'website',
-    },
-  }
 }

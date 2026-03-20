@@ -16,6 +16,7 @@ import {
 import { prisma } from '@/lib/prisma'
 import { Button } from '@/components/ui/button'
 import ContactForm from '@/components/ContactForm'
+import ServicesCatalogSection from '@/components/services/ServicesCatalogSection'
 
 const defaultHomeMetadata = {
   title: 'SEO-продвижение сайтов под заявки | Shelpakov Digital',
@@ -263,7 +264,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-20">
+      <ServicesCatalogSection compact />
+
+      {false && <section className="container mx-auto px-4 py-20">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Подход к проекту</p>
@@ -291,7 +294,7 @@ export default async function HomePage() {
             )
           })}
         </div>
-      </section>
+      </section>}
 
       <section className="border-y border-orange-100 bg-white/50">
         <div className="container mx-auto px-4 py-20">
