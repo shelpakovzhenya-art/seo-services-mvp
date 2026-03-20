@@ -56,8 +56,9 @@
   body {
     @apply bg-background text-foreground;
     background-image:
-      radial-gradient(circle at top, rgba(34, 211, 238, 0.18), transparent 24%),
-      radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.16), transparent 22%),
+      radial-gradient(circle at top, rgba(34, 211, 238, 0.2), transparent 22%),
+      radial-gradient(circle at 82% 10%, rgba(59, 130, 246, 0.2), transparent 22%),
+      radial-gradient(circle at 20% 75%, rgba(16, 185, 129, 0.12), transparent 20%),
       linear-gradient(180deg, #07111f 0%, #050b14 55%, #040810 100%);
     font-family: "Segoe UI", Arial, sans-serif;
     min-height: 100vh;
@@ -68,6 +69,27 @@
   .glass-panel {
     @apply rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl;
     box-shadow: 0 20px 60px rgba(3, 8, 20, 0.42);
+  }
+
+  .interactive-card {
+    @apply transition-all duration-300;
+  }
+
+  .interactive-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(103, 232, 249, 0.26);
+    box-shadow:
+      0 24px 80px rgba(3, 8, 20, 0.48),
+      0 0 0 1px rgba(103, 232, 249, 0.08),
+      0 0 32px rgba(34, 211, 238, 0.12);
+  }
+
+  .hero-panel {
+    background:
+      linear-gradient(160deg, rgba(15, 23, 42, 0.88) 0%, rgba(11, 18, 32, 0.92) 48%, rgba(9, 16, 29, 0.96) 100%);
+    box-shadow:
+      0 30px 80px rgba(2, 6, 23, 0.58),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
   .section-grid {
