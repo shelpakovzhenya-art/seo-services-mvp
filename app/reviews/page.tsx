@@ -78,7 +78,7 @@ export async function generateMetadata() {
   const reviewsUrl = getFullUrl('/reviews')
   const fallbackTitle = 'Отзывы клиентов | Shelpakov Digital'
   const fallbackDescription =
-    'Отзывы клиентов о работе над SEO, структурой сайта и упаковкой оффера помогают понять подход, формат коммуникации и ожидания по проекту.'
+    'Отзывы клиентов о работе над SEO, структурой сайта и упаковкой оффера помогают заранее понять подход, формат коммуникации и ожидания по проекту.'
   const title = normalizeMetaTitle(page?.title, fallbackTitle)
   const description = normalizeMetaDescription(page?.description, fallbackDescription)
 
