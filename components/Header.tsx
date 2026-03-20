@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { ArrowUpRight, Mail, MessageCircle } from 'lucide-react'
@@ -107,8 +108,14 @@ export default async function Header() {
 
         <nav className="flex items-center justify-between py-5">
           <Link href="/" className="flex items-center gap-3">
-            <span className="grid h-12 w-12 place-items-center rounded-2xl border border-cyan-400/30 bg-gradient-to-br from-cyan-400/20 to-blue-500/20 text-lg font-semibold text-cyan-100 shadow-[0_0_40px_rgba(34,211,238,0.15)]">
-              SD
+            <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-2xl border border-cyan-400/30 bg-gradient-to-br from-cyan-400/20 to-blue-500/20 shadow-[0_0_40px_rgba(34,211,238,0.15)]">
+              <Image
+                src="/favicon-48.png"
+                alt="Логотип Shelpakov Digital"
+                width={28}
+                height={28}
+                className="h-7 w-7 object-contain"
+              />
             </span>
             <span className="flex flex-col">
               <span className="text-lg font-semibold tracking-[0.18em] text-white uppercase">
