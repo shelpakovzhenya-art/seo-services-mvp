@@ -11,6 +11,7 @@ import {
   Rocket,
   ShieldCheck,
 } from 'lucide-react'
+import { podocenterCase } from '@/lib/podocenter-case'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { Button } from '@/components/ui/button'
@@ -365,6 +366,22 @@ export default async function HomePage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
+          <Link
+            href={podocenterCase.url}
+            className="glass-panel interactive-card group block p-8 transition hover:border-cyan-200"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-sm uppercase tracking-[0.24em] text-orange-700">Новый кейс</span>
+              <Building2 className="h-5 w-5 text-cyan-700" />
+            </div>
+            <h3 className="mt-6 text-3xl font-semibold text-slate-950">{podocenterCase.h1}</h3>
+            <p className="mt-4 text-sm leading-7 text-slate-600">{podocenterCase.excerpt}</p>
+            <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700 transition group-hover:text-slate-950">
+              Открыть кейс
+              <ArrowRight className="h-4 w-4" />
+            </div>
+          </Link>
+
           {cases.length > 0 ? (
             cases.map((item, index) => (
               <div key={item.id} className="glass-panel interactive-card p-8">
