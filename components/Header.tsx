@@ -58,12 +58,14 @@ export default async function Header() {
   ].filter((item) => item.href)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/12 bg-[#08101d]/84 shadow-[0_18px_40px_rgba(2,8,23,0.32)] backdrop-blur-2xl">
+    <header className="sticky top-0 z-50 border-b border-white/12 bg-[#07101d]/94 shadow-[0_18px_40px_rgba(2,8,23,0.38)] backdrop-blur-2xl">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between gap-4 py-3 text-xs font-medium text-slate-200/88">
           <div className="flex flex-wrap items-center gap-3">
             <span className="warm-chip">Shelpakov Digital</span>
-            <span className="font-semibold text-slate-100/88">{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</span>
+            <span className="inline-flex items-center rounded-full border border-white/12 bg-[#0c1727]/90 px-3.5 py-1.5 font-semibold text-slate-50 shadow-[0_10px_24px_rgba(2,8,23,0.22)]">
+              {settings?.workSchedule || 'Пн-Пт 09:00-17:00'}
+            </span>
             <span className={`inline-flex items-center gap-2.5 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold ${workStatus.badgeClass}`}>
               <span className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
                 <span className={`absolute inset-0 inline-flex animate-ping rounded-full opacity-90 ${workStatus.pingClass}`} />
@@ -73,7 +75,7 @@ export default async function Header() {
             </span>
             <a
               href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`}
-              className="inline-flex items-center gap-2 font-medium text-slate-100/88 transition hover:text-white"
+              className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-[#0c1727]/90 px-3.5 py-1.5 font-medium text-slate-50 shadow-[0_10px_24px_rgba(2,8,23,0.22)] transition hover:border-cyan-300/30 hover:text-white"
             >
               <Mail className="h-3.5 w-3.5" />
               {settings?.email || 'shelpakovzhenya@gmail.com'}
