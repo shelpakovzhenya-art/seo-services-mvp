@@ -14,7 +14,7 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
   const pricingMap = await getMergedServicePricingMap(services.map((service) => service.slug))
 
   return (
-    <section className={compact ? 'container mx-auto px-4 py-20' : 'page-shell'}>
+    <section className={compact ? 'container mx-auto px-4 py-14 md:py-16' : 'page-shell'}>
       <div className={compact ? 'surface-grid p-8 md:p-10' : 'surface-signal p-8 md:p-10'}>
       <div className="grid gap-8 lg:grid-cols-[0.86fr_1.14fr]">
         <div className="space-y-6">

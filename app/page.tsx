@@ -152,7 +152,7 @@ export default async function HomePage() {
   const featuredCases = buildCaseListing(cases).slice(0, 2)
 
   return (
-    <div className="overflow-hidden pb-24">
+    <div className="overflow-hidden pb-16 md:pb-20">
       <section className="section-grid relative border-b border-white/10">
         <div className="container relative mx-auto px-4 pb-8 pt-6 md:pb-10 md:pt-8">
           <div className="hero-panel hero-sheen relative overflow-hidden rounded-[32px] border border-white/70 px-4 py-5 md:px-6 md:py-6 lg:px-8 lg:py-7">
@@ -230,7 +230,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 pb-20 pt-8 md:pb-20 md:pt-10">
+      <section className="container mx-auto px-4 pb-14 pt-6 md:pb-16 md:pt-8">
         <div className="surface-signal p-8 md:p-10">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
@@ -260,7 +260,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-20">
+      <section className="container mx-auto px-4 py-14 md:py-16">
         <div className="surface-dawn p-8 md:p-10">
           <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
@@ -320,7 +320,7 @@ export default async function HomePage() {
 
       <ServicesCatalogSection compact />
 
-      <section className="container mx-auto px-4 py-20">
+      <section className="container mx-auto px-4 py-14 md:py-16">
         <div className="surface-dawn p-8 md:p-10">
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
             <div className="glass-panel interactive-card p-8">
@@ -355,7 +355,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-20">
+      <section className="container mx-auto px-4 py-14 md:py-16">
         <div className="surface-grid p-8 md:p-10">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
@@ -425,7 +425,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-20">
+      <section className="container mx-auto px-4 py-14 md:py-16">
         <div className="surface-grid p-8 md:p-10">
           <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
@@ -469,7 +469,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-20">
+      <section className="container mx-auto px-4 py-14 md:py-16">
         <div className="surface-signal p-8 md:p-10">
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
@@ -507,7 +507,7 @@ export default async function HomePage() {
       </section>
 
       <section id="contact-form" className="scroll-mt-32">
-        <div className="container mx-auto px-4 py-20">
+        <div className="container mx-auto px-4 py-14 md:py-16">
           <div className="surface-grid p-4 md:p-6">
           <div className="soft-section grid gap-8 overflow-hidden lg:grid-cols-[0.9fr_1.1fr]">
             <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
