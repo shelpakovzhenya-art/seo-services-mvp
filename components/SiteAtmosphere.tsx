@@ -17,6 +17,13 @@ const stars = [
   { left: '88%', top: '74%', size: 'md', delay: '0.8s', duration: '6.2s' },
 ]
 
+const sparkles = [
+  { left: '18%', top: '18%', delay: '0.4s', duration: '6.8s' },
+  { left: '46%', top: '12%', delay: '1.6s', duration: '7.4s' },
+  { left: '72%', top: '66%', delay: '0.9s', duration: '7.1s' },
+  { left: '86%', top: '26%', delay: '2.1s', duration: '6.5s' },
+]
+
 export default function SiteAtmosphere() {
   return (
     <div aria-hidden="true" className="site-atmosphere">
@@ -37,12 +44,28 @@ export default function SiteAtmosphere() {
         />
       ))}
 
+      {sparkles.map((sparkle, index) => (
+        <span
+          key={`${sparkle.left}-${sparkle.top}-${index}`}
+          className="ambient-sparkle"
+          style={{
+            left: sparkle.left,
+            top: sparkle.top,
+            animationDelay: sparkle.delay,
+            animationDuration: sparkle.duration,
+          }}
+        />
+      ))}
+
       <span className="ambient-comet ambient-comet--1" />
       <span className="ambient-comet ambient-comet--2" />
+      <span className="ambient-rocket ambient-rocket--1" />
+      <span className="ambient-rocket ambient-rocket--2" />
       <span className="ambient-signal ambient-signal--1" />
       <span className="ambient-signal ambient-signal--2" />
       <span className="ambient-ufo ambient-ufo--1" />
       <span className="ambient-ufo ambient-ufo--2" />
+      <span className="ambient-ufo ambient-ufo--3" />
       <span className="ambient-orb ambient-orb--1" />
       <span className="ambient-orb ambient-orb--2" />
     </div>

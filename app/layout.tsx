@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
+import ScrollToTopButton from '@/components/ScrollToTopButton'
 import SiteAtmosphere from '@/components/SiteAtmosphere'
 import { getSiteUrl } from '@/lib/site-url'
 import './globals.css'
@@ -80,6 +81,7 @@ export default async function RootLayout({
         <div className={isAdmin ? '' : 'site-frame'}>
           {!isAdmin && <Header />}
           <main className={isAdmin ? '' : 'min-h-screen'}>{children}</main>
+          {!isAdmin && <ScrollToTopButton />}
           {!isAdmin && <Footer />}
         </div>
       </body>

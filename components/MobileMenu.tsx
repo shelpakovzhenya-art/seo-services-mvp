@@ -61,7 +61,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
         aria-label={open ? CLOSE_MENU_LABEL : OPEN_MENU_LABEL}
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-slate-100 transition hover:bg-white/16 lg:hidden"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/16 bg-white/12 text-slate-50 shadow-[0_12px_26px_rgba(2,8,23,0.24)] transition hover:bg-white/18 lg:hidden"
       >
         {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
@@ -96,8 +96,8 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
 
           <div className="flex min-h-[calc(100dvh-89px)] flex-col px-6 py-6 pb-8">
             <div className="rounded-[30px] border border-white/12 bg-white/[0.07] p-5 shadow-[0_20px_40px_rgba(2,8,23,0.24)] backdrop-blur-xl">
-              <div className="flex flex-wrap items-center gap-3 text-sm text-slate-300">
-                <span>{workSchedule}</span>
+              <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-slate-200/88">
+                <span className="font-semibold text-slate-50/92">{workSchedule}</span>
                 <span className={`inline-flex items-center gap-2.5 rounded-full border px-3 py-1 text-[11px] font-semibold ${workStatus.badgeClass}`}>
                   <span className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
                     <span className={`absolute inset-0 inline-flex animate-ping rounded-full opacity-90 ${workStatus.pingClass}`} />
@@ -108,7 +108,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
               </div>
               <a
                 href={`mailto:${email}`}
-                className="mt-4 inline-flex items-center gap-2 text-sm text-slate-100 transition hover:text-cyan-100"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-slate-100 transition hover:text-cyan-100"
               >
                 <Mail className="h-4 w-4 text-cyan-300" />
                 {email}
@@ -121,7 +121,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
                   key={item.id}
                   href={item.url}
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between rounded-[30px] border border-white/12 bg-white/[0.07] px-5 py-5 text-[clamp(1.2rem,4.4vw,1.56rem)] font-semibold text-white shadow-[0_18px_36px_rgba(2,8,23,0.2)] backdrop-blur-xl transition hover:border-cyan-300/40 hover:bg-white/[0.11]"
+                  className="flex items-center justify-between rounded-[30px] border border-white/12 bg-white/[0.08] px-5 py-5 text-[clamp(1.2rem,4.4vw,1.56rem)] font-bold tracking-[0.01em] text-white shadow-[0_18px_36px_rgba(2,8,23,0.2)] backdrop-blur-xl transition hover:border-cyan-300/40 hover:bg-white/[0.12]"
                 >
                   <span>{item.label}</span>
                   <ArrowUpRight className="h-5 w-5 text-cyan-300" />
@@ -159,7 +159,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
             <a
               href="#contact-form"
               onClick={() => setOpen(false)}
-              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-cyan-200/30 bg-[linear-gradient(135deg,rgba(96,227,255,0.95),rgba(255,183,137,0.9))] px-5 py-4 text-base font-semibold text-slate-950 shadow-[0_16px_32px_rgba(2,8,23,0.26)] transition hover:-translate-y-0.5"
+              className="site-cta-button mt-6 inline-flex w-full justify-center px-5 py-4 text-base"
             >
               {DISCUSS_PROJECT}
               <ArrowUpRight className="h-5 w-5" />

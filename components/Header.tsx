@@ -58,12 +58,12 @@ export default async function Header() {
   ].filter((item) => item.href)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#08101d]/72 backdrop-blur-2xl">
+    <header className="sticky top-0 z-50 border-b border-white/12 bg-[#08101d]/84 shadow-[0_18px_40px_rgba(2,8,23,0.32)] backdrop-blur-2xl">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between gap-4 py-3 text-xs text-slate-300">
+        <div className="flex items-center justify-between gap-4 py-3 text-xs font-medium text-slate-200/88">
           <div className="flex flex-wrap items-center gap-3">
             <span className="warm-chip">Shelpakov Digital</span>
-            <span>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</span>
+            <span className="font-semibold text-slate-100/88">{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</span>
             <span className={`inline-flex items-center gap-2.5 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold ${workStatus.badgeClass}`}>
               <span className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
                 <span className={`absolute inset-0 inline-flex animate-ping rounded-full opacity-90 ${workStatus.pingClass}`} />
@@ -73,7 +73,7 @@ export default async function Header() {
             </span>
             <a
               href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`}
-              className="inline-flex items-center gap-2 transition hover:text-white"
+              className="inline-flex items-center gap-2 font-medium text-slate-100/88 transition hover:text-white"
             >
               <Mail className="h-3.5 w-3.5" />
               {settings?.email || 'shelpakovzhenya@gmail.com'}
@@ -90,7 +90,7 @@ export default async function Header() {
                   rel="noreferrer"
                   aria-label={item.label}
                   title={item.label}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/12 bg-white/8 text-slate-200 transition hover:border-cyan-300/60 hover:bg-white/14 hover:text-cyan-100"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/14 bg-white/10 text-slate-100 transition hover:border-cyan-300/60 hover:bg-white/16 hover:text-cyan-100"
                 >
                   {item.type === 'telegram' ? (
                     <Image src="/telegram-logo.svg" alt="Telegram" width={20} height={20} className="h-5 w-5" />
@@ -105,21 +105,21 @@ export default async function Header() {
           ) : null}
         </div>
 
-        <nav className="mb-4 flex items-center justify-between gap-4 rounded-[32px] border border-white/10 bg-white/[0.06] px-4 py-4 shadow-[0_20px_55px_rgba(2,8,23,0.24)]">
+        <nav className="mb-4 flex items-center justify-between gap-4 rounded-[32px] border border-white/14 bg-[linear-gradient(145deg,rgba(11,20,37,0.92),rgba(15,28,48,0.85))] px-4 py-4 shadow-[0_26px_65px_rgba(2,8,23,0.34)]">
           <Link href="/" className="flex items-center gap-3">
             <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-2xl border border-cyan-200/40 bg-white/95 shadow-[0_10px_24px_rgba(15,23,42,0.14)]">
               <Image src="/favicon-48.png" alt="Логотип Shelpakov Digital" width={28} height={28} className="h-7 w-7 object-contain" />
             </span>
             <span className="flex flex-col">
               <span className="text-lg font-semibold uppercase tracking-[0.16em] text-white">Shelpakov Digital</span>
-              <span className="text-xs uppercase tracking-[0.2em] text-slate-400">SEO, структура сайта, заявки</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300/88">SEO, структура сайта, заявки</span>
             </span>
           </Link>
 
           <ul className="hidden items-center gap-7 lg:flex">
             {menuItems.map((item) => (
               <li key={item.id}>
-                <Link href={item.url} className="text-sm text-slate-300 transition hover:text-white">
+                <Link href={item.url} className="site-nav-link">
                   {item.label}
                 </Link>
               </li>
@@ -128,7 +128,7 @@ export default async function Header() {
 
           <a
             href="#contact-form"
-            className="hidden items-center gap-2 rounded-full border border-cyan-200/30 bg-[linear-gradient(135deg,rgba(96,227,255,0.95),rgba(255,183,137,0.9))] px-4 py-2 text-sm font-semibold text-slate-950 shadow-[0_14px_32px_rgba(2,8,23,0.22)] transition hover:-translate-y-0.5 lg:inline-flex"
+            className="site-cta-button hidden lg:inline-flex"
           >
             Обсудить проект
             <ArrowUpRight className="h-4 w-4" />
