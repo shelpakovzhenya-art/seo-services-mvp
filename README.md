@@ -61,7 +61,8 @@ LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
 GMAIL_USER=shelpakovzhenya@gmail.com
 GMAIL_APP_PASSWORD=your-google-app-password
 ```
-Если нужен другой SMTP-сервер, можно использовать стандартные `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`.
+Если пароль приложения Gmail вставлен с пробелами, приложение теперь очистит их автоматически.
+Если нужен другой SMTP-сервер, можно использовать `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`.
 
 Подробная инструкция: [SMTP-SETUP.md](./SMTP-SETUP.md)
 

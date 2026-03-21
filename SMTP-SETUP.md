@@ -20,12 +20,14 @@ GMAIL_USER=shelpakovzhenya@gmail.com
 GMAIL_APP_PASSWORD=ваш-пароль-приложения
 ```
 Этого достаточно для формы обратной связи. Приложение само подключится к `smtp.gmail.com` и отправит письмо на `shelpakovzhenya@gmail.com`.
+Если Google показал пароль группами через пробел, можно вставлять как есть: приложение теперь автоматически убирает пробелы.
 
 ### Вариант 2: Яндекс Почта
 
 ```env
 SMTP_HOST=smtp.yandex.ru
 SMTP_PORT=465
+SMTP_SECURE=true
 SMTP_USER=ваш-email@yandex.ru
 SMTP_PASS=ваш-пароль
 SMTP_FROM=ваш-email@yandex.ru
@@ -36,6 +38,7 @@ SMTP_FROM=ваш-email@yandex.ru
 ```env
 SMTP_HOST=smtp.mail.ru
 SMTP_PORT=465
+SMTP_SECURE=true
 SMTP_USER=ваш-email@mail.ru
 SMTP_PASS=ваш-пароль
 SMTP_FROM=ваш-email@mail.ru
@@ -47,6 +50,7 @@ SMTP_FROM=ваш-email@mail.ru
 ```env
 SMTP_HOST=адрес-smtp-сервера
 SMTP_PORT=587
+SMTP_SECURE=false
 SMTP_USER=ваш-email
 SMTP_PASS=ваш-пароль
 SMTP_FROM=ваш-email
@@ -75,7 +79,9 @@ LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
 1. Проверьте консоль сервера на наличие ошибок
 2. Убедитесь, что все поля в `.env` заполнены правильно
 3. Проверьте, что пароль приложения (для Gmail) создан правильно
-4. Убедитесь, что порт не заблокирован файрволом
+4. Если используете Gmail, проверьте `GMAIL_USER` и пароль приложения, а не обычный пароль
+5. Если используете внешний SMTP, явно задайте `SMTP_SECURE=true` для порта `465` и `SMTP_SECURE=false` для `587`
+6. Убедитесь, что порт не заблокирован файрволом
 
 
 
