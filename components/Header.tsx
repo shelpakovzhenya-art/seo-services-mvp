@@ -64,8 +64,11 @@ export default async function Header() {
           <div className="flex flex-wrap items-center gap-3">
             <span className="warm-chip">Shelpakov Digital</span>
             <span>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-medium text-slate-700">
-              <span className={`h-2 w-2 rounded-full ${workStatus.dotClass}`} />
+            <span className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold ${workStatus.badgeClass}`}>
+              <span className="relative flex h-2.5 w-2.5">
+                <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${workStatus.pingClass}`} />
+                <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${workStatus.dotClass}`} />
+              </span>
               {workStatus.text}
             </span>
             <a
@@ -138,9 +141,12 @@ export default async function Header() {
               url: item.url,
             }))}
             email={settings?.email || 'shelpakovzhenya@gmail.com'}
+            workSchedule={settings?.workSchedule || 'РџРЅ-РџС‚ 09:00-17:00'}
+            workStatus={workStatus}
             socialLinks={socialLinks.map((item) => ({
               href: item.href,
               label: item.label,
+              type: item.type,
             }))}
           />
         </nav>

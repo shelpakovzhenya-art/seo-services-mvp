@@ -1,4 +1,4 @@
-import ReactMarkdown from 'react-markdown'
+import RichContent from '@/components/RichContent'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
@@ -61,13 +61,7 @@ export default async function ReviewsPage() {
 
       {pageContent && (
         <div className="page-card mt-8 prose max-w-none prose-slate">
-          <ReactMarkdown
-            components={{
-              h1: ({ children }) => <h2>{children}</h2>,
-            }}
-          >
-            {pageContent}
-          </ReactMarkdown>
+          <RichContent content={pageContent} />
         </div>
       )}
     </div>

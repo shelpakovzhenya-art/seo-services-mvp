@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Script from 'next/script'
 import { ArrowRight, Check, ChevronRight, Clock3 } from 'lucide-react'
+import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
 import ContactForm from '@/components/ContactForm'
 import { getFullUrl } from '@/lib/site-url'
@@ -9,6 +10,7 @@ import { getRelatedServices, type ServicePageContent } from '@/lib/service-pages
 
 type ServicePageTemplateProps = {
   service: ServicePageContent
+  customContent?: string | null
 }
 
 function JsonLd({ data, id }: { data: object; id: string }) {
@@ -37,7 +39,7 @@ function VisualCard({
   )
 }
 
-export default function ServicePageTemplate({ service }: ServicePageTemplateProps) {
+export default function ServicePageTemplate({ service, customContent }: ServicePageTemplateProps) {
   const relatedServices = getRelatedServices(service.related)
   const pageUrl = getFullUrl(`/services/${service.slug}`)
   const pricing = getServicePricing(service.slug)
@@ -169,6 +171,17 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
             </div>
           ))}
         </section>
+
+        {customContent ? (
+          <section className="page-card mt-10">
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{'\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u0443\u0435\u043c\u044b\u0439 \u0431\u043b\u043e\u043a'}</p>
+            <RichContent
+              content={customContent}
+              title={service.h1}
+              className="prose mt-6 max-w-none prose-slate"
+            />
+          </section>
+        ) : null}
 
         <section className="mt-10 grid gap-8 lg:grid-cols-[0.94fr_1.06fr]">
           <div className="page-card">

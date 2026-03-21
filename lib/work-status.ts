@@ -1,12 +1,15 @@
 const DAY_MAP: Record<string, number> = {
-  пн: 1,
-  вт: 2,
-  ср: 3,
-  чт: 4,
-  пт: 5,
-  сб: 6,
-  вс: 7,
+  '\u043f\u043d': 1,
+  '\u0432\u0442': 2,
+  '\u0441\u0440': 3,
+  '\u0447\u0442': 4,
+  '\u043f\u0442': 5,
+  '\u0441\u0431': 6,
+  '\u0432\u0441': 7,
 }
+
+const DAY_PATTERN =
+  /(\u043f\u043d|\u0432\u0442|\u0441\u0440|\u0447\u0442|\u043f\u0442|\u0441\u0431|\u0432\u0441)/g
 
 function getMoscowDate() {
   const now = new Date()
@@ -42,13 +45,24 @@ function getMoscowDate() {
   }
 }
 
+function normalizeSchedule(schedule: string) {
+  return schedule
+    .toLowerCase()
+    .replace(/[\u2013\u2014]/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 function parseDays(schedule: string) {
-  const normalized = schedule.toLowerCase().replace(/–|—/g, '-')
-  const rangeMatch = normalized.match(/(пн|вт|ср|чт|пт|сб|вс)\s*-\s*(пн|вт|ср|чт|пт|сб|вс)/)
+  const normalized = normalizeSchedule(schedule)
+  const rangeMatch = normalized.match(
+    /(\u043f\u043d|\u0432\u0442|\u0441\u0440|\u0447\u0442|\u043f\u0442|\u0441\u0431|\u0432\u0441)\s*-\s*(\u043f\u043d|\u0432\u0442|\u0441\u0440|\u0447\u0442|\u043f\u0442|\u0441\u0431|\u0432\u0441)/,
+  )
 
   if (rangeMatch) {
     const start = DAY_MAP[rangeMatch[1]]
     const end = DAY_MAP[rangeMatch[2]]
+
     if (start && end) {
       if (start <= end) {
         return Array.from({ length: end - start + 1 }, (_, index) => start + index)
@@ -58,12 +72,15 @@ function parseDays(schedule: string) {
     }
   }
 
-  const matches = [...normalized.matchAll(/\b(пн|вт|ср|чт|пт|сб|вс)\b/g)].map((match) => DAY_MAP[match[1]])
+  const matches = [...normalized.matchAll(DAY_PATTERN)]
+    .map((match) => DAY_MAP[match[1]])
+    .filter(Boolean)
+
   return matches.length > 0 ? matches : [1, 2, 3, 4, 5]
 }
 
 function parseTime(schedule: string) {
-  const normalized = schedule.replace(/–|—/g, '-')
+  const normalized = normalizeSchedule(schedule)
   const timeMatch = normalized.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/)
 
   if (!timeMatch) {
@@ -80,7 +97,7 @@ function parseTime(schedule: string) {
 }
 
 export function getWorkStatus(workSchedule?: string | null) {
-  const schedule = workSchedule?.trim() || 'Пн-Пт 09:00-17:00'
+  const schedule = workSchedule?.trim() || '\u041f\u043d-\u041f\u0442 09:00-17:00'
   const moscow = getMoscowDate()
   const { startMinutes, endMinutes } = parseTime(schedule)
   const activeDays = parseDays(schedule)
@@ -89,7 +106,11 @@ export function getWorkStatus(workSchedule?: string | null) {
 
   return {
     isWorking,
-    text: isWorking ? 'В сети' : 'Не в сети',
-    dotClass: isWorking ? 'bg-emerald-500' : 'bg-slate-400',
+    text: isWorking ? '\u0412 \u0441\u0435\u0442\u0438' : '\u041d\u0435 \u0432 \u0441\u0435\u0442\u0438',
+    badgeClass: isWorking
+      ? 'border-emerald-200 bg-emerald-50/90 text-emerald-700'
+      : 'border-red-200 bg-red-50/90 text-red-700',
+    dotClass: isWorking ? 'bg-emerald-500' : 'bg-red-500',
+    pingClass: isWorking ? 'bg-emerald-400/50' : 'bg-red-400/50',
   }
 }

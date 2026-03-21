@@ -1,0 +1,125 @@
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
+import ContactForm from '@/components/ContactForm'
+import RichContent from '@/components/RichContent'
+import { Button } from '@/components/ui/button'
+import { prisma } from '@/lib/prisma'
+import { getFullUrl } from '@/lib/site-url'
+
+function parseResultImages(value?: string | null) {
+  return (value || '')
+    .split('\n')
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+export default async function CasePage({ params }: { params: { slug: string } }) {
+  const caseItem = await prisma.case.findFirst({
+    where: { slug: params.slug },
+  })
+
+  if (!caseItem) {
+    notFound()
+  }
+
+  const galleryImages = parseResultImages(caseItem.resultImages)
+
+  return (
+    <div className="page-shell">
+      <section className="soft-section overflow-hidden p-8 md:p-10">
+        <span className="warm-chip">РљРµР№СЃ</span>
+        <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">{caseItem.title}</h1>
+        {caseItem.description ? (
+          <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{caseItem.description}</p>
+        ) : null}
+
+        <div className="mt-8 flex flex-wrap gap-4">
+          <a href="#case-contact">
+            <Button size="lg" className="rounded-full px-7">
+              РћР±СЃСѓРґРёС‚СЊ РїРѕС…РѕР¶РёР№ РїСЂРѕРµРєС‚
+            </Button>
+          </a>
+        </div>
+
+        {caseItem.image ? (
+          <div className="relative mt-8 overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_20px_50px_rgba(58,97,137,0.12)]">
+            <div className="relative aspect-[16/9] w-full">
+              <Image src={caseItem.image} alt={caseItem.title} fill className="object-cover" />
+            </div>
+          </div>
+        ) : null}
+      </section>
+
+      <RichContent
+        content={caseItem.content}
+        title={caseItem.title}
+        className="page-card mt-8 prose max-w-none prose-slate"
+      />
+
+      {galleryImages.length > 0 ? (
+        <section className="page-card mt-8">
+          <h2 className="text-3xl font-semibold text-slate-950">РЎРєСЂРёРЅС‹ Рё СЂРµР·СѓР»СЊС‚Р°С‚С‹</h2>
+          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {galleryImages.map((src, index) => (
+              <article
+                key={src}
+                className="overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_18px_45px_rgba(148,107,61,0.08)]"
+              >
+                <div className="relative aspect-[16/10] w-full bg-[linear-gradient(180deg,#fffdf8,#f7fbff)] p-3">
+                  <div className="relative h-full w-full overflow-hidden rounded-[20px] border border-white/80 bg-white">
+                    <Image src={src} alt={`${caseItem.title} ${index + 1}`} fill className="object-contain p-2" />
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section id="case-contact" className="mt-8 soft-section overflow-hidden">
+        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+          <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
+            <span className="warm-chip">РћР±СЃСѓРґРёС‚СЊ РїСЂРѕРµРєС‚</span>
+            <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
+              РќСѓР¶РµРЅ РїРѕС…РѕР¶РёР№ РєРµР№СЃ РґР»СЏ РІР°С€РµРіРѕ СЃР°Р№С‚Р°?
+            </h2>
+            <p className="mt-5 text-base leading-8 text-slate-600">
+              Р Р°Р·Р±РµСЂСѓ Р·Р°РґР°С‡Сѓ, РїРѕРєР°Р¶Сѓ С‚РѕС‡РєРё СЂРѕСЃС‚Р° Рё РїРѕРґСЃРєР°Р¶Сѓ, СЃ С‡РµРіРѕ Р»РѕРіРёС‡РЅРѕ РЅР°С‡Р°С‚СЊ, С‡С‚РѕР±С‹ SEO Рё СЃС‚СЂСѓРєС‚СѓСЂР° СЃР°Р№С‚Р° СЂР°Р±РѕС‚Р°Р»Рё РЅР° Р·Р°СЏРІРєРё.
+            </p>
+          </div>
+
+          <div className="p-8">
+            <ContactForm />
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const caseItem = await prisma.case.findFirst({
+    where: { slug: params.slug },
+  })
+
+  if (!caseItem) {
+    return {}
+  }
+
+  const url = getFullUrl(`/cases/${params.slug}`)
+  const description = caseItem.description || 'РљРµР№СЃ Shelpakov Digital РїРѕ SEO, СЃС‚СЂСѓРєС‚СѓСЂРµ СЃР°Р№С‚Р° Рё СЂРѕСЃС‚Сѓ Р·Р°СЏРІРѕРє.'
+
+  return {
+    title: `${caseItem.title} | Shelpakov Digital`,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title: `${caseItem.title} | Shelpakov Digital`,
+      description,
+      url,
+      type: 'article',
+    },
+  }
+}

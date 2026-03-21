@@ -2,7 +2,6 @@ import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
 import { getSiteUrl, getFullUrl } from '@/lib/site-url'
 import { servicePages } from '@/lib/service-pages'
-import { podocenterCase } from '@/lib/podocenter-case'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl()
@@ -27,12 +26,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
-    },
-    {
-      url: getFullUrl(podocenterCase.url),
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.75,
     },
     {
       url: getFullUrl('/reviews'),
@@ -68,6 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Blog posts
   let blogPosts: MetadataRoute.Sitemap = []
+  let casePages: MetadataRoute.Sitemap = []
   try {
     const posts = await prisma.blogPost.findMany({
       where: { published: true },
@@ -89,6 +83,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Error fetching blog posts for sitemap:', error)
   }
 
-  return [...staticPages, ...blogPosts]
+  try {
+    const cases = await prisma.case.findMany({
+      where: {
+        slug: {
+          not: null,
+        },
+      },
+      select: {
+        slug: true,
+        updatedAt: true,
+      },
+      orderBy: { updatedAt: 'desc' },
+    })
+
+    casePages = cases
+      .filter((item) => item.slug)
+      .map((item) => ({
+        url: getFullUrl(`/cases/${item.slug}`),
+        lastModified: item.updatedAt || new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.75,
+      }))
+  } catch (error) {
+    console.error('Error fetching cases for sitemap:', error)
+  }
+
+  return [...staticPages, ...casePages, ...blogPosts]
 }
 

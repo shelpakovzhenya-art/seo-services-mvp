@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ServicePageTemplate from '@/components/services/ServicePageTemplate'
 import { getServicePage, servicePages } from '@/lib/service-pages'
+import { getServiceOverrideMap, mergeServiceWithOverride } from '@/lib/service-overrides'
 import { getFullUrl } from '@/lib/site-url'
 
 type ServicePageProps = {
@@ -63,20 +64,26 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
   const { slug } = await params
   const service = getServicePage(slug)
+  const overrideMap = await getServiceOverrideMap([slug])
+  const override = overrideMap.get(slug)
 
   if (!service) {
     return {}
   }
 
-  const canonical = getFullUrl(`/services/${service.slug}`)
-  const meta = serviceMetadata[service.slug] || {
-    title: service.title,
-    description: service.description,
+  const mergedService = mergeServiceWithOverride(service, 0, override)
+  const canonical = getFullUrl(`/services/${mergedService.slug}`)
+  const meta = serviceMetadata[mergedService.slug] || {
+    title: mergedService.title,
+    description: mergedService.description,
   }
 
   return {
     title: meta.title,
     description: meta.description,
+    keywords: mergedService.overrideKeywords
+      ? mergedService.overrideKeywords.split(',').map((item) => item.trim()).filter(Boolean)
+      : undefined,
     alternates: {
       canonical,
     },
@@ -92,10 +99,14 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = await params
   const service = getServicePage(slug)
+  const overrideMap = await getServiceOverrideMap([slug])
+  const override = overrideMap.get(slug)
 
   if (!service) {
     notFound()
   }
 
-  return <ServicePageTemplate service={service} />
+  const mergedService = mergeServiceWithOverride(service, 0, override)
+
+  return <ServicePageTemplate service={mergedService} customContent={mergedService.overrideContent} />
 }

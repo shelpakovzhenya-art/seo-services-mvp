@@ -1,6 +1,6 @@
-import ReactMarkdown from 'react-markdown'
 import { Clock, Mail } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
+import RichContent from '@/components/RichContent'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
@@ -51,13 +51,7 @@ export default async function ContactsPage() {
 
           {pageContent && (
             <div className="prose mt-8 max-w-none prose-slate">
-              <ReactMarkdown
-                components={{
-                  h1: ({ children }) => <h2>{children}</h2>,
-                }}
-              >
-                {pageContent}
-              </ReactMarkdown>
+              <RichContent content={pageContent} />
             </div>
           )}
         </div>

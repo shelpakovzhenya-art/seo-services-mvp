@@ -11,7 +11,6 @@ import {
   Rocket,
   ShieldCheck,
 } from 'lucide-react'
-import { podocenterCase } from '@/lib/podocenter-case'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { Button } from '@/components/ui/button'
@@ -366,37 +365,47 @@ export default async function HomePage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          <Link
-            href={podocenterCase.url}
-            className="glass-panel interactive-card group block p-8 transition hover:border-cyan-200"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm uppercase tracking-[0.24em] text-orange-700">Новый кейс</span>
-              <Building2 className="h-5 w-5 text-cyan-700" />
-            </div>
-            <h3 className="mt-6 text-3xl font-semibold text-slate-950">{podocenterCase.h1}</h3>
-            <p className="mt-4 text-sm leading-7 text-slate-600">{podocenterCase.excerpt}</p>
-            <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700 transition group-hover:text-slate-950">
-              Открыть кейс
-              <ArrowRight className="h-4 w-4" />
-            </div>
-          </Link>
-
           {cases.length > 0 ? (
-            cases.map((item, index) => (
-              <div key={item.id} className="glass-panel interactive-card p-8">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm uppercase tracking-[0.24em] text-orange-700">Кейс {index + 1}</span>
-                  <Building2 className="h-5 w-5 text-cyan-700" />
+            cases.map((item, index) => {
+              const cardContent = (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm uppercase tracking-[0.24em] text-orange-700">{`\u041a\u0435\u0439\u0441 ${index + 1}`}</span>
+                    <Building2 className="h-5 w-5 text-cyan-700" />
+                  </div>
+                  <h3 className="mt-6 text-3xl font-semibold text-slate-950">{item.title}</h3>
+                  <p className="mt-4 text-sm leading-7 text-slate-600">
+                    {item.description ||
+                      item.content ||
+                      '\u0420\u0430\u0437\u0431\u043e\u0440 \u043f\u0440\u043e\u0435\u043a\u0442\u0430, \u0432 \u043a\u043e\u0442\u043e\u0440\u043e\u043c \u0434\u043e\u0440\u0430\u0431\u043e\u0442\u043a\u0430 \u0441\u0442\u0440\u0443\u043a\u0442\u0443\u0440\u044b, \u043a\u043e\u043d\u0442\u0435\u043d\u0442\u0430 \u0438 \u043a\u043b\u044e\u0447\u0435\u0432\u044b\u0445 \u0441\u0442\u0440\u0430\u043d\u0438\u0446 \u0443\u0441\u0438\u043b\u0438\u043b\u0430 \u043e\u0440\u0433\u0430\u043d\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043f\u043e\u0442\u0435\u043d\u0446\u0438\u0430\u043b \u0441\u0430\u0439\u0442\u0430.'}
+                  </p>
+                  {item.slug ? (
+                    <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700 transition group-hover:text-slate-950">
+                      {'\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u043a\u0435\u0439\u0441'}
+                      <ArrowRight className="h-4 w-4" />
+                    </div>
+                  ) : null}
+                </>
+              )
+
+              if (item.slug) {
+                return (
+                  <Link
+                    key={item.id}
+                    href={`/cases/${item.slug}`}
+                    className="glass-panel interactive-card group block p-8 transition hover:border-cyan-200"
+                  >
+                    {cardContent}
+                  </Link>
+                )
+              }
+
+              return (
+                <div key={item.id} className="glass-panel interactive-card p-8">
+                  {cardContent}
                 </div>
-                <h3 className="mt-6 text-3xl font-semibold text-slate-950">{item.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-slate-600">
-                  {item.description ||
-                    item.content ||
-                    'Разбор проекта, в котором доработка структуры, контента и ключевых страниц усилила органический потенциал сайта.'}
-                </p>
-              </div>
-            ))
+              )
+            })
           ) : (
             <div className="glass-panel p-8 lg:col-span-2">
               <h3 className="text-2xl font-semibold text-slate-950">Кейсы с разбором задачи, работ и результата</h3>

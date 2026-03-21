@@ -3,12 +3,15 @@ import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { servicePages, serviceScenarios } from '@/lib/service-pages'
 import { getServicePricing } from '@/lib/service-pricing'
+import { getMergedServicePages } from '@/lib/service-overrides'
 
 type ServicesCatalogSectionProps = {
   compact?: boolean
 }
 
-export default function ServicesCatalogSection({ compact = false }: ServicesCatalogSectionProps) {
+export default async function ServicesCatalogSection({ compact = false }: ServicesCatalogSectionProps) {
+  const services = await getMergedServicePages()
+
   return (
     <section className={compact ? 'container mx-auto px-4 py-20' : 'page-shell'}>
       <div className="grid gap-8 lg:grid-cols-[0.86fr_1.14fr]">
@@ -50,7 +53,7 @@ export default function ServicesCatalogSection({ compact = false }: ServicesCata
         </div>
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {servicePages.map((service) => {
+          {services.map((service) => {
             const pricing = getServicePricing(service.slug)
 
             return (
@@ -60,8 +63,8 @@ export default function ServicesCatalogSection({ compact = false }: ServicesCata
                 className="glass-panel interactive-card flex h-full flex-col p-6"
               >
                 <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{service.label}</div>
-                <h3 className="mt-4 text-2xl font-semibold text-slate-950">{service.shortName}</h3>
-                <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{service.cardDescription}</p>
+                <h3 className="mt-4 text-2xl font-semibold text-slate-950">{service.h1 || service.shortName}</h3>
+                <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{service.description || service.cardDescription}</p>
                 {pricing && <div className="mt-4 text-sm font-semibold text-slate-900">{pricing.priceLabel}</div>}
                 <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
                   {service.cardCta}

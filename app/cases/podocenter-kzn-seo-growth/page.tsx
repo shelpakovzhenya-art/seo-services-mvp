@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, CheckCircle2, MapPin, Search, TrendingUp } from 'lucide-react'
+import { notFound } from 'next/navigation'
+import { ArrowRight, CheckCircle2, MapPin, Search } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import { Button } from '@/components/ui/button'
 import { prisma } from '@/lib/prisma'
@@ -27,6 +28,10 @@ const fallbackVisuals = [
     src: '/cases/podocenter/cpl-dynamics.svg',
     alt: 'Динамика заявок и снижение CPL по проекту PodoCenter',
   },
+  {
+    src: '/cases/podocenter/positions-heatmap.svg',
+    alt: 'Тепловая карта позиций PodoCenter по приоритетным запросам',
+  },
 ]
 
 function parseResultImages(value?: string | null) {
@@ -38,6 +43,7 @@ function parseResultImages(value?: string | null) {
 
 export default async function PodocenterCasePage() {
   let uploadedImages: string[] = []
+  let hasCase = false
 
   try {
     const caseItem = await prisma.case.findFirst({
@@ -49,9 +55,14 @@ export default async function PodocenterCasePage() {
       },
     })
 
+    hasCase = Boolean(caseItem)
     uploadedImages = parseResultImages(caseItem?.resultImages)
   } catch (error) {
     console.error('Error loading podocenter case assets:', error)
+  }
+
+  if (!hasCase) {
+    notFound()
   }
 
   const galleryImages =
@@ -61,6 +72,7 @@ export default async function PodocenterCasePage() {
           alt: `Скрин результата PodoCenter ${index + 1}`,
         }))
       : fallbackVisuals
+  const hasUploadedResults = uploadedImages.length > 0
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -211,35 +223,18 @@ export default async function PodocenterCasePage() {
           ))}
         </div>
       </section>
-
       <section className="mt-8 page-card">
         <span className="warm-chip">Результаты</span>
         <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
-          Что изменилось после внедрения структуры, контента и коммерческих факторов
+          Вместо карточек с цифрами здесь показываем сами скриншоты результатов
         </h2>
-        <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {podocenterCase.results.map((item) => (
-            <div key={item.metric} className="rounded-[26px] border border-orange-100 bg-[#fffaf5] p-6">
-              <div className="flex items-center gap-3 text-orange-700">
-                <TrendingUp className="h-5 w-5" />
-                <span className="text-sm uppercase tracking-[0.22em]">{item.metric}</span>
-              </div>
-              <p className="mt-4 text-lg font-semibold leading-7 text-slate-950">{item.value}</p>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{item.impact}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-8 page-card">
-        <span className="warm-chip">Подтверждение результата</span>
-        <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">Скрины роста в компактной подаче</h2>
         <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">
-          Здесь собраны визуальные подтверждения роста: без перегруза страницы, но с понятной опорой на реальные результаты
-          проекта.
+          {hasUploadedResults
+            ? 'Ниже показаны реальные фотографии-скриншоты из проекта: рост трафика, видимости, заявок и позиций по приоритетным запросам.'
+            : 'Блок уже подготовлен под реальные скриншоты кейса. Пока в базе не загружены фотографии, показываются временные демонстрационные визуалы.'}
         </p>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
           {galleryImages.map((item) => (
             <article
               key={item.src}

@@ -1,6 +1,6 @@
-import ReactMarkdown from 'react-markdown'
 import Calculator from '@/components/Calculator'
 import ContactForm from '@/components/ContactForm'
+import RichContent from '@/components/RichContent'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
 import { servicePricing } from '@/lib/service-pricing'
@@ -91,13 +91,7 @@ export default async function CalculatorPage() {
 
       {pageContent && (
         <div className="page-card mt-10 prose max-w-none prose-slate">
-          <ReactMarkdown
-            components={{
-              h1: ({ children }) => <h2>{children}</h2>,
-            }}
-          >
-            {pageContent}
-          </ReactMarkdown>
+          <RichContent content={pageContent} />
         </div>
       )}
     </div>

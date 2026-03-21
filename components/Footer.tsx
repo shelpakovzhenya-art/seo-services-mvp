@@ -1,5 +1,6 @@
+import Image from 'next/image'
 import Link from 'next/link'
-import { MessageCircle, MessagesSquare, Send } from 'lucide-react'
+import { MessageCircle, MessagesSquare } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { featuredReads } from '@/lib/site-recommendations'
 
@@ -36,22 +37,22 @@ export default async function Footer() {
     {
       href: settings?.telegramUrl,
       label: 'Telegram',
-      icon: Send,
+      type: 'telegram' as const,
     },
     {
       href: settings?.whatsappUrl,
       label: 'WhatsApp',
-      icon: MessageCircle,
+      type: 'whatsapp' as const,
     },
     {
       href: settings?.vkUrl,
       label: 'VK',
-      icon: MessagesSquare,
+      type: 'vk' as const,
     },
     {
       href: settings?.maxUrl,
       label: 'Messenger',
-      icon: MessageCircle,
+      type: 'max' as const,
     },
   ].filter((item) => item.href)
 
@@ -69,22 +70,25 @@ export default async function Footer() {
             </p>
             {socialLinks.length > 0 ? (
               <div className="flex flex-wrap gap-3 pt-2">
-                {socialLinks.map((item) => {
-                  const Icon = item.icon
-                  return (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={item.label}
-                      className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-cyan-300 hover:text-cyan-700"
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span>{item.label}</span>
-                    </a>
-                  )
-                })}
+                {socialLinks.map((item) => (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={item.label}
+                    className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-cyan-300 hover:text-cyan-700"
+                  >
+                    {item.type === 'telegram' ? (
+                      <Image src="/telegram-logo.svg" alt="Telegram" width={18} height={18} className="h-[18px] w-[18px]" />
+                    ) : item.type === 'vk' ? (
+                      <MessagesSquare className="h-4 w-4" />
+                    ) : (
+                      <MessageCircle className="h-4 w-4" />
+                    )}
+                    <span>{item.label}</span>
+                  </a>
+                ))}
               </div>
             ) : null}
           </div>

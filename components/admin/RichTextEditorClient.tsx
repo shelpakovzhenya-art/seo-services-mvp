@@ -1,26 +1,27 @@
 'use client'
 
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEffect, useRef, useState } from 'react'
+import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import { Button } from '@/components/ui/button'
-import { 
-  Bold, 
-  Italic, 
-  List, 
-  ListOrdered, 
-  Link as LinkIcon,
-  Image as ImageIcon,
+import {
+  Bold,
+  Code2,
   Heading1,
   Heading2,
   Heading3,
+  Image as ImageIcon,
+  Italic,
+  Link as LinkIcon,
+  List,
+  ListOrdered,
   Quote,
+  Redo,
   Undo,
-  Redo
 } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
 
 interface RichTextEditorProps {
   content?: string | null
@@ -28,13 +29,15 @@ interface RichTextEditorProps {
   placeholder?: string
 }
 
-export default function RichTextEditorClient({ 
-  content, 
-  onChange, 
-  placeholder = 'Начните вводить текст...' 
+export default function RichTextEditorClient({
+  content,
+  onChange,
+  placeholder = '\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u0432\u0432\u043e\u0434\u0438\u0442\u044c \u0442\u0435\u043a\u0441\u0442...',
 }: RichTextEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
+  const [isCodeMode, setIsCodeMode] = useState(false)
+  const [htmlValue, setHtmlValue] = useState(content || '')
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -60,7 +63,9 @@ export default function RichTextEditorClient({
     ],
     content: content || '',
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
+      const html = editor.getHTML()
+      setHtmlValue(html)
+      onChange(html)
     },
     editorProps: {
       attributes: {
@@ -69,19 +74,19 @@ export default function RichTextEditorClient({
     },
   })
 
-  // Update content when it changes externally
   useEffect(() => {
-    if (editor && content !== undefined && content !== null) {
-      const currentContent = editor.getHTML()
-      const newContent = content || ''
-      if (currentContent !== newContent && newContent.trim() !== '' && newContent !== '<p></p>') {
-        const isUserEditing = editor.isFocused
-        if (!isUserEditing) {
-          editor.commands.setContent(newContent, { emitUpdate: false })
-        }
-      }
+    const nextValue = content || ''
+    setHtmlValue(nextValue)
+
+    if (!editor || content === undefined || content === null) {
+      return
     }
-  }, [content, editor, onChange])
+
+    const currentContent = editor.getHTML()
+    if (currentContent !== nextValue && !editor.isFocused) {
+      editor.commands.setContent(nextValue || '<p></p>', { emitUpdate: false })
+    }
+  }, [content, editor])
 
   const handleImageUpload = async () => {
     if (!fileInputRef.current || !editor) return
@@ -110,7 +115,7 @@ export default function RichTextEditorClient({
       editor.chain().focus().setImage({ src: url }).run()
     } catch (error) {
       console.error('Error uploading image:', error)
-      alert('Ошибка загрузки изображения')
+      alert('\u041e\u0448\u0438\u0431\u043a\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0438 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u044f')
     } finally {
       setUploading(false)
       if (fileInputRef.current) {
@@ -137,17 +142,30 @@ export default function RichTextEditorClient({
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
   }
 
+  const toggleCodeMode = () => {
+    if (!editor) {
+      return
+    }
+
+    if (isCodeMode) {
+      editor.commands.setContent(htmlValue || '<p></p>')
+    } else {
+      setHtmlValue(editor.getHTML())
+    }
+
+    setIsCodeMode((value) => !value)
+  }
+
   if (!editor) {
     return (
       <div className="border rounded-lg min-h-[300px] p-4 bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400">Загрузка редактора...</p>
+        <p className="text-gray-400">{'\u0417\u0430\u0433\u0440\u0443\u0437\u043a\u0430 \u0440\u0435\u0434\u0430\u043a\u0442\u043e\u0440\u0430...'}</p>
       </div>
     )
   }
 
   return (
     <div className="border rounded-lg overflow-hidden">
-      {/* Toolbar */}
       <div className="border-b bg-gray-50 p-2 flex flex-wrap gap-1">
         <Button
           type="button"
@@ -239,6 +257,15 @@ export default function RichTextEditorClient({
         >
           <ImageIcon className="w-4 h-4" />
         </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={toggleCodeMode}
+          className={isCodeMode ? 'bg-gray-200' : ''}
+        >
+          <Code2 className="w-4 h-4" />
+        </Button>
         <div className="w-px h-6 bg-gray-300 mx-1" />
         <Button
           type="button"
@@ -260,10 +287,21 @@ export default function RichTextEditorClient({
         </Button>
       </div>
 
-      {/* Editor */}
-      <EditorContent editor={editor} className="min-h-[300px]" />
+      {isCodeMode ? (
+        <textarea
+          value={htmlValue}
+          onChange={(e) => {
+            const value = e.target.value
+            setHtmlValue(value)
+            onChange(value)
+          }}
+          className="min-h-[300px] w-full resize-y border-0 p-4 font-mono text-sm leading-6 text-slate-800 focus:outline-none"
+          spellCheck={false}
+        />
+      ) : (
+        <EditorContent editor={editor} className="min-h-[300px]" />
+      )}
 
-      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -274,4 +312,3 @@ export default function RichTextEditorClient({
     </div>
   )
 }
-

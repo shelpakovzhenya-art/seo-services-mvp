@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import ReactMarkdown from 'react-markdown'
+import RichContent from '@/components/RichContent'
+import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
 
 function normalizeMetaDescription(excerpt: string | null | undefined) {
@@ -34,34 +35,6 @@ function getFallbackCover(slug: string) {
   return coverMap[slug] || ''
 }
 
-function stripLeadingH1(markdown: string, title: string) {
-  const normalizedTitle = title.trim().toLowerCase()
-  const lines = markdown.split('\n')
-
-  if (lines.length === 0) {
-    return markdown
-  }
-
-  const firstNonEmptyIndex = lines.findIndex((line) => line.trim().length > 0)
-  if (firstNonEmptyIndex === -1) {
-    return markdown
-  }
-
-  const firstLine = lines[firstNonEmptyIndex].trim()
-  if (firstLine.startsWith('# ')) {
-    const heading = firstLine.replace(/^#\s+/, '').trim().toLowerCase()
-    if (heading === normalizedTitle) {
-      lines.splice(firstNonEmptyIndex, 1)
-      while (lines[firstNonEmptyIndex] !== undefined && lines[firstNonEmptyIndex].trim() === '') {
-        lines.splice(firstNonEmptyIndex, 1)
-      }
-      return lines.join('\n')
-    }
-  }
-
-  return markdown
-}
-
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   let post: any = null
 
@@ -79,7 +52,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   }
 
   const coverImage = post.coverImage || getFallbackCover(post.slug)
-  const content = stripLeadingH1(post.content, post.title)
+  const content = stripLeadingMarkdownH1(post.content, post.title)
 
   return (
     <article className="container mx-auto mb-0 max-w-4xl px-4 py-12">
@@ -109,13 +82,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       </header>
 
       <div className="prose mt-10 max-w-none prose-slate prose-headings:text-slate-950 prose-p:text-slate-700 prose-li:text-slate-700">
-        <ReactMarkdown
-          components={{
-            h1: ({ children }) => <h2>{children}</h2>,
-          }}
-        >
-          {content}
-        </ReactMarkdown>
+        <RichContent content={content} />
       </div>
     </article>
   )

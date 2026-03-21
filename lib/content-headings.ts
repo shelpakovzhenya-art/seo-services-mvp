@@ -30,6 +30,14 @@ export function stripLeadingMarkdownH1(markdown: string | null | undefined, titl
   return markdown
 }
 
+export function isHtmlContent(content: string | null | undefined) {
+  if (!content) {
+    return false
+  }
+
+  return /<\/?[a-z][\s\S]*>/i.test(content)
+}
+
 export function demoteHtmlHeadings(html: string | null | undefined) {
   if (!html) {
     return ''
