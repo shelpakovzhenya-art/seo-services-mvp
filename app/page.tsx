@@ -152,8 +152,8 @@ export default async function HomePage() {
   const featuredCases = buildCaseListing(cases).slice(0, 2)
 
   return (
-    <div className="overflow-hidden">
-      <section className="section-grid relative border-b border-orange-100">
+    <div className="overflow-hidden pb-24">
+      <section className="section-grid relative border-b border-white/10">
         <div className="container relative mx-auto px-4 pb-20 pt-16 md:pb-24 md:pt-20">
           <div className="hero-panel hero-sheen relative overflow-hidden rounded-[40px] border border-white/70 px-6 py-8 md:px-10 md:py-10 lg:px-12 lg:py-12">
             <div className="hero-grid-mask" />
@@ -231,6 +231,7 @@ export default async function HomePage() {
       </section>
 
       <section className="container mx-auto px-4 py-20">
+        <div className="surface-signal p-8 md:p-10">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Подход к проекту</p>
@@ -256,10 +257,11 @@ export default async function HomePage() {
             )
           })}
         </div>
+        </div>
       </section>
 
-      <section className="border-y border-orange-100 bg-white/50">
-        <div className="container mx-auto px-4 py-20">
+      <section className="container mx-auto px-4 py-20">
+        <div className="surface-dawn p-8 md:p-10">
           <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Тарифы</p>
@@ -318,8 +320,8 @@ export default async function HomePage() {
 
       <ServicesCatalogSection compact />
 
-      <section className="border-y border-orange-100 bg-white/50">
-        <div className="container mx-auto px-4 py-20">
+      <section className="container mx-auto px-4 py-20">
+        <div className="surface-dawn p-8 md:p-10">
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
             <div className="glass-panel interactive-card p-8">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Кому особенно полезно</p>
@@ -354,6 +356,7 @@ export default async function HomePage() {
       </section>
 
       <section className="container mx-auto px-4 py-20">
+        <div className="surface-grid p-8 md:p-10">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Кейсы</p>
@@ -419,10 +422,11 @@ export default async function HomePage() {
             </div>
           )}
         </div>
+        </div>
       </section>
 
-      <section className="border-y border-orange-100 bg-white/50">
-        <div className="container mx-auto px-4 py-20">
+      <section className="container mx-auto px-4 py-20">
+        <div className="surface-grid p-8 md:p-10">
           <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Блог</p>
@@ -466,6 +470,7 @@ export default async function HomePage() {
       </section>
 
       <section className="container mx-auto px-4 py-20">
+        <div className="surface-signal p-8 md:p-10">
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Отзывы</p>
@@ -498,10 +503,12 @@ export default async function HomePage() {
             </div>
           )}
         </div>
+        </div>
       </section>
 
-      <section id="contact-form" className="scroll-mt-32 border-t border-orange-100 bg-white/50">
+      <section id="contact-form" className="scroll-mt-32">
         <div className="container mx-auto px-4 py-20">
+          <div className="surface-grid p-4 md:p-6">
           <div className="soft-section grid gap-8 overflow-hidden lg:grid-cols-[0.9fr_1.1fr]">
             <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Следующий шаг</p>
@@ -535,6 +542,7 @@ export default async function HomePage() {
             <div className="p-8">
               <ContactForm />
             </div>
+          </div>
           </div>
         </div>
       </section>

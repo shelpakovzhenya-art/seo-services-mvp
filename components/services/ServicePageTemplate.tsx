@@ -109,7 +109,7 @@ export default function ServicePageTemplate({ service, customContent }: ServiceP
           <span className="text-slate-900">{service.shortName}</span>
         </nav>
 
-        <section className="soft-section overflow-hidden p-8 md:p-10">
+        <section className="surface-grid overflow-hidden p-8 md:p-10">
           <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr]">
             <div>
               <span className="warm-chip">{service.label}</span>
@@ -173,12 +173,12 @@ export default function ServicePageTemplate({ service, customContent }: ServiceP
         </section>
 
         {customContent ? (
-          <section className="page-card mt-10">
+          <section className="reading-shell mt-10">
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{'\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u0443\u0435\u043c\u044b\u0439 \u0431\u043b\u043e\u043a'}</p>
             <RichContent
               content={customContent}
               title={service.h1}
-              className="prose mt-6 max-w-none prose-slate"
+              className="editorial-prose mt-6 max-w-none"
             />
           </section>
         ) : null}
@@ -292,7 +292,7 @@ export default function ServicePageTemplate({ service, customContent }: ServiceP
           </div>
         </section>
 
-        <section className="mt-10 page-card">
+        <section className="mt-10 reading-shell">
           <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Экспертный блок</p>
           <h2 className="mt-3 text-3xl font-semibold text-slate-950">{service.seoBlockTitle}</h2>
           <div className="mt-6 grid gap-4 lg:grid-cols-3">
@@ -304,7 +304,7 @@ export default function ServicePageTemplate({ service, customContent }: ServiceP
           </div>
         </section>
 
-        <section className="mt-10 page-card">
+        <section className="mt-10 reading-shell">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">FAQ</p>
@@ -326,7 +326,7 @@ export default function ServicePageTemplate({ service, customContent }: ServiceP
           </div>
         </section>
 
-        <section className="mt-10 page-card">
+        <section className="mt-10 reading-shell">
           <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Смежные услуги</p>
           <h2 className="mt-3 text-3xl font-semibold text-slate-950">Что усилит результат</h2>
           <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -344,7 +344,8 @@ export default function ServicePageTemplate({ service, customContent }: ServiceP
           </div>
         </section>
 
-        <section id="contact-form" className="mt-10 scroll-mt-32 soft-section overflow-hidden">
+        <section id="contact-form" className="mt-10 scroll-mt-32 surface-grid p-4 md:p-6">
+          <div className="soft-section overflow-hidden">
           <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
             <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Консультация</p>
@@ -366,6 +367,7 @@ export default function ServicePageTemplate({ service, customContent }: ServiceP
             <div className="p-8">
               <ContactForm />
             </div>
+          </div>
           </div>
         </section>
 

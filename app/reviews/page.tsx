@@ -25,7 +25,7 @@ export default async function ReviewsPage() {
 
   return (
     <div className="page-shell">
-      <section className="soft-section p-8 md:p-10">
+      <section className="surface-grid p-8 md:p-10">
         <span className="warm-chip">Отзывы</span>
         <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">
           {page?.h1 || 'Отзывы и подтверждение работы'}
@@ -36,9 +36,9 @@ export default async function ReviewsPage() {
       </section>
 
       {settings?.yandexReviewsEmbed ? (
-        <div className="page-card mt-8" dangerouslySetInnerHTML={{ __html: settings.yandexReviewsEmbed }} />
+        <div className="reading-shell mt-8" dangerouslySetInnerHTML={{ __html: settings.yandexReviewsEmbed }} />
       ) : (
-        <div className="page-card mt-8">
+        <div className="reading-shell mt-8">
           <p className="text-slate-600">На этой странице публикуются отзывы клиентов и дополнительные сигналы доверия.</p>
         </div>
       )}
@@ -46,7 +46,7 @@ export default async function ReviewsPage() {
       {reviews.length > 0 && (
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {reviews.map((review) => (
-            <div key={review.id} className="page-card">
+            <div key={review.id} className="glass-panel interactive-card p-7">
               <div className="mb-3 flex items-center gap-1 text-xl text-orange-400">
                 {[...Array(review.rating)].map((_, i) => (
                   <span key={i}>★</span>
@@ -60,8 +60,10 @@ export default async function ReviewsPage() {
       )}
 
       {pageContent && (
-        <div className="page-card mt-8 prose max-w-none prose-slate">
+        <div className="reading-shell mt-8">
+          <div className="editorial-prose max-w-none">
           <RichContent content={pageContent} />
+          </div>
         </div>
       )}
     </div>

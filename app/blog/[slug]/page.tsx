@@ -15,7 +15,7 @@ function normalizeMetaDescription(excerpt: string | null | undefined) {
     return `${clean.slice(0, 157).trimEnd()}...`
   }
 
-  const fallback = `${clean ? `${clean} ` : ''}Экспертный материал Shelpakov Digital о SEO, структуре сайта и росте органического трафика.`
+  const fallback = `${clean ? `${clean} ` : ''}Р­РєСЃРїРµСЂС‚РЅС‹Р№ РјР°С‚РµСЂРёР°Р» Shelpakov Digital Рѕ SEO, СЃС‚СЂСѓРєС‚СѓСЂРµ СЃР°Р№С‚Р° Рё СЂРѕСЃС‚Рµ РѕСЂРіР°РЅРёС‡РµСЃРєРѕРіРѕ С‚СЂР°С„РёРєР°.`
   return fallback.length > 160 ? `${fallback.slice(0, 157).trimEnd()}...` : fallback
 }
 
@@ -55,11 +55,11 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const content = stripLeadingMarkdownH1(post.content, post.title)
 
   return (
-    <article className="container mx-auto mb-0 max-w-4xl px-4 py-12">
-      <header className="soft-section overflow-hidden p-8 md:p-10">
+    <article className="page-shell max-w-5xl">
+      <header className="surface-cosmos overflow-hidden p-8 md:p-10">
         <div className="max-w-3xl">
           {post.publishedAt && (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-400">
               {new Date(post.publishedAt).toLocaleDateString('ru-RU', {
                 year: 'numeric',
                 month: 'long',
@@ -68,12 +68,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             </p>
           )}
 
-          <h1 className="mt-4 text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{post.title}</h1>
-          {post.excerpt && <p className="mt-5 text-lg leading-8 text-slate-600">{post.excerpt}</p>}
+          <h1 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-6xl">{post.title}</h1>
+          {post.excerpt && <p className="mt-5 text-lg leading-8 text-slate-300">{post.excerpt}</p>}
         </div>
 
         {coverImage && (
-          <div className="relative mt-8 overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_20px_50px_rgba(58,97,137,0.12)]">
+          <div className="relative mt-8 overflow-hidden rounded-[30px] border border-white/12 bg-white/8 shadow-[0_24px_60px_rgba(2,8,23,0.28)]">
             <div className="relative aspect-[16/9] w-full">
               <Image src={coverImage} alt={post.title} fill className="object-cover" />
             </div>
@@ -81,8 +81,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         )}
       </header>
 
-      <div className="prose mt-10 max-w-none prose-slate prose-headings:text-slate-950 prose-p:text-slate-700 prose-li:text-slate-700">
-        <RichContent content={content} />
+      <div className="mt-10 reading-shell">
+        <div className="editorial-prose max-w-none">
+          <RichContent content={content} />
+        </div>
       </div>
     </article>
   )
@@ -101,7 +103,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   if (!post) {
     return {
-      title: 'Статья не найдена',
+      title: 'РЎС‚Р°С‚СЊСЏ РЅРµ РЅР°Р№РґРµРЅР°',
     }
   }
 

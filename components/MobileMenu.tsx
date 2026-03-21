@@ -61,7 +61,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
         aria-label={open ? CLOSE_MENU_LABEL : OPEN_MENU_LABEL}
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-cyan-300 bg-cyan-50 text-cyan-800 transition hover:bg-cyan-100 lg:hidden"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-slate-100 transition hover:bg-white/16 lg:hidden"
       >
         {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
@@ -70,24 +70,24 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
         <button
           type="button"
           aria-label={CLOSE_MENU_LABEL}
-          className={`absolute inset-0 bg-slate-950/28 backdrop-blur-[2px] transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 bg-slate-950/44 backdrop-blur-md transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
           onClick={() => setOpen(false)}
         />
 
         <div
-          className={`absolute inset-0 h-[100dvh] w-screen overflow-y-auto bg-[radial-gradient(circle_at_top,_rgba(255,208,166,0.18),_transparent_34%),linear-gradient(180deg,_rgba(255,250,244,0.98),_rgba(255,247,239,1))] shadow-[0_24px_80px_rgba(15,23,42,0.18)] transition-transform duration-300 ease-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
+          className={`absolute inset-0 h-[100dvh] w-screen overflow-y-auto bg-[radial-gradient(circle_at_18%_16%,rgba(255,182,140,0.2),transparent_24%),radial-gradient(circle_at_82%_14%,rgba(96,227,255,0.18),transparent_22%),linear-gradient(180deg,rgba(6,12,24,0.985),rgba(10,18,33,1))] transition-transform duration-300 ease-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
         >
-          <div className="sticky top-0 z-10 border-b border-orange-100 bg-[#fffaf4]/95 px-6 py-5 backdrop-blur">
+          <div className="sticky top-0 z-10 border-b border-white/10 bg-[#09111f]/88 px-6 py-5 backdrop-blur-2xl">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{MENU_TITLE}</div>
-                <div className="mt-1 text-2xl font-semibold text-slate-950">Shelpakov Digital</div>
+                <div className="text-xs uppercase tracking-[0.24em] text-orange-300">{MENU_TITLE}</div>
+                <div className="mt-1 text-2xl font-semibold text-white">Shelpakov Digital</div>
               </div>
               <button
                 type="button"
                 aria-label={CLOSE_MENU_LABEL}
                 onClick={() => setOpen(false)}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-orange-100 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)]"
+                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/12 bg-white/10 text-slate-100 shadow-[0_12px_30px_rgba(2,8,23,0.3)]"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -95,22 +95,22 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
           </div>
 
           <div className="flex min-h-[calc(100dvh-89px)] flex-col px-6 py-6 pb-8">
-            <div className="rounded-[28px] border border-orange-100 bg-white/95 p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
-              <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+            <div className="rounded-[30px] border border-white/12 bg-white/[0.07] p-5 shadow-[0_20px_40px_rgba(2,8,23,0.24)] backdrop-blur-xl">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-slate-300">
                 <span>{workSchedule}</span>
                 <span className={`inline-flex items-center gap-2.5 rounded-full border px-3 py-1 text-[11px] font-semibold ${workStatus.badgeClass}`}>
                   <span className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
                     <span className={`absolute inset-0 inline-flex animate-ping rounded-full opacity-90 ${workStatus.pingClass}`} />
-                    <span className={`relative inline-flex h-2.5 w-2.5 rounded-full shadow-[0_0_0_2px_rgba(255,255,255,0.9)] ${workStatus.dotClass}`} />
+                    <span className={`relative inline-flex h-2.5 w-2.5 rounded-full shadow-[0_0_0_2px_rgba(255,255,255,0.92)] ${workStatus.dotClass}`} />
                   </span>
                   {workStatus.text}
                 </span>
               </div>
               <a
                 href={`mailto:${email}`}
-                className="mt-4 inline-flex items-center gap-2 text-sm text-slate-700 transition hover:text-slate-950"
+                className="mt-4 inline-flex items-center gap-2 text-sm text-slate-100 transition hover:text-cyan-100"
               >
-                <Mail className="h-4 w-4 text-cyan-700" />
+                <Mail className="h-4 w-4 text-cyan-300" />
                 {email}
               </a>
             </div>
@@ -121,16 +121,16 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
                   key={item.id}
                   href={item.url}
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between rounded-[28px] border border-orange-100 bg-white/95 px-5 py-5 text-[clamp(1.2rem,4.4vw,1.5rem)] font-semibold text-slate-900 shadow-[0_18px_40px_rgba(15,23,42,0.05)] transition hover:border-cyan-200"
+                  className="flex items-center justify-between rounded-[30px] border border-white/12 bg-white/[0.07] px-5 py-5 text-[clamp(1.2rem,4.4vw,1.56rem)] font-semibold text-white shadow-[0_18px_36px_rgba(2,8,23,0.2)] backdrop-blur-xl transition hover:border-cyan-300/40 hover:bg-white/[0.11]"
                 >
                   <span>{item.label}</span>
-                  <ArrowUpRight className="h-5 w-5 text-cyan-700" />
+                  <ArrowUpRight className="h-5 w-5 text-cyan-300" />
                 </Link>
               ))}
             </nav>
 
-            <div className="mt-6 rounded-[28px] border border-orange-100 bg-[#fff5ea]/95 p-5">
-              <div className="text-xs uppercase tracking-[0.22em] text-orange-700">{CONTACTS_TITLE}</div>
+            <div className="mt-6 rounded-[30px] border border-white/12 bg-[linear-gradient(145deg,rgba(255,186,140,0.15),rgba(255,255,255,0.06)_48%,rgba(96,227,255,0.08))] p-5 backdrop-blur-xl">
+              <div className="text-xs uppercase tracking-[0.22em] text-orange-300">{CONTACTS_TITLE}</div>
 
               {socialLinks.length > 0 ? (
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -140,7 +140,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
                       href={item.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-3 rounded-2xl border border-orange-200 bg-white px-4 py-4 text-base font-medium text-slate-700 transition hover:border-cyan-300 hover:text-cyan-700"
+                      className="inline-flex items-center gap-3 rounded-2xl border border-white/12 bg-white/10 px-4 py-4 text-base font-medium text-slate-100 transition hover:border-cyan-300/40 hover:bg-white/14 hover:text-cyan-100"
                     >
                       {item.type === 'telegram' ? (
                         <Image src="/telegram-logo.svg" alt="Telegram" width={20} height={20} className="h-5 w-5" />
@@ -159,7 +159,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
             <a
               href="#contact-form"
               onClick={() => setOpen(false)}
-              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-cyan-300 bg-cyan-50 px-5 py-4 text-base font-medium text-cyan-800 transition hover:bg-cyan-100"
+              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-cyan-200/30 bg-[linear-gradient(135deg,rgba(96,227,255,0.95),rgba(255,183,137,0.9))] px-5 py-4 text-base font-semibold text-slate-950 shadow-[0_16px_32px_rgba(2,8,23,0.26)] transition hover:-translate-y-0.5"
             >
               {DISCUSS_PROJECT}
               <ArrowUpRight className="h-5 w-5" />

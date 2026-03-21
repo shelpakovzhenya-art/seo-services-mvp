@@ -71,7 +71,7 @@ export default function ServicesIndexPage() {
           <span className="text-slate-900">Услуги</span>
         </nav>
 
-        <section className="soft-section p-8 md:p-10">
+        <section className="surface-grid p-8 md:p-10">
           <div className="grid gap-8 lg:grid-cols-[1.04fr_0.96fr]">
             <div>
               <span className="warm-chip">SEO-услуги</span>
@@ -121,7 +121,7 @@ export default function ServicesIndexPage() {
 
         <ServicesCatalogSection />
 
-        <section className="page-card">
+        <section className="reading-shell">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">FAQ</p>
@@ -140,7 +140,8 @@ export default function ServicesIndexPage() {
           </div>
         </section>
 
-        <section id="contact-form" className="mt-10 scroll-mt-32 soft-section overflow-hidden">
+        <section id="contact-form" className="mt-10 scroll-mt-32 surface-grid p-4 md:p-6">
+          <div className="soft-section overflow-hidden">
           <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
             <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Консультация</p>
@@ -162,6 +163,7 @@ export default function ServicesIndexPage() {
             <div className="p-8">
               <ContactForm />
             </div>
+          </div>
           </div>
         </section>
       </div>

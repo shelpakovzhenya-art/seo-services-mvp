@@ -24,7 +24,7 @@ export default async function CalculatorPage() {
 
   return (
     <div className="page-shell">
-      <section className="soft-section p-8 md:p-10">
+      <section className="surface-grid p-8 md:p-10">
         <span className="warm-chip">Калькулятор SEO-услуг</span>
         <h1 className="mt-5 max-w-5xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">
           {page?.h1 || 'Подберите формат SEO-работ и получите ориентир по бюджету'}
@@ -56,7 +56,7 @@ export default async function CalculatorPage() {
       </section>
 
       <section className="mt-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="page-card">
+        <div className="reading-shell">
           <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Что влияет на стоимость</p>
           <h2 className="mt-3 text-3xl font-semibold text-slate-950">Цена зависит не только от услуги, но и от масштаба проекта</h2>
           <div className="mt-6 space-y-3">
@@ -90,8 +90,10 @@ export default async function CalculatorPage() {
       </section>
 
       {pageContent && (
-        <div className="page-card mt-10 prose max-w-none prose-slate">
-          <RichContent content={pageContent} />
+        <div className="reading-shell mt-10">
+          <div className="editorial-prose max-w-none">
+            <RichContent content={pageContent} />
+          </div>
         </div>
       )}
     </div>

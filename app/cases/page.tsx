@@ -32,7 +32,7 @@ export default async function CasesPage() {
 
   return (
     <div className="page-shell">
-      <section className="soft-section p-8 md:p-10">
+      <section className="surface-grid p-8 md:p-10">
         <span className="warm-chip">{'\u041a\u0435\u0439\u0441\u044b'}</span>
         <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{page?.h1 || PAGE_FALLBACK_TITLE}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{page?.description || PAGE_FALLBACK_DESCRIPTION}</p>
@@ -61,12 +61,12 @@ export default async function CasesPage() {
               <Link
                 key={caseItem.id}
                 href={`/cases/${caseItem.slug}`}
-                className="page-card overflow-hidden p-0 transition hover:-translate-y-0.5 hover:border-cyan-200"
+                className="reading-shell interactive-card overflow-hidden p-0"
               >
                 {cardContent}
               </Link>
             ) : (
-              <article key={caseItem.id} className="page-card overflow-hidden p-0">
+              <article key={caseItem.id} className="reading-shell overflow-hidden p-0">
                 {cardContent}
               </article>
             )
@@ -77,7 +77,7 @@ export default async function CasesPage() {
       <RichContent
         content={page?.content}
         title={page?.h1 || page?.title || '\u041a\u0435\u0439\u0441\u044b'}
-        className="page-card mt-8 prose max-w-none prose-slate"
+        className="reading-shell editorial-prose mt-8 max-w-none"
       />
     </div>
   )
