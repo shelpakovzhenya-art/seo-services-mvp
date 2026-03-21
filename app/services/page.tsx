@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ArrowRight, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import ServicesCatalogSection from '@/components/services/ServicesCatalogSection'
-import ContactForm from '@/components/ContactForm'
+import LazyContactForm from '@/components/LazyContactForm'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getFullUrl } from '@/lib/site-url'
 import { serviceIndexFaq, servicePages } from '@/lib/service-pages'
@@ -168,7 +168,7 @@ export default function ServicesIndexPage() {
               </div>
             </div>
             <div className="p-8">
-              <ContactForm />
+              <LazyContactForm />
             </div>
           </div>
           </div>

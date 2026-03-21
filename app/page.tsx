@@ -15,7 +15,7 @@ import { buildCaseListing } from '@/lib/case-listing'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { Button } from '@/components/ui/button'
-import ContactForm from '@/components/ContactForm'
+import LazyContactForm from '@/components/LazyContactForm'
 import ServicesCatalogSection from '@/components/services/ServicesCatalogSection'
 
 const defaultHomeMetadata = {
@@ -540,7 +540,7 @@ export default async function HomePage() {
             </div>
 
             <div className="p-8">
-              <ContactForm />
+              <LazyContactForm />
             </div>
           </div>
           </div>

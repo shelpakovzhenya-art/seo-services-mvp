@@ -1,5 +1,5 @@
-import Calculator from '@/components/Calculator'
-import ContactForm from '@/components/ContactForm'
+import LazyCalculator from '@/components/LazyCalculator'
+import LazyContactForm from '@/components/LazyContactForm'
 import RichContent from '@/components/RichContent'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
@@ -42,7 +42,7 @@ export default async function CalculatorPage() {
       </section>
 
       <section className="mt-10">
-        <Calculator
+        <LazyCalculator
           services={pricing.map((service) => ({
             id: service.slug,
             slug: service.slug,
@@ -84,7 +84,7 @@ export default async function CalculatorPage() {
               </p>
             </div>
             <div className="p-8">
-              <ContactForm />
+              <LazyContactForm />
             </div>
           </div>
         </div>

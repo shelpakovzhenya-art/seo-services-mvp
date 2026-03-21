@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import ContactForm from '@/components/ContactForm'
+import LazyContactForm from '@/components/LazyContactForm'
 import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
@@ -97,7 +97,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
           </div>
 
           <div className="p-8">
-            <ContactForm />
+            <LazyContactForm />
           </div>
         </div>
       </section>

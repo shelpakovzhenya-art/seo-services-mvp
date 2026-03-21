@@ -1,5 +1,5 @@
 import { Clock, Mail } from 'lucide-react'
-import ContactForm from '@/components/ContactForm'
+import LazyContactForm from '@/components/LazyContactForm'
 import RichContent from '@/components/RichContent'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
@@ -59,7 +59,7 @@ export default async function ContactsPage() {
         <div id="contact-form" className="page-card h-full scroll-mt-36 md:scroll-mt-40">
           <h2 className="text-2xl font-semibold text-slate-950">Форма обратной связи</h2>
           <div className="mt-6">
-            <ContactForm />
+            <LazyContactForm />
           </div>
         </div>
       </div>

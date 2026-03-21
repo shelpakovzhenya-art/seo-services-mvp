@@ -3,7 +3,7 @@ import Script from 'next/script'
 import { ArrowRight, Check, ChevronRight, Clock3 } from 'lucide-react'
 import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
-import ContactForm from '@/components/ContactForm'
+import LazyContactForm from '@/components/LazyContactForm'
 import { getFullUrl } from '@/lib/site-url'
 import { formatServiceBillingUnit, formatServicePrice, type ServicePricing } from '@/lib/service-pricing'
 import { getRelatedServices, type ServicePageContent } from '@/lib/service-pages'
@@ -365,7 +365,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
             </div>
 
             <div className="p-8">
-              <ContactForm />
+              <LazyContactForm />
             </div>
           </div>
           </div>

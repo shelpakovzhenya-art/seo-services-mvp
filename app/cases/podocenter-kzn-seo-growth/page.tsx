@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, CheckCircle2, MapPin, Search } from 'lucide-react'
-import ContactForm from '@/components/ContactForm'
+import LazyContactForm from '@/components/LazyContactForm'
 import { Button } from '@/components/ui/button'
 import { isPlaceholderCase } from '@/lib/case-listing'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
@@ -393,7 +393,7 @@ export default async function PodocenterCasePage() {
           </div>
 
           <div className="p-8">
-            <ContactForm />
+            <LazyContactForm />
           </div>
         </div>
       </section>
