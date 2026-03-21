@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 import { ArrowRight, CheckCircle2, MapPin, Search } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import { Button } from '@/components/ui/button'
@@ -43,7 +42,6 @@ function parseResultImages(value?: string | null) {
 
 export default async function PodocenterCasePage() {
   let uploadedImages: string[] = []
-  let hasCase = false
 
   try {
     const caseItem = await prisma.case.findFirst({
@@ -55,14 +53,9 @@ export default async function PodocenterCasePage() {
       },
     })
 
-    hasCase = Boolean(caseItem)
     uploadedImages = parseResultImages(caseItem?.resultImages)
   } catch (error) {
     console.error('Error loading podocenter case assets:', error)
-  }
-
-  if (!hasCase) {
-    notFound()
   }
 
   const galleryImages =

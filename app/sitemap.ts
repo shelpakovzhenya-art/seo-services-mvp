@@ -1,4 +1,6 @@
 import { MetadataRoute } from 'next'
+import { isPlaceholderCase } from '@/lib/case-listing'
+import { podocenterCase } from '@/lib/podocenter-case'
 import { prisma } from '@/lib/prisma'
 import { getSiteUrl, getFullUrl } from '@/lib/site-url'
 import { servicePages } from '@/lib/service-pages'
@@ -26,6 +28,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
+    },
+    {
+      url: getFullUrl(podocenterCase.url),
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.75,
     },
     {
       url: getFullUrl('/reviews'),
@@ -98,6 +106,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
 
     casePages = cases
+      .filter((item) => !isPlaceholderCase(item))
       .filter((item) => item.slug)
       .map((item) => ({
         url: getFullUrl(`/cases/${item.slug}`),

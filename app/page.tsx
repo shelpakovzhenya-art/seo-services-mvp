@@ -11,6 +11,7 @@ import {
   Rocket,
   ShieldCheck,
 } from 'lucide-react'
+import { buildCaseListing } from '@/lib/case-listing'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { Button } from '@/components/ui/button'
@@ -147,6 +148,8 @@ export default async function HomePage() {
   } catch (error) {
     console.error('Error loading homepage data:', error)
   }
+
+  const featuredCases = buildCaseListing(cases).slice(0, 2)
 
   return (
     <div className="overflow-hidden">
@@ -365,8 +368,8 @@ export default async function HomePage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          {cases.length > 0 ? (
-            cases.map((item, index) => {
+          {featuredCases.length > 0 ? (
+            featuredCases.map((item, index) => {
               const cardContent = (
                 <>
                   <div className="flex items-center justify-between">
