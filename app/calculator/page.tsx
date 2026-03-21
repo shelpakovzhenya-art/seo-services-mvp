@@ -25,7 +25,7 @@ export default async function CalculatorPage() {
 
   return (
     <div className="page-shell">
-      <section className="surface-grid p-8 md:p-10">
+      <section className="surface-grid surface-pad">
         <span className="warm-chip">Калькулятор SEO-услуг</span>
         <h1 className="mt-5 max-w-5xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">
           {page?.h1 || 'Подберите формат SEO-работ и получите ориентир по бюджету'}
@@ -56,8 +56,8 @@ export default async function CalculatorPage() {
         />
       </section>
 
-      <section className="mt-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="reading-shell">
+      <section className="mt-8 grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <div className="reading-shell h-full">
           <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Что влияет на стоимость</p>
           <h2 className="mt-3 text-3xl font-semibold text-slate-950">Цена зависит не только от услуги, но и от масштаба проекта</h2>
           <div className="mt-6 space-y-3">
@@ -73,8 +73,8 @@ export default async function CalculatorPage() {
           </div>
         </div>
 
-        <div id="contact-form" className="soft-section overflow-hidden">
-          <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
+        <div id="contact-form" className="soft-section h-full overflow-hidden">
+          <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
             <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Обсудить задачу</p>
               <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">Оставьте заявку, если нужен точный расчёт</h2>

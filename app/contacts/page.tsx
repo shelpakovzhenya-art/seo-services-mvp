@@ -22,7 +22,7 @@ export default async function ContactsPage() {
 
   return (
     <div className="page-shell">
-      <section className="surface-grid p-8 md:p-10">
+      <section className="surface-grid surface-pad">
         <span className="warm-chip">Контакты</span>
         <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">
           {page?.h1 || 'Связаться по проекту'}
@@ -33,8 +33,8 @@ export default async function ContactsPage() {
         </p>
       </section>
 
-      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <div className="reading-shell">
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
+        <div className="reading-shell h-full">
           <h2 className="text-2xl font-semibold text-slate-950">Как связаться</h2>
           <div className="mt-6 space-y-4">
             <div className="flex items-center gap-3 text-slate-700">
@@ -56,7 +56,7 @@ export default async function ContactsPage() {
           )}
         </div>
 
-        <div id="contact-form" className="page-card scroll-mt-36 md:scroll-mt-40">
+        <div id="contact-form" className="page-card h-full scroll-mt-36 md:scroll-mt-40">
           <h2 className="text-2xl font-semibold text-slate-950">Форма обратной связи</h2>
           <div className="mt-6">
             <ContactForm />

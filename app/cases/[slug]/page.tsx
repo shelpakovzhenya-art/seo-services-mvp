@@ -27,7 +27,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
 
   return (
     <div className="page-shell">
-      <section className="soft-section overflow-hidden p-8 md:p-10">
+      <section className="soft-section surface-pad overflow-hidden">
         <span className="warm-chip">Кейс</span>
         <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">{caseItem.title}</h1>
         {caseItem.description ? (
@@ -60,7 +60,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
       {galleryImages.length > 0 ? (
         <section className="page-card mt-8">
           <h2 className="text-3xl font-semibold text-slate-950">Скрины и результаты</h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="uniform-grid-3 mt-8 gap-4">
             {galleryImages.map((src, index) => (
               <article
                 key={src}
@@ -84,7 +84,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
       ) : null}
 
       <section id="case-contact" className="mt-8 soft-section overflow-hidden">
-        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
             <span className="warm-chip">Обсудить проект</span>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">

@@ -14,9 +14,9 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
   const pricingMap = await getMergedServicePricingMap(services.map((service) => service.slug))
 
   return (
-    <section className={compact ? 'container mx-auto px-4 py-14 md:py-16' : 'page-shell'}>
-      <div className={compact ? 'surface-grid p-8 md:p-10' : 'surface-signal p-8 md:p-10'}>
-      <div className="grid gap-8 lg:grid-cols-[0.86fr_1.14fr]">
+    <section className={compact ? 'section-shell' : 'page-shell'}>
+      <div className={compact ? 'surface-grid surface-pad' : 'surface-signal surface-pad'}>
+      <div className="grid gap-6 lg:grid-cols-[0.86fr_1.14fr] lg:items-start">
         <div className="space-y-6">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">SEO-услуги</p>
@@ -54,7 +54,7 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
           )}
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="uniform-grid-3 gap-5">
           {services.map((service) => {
             const pricing = pricingMap.get(service.slug)
 
@@ -62,7 +62,7 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
               <Link
                 key={service.slug}
                 href={`/services/${service.slug}`}
-                className="glass-panel interactive-card flex h-full flex-col p-6"
+                className="uniform-card glass-panel interactive-card p-6"
               >
                 <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{service.label}</div>
                 <h3 className="mt-4 text-2xl font-semibold text-slate-950">{service.h1 || service.shortName}</h3>

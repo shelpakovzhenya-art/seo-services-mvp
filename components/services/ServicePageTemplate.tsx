@@ -109,8 +109,8 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           <span className="text-slate-900">{service.shortName}</span>
         </nav>
 
-        <section className="surface-grid overflow-hidden p-8 md:p-10">
-          <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr]">
+        <section className="surface-grid surface-pad overflow-hidden">
+          <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
             <div>
               <span className="warm-chip">{service.label}</span>
               <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{service.h1}</h1>
@@ -163,9 +163,9 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </div>
         </section>
 
-        <section className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <section className="uniform-grid-4 mt-8">
           {service.benefits.map((item) => (
-            <div key={item.title} className="glass-panel interactive-card p-6">
+            <div key={item.title} className="uniform-card glass-panel interactive-card p-6">
               <h2 className="text-2xl font-semibold text-slate-950">{item.title}</h2>
               <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
             </div>
@@ -173,7 +173,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
         </section>
 
         {customContent ? (
-          <section className="reading-shell mt-10">
+          <section className="reading-shell mt-8">
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{'\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u0443\u0435\u043c\u044b\u0439 \u0431\u043b\u043e\u043a'}</p>
             <RichContent
               content={customContent}
@@ -183,7 +183,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </section>
         ) : null}
 
-        <section className="mt-10 grid gap-8 lg:grid-cols-[0.94fr_1.06fr]">
+        <section className="mt-8 grid gap-6 lg:grid-cols-[0.94fr_1.06fr] lg:items-start">
           <div className="page-card">
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Кому подходит</p>
             <h2 className="mt-3 text-3xl font-semibold text-slate-950">Когда эта услуга особенно полезна</h2>
@@ -210,7 +210,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </div>
         </section>
 
-        <section className="mt-10 rounded-[32px] border border-orange-100 bg-gradient-to-r from-orange-50 via-white to-cyan-50 p-8 md:p-10">
+        <section className="mt-8 rounded-[32px] border border-orange-100 bg-gradient-to-r from-orange-50 via-white to-cyan-50 surface-pad">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Быстрый вход</p>
@@ -226,7 +226,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </p>
         </section>
 
-        <section className="mt-10 grid gap-8 lg:grid-cols-[1.04fr_0.96fr]">
+        <section className="mt-8 grid gap-6 lg:grid-cols-[1.04fr_0.96fr] lg:items-start">
           <div className="page-card">
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Этапы работ</p>
             <h2 className="mt-3 text-3xl font-semibold text-slate-950">Как обычно строится работа</h2>
@@ -260,7 +260,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </div>
         </section>
 
-        <section className="mt-10 grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+        <section className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="page-card">
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Результаты</p>
             <h2 className="mt-3 text-3xl font-semibold text-slate-950">На что влияет эта работа</h2>
@@ -292,7 +292,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </div>
         </section>
 
-        <section className="mt-10 reading-shell">
+        <section className="mt-8 reading-shell">
           <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Экспертный блок</p>
           <h2 className="mt-3 text-3xl font-semibold text-slate-950">{service.seoBlockTitle}</h2>
           <div className="mt-6 grid gap-4 lg:grid-cols-3">
@@ -304,7 +304,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </div>
         </section>
 
-        <section className="mt-10 reading-shell">
+        <section className="mt-8 reading-shell">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">FAQ</p>
@@ -326,12 +326,12 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </div>
         </section>
 
-        <section className="mt-10 reading-shell">
+        <section className="mt-8 reading-shell">
           <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Смежные услуги</p>
           <h2 className="mt-3 text-3xl font-semibold text-slate-950">Что усилит результат</h2>
-          <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="uniform-grid-4 mt-6 gap-5">
             {relatedServices.map((item) => (
-              <Link key={item.slug} href={`/services/${item.slug}`} className="interactive-card rounded-[24px] border border-orange-100 bg-white/80 p-5">
+              <Link key={item.slug} href={`/services/${item.slug}`} className="uniform-card interactive-card rounded-[24px] border border-orange-100 bg-white/80 p-5">
                 <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{item.label}</div>
                 <div className="mt-3 text-xl font-semibold text-slate-950">{item.shortName}</div>
                 <p className="mt-3 text-sm leading-7 text-slate-600">{item.cardDescription}</p>
@@ -344,9 +344,9 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </div>
         </section>
 
-        <section id="contact-form" className="mt-10 scroll-mt-32 surface-grid p-4 md:p-6">
+        <section id="contact-form" className="mt-8 scroll-mt-32 surface-grid p-4 md:p-6">
           <div className="soft-section overflow-hidden">
-          <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
+          <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
             <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Консультация</p>
               <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{service.ctas.rational}</h2>

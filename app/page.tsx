@@ -154,7 +154,7 @@ export default async function HomePage() {
   return (
     <div className="overflow-hidden pb-16 md:pb-20">
       <section className="section-grid relative border-b border-white/10">
-        <div className="container relative mx-auto px-4 pb-8 pt-6 md:pb-10 md:pt-8">
+        <div className="section-shell-tight relative !pb-8 !pt-6 md:!pb-10 md:!pt-8">
           <div className="hero-panel hero-sheen relative overflow-hidden rounded-[32px] border border-white/70 px-4 py-5 md:px-6 md:py-6 lg:px-8 lg:py-7">
             <div className="hero-grid-mask" />
             <div className="hero-orb float-slow left-[-30px] top-10 h-28 w-28 bg-[radial-gradient(circle,rgba(255,163,102,0.34),rgba(255,163,102,0))]" />
@@ -230,9 +230,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 pb-14 pt-6 md:pb-16 md:pt-8">
-        <div className="surface-signal p-8 md:p-10">
-        <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <section className="section-shell-tight !pb-10 !pt-4 md:!pb-12 md:!pt-6">
+        <div className="surface-signal surface-pad">
+        <div className="section-heading">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Подход к проекту</p>
             <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">
@@ -245,11 +245,11 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="uniform-grid-3">
           {advantageCards.map((item) => {
             const Icon = item.icon
             return (
-              <div key={item.title} className="glass-panel interactive-card p-7">
+              <div key={item.title} className="uniform-card glass-panel interactive-card p-7">
                 <Icon className="h-8 w-8 text-cyan-700" />
                 <h3 className="mt-5 text-2xl font-semibold text-slate-950">{item.title}</h3>
                 <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
@@ -260,9 +260,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-14 md:py-16">
-        <div className="surface-dawn p-8 md:p-10">
-          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <section className="section-shell">
+        <div className="surface-dawn surface-pad">
+          <div className="section-heading">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Тарифы</p>
               <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">
@@ -274,13 +274,13 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-3">
+          <div className="uniform-grid-3">
             {packageCards.map((pkg, index) => {
               const Icon = pkg.icon
               return (
                 <div
                   key={pkg.name}
-                  className={`interactive-card relative flex h-full flex-col rounded-[30px] border p-7 ${
+                  className={`uniform-card interactive-card relative rounded-[30px] border p-7 ${
                     index === 1
                       ? 'border-cyan-200 bg-[linear-gradient(180deg,rgba(224,247,255,0.95),rgba(255,250,243,0.95))] shadow-[0_24px_60px_rgba(56,189,248,0.12)]'
                       : 'border-white/80 bg-white/88'
@@ -320,9 +320,9 @@ export default async function HomePage() {
 
       <ServicesCatalogSection compact />
 
-      <section className="container mx-auto px-4 py-14 md:py-16">
-        <div className="surface-dawn p-8 md:p-10">
-          <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+      <section className="section-shell">
+        <div className="surface-dawn surface-pad">
+          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
             <div className="glass-panel interactive-card p-8">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Кому особенно полезно</p>
               <h2 className="mt-3 text-3xl font-semibold text-slate-950">
@@ -355,9 +355,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-14 md:py-16">
-        <div className="surface-grid p-8 md:p-10">
-        <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <section className="section-shell">
+        <div className="surface-grid surface-pad">
+        <div className="section-heading">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Кейсы</p>
             <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">
@@ -370,7 +370,7 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="uniform-grid-2">
           {featuredCases.length > 0 ? (
             featuredCases.map((item, index) => {
               const cardContent = (
@@ -399,7 +399,7 @@ export default async function HomePage() {
                   <Link
                     key={item.id}
                     href={`/cases/${item.slug}`}
-                    className="glass-panel interactive-card group block p-8 transition hover:border-cyan-200"
+                    className="uniform-card glass-panel interactive-card group block p-8 transition hover:border-cyan-200"
                   >
                     {cardContent}
                   </Link>
@@ -407,7 +407,7 @@ export default async function HomePage() {
               }
 
               return (
-                <div key={item.id} className="glass-panel interactive-card p-8">
+                <div key={item.id} className="uniform-card glass-panel interactive-card p-8">
                   {cardContent}
                 </div>
               )
@@ -425,9 +425,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-14 md:py-16">
-        <div className="surface-grid p-8 md:p-10">
-          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <section className="section-shell">
+        <div className="surface-grid surface-pad">
+          <div className="section-heading">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Блог</p>
               <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">
@@ -440,13 +440,13 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="uniform-grid-3">
             {posts.length > 0 ? (
               posts.map((post) => (
                 <Link
                   key={post.id}
                   href={`/blog/${post.slug}`}
-                  className="glass-panel interactive-card group p-7 transition hover:border-cyan-200"
+                  className="uniform-card glass-panel interactive-card group p-7 transition hover:border-cyan-200"
                 >
                   <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Материал</div>
                   <h3 className="mt-4 text-2xl font-semibold text-slate-950">{post.title}</h3>
@@ -469,9 +469,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-14 md:py-16">
-        <div className="surface-signal p-8 md:p-10">
-        <div className="mb-10 flex items-end justify-between gap-6">
+      <section className="section-shell">
+        <div className="surface-signal surface-pad">
+        <div className="section-heading">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Отзывы</p>
             <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">
@@ -480,10 +480,10 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="uniform-grid-3">
           {reviews.length > 0 ? (
             reviews.map((review) => (
-              <div key={review.id} className="glass-panel interactive-card p-7">
+              <div key={review.id} className="uniform-card glass-panel interactive-card p-7">
                 <div className="text-sm uppercase tracking-[0.24em] text-orange-700">{review.author}</div>
                 <p className="mt-5 text-sm leading-7 text-slate-600">{review.text}</p>
                 {(review.company || review.position) && (
@@ -507,7 +507,7 @@ export default async function HomePage() {
       </section>
 
       <section id="contact-form" className="scroll-mt-32">
-        <div className="container mx-auto px-4 py-14 md:py-16">
+        <div className="section-shell">
           <div className="surface-grid p-4 md:p-6">
           <div className="soft-section grid gap-8 overflow-hidden lg:grid-cols-[0.9fr_1.1fr]">
             <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">

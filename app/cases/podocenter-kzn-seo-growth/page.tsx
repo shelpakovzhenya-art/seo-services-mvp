@@ -123,7 +123,7 @@ export default async function PodocenterCasePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      <section className="soft-section p-8 md:p-10">
+      <section className="soft-section surface-pad">
         <span className="warm-chip">SEO-кейс локального проекта</span>
         <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">
           {podocenterCase.h1}
@@ -176,7 +176,7 @@ export default async function PodocenterCasePage() {
         </div>
       </section>
 
-      <section className="mt-8 grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+      <section className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
         <div className="page-card">
           <span className="warm-chip">О проекте</span>
           <ul className="mt-6 space-y-4 text-base leading-7 text-slate-700">
@@ -279,7 +279,7 @@ export default async function PodocenterCasePage() {
         </section>
       ) : null}
 
-      <section className="mt-8 grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
         <div className="page-card">
           <span className="warm-chip">Что дало результат</span>
           <h2 className="mt-4 text-3xl font-semibold text-slate-950">Почему стратегия сработала</h2>
@@ -350,7 +350,7 @@ export default async function PodocenterCasePage() {
       <section className="mt-8 page-card">
         <span className="warm-chip">Связанные услуги</span>
         <h2 className="mt-4 text-3xl font-semibold text-slate-950">Что может усилить такой же проект</h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="uniform-grid-4 mt-8 gap-4">
           {serviceLinks.map((item) => (
             <Link
               key={item.href}
@@ -371,7 +371,7 @@ export default async function PodocenterCasePage() {
       </section>
 
       <section id="case-contact" className="mt-8 soft-section overflow-hidden">
-        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
             <span className="warm-chip">Обсудить проект</span>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">

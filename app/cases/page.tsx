@@ -32,14 +32,14 @@ export default async function CasesPage() {
 
   return (
     <div className="page-shell">
-      <section className="surface-grid p-8 md:p-10">
+      <section className="surface-grid surface-pad">
         <span className="warm-chip">{'\u041a\u0435\u0439\u0441\u044b'}</span>
         <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{page?.h1 || PAGE_FALLBACK_TITLE}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{page?.description || PAGE_FALLBACK_DESCRIPTION}</p>
       </section>
 
       {caseCards.length > 0 ? (
-        <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="uniform-grid-2 mt-8">
           {caseCards.map((caseItem) => {
             const cardContent = (
               <>
@@ -61,12 +61,12 @@ export default async function CasesPage() {
               <Link
                 key={caseItem.id}
                 href={`/cases/${caseItem.slug}`}
-                className="reading-shell interactive-card overflow-hidden p-0"
+                className="uniform-card reading-shell interactive-card overflow-hidden p-0"
               >
                 {cardContent}
               </Link>
             ) : (
-              <article key={caseItem.id} className="reading-shell overflow-hidden p-0">
+              <article key={caseItem.id} className="uniform-card reading-shell overflow-hidden p-0">
                 {cardContent}
               </article>
             )

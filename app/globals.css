@@ -531,11 +531,52 @@
     background-size: 72px 72px;
   }
 
-  .page-shell {
-    @apply container mx-auto px-4 py-12 md:py-16;
+  .page-shell,
+  .section-shell {
+    @apply container mx-auto px-4 py-10 md:py-12;
     position: relative;
     z-index: 1;
     max-width: 1360px;
+  }
+
+  .section-shell-tight {
+    @apply container mx-auto px-4 py-8 md:py-10;
+    position: relative;
+    z-index: 1;
+    max-width: 1360px;
+  }
+
+  .surface-pad {
+    @apply p-6 md:p-8 xl:p-10;
+  }
+
+  .section-heading {
+    @apply mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between;
+  }
+
+  .uniform-grid-2,
+  .uniform-grid-3,
+  .uniform-grid-4 {
+    align-items: stretch;
+  }
+
+  .uniform-grid-2 {
+    @apply grid grid-cols-1 gap-6 md:grid-cols-2;
+  }
+
+  .uniform-grid-3 {
+    @apply grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3;
+  }
+
+  .uniform-grid-4 {
+    @apply grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4;
+  }
+
+  .uniform-card {
+    display: flex;
+    min-width: 0;
+    height: 100%;
+    flex-direction: column;
   }
 
   .page-card {

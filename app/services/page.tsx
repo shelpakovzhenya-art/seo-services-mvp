@@ -78,8 +78,8 @@ export default function ServicesIndexPage() {
           <span className="text-slate-900">Услуги</span>
         </nav>
 
-        <section className="surface-grid p-8 md:p-10">
-          <div className="grid gap-8 lg:grid-cols-[1.04fr_0.96fr]">
+        <section className="surface-grid surface-pad">
+          <div className="grid gap-6 lg:grid-cols-[1.04fr_0.96fr] lg:items-start">
             <div>
               <span className="warm-chip">SEO-услуги</span>
               <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">
@@ -137,7 +137,7 @@ export default function ServicesIndexPage() {
             <div className="text-sm text-slate-500">Всего направлений: {servicePages.length}</div>
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="uniform-grid-2 mt-6 gap-4">
             {serviceIndexFaq.map((item) => (
               <div key={item.question} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
                 <h3 className="text-lg font-semibold text-slate-950">{item.question}</h3>
@@ -147,9 +147,9 @@ export default function ServicesIndexPage() {
           </div>
         </section>
 
-        <section id="contact-form" className="mt-10 scroll-mt-32 surface-grid p-4 md:p-6">
+        <section id="contact-form" className="mt-8 scroll-mt-32 surface-grid p-4 md:p-6">
           <div className="soft-section overflow-hidden">
-          <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
+          <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
             <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Консультация</p>
               <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">

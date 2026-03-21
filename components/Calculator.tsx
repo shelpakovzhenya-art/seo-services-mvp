@@ -48,7 +48,7 @@ export default function Calculator({ services }: CalculatorProps) {
               key={serviceKey}
               type="button"
               onClick={() => toggleService(serviceKey)}
-              className={`w-full rounded-[28px] border p-5 text-left transition ${
+              className={`uniform-card w-full rounded-[28px] border p-5 text-left transition ${
                 isSelected
                   ? 'border-cyan-300 bg-cyan-50 shadow-[0_16px_40px_rgba(34,211,238,0.16)]'
                   : 'border-orange-100 bg-white hover:border-orange-200 hover:bg-[#fffaf5]'

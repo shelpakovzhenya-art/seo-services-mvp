@@ -71,8 +71,8 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
         <span className="text-white">{tool.title}</span>
       </nav>
 
-      <section className="surface-grid p-8 md:p-10">
-        <div className="grid gap-8 xl:grid-cols-[1.02fr_0.98fr] xl:items-end">
+      <section className="surface-grid surface-pad">
+        <div className="grid gap-6 xl:grid-cols-[1.02fr_0.98fr] xl:items-end">
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <span className="warm-chip">{tool.category}</span>

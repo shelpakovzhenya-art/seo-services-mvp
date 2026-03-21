@@ -42,8 +42,8 @@ export default function ToolsIndexPage() {
         <span className="text-white">Инструменты</span>
       </nav>
 
-      <section className="surface-cosmos p-8 md:p-10">
-        <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="surface-cosmos surface-pad">
+        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <span className="warm-chip">SEO-инструменты</span>
@@ -89,13 +89,13 @@ export default function ToolsIndexPage() {
         </div>
       </section>
 
-      <section className="mt-10">
-        <div className="grid gap-6 xl:grid-cols-3">
+      <section className="mt-8">
+        <div className="uniform-grid-3">
           {seoTools.map((tool) => (
             <Link
               key={tool.slug}
               href={`/tools/${tool.slug}`}
-              className="group flex h-full flex-col rounded-[34px] border border-white/10 bg-[#071120]/88 p-7 text-slate-300 shadow-[0_24px_70px_rgba(2,6,23,0.34)] transition hover:-translate-y-1.5 hover:border-orange-300/30 hover:bg-[#0a1528]/94"
+              className="uniform-card group rounded-[34px] border border-white/10 bg-[#071120]/88 p-7 text-slate-300 shadow-[0_24px_70px_rgba(2,6,23,0.34)] transition hover:-translate-y-1.5 hover:border-orange-300/30 hover:bg-[#0a1528]/94"
             >
               <div className="flex flex-wrap items-center gap-3">
                 <span className="rounded-full border border-orange-300/30 bg-orange-300/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-orange-200">

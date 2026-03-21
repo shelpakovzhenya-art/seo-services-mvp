@@ -133,7 +133,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
   return (
     <article className="page-shell max-w-5xl">
-      <header className="surface-cosmos overflow-hidden p-8 md:p-10">
+      <header className="surface-cosmos surface-pad overflow-hidden">
         <div className="max-w-3xl">
           {post.publishedAt && (
             <p className="text-sm text-slate-400">
@@ -171,12 +171,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             материала и помогают превратить выводы в рабочий план.
           </p>
 
-          <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <div className="uniform-grid-3 mt-6 gap-3">
             {relatedServices.map((service) => (
               <Link
                 key={service.href}
                 href={service.href}
-                className="group rounded-[22px] border border-white/80 bg-white/92 px-4 py-4 shadow-[0_14px_30px_rgba(15,23,42,0.06)] transition duration-200 hover:-translate-y-0.5 hover:border-cyan-200 hover:bg-white"
+                className="uniform-card group rounded-[22px] border border-white/80 bg-white/92 px-4 py-4 shadow-[0_14px_30px_rgba(15,23,42,0.06)] transition duration-200 hover:-translate-y-0.5 hover:border-cyan-200 hover:bg-white"
               >
                 <p className="text-lg font-semibold text-slate-950 transition-colors duration-200 group-hover:text-sky-700">
                   {service.label}

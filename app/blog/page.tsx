@@ -34,7 +34,7 @@ export default async function BlogPage() {
 
   return (
     <div className="page-shell">
-      <section className="surface-cosmos p-8 md:p-10">
+      <section className="surface-cosmos surface-pad">
         <div className="max-w-4xl">
           <span className="warm-chip">Блог</span>
           <h1 className="mt-4 text-4xl font-semibold text-white md:text-6xl">Материалы по SEO и развитию сайта</h1>
@@ -50,15 +50,15 @@ export default async function BlogPage() {
         </div>
       </section>
 
-      <section className="mt-10 surface-grid p-6 md:p-8">
+      <section className="mt-8 surface-grid surface-pad">
         {posts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="uniform-grid-3">
             {posts.map((post) => {
               const cover = getPostCover(post)
 
               return (
                 <Link key={post.id} href={`/blog/${post.slug}`} className="group block h-full">
-                  <article className="interactive-card reading-shell flex h-full flex-col overflow-hidden p-0">
+                  <article className="uniform-card interactive-card reading-shell overflow-hidden p-0">
                     {cover ? (
                       <div className="relative h-52 w-full">
                         <Image
@@ -71,7 +71,7 @@ export default async function BlogPage() {
                       </div>
                     ) : null}
 
-                    <div className="flex flex-1 flex-col p-6">
+                    <div className="flex flex-1 flex-col p-6 md:p-7">
                       <div className="text-[11px] uppercase tracking-[0.24em] text-orange-700">Статья</div>
                       <h2 className="mt-4 text-2xl font-semibold leading-tight text-slate-950">{post.title}</h2>
                       {post.excerpt ? (
