@@ -154,8 +154,8 @@ export default async function HomePage() {
   return (
     <div className="overflow-hidden pb-24">
       <section className="section-grid relative border-b border-white/10">
-        <div className="container relative mx-auto px-4 pb-20 pt-16 md:pb-24 md:pt-20">
-          <div className="hero-panel hero-sheen relative overflow-hidden rounded-[40px] border border-white/70 px-6 py-8 md:px-10 md:py-10 lg:px-12 lg:py-12">
+        <div className="container relative mx-auto px-4 pb-12 pt-10 md:pb-14 md:pt-12">
+          <div className="hero-panel hero-sheen relative overflow-hidden rounded-[36px] border border-white/70 px-6 py-7 md:px-8 md:py-8 lg:px-10 lg:py-9">
             <div className="hero-grid-mask" />
             <div className="hero-orb float-slow left-[-30px] top-10 h-28 w-28 bg-[radial-gradient(circle,rgba(255,163,102,0.34),rgba(255,163,102,0))]" />
             <div className="hero-orb float-reverse right-10 top-[-16px] h-24 w-24 bg-[radial-gradient(circle,rgba(56,189,248,0.28),rgba(56,189,248,0))]" />
@@ -176,17 +176,17 @@ export default async function HomePage() {
 
             <div className="relative max-w-5xl">
               <span className="warm-chip">SEO-продвижение под заявки</span>
-              <h1 className="mt-6 max-w-5xl text-5xl font-semibold leading-[0.98] tracking-[-0.03em] text-slate-950 md:text-7xl">
+              <h1 className="mt-5 max-w-[12.5ch] text-[clamp(3.15rem,5.7vw,5.6rem)] font-semibold leading-[0.94] tracking-[-0.04em] text-slate-950">
                 SEO и структура сайта, которые помогают получать больше обращений, а не просто расти по позициям.
               </h1>
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600 md:text-xl">
+              <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 md:text-[1.15rem] md:leading-8">
                 Помогаю бизнесу усиливать сайт под поиск и под клиента: дорабатываю ключевые страницы, оффер,
                 структуру, коммерческие факторы и логику заявки, чтобы органика становилась каналом роста.
               </p>
 
-              <div className="mt-10 flex flex-wrap gap-4">
+              <div className="mt-7 flex flex-wrap gap-3">
                 <a href="#contact-form">
-                  <Button size="lg" className="rounded-full px-7">
+                  <Button size="lg" className="rounded-full px-6">
                     Получить разбор сайта
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -195,33 +195,33 @@ export default async function HomePage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="rounded-full border-slate-300 bg-white px-7 text-slate-900 hover:bg-slate-50"
+                    className="rounded-full border-slate-300 bg-white px-6 text-slate-900 hover:bg-slate-50"
                   >
                     Посмотреть кейсы
                   </Button>
                 </Link>
               </div>
 
-              <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate-600">
-                <span className="rounded-full border border-orange-200 bg-white/90 px-4 py-2 shadow-sm">
+              <div className="mt-6 flex flex-wrap gap-2.5 text-[13px] text-slate-600 md:text-sm">
+                <span className="rounded-full border border-orange-200 bg-white/90 px-3.5 py-1.5 shadow-sm">
                   Быстрый ответ по заявке
                 </span>
-                <span className="rounded-full border border-orange-200 bg-white/90 px-4 py-2 shadow-sm">
+                <span className="rounded-full border border-orange-200 bg-white/90 px-3.5 py-1.5 shadow-sm">
                   План работ после созвона
                 </span>
-                <span className="rounded-full border border-orange-200 bg-white/90 px-4 py-2 shadow-sm">
+                <span className="rounded-full border border-orange-200 bg-white/90 px-3.5 py-1.5 shadow-sm">
                   Фокус на заявках и доверии
                 </span>
               </div>
 
-              <div className="mt-10 grid gap-4 md:grid-cols-3">
+              <div className="mt-7 grid gap-3 md:grid-cols-3">
                 {trustMetrics.map((metric) => (
                   <div
                     key={metric.value}
-                    className="rounded-[24px] border border-orange-100 bg-white/82 p-5 shadow-[0_18px_35px_rgba(138,103,63,0.06)] backdrop-blur-sm"
+                    className="rounded-[22px] border border-orange-100 bg-white/82 p-4 shadow-[0_18px_35px_rgba(138,103,63,0.06)] backdrop-blur-sm"
                   >
-                    <div className="text-2xl font-semibold text-slate-950">{metric.value}</div>
-                    <div className="mt-2 text-sm leading-6 text-slate-600">{metric.label}</div>
+                    <div className="text-lg font-semibold text-slate-950 md:text-xl">{metric.value}</div>
+                    <div className="mt-1.5 text-[13px] leading-5 text-slate-600 md:text-sm md:leading-6">{metric.label}</div>
                   </div>
                 ))}
               </div>
@@ -230,7 +230,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-20">
+      <section className="container mx-auto px-4 pb-20 pt-10 md:pb-20 md:pt-12">
         <div className="surface-signal p-8 md:p-10">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
