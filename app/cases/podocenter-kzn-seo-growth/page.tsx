@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowRight, CheckCircle2, MapPin, Search } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import { Button } from '@/components/ui/button'
+import { isPlaceholderCase } from '@/lib/case-listing'
 import { prisma } from '@/lib/prisma'
 import { getFullUrl } from '@/lib/site-url'
 import { podocenterCase } from '@/lib/podocenter-case'
@@ -14,22 +15,26 @@ const serviceLinks = [
   { href: '/services/seo-content', label: 'SEO-контент' },
 ]
 
-const fallbackVisuals = [
+const resultCaptions = [
   {
-    src: '/cases/podocenter/traffic-growth.svg',
-    alt: 'Рост органического трафика PodoCenter из Google и Яндекса',
+    alt: 'Рост поискового трафика PodoCenter',
+    caption:
+      'Рост визитов и пользователей из поиска после усиления структуры и ключевых посадочных страниц.',
   },
   {
-    src: '/cases/podocenter/visibility-growth.svg',
-    alt: 'Рост видимости PodoCenter по локальным запросам в Казани',
+    alt: 'Динамика видимости PodoCenter по Казани',
+    caption:
+      'Видимость по Казани выросла и закрепилась в коммерческом сегменте локальной выдачи.',
   },
   {
-    src: '/cases/podocenter/cpl-dynamics.svg',
-    alt: 'Динамика заявок и снижение CPL по проекту PodoCenter',
+    alt: 'Динамика заявок и CPL по проекту',
+    caption:
+      'При том же бюджете трафик и количество заявок росли, а CPL снижался месяц к месяцу.',
   },
   {
-    src: '/cases/podocenter/positions-heatmap.svg',
-    alt: 'Тепловая карта позиций PodoCenter по приоритетным запросам',
+    alt: 'Матрица позиций PodoCenter',
+    caption:
+      'Матрица показывает закрепление значимой части запросов в ТОП-10 и появление точек входа в ТОП-3.',
   },
 ]
 
@@ -44,28 +49,46 @@ export default async function PodocenterCasePage() {
   let uploadedImages: string[] = []
 
   try {
-    const caseItem = await prisma.case.findFirst({
+    const caseItems = await prisma.case.findMany({
       where: {
-        OR: [{ slug: podocenterCase.slug }, { title: { contains: 'PodoCenter' } }],
+        OR: [
+          { slug: podocenterCase.slug },
+          { title: { contains: 'PodoCenter', mode: 'insensitive' } },
+          { title: { contains: 'подолог', mode: 'insensitive' } },
+          { resultImages: { not: null } },
+        ],
       },
       select: {
+        slug: true,
+        title: true,
         resultImages: true,
+        updatedAt: true,
       },
+      orderBy: { updatedAt: 'desc' },
     })
 
-    uploadedImages = parseResultImages(caseItem?.resultImages)
+    const gallerySource =
+      caseItems.find((item) => item.slug === podocenterCase.slug && parseResultImages(item.resultImages).length > 0) ||
+      caseItems.find(
+        (item) =>
+          (item.title || '').toLowerCase().includes('podocenter') && parseResultImages(item.resultImages).length > 0
+      ) ||
+      caseItems.find((item) => !isPlaceholderCase(item) && parseResultImages(item.resultImages).length > 0) ||
+      caseItems.find((item) => parseResultImages(item.resultImages).length > 0) ||
+      null
+
+    uploadedImages = parseResultImages(gallerySource?.resultImages)
   } catch (error) {
     console.error('Error loading podocenter case assets:', error)
   }
 
-  const galleryImages =
-    uploadedImages.length > 0
-      ? uploadedImages.map((src, index) => ({
-          src,
-          alt: `Скрин результата PodoCenter ${index + 1}`,
-        }))
-      : fallbackVisuals
-  const hasUploadedResults = uploadedImages.length > 0
+  const galleryImages = uploadedImages.map((src, index) => ({
+    src,
+    alt: resultCaptions[index]?.alt || `Скрин результата PodoCenter ${index + 1}`,
+    caption:
+      resultCaptions[index]?.caption ||
+      'Скриншот из проекта с динамикой роста по поиску, видимости и обращениям.',
+  }))
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -216,32 +239,43 @@ export default async function PodocenterCasePage() {
           ))}
         </div>
       </section>
-      <section className="mt-8 page-card">
-        <span className="warm-chip">Результаты</span>
-        <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
-          Вместо карточек с цифрами здесь показываем сами скриншоты результатов
-        </h2>
-        <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">
-          {hasUploadedResults
-            ? 'Ниже показаны реальные фотографии-скриншоты из проекта: рост трафика, видимости, заявок и позиций по приоритетным запросам.'
-            : 'Блок уже подготовлен под реальные скриншоты кейса. Пока в базе не загружены фотографии, показываются временные демонстрационные визуалы.'}
-        </p>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          {galleryImages.map((item) => (
-            <article
-              key={item.src}
-              className="overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_18px_45px_rgba(148,107,61,0.08)]"
-            >
-              <div className="relative aspect-[16/10] w-full bg-[linear-gradient(180deg,#fffdf8,#f7fbff)] p-3">
-                <div className="relative h-full w-full overflow-hidden rounded-[20px] border border-white/80 bg-white">
-                  <Image src={item.src} alt={item.alt} fill className="object-contain p-2" />
+      {galleryImages.length > 0 ? (
+        <section className="mt-8 page-card">
+          <span className="warm-chip">Результаты</span>
+          <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
+            Скриншоты роста по трафику, видимости и заявкам
+          </h2>
+          <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">
+            Ниже идут реальные скриншоты из проекта. Каждый экран показывает отдельный срез: трафик, видимость,
+            обращения и позиции.
+          </p>
+
+          <div className="mt-8 space-y-6">
+            {galleryImages.map((item, index) => (
+              <article
+                key={item.src}
+                className="overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_18px_45px_rgba(148,107,61,0.08)]"
+              >
+                <div className="border-b border-orange-100 bg-[linear-gradient(180deg,#fffdf8,#f7fbff)] p-3 sm:p-4">
+                  <div className="relative min-h-[220px] w-full overflow-hidden rounded-[20px] border border-orange-100 bg-white sm:min-h-[320px] lg:min-h-[420px]">
+                    <Image
+                      src={item.src}
+                      alt={item.alt}
+                      fill
+                      priority={index === 0}
+                      className="object-contain p-2 sm:p-4"
+                    />
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+                <div className="px-5 py-4 sm:px-6">
+                  <p className="text-base font-medium leading-7 text-slate-700">{item.caption}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-8 grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="page-card">
@@ -262,8 +296,8 @@ export default async function PodocenterCasePage() {
           <h2 className="mt-4 text-3xl font-semibold text-slate-950">Что важно для похожих проектов</h2>
           <p className="mt-5 text-base leading-8 text-slate-600">
             Для локального сервиса недостаточно просто получить трафик. Нужны правильные страницы услуг, понятная логика
-            записи, сильные коммерческие сигналы и техническая база, которая помогает поиску правильно понимать сайт. Если у
-            вас похожая задача, чаще всего стоит начинать с{' '}
+            записи, сильные коммерческие сигналы и техническая база, которая помогает поиску правильно понимать сайт.
+            Если у вас похожая задача, чаще всего стоит начинать с{' '}
             <Link href="/services/seo-audit" className="font-medium text-cyan-700 transition hover:text-slate-950">
               SEO-аудита
             </Link>{' '}
@@ -278,15 +312,18 @@ export default async function PodocenterCasePage() {
             <div className="text-sm uppercase tracking-[0.22em] text-cyan-300">CTA</div>
             <h3 className="mt-3 text-2xl font-semibold">Нужен похожий результат для локального проекта?</h3>
             <p className="mt-3 text-sm leading-7 text-slate-300">
-              Разберу, где сайт теряет поисковый потенциал, какие страницы нужно усиливать в первую очередь и как связать SEO
-              с обращениями, а не только с позициями.
+              Разберу, где сайт теряет поисковый потенциал, какие страницы нужно усиливать в первую очередь и как связать
+              SEO с обращениями, а не только с позициями.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <a href="#case-contact">
                 <Button className="rounded-full">Заказать SEO-разбор проекта</Button>
               </a>
               <Link href="/calculator">
-                <Button variant="outline" className="rounded-full border-white/25 bg-transparent text-white hover:bg-white/10">
+                <Button
+                  variant="outline"
+                  className="rounded-full border-white/25 bg-transparent text-white hover:bg-white/10"
+                >
                   Оценить формат работ
                 </Button>
               </Link>
@@ -339,8 +376,8 @@ export default async function PodocenterCasePage() {
               Нужен не отчёт, а рост по поиску и обращениям?
             </h2>
             <p className="mt-5 text-base leading-8 text-slate-600">
-              Разберу сайт, покажу слабые места в структуре, контенте и коммерческих факторах, а затем соберу понятный план
-              продвижения под ваш регион и спрос.
+              Разберу сайт, покажу слабые места в структуре, контенте и коммерческих факторах, а затем соберу понятный
+              план продвижения под ваш регион и спрос.
             </p>
             <div className="mt-8 space-y-3 text-sm leading-7 text-slate-600">
               <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">Ответ в течение дня</div>
