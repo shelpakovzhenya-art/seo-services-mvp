@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import fs from 'fs/promises'
+import path from 'path'
 import nodemailer from 'nodemailer'
 
 const DEFAULT_LEAD_EMAIL = 'shelpakovzhenya@gmail.com'
@@ -200,6 +202,75 @@ function getMailCandidates() {
   return candidates
 }
 
+async function ensureLeadLogDirectory(filePath: string) {
+  try {
+    await fs.mkdir(path.dirname(filePath), { recursive: true })
+  } catch (error) {
+    console.error('Unable to create lead log directory', error)
+  }
+}
+
+async function persistLeadLog(
+  payload: { name: string; contact: string; site: string },
+  meta: { ip: string; sourceUrl: string; sourceTitle: string; date: string; userAgent: string },
+  status: 'sent' | 'failed'
+) {
+  const leadLogPath = process.env.LEAD_LOG_PATH || path.join(process.cwd(), 'data', 'leads.log')
+  const record = {
+    status,
+    timestamp: new Date().toISOString(),
+    payload,
+    meta,
+  }
+
+  try {
+    await ensureLeadLogDirectory(leadLogPath)
+    await fs.appendFile(leadLogPath, JSON.stringify(record) + '\n', { encoding: 'utf-8' })
+  } catch (error) {
+    console.error('Unable to persist lead record', error)
+  }
+}
+
+async function notifyTelegram(record: {
+  payload: { name: string; contact: string; site: string }
+  meta: { ip: string; sourceUrl: string; sourceTitle: string; date: string; userAgent: string }
+  status: 'sent' | 'failed'
+}) {
+  const token = process.env.TELEGRAM_BOT_TOKEN?.trim()
+  const chatId = process.env.TELEGRAM_CHAT_ID?.trim()
+
+  if (!token || !chatId) {
+    return
+  }
+
+  const escape = (value: string) => escapeHtml(value)
+  const statusLabel = record.status === 'sent' ? '✅' : '⚠️'
+  const text = [
+    `${statusLabel} <b>Заявка с сайта</b>`,
+    `Имя: ${escape(record.payload.name)}`,
+    `Контакт: ${escape(record.payload.contact)}`,
+    `Сайт: ${escape(record.payload.site || 'не указан')}`,
+    `Источник: ${escape(record.meta.sourceTitle)} (${escape(record.meta.sourceUrl)})`,
+    `IP: ${escape(record.meta.ip)}`,
+    `UA: ${escape(record.meta.userAgent)}`,
+    `Статус: ${record.status === 'sent' ? 'отправлена' : 'не отправлена, см. логи'}`,
+  ].join('\n')
+
+  try {
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        parse_mode: 'HTML',
+        text,
+      }),
+    })
+  } catch (error) {
+    console.error('Telegram notification failed', error)
+  }
+}
+
 async function sendLeadMail(
   candidates: MailCandidate[],
   mail: {
@@ -246,17 +317,28 @@ async function sendLeadMail(
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const ip = getClientIp(request)
+  let name = ''
+  let contact = ''
+  let site = ''
+  let safeSourceUrl = 'Не определён'
+  let safeSourceTitle = 'Не определена'
+  const ip = getClientIp(request)
+  const currentDate = new Date().toLocaleString('ru-RU', {
+    dateStyle: 'full',
+    timeStyle: 'medium',
+    timeZone: 'Europe/Moscow',
+  })
+  const userAgent = request.headers.get('user-agent') || 'Не определён'
 
+  try {
     if (!checkRateLimit(ip)) {
       return NextResponse.json({ error: 'Слишком много запросов. Попробуйте позже.' }, { status: 429 })
     }
 
     const body = (await request.json()) as LeadPayload
-    const name = normalizeText(body.name)
-    const contact = normalizeText(body.phone)
-    const site = normalizeText(body.site)
+    name = normalizeText(body.name)
+    contact = normalizeText(body.phone)
+    site = normalizeText(body.site)
     const honeypot = normalizeText(body.honeypot)
     const sourceUrl = normalizeText(body.sourceUrl)
     const sourceTitle = normalizeText(body.sourceTitle)
@@ -279,19 +361,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const currentDate = new Date().toLocaleString('ru-RU', {
-      dateStyle: 'full',
-      timeStyle: 'medium',
-      timeZone: 'Europe/Moscow',
-    })
     const referer = request.headers.get('referer') || 'Не определён'
-    const userAgent = request.headers.get('user-agent') || 'Не определён'
     const replyTo = looksLikeEmail(contact) ? contact : undefined
     const safeName = escapeHtml(name)
     const safeContact = escapeHtml(contact)
     const safeSite = escapeHtml(site || 'Не указан')
-    const safeSourceUrl = escapeHtml(sourceUrl || referer)
-    const safeSourceTitle = escapeHtml(sourceTitle || 'Не указана')
+    safeSourceUrl = escapeHtml(sourceUrl || referer)
+    safeSourceTitle = escapeHtml(sourceTitle || 'Не указана')
     const safeIp = escapeHtml(ip)
     const safeUserAgent = escapeHtml(userAgent)
 
@@ -337,12 +413,26 @@ export async function POST(request: NextRequest) {
       }`
     )
 
+    const leadPayload = { name, contact, site }
+    const leadMeta = { ip, sourceUrl: safeSourceUrl, sourceTitle: safeSourceTitle, date: currentDate, userAgent }
+
+    await persistLeadLog(leadPayload, leadMeta, 'sent')
+    await notifyTelegram({ payload: leadPayload, meta: leadMeta, status: 'sent' })
+
     return NextResponse.json({ success: true, message: 'Заявка отправлена. Скоро свяжусь с вами.' })
   } catch (error) {
     console.error('Error sending lead email:', error)
 
+    const leadPayload = { name, contact, site }
+    const leadMeta = { ip, sourceUrl: safeSourceUrl, sourceTitle: safeSourceTitle, date: currentDate, userAgent }
+    await persistLeadLog(leadPayload, leadMeta, 'failed')
+    await notifyTelegram({ payload: leadPayload, meta: leadMeta, status: 'failed' })
+
     return NextResponse.json(
-      { error: 'Не удалось отправить заявку. Попробуйте ещё раз чуть позже.' },
+      {
+        error:
+          'Не удалось отправить заявку. Сохраню её на случай ручной проверки и обязательно сообщу. Проверьте, пожалуйста, настройки почты или Telegram.',
+      },
       { status: 500 }
     )
   }
