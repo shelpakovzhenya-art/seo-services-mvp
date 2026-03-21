@@ -24,17 +24,45 @@ const sparkles = [
   { left: '86%', top: '26%', delay: '2.1s', duration: '6.5s' },
 ]
 
+const headerGapStars = [
+  { left: '18%', top: '166px', size: 'sm', delay: '0.2s', duration: '5.3s' },
+  { left: '27%', top: '214px', size: 'md', delay: '1.1s', duration: '6.4s' },
+  { left: '39%', top: '188px', size: 'sm', delay: '0.5s', duration: '5.6s' },
+  { left: '58%', top: '204px', size: 'sm', delay: '1.8s', duration: '5.8s' },
+  { left: '72%', top: '178px', size: 'md', delay: '0.9s', duration: '6.2s' },
+  { left: '83%', top: '232px', size: 'sm', delay: '1.4s', duration: '5.1s' },
+]
+
+const headerGapSparkles = [
+  { left: '22%', top: '188px', delay: '0.8s', duration: '6.9s' },
+  { left: '66%', top: '224px', delay: '1.9s', duration: '7.2s' },
+]
+
 export default function SiteAtmosphere() {
   return (
     <div aria-hidden="true" className="site-atmosphere">
       <div className="ambient-glow ambient-glow--warm" />
       <div className="ambient-glow ambient-glow--cool" />
+      <div className="ambient-header-band" />
       <div className="ambient-grid" />
 
       {stars.map((star, index) => (
         <span
           key={`${star.left}-${star.top}-${index}`}
           className={`ambient-star ambient-star--${star.size}`}
+          style={{
+            left: star.left,
+            top: star.top,
+            animationDelay: star.delay,
+            animationDuration: star.duration,
+          }}
+        />
+      ))}
+
+      {headerGapStars.map((star, index) => (
+        <span
+          key={`header-${star.left}-${star.top}-${index}`}
+          className={`ambient-star ambient-star--${star.size} ambient-star--header`}
           style={{
             left: star.left,
             top: star.top,
@@ -57,17 +85,34 @@ export default function SiteAtmosphere() {
         />
       ))}
 
+      {headerGapSparkles.map((sparkle, index) => (
+        <span
+          key={`header-sparkle-${sparkle.left}-${sparkle.top}-${index}`}
+          className="ambient-sparkle ambient-sparkle--header"
+          style={{
+            left: sparkle.left,
+            top: sparkle.top,
+            animationDelay: sparkle.delay,
+            animationDuration: sparkle.duration,
+          }}
+        />
+      ))}
+
       <span className="ambient-comet ambient-comet--1" />
       <span className="ambient-comet ambient-comet--2" />
+      <span className="ambient-comet ambient-comet--header" />
       <span className="ambient-rocket ambient-rocket--1" />
       <span className="ambient-rocket ambient-rocket--2" />
+      <span className="ambient-rocket ambient-rocket--3" />
       <span className="ambient-signal ambient-signal--1" />
       <span className="ambient-signal ambient-signal--2" />
       <span className="ambient-ufo ambient-ufo--1" />
       <span className="ambient-ufo ambient-ufo--2" />
       <span className="ambient-ufo ambient-ufo--3" />
+      <span className="ambient-ufo ambient-ufo--4" />
       <span className="ambient-orb ambient-orb--1" />
       <span className="ambient-orb ambient-orb--2" />
+      <span className="ambient-orb ambient-orb--3" />
     </div>
   )
 }

@@ -121,6 +121,21 @@
     opacity: 0.58;
   }
 
+  .ambient-header-band {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 6.9rem;
+    height: 13rem;
+    background:
+      radial-gradient(circle at 18% 48%, rgba(255, 174, 125, 0.16), rgba(255, 174, 125, 0) 28%),
+      radial-gradient(circle at 82% 42%, rgba(96, 227, 255, 0.14), rgba(96, 227, 255, 0) 30%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+    opacity: 0.92;
+    animation: headerBandPulse 8.8s ease-in-out infinite;
+  }
+
   .ambient-glow {
     position: absolute;
     border-radius: 9999px;
@@ -171,6 +186,13 @@
     height: 7px;
   }
 
+  .ambient-star--header {
+    box-shadow:
+      0 0 18px rgba(255, 255, 255, 0.46),
+      0 0 30px rgba(96, 227, 255, 0.2),
+      0 0 40px rgba(255, 179, 135, 0.16);
+  }
+
   .ambient-sparkle {
     position: absolute;
     width: 1.15rem;
@@ -203,6 +225,10 @@
     height: 2px;
   }
 
+  .ambient-sparkle--header {
+    opacity: 0.98;
+  }
+
   .ambient-comet {
     position: absolute;
     height: 2px;
@@ -226,6 +252,15 @@
     width: 11rem;
     transform: rotate(12deg);
     animation: cometRideReverse 26s linear infinite;
+  }
+
+  .ambient-comet--header {
+    top: 11.6rem;
+    left: 58%;
+    width: 8rem;
+    opacity: 0.74;
+    transform: rotate(-10deg);
+    animation: headerCometSweep 18s linear infinite;
   }
 
   .ambient-rocket {
@@ -280,6 +315,16 @@
     opacity: 0.84;
     transform: rotate(14deg);
     animation: rocketFlyReverse 24s ease-in-out infinite;
+  }
+
+  .ambient-rocket--3 {
+    right: 13%;
+    top: 10.4rem;
+    width: 4rem;
+    height: 0.92rem;
+    opacity: 0.76;
+    transform: rotate(-12deg);
+    animation: rocketFlyHeader 16s ease-in-out infinite;
   }
 
   .ambient-signal {
@@ -370,6 +415,15 @@
     animation: ufoHover 18s ease-in-out infinite;
   }
 
+  .ambient-ufo--4 {
+    left: 36%;
+    top: 11.2rem;
+    width: 4.8rem;
+    height: 1.7rem;
+    opacity: 0.82;
+    animation: ufoHeaderGlide 15s ease-in-out infinite;
+  }
+
   .ambient-orb {
     position: absolute;
     border-radius: 9999px;
@@ -395,6 +449,16 @@
     background: rgba(96, 227, 255, 0.95);
     box-shadow: 0 0 18px rgba(96, 227, 255, 0.42);
     animation: orbitBlink 5.6s ease-in-out infinite 1.2s;
+  }
+
+  .ambient-orb--3 {
+    left: 64%;
+    top: 12.7rem;
+    width: 0.82rem;
+    height: 0.82rem;
+    background: rgba(255, 188, 136, 0.94);
+    box-shadow: 0 0 18px rgba(255, 188, 136, 0.42);
+    animation: orbitBlink 4.9s ease-in-out infinite 0.8s;
   }
 
   .glass-panel {
@@ -879,7 +943,14 @@
   .ambient-signal,
   .ambient-ufo--2,
   .ambient-ufo--3,
-  .ambient-rocket--2 {
+  .ambient-ufo--4,
+  .ambient-rocket--2,
+  .ambient-rocket--3,
+  .ambient-comet--header,
+  .ambient-header-band,
+  .ambient-star--header,
+  .ambient-sparkle--header,
+  .ambient-orb--3 {
     display: none;
   }
 
@@ -921,6 +992,7 @@
   .ambient-ufo,
   .ambient-orb,
   .ambient-glow,
+  .ambient-header-band,
   .float-slow,
   .float-reverse,
   .pulse-glow,
@@ -1160,5 +1232,65 @@
   50% {
     opacity: 1;
     transform: scale(1.18);
+  }
+}
+
+@keyframes rocketFlyHeader {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-12deg);
+  }
+
+  35% {
+    transform: translate3d(-28px, 10px, 0) rotate(-8deg);
+  }
+
+  70% {
+    transform: translate3d(-74px, -8px, 0) rotate(-15deg);
+  }
+}
+
+@keyframes ufoHeaderGlide {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  28% {
+    transform: translate3d(22px, -6px, 0);
+  }
+
+  65% {
+    transform: translate3d(68px, 8px, 0);
+  }
+}
+
+@keyframes headerCometSweep {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-10deg);
+    opacity: 0;
+  }
+
+  15%,
+  80% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translate3d(26vw, -5vh, 0) rotate(-10deg);
+    opacity: 0;
+  }
+}
+
+@keyframes headerBandPulse {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate3d(0, 8px, 0);
   }
 }
