@@ -1,14 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
-import { Plus, Edit, Trash2 } from 'lucide-react'
+import { Edit, ImagePlus, Plus, Trash2, Upload, X } from 'lucide-react'
 
 const RichTextEditor = dynamic(() => import('./RichTextEditor'), {
   ssr: false,
   loading: () => (
-    <div className="border rounded-lg min-h-[300px] p-4 bg-gray-50 flex items-center justify-center">
+    <div className="flex min-h-[300px] items-center justify-center rounded-lg border bg-gray-50 p-4">
       <p className="text-gray-400">Загрузка редактора...</p>
     </div>
   ),
@@ -22,10 +22,69 @@ interface BlogPost {
   content: string
   coverImage: string | null
   published: boolean
-  publishedAt: string | null // ISO string from server, converted to Date when needed
+  publishedAt: string | null
   parentId: string | null
   order: number
   children?: BlogPost[]
+}
+
+type BlogPostFormData = {
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  coverImage: string
+  published: boolean
+  publishedAt: string
+  parentId: string | null
+  order: number
+}
+
+function buildTree(items: BlogPost[]): BlogPost[] {
+  const map = new Map<string, BlogPost>()
+  const roots: BlogPost[] = []
+
+  items.forEach((item) => {
+    map.set(item.id, { ...item, children: [] })
+  })
+
+  items.forEach((item) => {
+    const node = map.get(item.id)
+
+    if (!node) {
+      return
+    }
+
+    if (item.parentId && map.has(item.parentId)) {
+      const parent = map.get(item.parentId)
+
+      if (!parent) {
+        roots.push(node)
+        return
+      }
+
+      parent.children = parent.children || []
+      parent.children.push(node)
+    } else {
+      roots.push(node)
+    }
+  })
+
+  return roots.sort((a, b) => a.order - b.order)
+}
+
+function createInitialFormData(post: BlogPost | null): BlogPostFormData {
+  return {
+    slug: post?.slug || '',
+    title: post?.title || '',
+    excerpt: post?.excerpt || '',
+    content: post?.content || '',
+    coverImage: post?.coverImage || '',
+    published: post?.published ?? false,
+    publishedAt: post?.publishedAt ? new Date(post.publishedAt).toISOString().split('T')[0] : '',
+    parentId: post?.parentId || null,
+    order: post?.order || 0,
+  }
 }
 
 export default function BlogManager({ initialPosts }: { initialPosts: BlogPost[] }) {
@@ -33,34 +92,11 @@ export default function BlogManager({ initialPosts }: { initialPosts: BlogPost[]
   const [editing, setEditing] = useState<BlogPost | null>(null)
   const [isCreating, setIsCreating] = useState(false)
 
-  // Build tree structure
-  const buildTree = (items: BlogPost[]): BlogPost[] => {
-    const map = new Map<string, BlogPost>()
-    const roots: BlogPost[] = []
-
-    items.forEach(item => {
-      map.set(item.id, { ...item, children: [] })
-    })
-
-    items.forEach(item => {
-      const node = map.get(item.id)!
-      if (item.parentId && map.has(item.parentId)) {
-        const parent = map.get(item.parentId)!
-        if (!parent.children) parent.children = []
-        parent.children.push(node)
-      } else {
-        roots.push(node)
-      }
-    })
-
-    return roots.sort((a, b) => a.order - b.order)
-  }
-
   const treePosts = buildTree(posts)
 
   const handleSave = async (post: Partial<BlogPost>) => {
-    const url = editing ? `/api/admin/blog/${editing.id}` : '/api/admin/blog'
-    const method = editing ? 'PUT' : 'POST'
+    const url = editing?.id ? `/api/admin/blog/${editing.id}` : '/api/admin/blog'
+    const method = editing?.id ? 'PUT' : 'POST'
 
     try {
       const response = await fetch(url, {
@@ -69,14 +105,15 @@ export default function BlogManager({ initialPosts }: { initialPosts: BlogPost[]
         body: JSON.stringify(post),
       })
 
-      if (response.ok) {
-        setEditing(null)
-        setIsCreating(false)
-        window.location.reload()
-      } else {
-        const error = await response.json()
-        alert(error.error || 'Ошибка при сохранении статьи')
+      if (!response.ok) {
+        const error = await response.json().catch(() => null)
+        alert(error?.error || 'Ошибка при сохранении статьи')
+        return
       }
+
+      setEditing(null)
+      setIsCreating(false)
+      window.location.reload()
     } catch (error) {
       console.error('Error saving post:', error)
       alert('Ошибка при сохранении статьи. Проверьте консоль для деталей.')
@@ -84,27 +121,56 @@ export default function BlogManager({ initialPosts }: { initialPosts: BlogPost[]
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Удалить статью?')) return
+    if (!confirm('Удалить статью?')) {
+      return
+    }
 
     try {
       const response = await fetch(`/api/admin/blog/${id}`, {
         method: 'DELETE',
       })
 
-      if (response.ok) {
-        setPosts(posts.filter(p => p.id !== id))
-        window.location.reload()
-      } else {
-        const error = await response.json()
-        alert(error.error || 'Ошибка при удалении статьи')
+      if (!response.ok) {
+        const error = await response.json().catch(() => null)
+        alert(error?.error || 'Ошибка при удалении статьи')
+        return
       }
+
+      setPosts((current) => current.filter((item) => item.id !== id))
+      window.location.reload()
     } catch (error) {
       console.error('Error deleting post:', error)
       alert('Ошибка при удалении статьи. Проверьте консоль для деталей.')
     }
   }
 
-  const renderPostItem = (post: BlogPost, level: number = 0): JSX.Element => (
+  const startCreate = () => {
+    setEditing(null)
+    setIsCreating(true)
+  }
+
+  const startEdit = (post: BlogPost) => {
+    setIsCreating(false)
+    setEditing(post)
+  }
+
+  const startCreateChild = (post: BlogPost) => {
+    setIsCreating(true)
+    setEditing({
+      id: '',
+      slug: `${post.slug}-subsection`,
+      title: '',
+      excerpt: '',
+      content: '',
+      coverImage: '',
+      published: false,
+      publishedAt: null,
+      parentId: post.id,
+      order: 0,
+    })
+  }
+
+  const renderPostItem = (post: BlogPost, level = 0): JSX.Element => (
     <>
       <tr key={post.id} className={level > 0 ? 'bg-gray-50' : ''}>
         <td className="px-4 py-3">
@@ -115,66 +181,34 @@ export default function BlogManager({ initialPosts }: { initialPosts: BlogPost[]
         </td>
         <td className="px-4 py-3 text-sm text-gray-600">{post.slug}</td>
         <td className="px-4 py-3">
-          <span className={post.published ? 'text-green-600' : 'text-gray-400'}>
-            {post.published ? 'Да' : 'Нет'}
-          </span>
+          <span className={post.published ? 'text-green-600' : 'text-gray-400'}>{post.published ? 'Да' : 'Нет'}</span>
         </td>
         <td className="px-4 py-3 text-sm text-gray-600">
           {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('ru-RU') : '—'}
         </td>
         <td className="px-4 py-3">
           <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setIsCreating(false)
-                setEditing(post)
-              }}
-            >
-              <Edit className="w-4 h-4" />
+            <Button variant="ghost" size="sm" onClick={() => startEdit(post)}>
+              <Edit className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setEditing(null)
-                setIsCreating(true)
-                const formData = {
-                  slug: `${post.slug}-subsection`,
-                  title: '',
-                  excerpt: '',
-                  content: '',
-                  coverImage: '',
-                  published: false,
-                  publishedAt: null,
-                  parentId: post.id,
-                  order: 0,
-                }
-                setEditing({ ...formData, id: '' } as BlogPost)
-              }}
-            >
-              <Plus className="w-4 h-4" />
+            <Button variant="ghost" size="sm" onClick={() => startCreateChild(post)}>
+              <Plus className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleDelete(post.id)}
-            >
-              <Trash2 className="w-4 h-4 text-red-600" />
+            <Button variant="ghost" size="sm" onClick={() => handleDelete(post.id)}>
+              <Trash2 className="h-4 w-4 text-red-600" />
             </Button>
           </div>
         </td>
       </tr>
-      {post.children?.map(child => renderPostItem(child, level + 1))}
+      {post.children?.map((child) => renderPostItem(child, level + 1))}
     </>
   )
 
   return (
     <div>
       <div className="mb-4">
-        <Button onClick={() => setIsCreating(true)} className="gap-2">
-          <Plus className="w-4 h-4" />
+        <Button onClick={startCreate} className="gap-2">
+          <Plus className="h-4 w-4" />
           Добавить статью
         </Button>
       </div>
@@ -191,7 +225,7 @@ export default function BlogManager({ initialPosts }: { initialPosts: BlogPost[]
         />
       )}
 
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="overflow-hidden rounded-lg bg-white shadow-md">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -222,110 +256,184 @@ function BlogPostForm({
   onSave: (post: Partial<BlogPost>) => void
   onCancel: () => void
 }) {
-  const isNew = !post?.id
-  const [formData, setFormData] = useState<{
-    slug: string
-    title: string
-    excerpt: string
-    content: string
-    coverImage: string
-    published: boolean
-    publishedAt: string
-    parentId: string | null
-    order: number
-  }>({
-    slug: post?.slug || '',
-    title: post?.title || '',
-    excerpt: post?.excerpt || '',
-    content: post?.content || '',
-    coverImage: post?.coverImage || '',
-    published: post?.published ?? false,
-    publishedAt: post?.publishedAt ? new Date(post.publishedAt).toISOString().split('T')[0] : '',
-    parentId: post?.parentId || null,
-    order: post?.order || 0,
-  })
+  const isExistingPost = Boolean(post?.id)
+  const coverInputRef = useRef<HTMLInputElement>(null)
+  const [isUploadingCover, setIsUploadingCover] = useState(false)
+  const [formData, setFormData] = useState<BlogPostFormData>(createInitialFormData(post))
 
-  // Filter out current post and its children from parent options
-  const getParentOptions = (): BlogPost[] => {
-    if (isNew) return allPosts.filter(p => !p.parentId)
-    return allPosts.filter(p => p.id !== post.id && !p.parentId)
+  const getParentOptions = () => {
+    if (!post?.id) {
+      return allPosts.filter((item) => !item.parentId)
+    }
+
+    return allPosts.filter((item) => item.id !== post.id && !item.parentId)
+  }
+
+  const handleCoverUpload = async (file: File) => {
+    setIsUploadingCover(true)
+
+    try {
+      const payload = new FormData()
+      payload.append('file', file)
+
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: payload,
+      })
+
+      if (!response.ok) {
+        throw new Error('Upload failed')
+      }
+
+      const { url } = await response.json()
+      setFormData((current) => ({ ...current, coverImage: url }))
+    } catch (error) {
+      console.error('Error uploading cover image:', error)
+      alert('Ошибка загрузки обложки. Попробуйте еще раз.')
+    } finally {
+      setIsUploadingCover(false)
+      if (coverInputRef.current) {
+        coverInputRef.current.value = ''
+      }
+    }
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-      <h2 className="text-xl font-semibold mb-4">
-        {post ? 'Редактировать статью' : 'Новая статья'}
-      </h2>
+    <div className="mb-6 rounded-lg bg-white p-6 shadow-md">
+      <h2 className="mb-4 text-xl font-semibold">{isExistingPost ? 'Редактировать статью' : 'Новая статья'}</h2>
+
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Slug (URL)</label>
+          <label className="mb-1 block text-sm font-medium">Slug (URL)</label>
           <input
             type="text"
             value={formData.slug}
             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
+            className="w-full rounded-md border px-4 py-2"
             required
-            disabled={!!post}
+            disabled={isExistingPost}
           />
         </div>
+
         <div>
-          <label className="block text-sm font-medium mb-1">Название</label>
+          <label className="mb-1 block text-sm font-medium">Название</label>
           <input
             type="text"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
+            className="w-full rounded-md border px-4 py-2"
             required
           />
         </div>
+
         <div>
-          <label className="block text-sm font-medium mb-1">Краткое описание</label>
+          <label className="mb-1 block text-sm font-medium">Краткое описание</label>
           <textarea
             value={formData.excerpt}
             onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
+            className="w-full rounded-md border px-4 py-2"
             rows={2}
           />
         </div>
+
         <div>
-          <label className="block text-sm font-medium mb-1">URL обложки</label>
-          <input
-            type="url"
-            value={formData.coverImage}
-            onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
-          />
+          <label className="mb-1 block text-sm font-medium">Обложка анонса</label>
+          <div className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
+            {formData.coverImage ? (
+              <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-white">
+                <img src={formData.coverImage} alt="Предпросмотр обложки" className="h-48 w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, coverImage: '' })}
+                  className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-950/70 text-white transition hover:bg-slate-950"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex h-36 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white text-sm text-slate-500">
+                Обложка пока не добавлена
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => coverInputRef.current?.click()}
+                disabled={isUploadingCover}
+                className="gap-2"
+              >
+                {isUploadingCover ? <Upload className="h-4 w-4 animate-pulse" /> : <ImagePlus className="h-4 w-4" />}
+                {isUploadingCover ? 'Загружаю фото...' : 'Загрузить фото для анонса'}
+              </Button>
+              <span className="self-center text-xs text-slate-500">Фото попадет и в карточку статьи, и в верх статьи.</span>
+            </div>
+
+            <input
+              ref={coverInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) {
+                  void handleCoverUpload(file)
+                }
+              }}
+            />
+
+            <div>
+              <label className="mb-2 block text-xs font-medium uppercase tracking-[0.14em] text-slate-500">
+                Или вставьте URL вручную
+              </label>
+              <input
+                type="url"
+                value={formData.coverImage}
+                onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
+                className="w-full rounded-md border bg-white px-4 py-2"
+                placeholder="https://... или data:image/..."
+              />
+            </div>
+          </div>
         </div>
+
         <div>
-          <label className="block text-sm font-medium mb-1">Родительский раздел</label>
+          <label className="mb-1 block text-sm font-medium">Родительский раздел</label>
           <select
             value={formData.parentId ?? ''}
             onChange={(e) => setFormData({ ...formData, parentId: e.target.value || null })}
-            className="w-full px-4 py-2 border rounded-md"
+            className="w-full rounded-md border px-4 py-2"
           >
             <option value="">— Корневой раздел —</option>
-            {getParentOptions().map(p => (
-              <option key={p.id} value={p.id}>{p.title}</option>
+            {getParentOptions().map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.title}
+              </option>
             ))}
           </select>
         </div>
+
         <div>
-          <label className="block text-sm font-medium mb-1">Порядок сортировки</label>
+          <label className="mb-1 block text-sm font-medium">Порядок сортировки</label>
           <input
             type="number"
             value={formData.order}
-            onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
-            className="w-full px-4 py-2 border rounded-md"
+            onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value, 10) || 0 })}
+            className="w-full rounded-md border px-4 py-2"
           />
         </div>
+
         <div>
-          <label className="block text-sm font-medium mb-1">Содержание</label>
+          <label className="mb-1 block text-sm font-medium">Содержание</label>
           <RichTextEditor
             content={formData.content}
             onChange={(content) => setFormData({ ...formData, content })}
             placeholder="Введите содержимое статьи..."
           />
+          <p className="mt-2 text-xs text-slate-500">Для фото внутри статьи нажмите иконку картинки в панели редактора.</p>
         </div>
+
         <div className="flex items-center gap-4">
           <label className="flex items-center gap-2">
             <input
@@ -335,30 +443,37 @@ function BlogPostForm({
             />
             <span>Опубликовано</span>
           </label>
+
           {formData.published && (
             <div>
-              <label className="block text-sm font-medium mb-1">Дата публикации</label>
+              <label className="mb-1 block text-sm font-medium">Дата публикации</label>
               <input
                 type="date"
                 value={formData.publishedAt}
                 onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
-                className="px-4 py-2 border rounded-md"
+                className="rounded-md border px-4 py-2"
               />
             </div>
           )}
         </div>
+
         <div className="flex gap-2">
-          <Button onClick={() => onSave({
-            ...formData,
-            parentId: formData.parentId || null,
-            publishedAt: formData.published && formData.publishedAt 
-              ? new Date(formData.publishedAt).toISOString() 
-              : null
-          })}>Сохранить</Button>
-          <Button variant="outline" onClick={onCancel}>Отмена</Button>
+          <Button
+            onClick={() =>
+              onSave({
+                ...formData,
+                parentId: formData.parentId || null,
+                publishedAt: formData.published && formData.publishedAt ? new Date(formData.publishedAt).toISOString() : null,
+              })
+            }
+          >
+            Сохранить
+          </Button>
+          <Button variant="outline" onClick={onCancel}>
+            Отмена
+          </Button>
         </div>
       </div>
     </div>
   )
 }
-

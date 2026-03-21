@@ -11,6 +11,10 @@ function getFallbackCover(slug: string) {
   return coverMap[slug] || ''
 }
 
+function isInlineImage(src: string) {
+  return src.startsWith('data:')
+}
+
 export default async function BlogPage() {
   let posts: any[] = []
 
@@ -49,7 +53,13 @@ export default async function BlogPage() {
               <article className="reading-shell interactive-card overflow-hidden p-0">
                 {(post.coverImage || getFallbackCover(post.slug)) && (
                   <div className="relative h-48 w-full">
-                    <Image src={post.coverImage || getFallbackCover(post.slug)} alt={post.title} fill className="object-cover" />
+                    <Image
+                      src={post.coverImage || getFallbackCover(post.slug)}
+                      alt={post.title}
+                      fill
+                      className="object-cover"
+                      unoptimized={isInlineImage(post.coverImage || getFallbackCover(post.slug))}
+                    />
                   </div>
                 )}
                 <div className="p-6">

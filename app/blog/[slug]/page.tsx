@@ -14,6 +14,10 @@ function getFallbackCover(slug: string) {
   return coverMap[slug] || ''
 }
 
+function isInlineImage(src: string) {
+  return src.startsWith('data:')
+}
+
 function getRelatedServices(slug: string) {
   const relatedMap: Record<string, Array<{ href: string; label: string; description: string }>> = {
     'trebovaniya-k-sovremennomu-saitu-dlya-seo-i-konversii': [
@@ -148,7 +152,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         {coverImage && (
           <div className="relative mt-8 overflow-hidden rounded-[30px] border border-white/12 bg-white/8 shadow-[0_24px_60px_rgba(2,8,23,0.28)]">
             <div className="relative aspect-[16/9] w-full">
-              <Image src={coverImage} alt={post.title} fill className="object-cover" />
+              <Image src={coverImage} alt={post.title} fill className="object-cover" unoptimized={isInlineImage(coverImage)} />
             </div>
           </div>
         )}

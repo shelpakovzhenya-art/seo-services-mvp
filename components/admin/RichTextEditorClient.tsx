@@ -49,7 +49,7 @@ export default function RichTextEditorClient({
       }),
       Image.configure({
         inline: true,
-        allowBase64: false,
+        allowBase64: true,
       }),
       Link.configure({
         openOnClick: false,
@@ -254,6 +254,7 @@ export default function RichTextEditorClient({
           size="sm"
           onClick={handleImageUpload}
           disabled={uploading}
+          title="Загрузить изображение в статью"
         >
           <ImageIcon className="w-4 h-4" />
         </Button>
@@ -285,6 +286,9 @@ export default function RichTextEditorClient({
         >
           <Redo className="w-4 h-4" />
         </Button>
+        <span className="ml-2 self-center text-xs text-slate-500">
+          {uploading ? 'Загружаю изображение...' : 'Кнопка с картинкой добавляет фото в статью'}
+        </span>
       </div>
 
       {isCodeMode ? (
