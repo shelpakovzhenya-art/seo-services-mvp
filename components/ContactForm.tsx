@@ -35,13 +35,16 @@ export default function ContactForm() {
           name: formData.name,
           phone: formData.contact,
           site: formData.site,
+          honeypot: formData.honeypot,
+          sourceUrl: window.location.href,
+          sourceTitle: document.title,
         }),
       })
 
       const data = await response.json()
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Спасибо. Получил заявку и скоро свяжусь с вами.' })
+        setMessage({ type: 'success', text: data.message || 'Спасибо. Получил заявку и скоро свяжусь с вами.' })
         setFormData({ name: '', contact: '', site: '', honeypot: '' })
       } else {
         setMessage({ type: 'error', text: data.error || 'Не удалось отправить заявку. Попробуйте ещё раз чуть позже.' })
@@ -100,6 +103,7 @@ export default function ContactForm() {
           type="text"
           id="contact"
           required
+          autoComplete="tel"
           value={formData.contact}
           onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
           className="w-full rounded-2xl border border-orange-100 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-200"
@@ -114,6 +118,7 @@ export default function ContactForm() {
         <input
           type="text"
           id="site"
+          autoComplete="url"
           value={formData.site}
           onChange={(e) => setFormData({ ...formData, site: e.target.value })}
           className="w-full rounded-2xl border border-orange-100 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-200"

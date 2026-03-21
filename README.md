@@ -51,18 +51,17 @@ npm run dev
 2. Add a PostgreSQL service in the same Railway project.
 3. Ensure `DATABASE_URL` is available to the web service from Railway Postgres.
 4. Set `SITE_URL` to your Railway public domain, for example `https://your-app.up.railway.app`.
-5. Optional: set `ADMIN_USER`, `ADMIN_PASS`, and SMTP variables before the first production start.
+5. Optional: set `ADMIN_USER`, `ADMIN_PASS`, `LEAD_TO_EMAIL`, and mail variables before the first production start.
 6. Deploy the web service. On startup, the app will sync the schema and seed the initial admin/content automatically.
 
 ### SMTP (для отправки писем)
-Скопируйте `.env.example` в `.env` и заполните настройки SMTP:
+Для Gmail в Railway проще всего использовать пароль приложения и указать:
 ```env
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-password
-SMTP_FROM=your-email@gmail.com
+LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
+GMAIL_USER=shelpakovzhenya@gmail.com
+GMAIL_APP_PASSWORD=your-google-app-password
 ```
+Если нужен другой SMTP-сервер, можно использовать стандартные `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`.
 
 Подробная инструкция: [SMTP-SETUP.md](./SMTP-SETUP.md)
 

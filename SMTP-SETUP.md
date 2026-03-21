@@ -15,12 +15,11 @@
 
 3. Добавьте в файл `.env`:
 ```env
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=ваш-email@gmail.com
-SMTP_PASS=ваш-пароль-приложения
-SMTP_FROM=ваш-email@gmail.com
+LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
+GMAIL_USER=shelpakovzhenya@gmail.com
+GMAIL_APP_PASSWORD=ваш-пароль-приложения
 ```
+Этого достаточно для формы обратной связи. Приложение само подключится к `smtp.gmail.com` и отправит письмо на `shelpakovzhenya@gmail.com`.
 
 ### Вариант 2: Яндекс Почта
 
@@ -52,19 +51,23 @@ SMTP_USER=ваш-email
 SMTP_PASS=ваш-пароль
 SMTP_FROM=ваш-email
 ```
+Если используете этот вариант, тоже оставьте:
+```env
+LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
+```
 
 ## После настройки
 
 1. Сохраните файл `.env`
 2. Перезапустите сервер разработки (остановите и запустите снова `npm run dev`)
 3. Попробуйте отправить форму обратной связи
-4. Проверьте консоль сервера - там будут логи об отправке письма
+4. Убедитесь, что переменные сохранились в Railway и сервис перезапущен
 
 ## Проверка работы
 
 После отправки формы проверьте:
-- Консоль сервера - должно быть сообщение "✅ Email sent successfully"
 - Папку "Входящие" и "Спам" в почтовом ящике `shelpakovzhenya@gmail.com`
+- Что в письме есть имя, контакт, сайт и страница, с которой пришла заявка
 
 ## Отладка
 
