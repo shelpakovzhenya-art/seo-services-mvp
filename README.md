@@ -54,8 +54,15 @@ npm run dev
 5. Optional: set `ADMIN_USER`, `ADMIN_PASS`, `LEAD_TO_EMAIL`, and mail variables before the first production start.
 6. Deploy the web service. On startup, the app will sync the schema and seed the initial admin/content automatically.
 
-### SMTP (для отправки писем)
-Для Gmail в Railway проще всего использовать пароль приложения и указать:
+### Почта для заявок
+Для Railway надёжнее всего использовать Resend по HTTPS:
+```env
+LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
+RESEND_API_KEY=re_xxxxxxxxx
+RESEND_FROM=Shelpakov Digital <onboarding@resend.dev>
+```
+
+Также можно использовать Gmail с app password:
 ```env
 LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
 GMAIL_USER=shelpakovzhenya@gmail.com
@@ -63,6 +70,7 @@ GMAIL_APP_PASSWORD=your-google-app-password
 ```
 Если пароль приложения Gmail вставлен с пробелами, приложение теперь очистит их автоматически.
 Если нужен другой SMTP-сервер, можно использовать `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`.
+Если Railway режет SMTP-соединения, `RESEND_API_KEY` будет приоритетным и позволит отправлять письма без порта `465/587`.
 
 Подробная инструкция: [SMTP-SETUP.md](./SMTP-SETUP.md)
 

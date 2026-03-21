@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import fs from 'fs/promises'
 import path from 'path'
 import { NextRequest, NextResponse } from 'next/server'
@@ -8,6 +9,7 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 30
 
 const DEFAULT_LEAD_EMAIL = 'shelpakovzhenya@gmail.com'
+const DEFAULT_RESEND_FROM = 'Shelpakov Digital <onboarding@resend.dev>'
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
 
 type LeadPayload = {
@@ -19,16 +21,30 @@ type LeadPayload = {
   sourceTitle?: string
 }
 
-type MailCandidate = {
+type SmtpCandidate = {
   label: string
   from: string
   to: string
   transport: Record<string, unknown>
 }
 
+type ResendConfig = {
+  apiKey: string
+  from: string
+  to: string
+}
+
 type MailConfig = {
-  candidates: MailCandidate[]
+  resend?: ResendConfig
+  smtpCandidates: SmtpCandidate[]
   errors: string[]
+}
+
+type MailPayload = {
+  replyTo?: string
+  subject: string
+  text: string
+  html: string
 }
 
 function checkRateLimit(ip: string): boolean {
@@ -44,7 +60,7 @@ function checkRateLimit(ip: string): boolean {
     return false
   }
 
-  limit.count++
+  limit.count += 1
   return true
 }
 
@@ -72,10 +88,6 @@ function escapeHtml(value: string) {
 
 function looksLikeEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-}
-
-function looksLikeGmailAppPassword(value: string) {
-  return /^[a-z0-9]{16}$/i.test(value)
 }
 
 function parseBoolean(value: string | undefined) {
@@ -115,6 +127,10 @@ function normalizeFromAddress(value: string | undefined, fallbackEmail: string) 
 }
 
 function maskSecret(value: string) {
+  if (!value) {
+    return 'not-set'
+  }
+
   if (value.length <= 4) {
     return '****'
   }
@@ -128,6 +144,20 @@ function getMailConfig(): MailConfig {
     process.env.MAIL_TO?.trim() ||
     process.env.EMAIL_TO?.trim() ||
     DEFAULT_LEAD_EMAIL
+
+  const rawFrom =
+    process.env.RESEND_FROM?.trim() ||
+    process.env.EMAIL_FROM?.trim() ||
+    process.env.SMTP_FROM?.trim() ||
+    process.env.MAIL_FROM?.trim()
+
+  const resendApiKey =
+    process.env.RESEND_API_KEY?.trim() ||
+    process.env.RESEND_TOKEN?.trim() ||
+    process.env.RESEND_KEY?.trim()
+
+  const resendFrom = rawFrom || DEFAULT_RESEND_FROM
+
   const gmailPass =
     process.env.GMAIL_APP_PASSWORD?.replace(/\s+/g, '') ||
     process.env.GOOGLE_APP_PASSWORD?.replace(/\s+/g, '') ||
@@ -138,6 +168,7 @@ function getMailConfig(): MailConfig {
     process.env.SMTP_USER?.trim() ||
     process.env.MAIL_USER?.trim() ||
     recipient
+
   const smtpHost = process.env.SMTP_HOST?.trim()
   const smtpPort = Number(process.env.SMTP_PORT || 587)
   const smtpUser =
@@ -149,43 +180,93 @@ function getMailConfig(): MailConfig {
     process.env.SMTP_PASSWORD?.trim() ||
     process.env.MAIL_PASS?.trim()
   const smtpSecure = parseBoolean(process.env.SMTP_SECURE)
-  const rawFrom = process.env.SMTP_FROM?.trim() || process.env.MAIL_FROM?.trim()
-  const candidates: MailCandidate[] = []
+
+  const smtpCandidates: SmtpCandidate[] = []
   const errors: string[] = []
 
-  if (gmailPass) {
-    if (!looksLikeGmailAppPassword(gmailPass)) {
-      errors.push(
-        'GMAIL_APP_PASSWORD выглядит нестандартно, но отправка все равно будет выполнена. Если это не app password Google, лучше продублировать SMTP-переменные.'
-      )
+  if (resendApiKey) {
+    return {
+      resend: {
+        apiKey: resendApiKey,
+        from: resendFrom,
+        to: recipient,
+      },
+      smtpCandidates: buildSmtpCandidates({
+        gmailPass,
+        gmailUser,
+        rawFrom,
+        recipient,
+        smtpHost,
+        smtpPort,
+        smtpUser,
+        smtpPass,
+        smtpSecure,
+      }),
+      errors,
     }
+  }
 
-    const from = normalizeFromAddress(rawFrom, gmailUser)
+  smtpCandidates.push(
+    ...buildSmtpCandidates({
+      gmailPass,
+      gmailUser,
+      rawFrom,
+      recipient,
+      smtpHost,
+      smtpPort,
+      smtpUser,
+      smtpPass,
+      smtpSecure,
+    })
+  )
+
+  if (smtpCandidates.length === 0) {
+    errors.push('Не настроен ни один транспорт доставки. Для Railway лучше всего добавить RESEND_API_KEY и LEAD_TO_EMAIL.')
+  }
+
+  return { smtpCandidates, errors }
+}
+
+function buildSmtpCandidates(input: {
+  gmailPass: string
+  gmailUser: string
+  rawFrom?: string
+  recipient: string
+  smtpHost?: string
+  smtpPort: number
+  smtpUser?: string
+  smtpPass?: string
+  smtpSecure: boolean | null
+}) {
+  const candidates: SmtpCandidate[] = []
+
+  if (input.gmailPass) {
+    const from = normalizeFromAddress(input.rawFrom, input.gmailUser)
 
     candidates.push(
       {
         label: 'gmail-service',
         from,
-        to: recipient,
+        to: input.recipient,
         transport: {
           service: 'gmail',
           auth: {
-            user: gmailUser,
-            pass: gmailPass,
+            user: input.gmailUser,
+            pass: input.gmailPass,
           },
         },
       },
       {
         label: 'gmail-465',
         from,
-        to: recipient,
+        to: input.recipient,
         transport: {
           host: 'smtp.gmail.com',
           port: 465,
           secure: true,
           auth: {
-            user: gmailUser,
-            pass: gmailPass,
+            user: input.gmailUser,
+            pass: input.gmailPass,
           },
           authMethod: 'LOGIN',
           name: 'smtp.gmail.com',
@@ -198,15 +279,15 @@ function getMailConfig(): MailConfig {
       {
         label: 'gmail-587',
         from,
-        to: recipient,
+        to: input.recipient,
         transport: {
           host: 'smtp.gmail.com',
           port: 587,
           secure: false,
           requireTLS: true,
           auth: {
-            user: gmailUser,
-            pass: gmailPass,
+            user: input.gmailUser,
+            pass: input.gmailPass,
           },
           authMethod: 'LOGIN',
           name: 'smtp.gmail.com',
@@ -219,31 +300,31 @@ function getMailConfig(): MailConfig {
     )
   }
 
-  if (smtpHost && smtpUser && smtpPass) {
+  if (input.smtpHost && input.smtpUser && input.smtpPass) {
     candidates.push({
       label: 'smtp-custom',
-      from: normalizeFromAddress(rawFrom, smtpUser),
-      to: recipient,
+      from: normalizeFromAddress(input.rawFrom, input.smtpUser),
+      to: input.recipient,
       transport: {
-        host: smtpHost,
-        port: Number.isFinite(smtpPort) ? smtpPort : 587,
-        secure: smtpSecure ?? (Number.isFinite(smtpPort) ? smtpPort === 465 : false),
-        requireTLS: smtpSecure === false ? undefined : Number.isFinite(smtpPort) ? smtpPort !== 465 : true,
+        host: input.smtpHost,
+        port: Number.isFinite(input.smtpPort) ? input.smtpPort : 587,
+        secure: input.smtpSecure ?? (Number.isFinite(input.smtpPort) ? input.smtpPort === 465 : false),
+        requireTLS: input.smtpSecure === false ? undefined : Number.isFinite(input.smtpPort) ? input.smtpPort !== 465 : true,
         auth: {
-          user: smtpUser,
-          pass: smtpPass,
+          user: input.smtpUser,
+          pass: input.smtpPass,
         },
         authMethod: 'LOGIN',
-        name: smtpHost,
+        name: input.smtpHost,
         tls: {
-          servername: smtpHost,
+          servername: input.smtpHost,
           minVersion: 'TLSv1.2',
         },
       },
     })
   }
 
-  return { candidates, errors }
+  return candidates
 }
 
 async function ensureLeadLogDirectory(filePath: string) {
@@ -287,16 +368,15 @@ async function notifyTelegram(record: {
     return
   }
 
-  const escape = (value: string) => escapeHtml(value)
   const statusLabel = record.status === 'sent' ? '[sent]' : '[failed]'
   const text = [
     `${statusLabel} <b>Заявка с сайта</b>`,
-    `Имя: ${escape(record.payload.name)}`,
-    `Контакт: ${escape(record.payload.contact)}`,
-    `Сайт: ${escape(record.payload.site || 'не указан')}`,
-    `Источник: ${escape(record.meta.sourceTitle)} (${escape(record.meta.sourceUrl)})`,
-    `IP: ${escape(record.meta.ip)}`,
-    `UA: ${escape(record.meta.userAgent)}`,
+    `Имя: ${escapeHtml(record.payload.name)}`,
+    `Контакт: ${escapeHtml(record.payload.contact)}`,
+    `Сайт: ${escapeHtml(record.payload.site || 'не указан')}`,
+    `Источник: ${escapeHtml(record.meta.sourceTitle)} (${escapeHtml(record.meta.sourceUrl)})`,
+    `IP: ${escapeHtml(record.meta.ip)}`,
+    `UA: ${escapeHtml(record.meta.userAgent)}`,
   ].join('\n')
 
   try {
@@ -308,21 +388,52 @@ async function notifyTelegram(record: {
         parse_mode: 'HTML',
         text,
       }),
+      cache: 'no-store',
     })
   } catch (error) {
     console.error('Telegram notification failed', error)
   }
 }
 
-async function sendLeadMail(
-  candidates: MailCandidate[],
-  mail: {
-    replyTo?: string
-    subject: string
-    text: string
-    html: string
+async function sendLeadViaResend(config: ResendConfig, mail: MailPayload) {
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${config.apiKey}`,
+      'Content-Type': 'application/json',
+      'Idempotency-Key': randomUUID(),
+    },
+    body: JSON.stringify({
+      from: config.from,
+      to: [config.to],
+      subject: mail.subject,
+      html: mail.html,
+      text: mail.text,
+      reply_to: mail.replyTo,
+    }),
+    cache: 'no-store',
+  })
+
+  const payload = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    const apiMessage =
+      typeof payload?.message === 'string'
+        ? payload.message
+        : typeof payload?.error === 'string'
+          ? payload.error
+          : response.statusText
+
+    throw new Error(`resend: ${response.status} ${apiMessage}`)
   }
-) {
+
+  return {
+    transportLabel: 'resend-api',
+    info: payload,
+  }
+}
+
+async function sendLeadViaSmtp(candidates: SmtpCandidate[], mail: MailPayload) {
   const errors: string[] = []
 
   for (const candidate of candidates) {
@@ -344,8 +455,8 @@ async function sendLeadMail(
       })
 
       return {
-        info,
         transportLabel: candidate.label,
+        info,
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown mail error'
@@ -357,30 +468,65 @@ async function sendLeadMail(
   throw new Error(errors.join(' | '))
 }
 
+async function sendLeadMail(config: MailConfig, mail: MailPayload) {
+  const errors: string[] = []
+
+  if (config.resend) {
+    try {
+      return await sendLeadViaResend(config.resend, mail)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown Resend error'
+      errors.push(message)
+      console.error('[lead-email] resend-api failed', error)
+    }
+  }
+
+  if (config.smtpCandidates.length > 0) {
+    try {
+      return await sendLeadViaSmtp(config.smtpCandidates, mail)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown SMTP error'
+      errors.push(message)
+    }
+  }
+
+  if (errors.length === 0 && config.errors.length > 0) {
+    errors.push(...config.errors)
+  }
+
+  throw new Error(errors.join(' | ') || 'No mail transport configured')
+}
+
 function getMailFailureMessage(error: unknown) {
   const rawMessage = error instanceof Error ? error.message : 'Unknown mail error'
   const message = rawMessage.toLowerCase()
 
   if (
-    message.includes('app password') ||
     message.includes('invalid login') ||
     message.includes('bad credentials') ||
     message.includes('username and password not accepted') ||
-    message.includes('invalid credentials')
+    message.includes('invalid credentials') ||
+    message.includes('unauthorized') ||
+    message.includes('403')
   ) {
-    return 'Почта не приняла авторизацию. Проверьте логин ящика, app password Google или SMTP-пару логин/пароль.'
+    return 'Почтовый сервис отклонил авторизацию. Проверьте ключ Resend или логин и пароль SMTP.'
   }
 
   if (
     message.includes('timeout') ||
     message.includes('econnrefused') ||
     message.includes('ehostunreach') ||
-    message.includes('enotfound')
+    message.includes('enotfound') ||
+    message.includes('fetch failed')
   ) {
-    return 'Почтовый сервер недоступен по сети. Проверьте SMTP-настройки и ограничения Railway на исходящие соединения.'
+    return 'Почтовый сервис недоступен по сети. Для Railway надежнее использовать RESEND_API_KEY: он работает через HTTPS и обычно не блокируется.'
   }
 
-  return 'Не удалось отправить заявку. Почтовый транспорт отклонил отправку.'
+  if (message.includes('resend: 422')) {
+    return 'Resend отклонил письмо из-за настроек отправителя. Проверьте RESEND_FROM или используйте адрес вида onboarding@resend.dev для теста.'
+  }
+
+  return 'Не удалось отправить заявку. Почтовый сервис отклонил письмо. Проверьте RESEND_API_KEY или SMTP-настройки.'
 }
 
 export async function POST(request: NextRequest) {
@@ -419,15 +565,14 @@ export async function POST(request: NextRequest) {
     }
 
     const mailConfig = getMailConfig()
-    const mailCandidates = mailConfig.candidates
 
-    if (mailCandidates.length === 0) {
-      console.error('Lead email is not configured.', mailConfig.errors)
+    if (!mailConfig.resend && mailConfig.smtpCandidates.length === 0) {
+      console.error('[lead-email] no transport configured', mailConfig.errors)
       return NextResponse.json(
         {
           error:
             mailConfig.errors[0] ||
-            'Форма временно не настроена. Добавьте рабочий Gmail app password или SMTP-переменные.',
+            'Форма временно не настроена. Добавьте RESEND_API_KEY или рабочие SMTP-переменные.',
         },
         { status: 503 }
       )
@@ -473,21 +618,23 @@ export async function POST(request: NextRequest) {
       </div>
     `
 
-    const sendResult = await sendLeadMail(mailCandidates, {
+    const sendResult = await sendLeadMail(mailConfig, {
       replyTo,
       subject,
       text,
       html,
     })
 
-    console.info(
-      `[lead-email] sent via ${sendResult.transportLabel}; recipient=${mailCandidates[0]?.to}; gmailPass=${
-        process.env.GMAIL_APP_PASSWORD ? maskSecret(process.env.GMAIL_APP_PASSWORD.replace(/\s+/g, '')) : 'not-set'
-      }`
-    )
-
     const leadPayload = { name, contact, site }
     const leadMeta = { ip, sourceUrl: safeSourceUrl, sourceTitle: safeSourceTitle, date: currentDate, userAgent }
+
+    console.info(
+      `[lead-email] sent via ${sendResult.transportLabel}; recipient=${
+        mailConfig.resend?.to || mailConfig.smtpCandidates[0]?.to || DEFAULT_LEAD_EMAIL
+      }; resendKey=${maskSecret(process.env.RESEND_API_KEY || '')}; gmailPass=${maskSecret(
+        process.env.GMAIL_APP_PASSWORD?.replace(/\s+/g, '') || ''
+      )}`
+    )
 
     await persistLeadLog(leadPayload, leadMeta, 'sent')
     await notifyTelegram({ payload: leadPayload, meta: leadMeta, status: 'sent' })
@@ -498,6 +645,7 @@ export async function POST(request: NextRequest) {
 
     const leadPayload = { name, contact, site }
     const leadMeta = { ip, sourceUrl: safeSourceUrl, sourceTitle: safeSourceTitle, date: currentDate, userAgent }
+
     await persistLeadLog(leadPayload, leadMeta, 'failed')
     await notifyTelegram({ payload: leadPayload, meta: leadMeta, status: 'failed' })
 
