@@ -10,7 +10,7 @@
 Работает через HTTPS API и обычно стабильнее SMTP на Railway.
 
 ```env
-LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
+LEAD_TO_EMAIL=shelpak2015@yandex.ru
 RESEND_API_KEY=re_xxxxxxxxx
 RESEND_FROM=Shelpakov Digital <onboarding@resend.dev>
 ```
@@ -31,7 +31,7 @@ LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
 GMAIL_USER=shelpakovzhenya@gmail.com
 GMAIL_APP_PASSWORD=ваш-пароль-приложения
 ```
-Этого достаточно для формы обратной связи. Приложение само подключится к `smtp.gmail.com` и отправит письмо на `shelpakovzhenya@gmail.com`.
+Этого достаточно для формы обратной связи. Приложение само подключится к `smtp.gmail.com` и отправит письмо на `shelpak2015@yandex.ru`.
 Если Google показал пароль группами через пробел, можно вставлять как есть: приложение теперь автоматически убирает пробелы.
 
 ### Вариант 3: Яндекс Почта
@@ -69,7 +69,7 @@ SMTP_FROM=ваш-email
 ```
 Если используете этот вариант, тоже оставьте:
 ```env
-LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
+LEAD_TO_EMAIL=shelpak2015@yandex.ru
 ```
 
 ## После настройки

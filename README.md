@@ -57,14 +57,14 @@ npm run dev
 ### Почта для заявок
 Для Railway надёжнее всего использовать Resend по HTTPS:
 ```env
-LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
+LEAD_TO_EMAIL=shelpak2015@yandex.ru
 RESEND_API_KEY=re_xxxxxxxxx
 RESEND_FROM=Shelpakov Digital <onboarding@resend.dev>
 ```
 
 Также можно использовать Gmail с app password:
 ```env
-LEAD_TO_EMAIL=shelpakovzhenya@gmail.com
+LEAD_TO_EMAIL=shelpak2015@yandex.ru
 GMAIL_USER=shelpakovzhenya@gmail.com
 GMAIL_APP_PASSWORD=your-google-app-password
 ```

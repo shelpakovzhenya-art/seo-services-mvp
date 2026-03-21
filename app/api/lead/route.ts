@@ -8,7 +8,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
 
-const DEFAULT_LEAD_EMAIL = 'shelpakovzhenya@gmail.com'
+const DEFAULT_LEAD_EMAIL = 'shelpak2015@yandex.ru'
 const DEFAULT_RESEND_FROM = 'Shelpakov Digital <onboarding@resend.dev>'
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
 
