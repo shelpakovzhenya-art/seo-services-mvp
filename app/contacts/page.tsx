@@ -56,7 +56,7 @@ export default async function ContactsPage() {
           )}
         </div>
 
-        <div className="page-card">
+        <div id="contact-form" className="page-card scroll-mt-36 md:scroll-mt-40">
           <h2 className="text-2xl font-semibold text-slate-950">Форма обратной связи</h2>
           <div className="mt-6">
             <ContactForm />

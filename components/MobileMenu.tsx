@@ -37,6 +37,7 @@ const CLOSE_MENU_LABEL = '\u0417\u0430\u043a\u0440\u044b\u0442\u044c \u043c\u043
 const MENU_TITLE = '\u041c\u0435\u043d\u044e'
 const CONTACTS_TITLE = '\u0421\u0432\u044f\u0437\u044c'
 const DISCUSS_PROJECT = '\u041e\u0431\u0441\u0443\u0434\u0438\u0442\u044c \u043f\u0440\u043e\u0435\u043a\u0442'
+const CONTACT_FORM_HREF = '/contacts#contact-form'
 
 export default function MobileMenu({ menuItems, email, workSchedule, workStatus, socialLinks }: Props) {
   const [open, setOpen] = useState(false)
@@ -156,14 +157,14 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
               ) : null}
             </div>
 
-            <a
-              href="#contact-form"
+            <Link
+              href={CONTACT_FORM_HREF}
               onClick={() => setOpen(false)}
               className="site-cta-button mt-6 inline-flex w-full justify-center px-5 py-4 text-base"
             >
               {DISCUSS_PROJECT}
               <ArrowUpRight className="h-5 w-5" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -14,6 +14,8 @@ const DEFAULT_MENU_ITEMS = [
   { id: '6', label: 'Контакты', url: '/contacts', order: 6, isActive: true },
 ]
 
+const CONTACT_FORM_HREF = '/contacts#contact-form'
+
 export default async function Header() {
   let settings: any = null
   let menuItems: any[] = []
@@ -133,10 +135,10 @@ export default async function Header() {
               ))}
             </ul>
 
-            <a href="#contact-form" className="site-cta-button hidden lg:inline-flex">
+            <Link href={CONTACT_FORM_HREF} className="site-cta-button hidden lg:inline-flex">
               Обсудить проект
               <ArrowUpRight className="h-4 w-4" />
-            </a>
+            </Link>
 
             <MobileMenu
               menuItems={menuItems.map((item) => ({
