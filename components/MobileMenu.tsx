@@ -98,10 +98,10 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
             <div className="rounded-[24px] border border-orange-100 bg-white p-4">
               <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
                 <span>{workSchedule}</span>
-                <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold ${workStatus.badgeClass}`}>
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${workStatus.pingClass}`} />
-                    <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${workStatus.dotClass}`} />
+                <span className={`inline-flex items-center gap-2.5 rounded-full border px-3 py-1 text-[11px] font-semibold ${workStatus.badgeClass}`}>
+                  <span className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
+                    <span className={`absolute inset-0 inline-flex animate-ping rounded-full opacity-90 ${workStatus.pingClass}`} />
+                    <span className={`relative inline-flex h-2.5 w-2.5 rounded-full shadow-[0_0_0_2px_rgba(255,255,255,0.9)] ${workStatus.dotClass}`} />
                   </span>
                   {workStatus.text}
                 </span>
