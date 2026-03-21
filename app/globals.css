@@ -688,14 +688,18 @@
   }
 
   .editorial-prose a {
-    color: #0c8cb9;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(12, 140, 185, 0.2);
+    color: #0b6f98;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.2em;
+    border-bottom: 1px solid rgba(12, 140, 185, 0.24);
+    background: linear-gradient(180deg, rgba(96, 227, 255, 0) 0%, rgba(96, 227, 255, 0.18) 100%);
   }
 
   .editorial-prose a:hover {
-    color: #0f172a;
-    border-color: rgba(12, 140, 185, 0.45);
+    color: #081225;
+    border-color: rgba(12, 140, 185, 0.48);
   }
 
   .editorial-prose blockquote {

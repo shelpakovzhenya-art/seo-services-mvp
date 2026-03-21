@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import RichContent from '@/components/RichContent'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
@@ -35,6 +36,106 @@ function getFallbackCover(slug: string) {
   return coverMap[slug] || ''
 }
 
+function getRelatedServices(slug: string) {
+  const relatedMap: Record<string, Array<{ href: string; label: string; description: string }>> = {
+    'welcome-to-seo-services': [
+      {
+        href: '/services/seo',
+        label: 'SEO-продвижение',
+        description: 'Системная работа над органическим ростом и заявками.',
+      },
+      {
+        href: '/services/seo-audit',
+        label: 'SEO-аудит',
+        description: 'Понять, где сайт теряет рост, до внедрения дорогих правок.',
+      },
+    ],
+    'trebovaniya-k-sovremennomu-saitu-dlya-seo-i-konversii': [
+      {
+        href: '/services/seo-audit',
+        label: 'SEO-аудит',
+        description: 'Быстрое выявление слабых мест структуры, контента и техники.',
+      },
+      {
+        href: '/services/technical-seo',
+        label: 'Техническое SEO',
+        description: 'Исправление базы сайта: индексация, скорость, стабильность.',
+      },
+      {
+        href: '/services/seo-content',
+        label: 'SEO-контент',
+        description: 'Страницы и статьи, которые помогают и поиску, и заявкам.',
+      },
+    ],
+    'kak-podgotovit-sait-k-geo-i-ii-vydache': [
+      {
+        href: '/services/seo',
+        label: 'SEO-продвижение',
+        description: 'Выстраиваем структуру и видимость сайта под рост обращений.',
+      },
+      {
+        href: '/services/seo-audit',
+        label: 'SEO-аудит',
+        description: 'Определяем, что мешает сайту быть заметным и конверсионным.',
+      },
+      {
+        href: '/services/seo-content',
+        label: 'SEO-контент',
+        description: 'Собираем страницы и материалы под реальный спрос аудитории.',
+      },
+    ],
+    'seo-dlya-brand-media-kak-izmerit-polzu': [
+      {
+        href: '/services/seo-content',
+        label: 'SEO-контент',
+        description: 'Редакционная система контента, а не разрозненные публикации.',
+      },
+      {
+        href: '/services/seo-consulting',
+        label: 'SEO-консалтинг',
+        description: 'Помогаю связать контент, семантику и коммерческую логику сайта.',
+      },
+      {
+        href: '/services/b2b-seo',
+        label: 'B2B SEO',
+        description: 'Подход для экспертных и длинных циклов принятия решения.',
+      },
+    ],
+    'pereezd-na-novyy-domen-bez-poteri-trafika': [
+      {
+        href: '/services/technical-seo',
+        label: 'Техническое SEO',
+        description: 'Контроль индексации, редиректов и технической базы после переезда.',
+      },
+      {
+        href: '/services/seo-audit',
+        label: 'SEO-аудит',
+        description: 'Проверка рисков до и после запуска нового домена.',
+      },
+      {
+        href: '/services/seo',
+        label: 'SEO-продвижение',
+        description: 'Помогаю стабилизировать рост после изменений в структуре сайта.',
+      },
+    ],
+  }
+
+  return (
+    relatedMap[slug] || [
+      {
+        href: '/services/seo',
+        label: 'SEO-продвижение',
+        description: 'Основная услуга для роста органики, структуры сайта и заявок.',
+      },
+      {
+        href: '/services/seo-audit',
+        label: 'SEO-аудит',
+        description: 'Удобная стартовая точка, если сначала нужно понять проблемы проекта.',
+      },
+    ]
+  )
+}
+
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   let post: any = null
 
@@ -53,6 +154,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
   const coverImage = post.coverImage || getFallbackCover(post.slug)
   const content = stripLeadingMarkdownH1(post.content, post.title)
+  const relatedServices = getRelatedServices(post.slug)
 
   return (
     <article className="page-shell max-w-5xl">
@@ -86,6 +188,34 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           <RichContent content={content} />
         </div>
       </div>
+
+      <section className="surface-panel mt-8 p-6 md:p-8">
+        <div className="max-w-3xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[rgba(202,92,17,0.85)]">Связанные услуги</p>
+          <h2 className="mt-4 text-2xl font-semibold text-slate-950 md:text-3xl">Что полезно открыть дальше</h2>
+          <p className="mt-3 text-base leading-7 text-slate-600">
+            Ниже собрал услуги, которые логично продолжают тему этой статьи и помогают перейти от чтения к внедрению.
+          </p>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {relatedServices.map((service) => (
+            <Link
+              key={service.href}
+              href={service.href}
+              className="group rounded-[28px] border border-slate-200/80 bg-white/90 p-5 shadow-[0_18px_42px_rgba(15,23,42,0.08)] transition-transform duration-200 hover:-translate-y-1 hover:border-sky-300"
+            >
+              <p className="text-lg font-semibold text-slate-950 transition-colors duration-200 group-hover:text-sky-700">
+                {service.label}
+              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-600">{service.description}</p>
+              <span className="mt-4 inline-flex items-center text-sm font-semibold text-sky-700">
+                Перейти к услуге
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
     </article>
   )
 }
