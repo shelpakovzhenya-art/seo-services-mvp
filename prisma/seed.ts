@@ -196,7 +196,17 @@ async function main() {
     },
   })
 
-  // Create sample blog post
+  await prisma.blogPost.deleteMany({
+    where: { slug: 'welcome-to-seo-services' },
+  })
+
+  await prisma.case.deleteMany({
+    where: { title: 'РџСЂРёРјРµСЂ РєРµР№СЃР°' },
+  })
+
+  const shouldSeedInitialBlogPosts = (await prisma.blogPost.count()) === 0
+
+  if (shouldSeedInitialBlogPosts) {
   await prisma.blogPost.upsert({
     where: { slug: 'welcome-to-seo-services' },
     update: {},
@@ -1075,12 +1085,18 @@ GEO и ИИ-выдача меняют не только способ поиск�
     },
   })
 
+  }
+
+  await prisma.blogPost.deleteMany({
+    where: { slug: 'welcome-to-seo-services' },
+  })
+
   // Create sample case
   const existingCase = await prisma.case.findFirst({
     where: { title: 'Пример кейса' }
   })
   
-  if (!existingCase) {
+  if (false && !existingCase) {
     await prisma.case.create({
       data: {
         title: 'Пример кейса',
@@ -1096,7 +1112,7 @@ GEO и ИИ-выдача меняют не только способ поиск�
     where: { author: 'Иван Иванов' }
   })
   
-  if (!existingReview) {
+  if ((await prisma.review.count()) === 0 && !existingReview) {
     await prisma.review.create({
       data: {
         author: 'Иван Иванов',
