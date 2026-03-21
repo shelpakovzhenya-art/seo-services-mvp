@@ -3,6 +3,10 @@ import path from 'path'
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+export const maxDuration = 30
+
 const DEFAULT_LEAD_EMAIL = 'shelpakovzhenya@gmail.com'
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
 
@@ -71,7 +75,7 @@ function looksLikeEmail(value: string) {
 }
 
 function looksLikeGmailAppPassword(value: string) {
-  return /^[a-z]{16}$/i.test(value)
+  return /^[a-z0-9]{16}$/i.test(value)
 }
 
 function parseBoolean(value: string | undefined) {
@@ -119,16 +123,31 @@ function maskSecret(value: string) {
 }
 
 function getMailConfig(): MailConfig {
-  const recipient = process.env.LEAD_TO_EMAIL?.trim() || DEFAULT_LEAD_EMAIL
+  const recipient =
+    process.env.LEAD_TO_EMAIL?.trim() ||
+    process.env.MAIL_TO?.trim() ||
+    process.env.EMAIL_TO?.trim() ||
+    DEFAULT_LEAD_EMAIL
   const gmailPass =
-    process.env.GMAIL_APP_PASSWORD?.replace(/\s+/g, '').toLowerCase() ||
-    process.env.GOOGLE_APP_PASSWORD?.replace(/\s+/g, '').toLowerCase() ||
+    process.env.GMAIL_APP_PASSWORD?.replace(/\s+/g, '') ||
+    process.env.GOOGLE_APP_PASSWORD?.replace(/\s+/g, '') ||
     ''
-  const gmailUser = process.env.GMAIL_USER?.trim() || recipient
+  const gmailUser =
+    process.env.GMAIL_USER?.trim() ||
+    process.env.GOOGLE_USER?.trim() ||
+    process.env.SMTP_USER?.trim() ||
+    process.env.MAIL_USER?.trim() ||
+    recipient
   const smtpHost = process.env.SMTP_HOST?.trim()
   const smtpPort = Number(process.env.SMTP_PORT || 587)
-  const smtpUser = process.env.SMTP_USER?.trim() || process.env.SMTP_USERNAME?.trim()
-  const smtpPass = process.env.SMTP_PASS?.trim() || process.env.SMTP_PASSWORD?.trim()
+  const smtpUser =
+    process.env.SMTP_USER?.trim() ||
+    process.env.SMTP_USERNAME?.trim() ||
+    process.env.MAIL_USER?.trim()
+  const smtpPass =
+    process.env.SMTP_PASS?.trim() ||
+    process.env.SMTP_PASSWORD?.trim() ||
+    process.env.MAIL_PASS?.trim()
   const smtpSecure = parseBoolean(process.env.SMTP_SECURE)
   const rawFrom = process.env.SMTP_FROM?.trim() || process.env.MAIL_FROM?.trim()
   const candidates: MailCandidate[] = []
@@ -136,54 +155,68 @@ function getMailConfig(): MailConfig {
 
   if (gmailPass) {
     if (!looksLikeGmailAppPassword(gmailPass)) {
-      errors.push('Для Gmail нужен пароль приложения Google из 16 букв. Текущее значение GMAIL_APP_PASSWORD не похоже на app password.')
-    } else {
-      const from = normalizeFromAddress(rawFrom, gmailUser)
-
-      candidates.push(
-        {
-          label: 'gmail-465',
-          from,
-          to: recipient,
-          transport: {
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            auth: {
-              user: gmailUser,
-              pass: gmailPass,
-            },
-            authMethod: 'LOGIN',
-            name: 'smtp.gmail.com',
-            tls: {
-              servername: 'smtp.gmail.com',
-              minVersion: 'TLSv1.2',
-            },
-          },
-        },
-        {
-          label: 'gmail-587',
-          from,
-          to: recipient,
-          transport: {
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            requireTLS: true,
-            auth: {
-              user: gmailUser,
-              pass: gmailPass,
-            },
-            authMethod: 'LOGIN',
-            name: 'smtp.gmail.com',
-            tls: {
-              servername: 'smtp.gmail.com',
-              minVersion: 'TLSv1.2',
-            },
-          },
-        }
+      errors.push(
+        'GMAIL_APP_PASSWORD выглядит нестандартно, но отправка все равно будет выполнена. Если это не app password Google, лучше продублировать SMTP-переменные.'
       )
     }
+
+    const from = normalizeFromAddress(rawFrom, gmailUser)
+
+    candidates.push(
+      {
+        label: 'gmail-service',
+        from,
+        to: recipient,
+        transport: {
+          service: 'gmail',
+          auth: {
+            user: gmailUser,
+            pass: gmailPass,
+          },
+        },
+      },
+      {
+        label: 'gmail-465',
+        from,
+        to: recipient,
+        transport: {
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          auth: {
+            user: gmailUser,
+            pass: gmailPass,
+          },
+          authMethod: 'LOGIN',
+          name: 'smtp.gmail.com',
+          tls: {
+            servername: 'smtp.gmail.com',
+            minVersion: 'TLSv1.2',
+          },
+        },
+      },
+      {
+        label: 'gmail-587',
+        from,
+        to: recipient,
+        transport: {
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          requireTLS: true,
+          auth: {
+            user: gmailUser,
+            pass: gmailPass,
+          },
+          authMethod: 'LOGIN',
+          name: 'smtp.gmail.com',
+          tls: {
+            servername: 'smtp.gmail.com',
+            minVersion: 'TLSv1.2',
+          },
+        },
+      }
+    )
   }
 
   if (smtpHost && smtpUser && smtpPass) {
@@ -195,7 +228,7 @@ function getMailConfig(): MailConfig {
         host: smtpHost,
         port: Number.isFinite(smtpPort) ? smtpPort : 587,
         secure: smtpSecure ?? (Number.isFinite(smtpPort) ? smtpPort === 465 : false),
-        requireTLS: smtpSecure === false ? undefined : (Number.isFinite(smtpPort) ? smtpPort !== 465 : true),
+        requireTLS: smtpSecure === false ? undefined : Number.isFinite(smtpPort) ? smtpPort !== 465 : true,
         auth: {
           user: smtpUser,
           pass: smtpPass,
@@ -329,14 +362,13 @@ function getMailFailureMessage(error: unknown) {
   const message = rawMessage.toLowerCase()
 
   if (
-    message.includes('gmai_app_password') ||
     message.includes('app password') ||
     message.includes('invalid login') ||
     message.includes('bad credentials') ||
     message.includes('username and password not accepted') ||
     message.includes('invalid credentials')
   ) {
-    return 'Почта не приняла авторизацию. Для Gmail нужен именно пароль приложения Google из 16 букв, а не обычный пароль от аккаунта.'
+    return 'Почта не приняла авторизацию. Проверьте логин ящика, app password Google или SMTP-пару логин/пароль.'
   }
 
   if (
@@ -345,7 +377,7 @@ function getMailFailureMessage(error: unknown) {
     message.includes('ehostunreach') ||
     message.includes('enotfound')
   ) {
-    return 'Почтовый сервер недоступен по сети. Нужно проверить SMTP-провайдера или ограничения Railway.'
+    return 'Почтовый сервер недоступен по сети. Проверьте SMTP-настройки и ограничения Railway на исходящие соединения.'
   }
 
   return 'Не удалось отправить заявку. Почтовый транспорт отклонил отправку.'
@@ -355,7 +387,7 @@ export async function POST(request: NextRequest) {
   let name = ''
   let contact = ''
   let site = ''
-  let safeSourceUrl = 'Не определён'
+  let safeSourceUrl = 'Не определен'
   let safeSourceTitle = 'Не определена'
   const ip = getClientIp(request)
   const currentDate = new Date().toLocaleString('ru-RU', {
@@ -363,7 +395,7 @@ export async function POST(request: NextRequest) {
     timeStyle: 'medium',
     timeZone: 'Europe/Moscow',
   })
-  const userAgent = request.headers.get('user-agent') || 'Не определён'
+  const userAgent = request.headers.get('user-agent') || 'Не определен'
 
   try {
     if (!checkRateLimit(ip)) {
@@ -390,18 +422,18 @@ export async function POST(request: NextRequest) {
     const mailCandidates = mailConfig.candidates
 
     if (mailCandidates.length === 0) {
-      console.error('Lead email is not configured or invalid.', mailConfig.errors)
+      console.error('Lead email is not configured.', mailConfig.errors)
       return NextResponse.json(
         {
           error:
             mailConfig.errors[0] ||
-            'Форма временно не настроена. Добавьте рабочий SMTP или корректный Gmail app password.',
+            'Форма временно не настроена. Добавьте рабочий Gmail app password или SMTP-переменные.',
         },
         { status: 503 }
       )
     }
 
-    const referer = request.headers.get('referer') || 'Не определён'
+    const referer = request.headers.get('referer') || 'Не определен'
     const replyTo = looksLikeEmail(contact) ? contact : undefined
     const safeName = escapeHtml(name)
     const safeContact = escapeHtml(contact)
@@ -424,6 +456,7 @@ export async function POST(request: NextRequest) {
       `IP: ${ip}`,
       `User-Agent: ${userAgent}`,
     ].join('\n')
+
     const html = `
       <div style="font-family:Arial,sans-serif;line-height:1.6;color:#0f172a;">
         <h2 style="margin:0 0 16px;">Новая заявка с сайта</h2>
