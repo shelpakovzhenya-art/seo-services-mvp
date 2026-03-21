@@ -108,7 +108,7 @@ export default async function Footer() {
 
           <div>
             <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">Контакты</h3>
-            <div className="flex h-full flex-col text-sm">
+            <div className="text-sm">
               <div className="space-y-3">
                 <p>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</p>
                 <a href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`} className="transition hover:text-white">
@@ -117,7 +117,7 @@ export default async function Footer() {
                 <p className="text-slate-400">Аудит, стратегия, коммерческие факторы и рост заявок.</p>
               </div>
 
-              <div className="mt-auto pt-8">
+              <div className="pt-6">
                 <Link
                   href="/tools"
                   className="inline-flex w-fit items-center gap-3 border border-white/14 bg-[#09111d]/88 px-5 py-4 text-sm font-medium uppercase tracking-[0.22em] text-slate-200 transition hover:border-cyan-300/34 hover:bg-[#0d1624] hover:text-white"
