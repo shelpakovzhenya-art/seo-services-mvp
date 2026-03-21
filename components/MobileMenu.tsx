@@ -70,32 +70,32 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
         <button
           type="button"
           aria-label={CLOSE_MENU_LABEL}
-          className={`absolute inset-0 bg-slate-950/36 backdrop-blur-[2px] transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 bg-slate-950/28 backdrop-blur-[2px] transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
           onClick={() => setOpen(false)}
         />
 
         <div
-          className={`absolute inset-y-0 right-0 h-full w-full max-w-[420px] overflow-y-auto border-l border-orange-100 bg-[#fffaf4] shadow-[0_24px_80px_rgba(15,23,42,0.18)] transition-transform duration-300 ease-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
+          className={`absolute inset-0 h-[100dvh] w-screen overflow-y-auto bg-[radial-gradient(circle_at_top,_rgba(255,208,166,0.18),_transparent_34%),linear-gradient(180deg,_rgba(255,250,244,0.98),_rgba(255,247,239,1))] shadow-[0_24px_80px_rgba(15,23,42,0.18)] transition-transform duration-300 ease-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
         >
-          <div className="sticky top-0 z-10 border-b border-orange-100 bg-[#fffaf4]/95 px-5 py-4 backdrop-blur">
+          <div className="sticky top-0 z-10 border-b border-orange-100 bg-[#fffaf4]/95 px-6 py-5 backdrop-blur">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{MENU_TITLE}</div>
-                <div className="mt-1 text-base font-semibold text-slate-950">Shelpakov Digital</div>
+                <div className="mt-1 text-2xl font-semibold text-slate-950">Shelpakov Digital</div>
               </div>
               <button
                 type="button"
                 aria-label={CLOSE_MENU_LABEL}
                 onClick={() => setOpen(false)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-orange-100 bg-white text-slate-700"
+                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-orange-100 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)]"
               >
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6" />
               </button>
             </div>
           </div>
 
-          <div className="space-y-6 px-5 py-5 pb-8">
-            <div className="rounded-[24px] border border-orange-100 bg-white p-4">
+          <div className="flex min-h-[calc(100dvh-89px)] flex-col px-6 py-6 pb-8">
+            <div className="rounded-[28px] border border-orange-100 bg-white/95 p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
               <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
                 <span>{workSchedule}</span>
                 <span className={`inline-flex items-center gap-2.5 rounded-full border px-3 py-1 text-[11px] font-semibold ${workStatus.badgeClass}`}>
@@ -115,39 +115,39 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
               </a>
             </div>
 
-            <nav className="space-y-2">
+            <nav className="mt-6 grid gap-3">
               {menuItems.map((item) => (
                 <Link
                   key={item.id}
                   href={item.url}
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between rounded-2xl border border-orange-100 bg-white px-4 py-4 text-base font-medium text-slate-900 transition hover:border-cyan-200"
+                  className="flex items-center justify-between rounded-[28px] border border-orange-100 bg-white/95 px-5 py-5 text-[clamp(1.2rem,4.4vw,1.5rem)] font-semibold text-slate-900 shadow-[0_18px_40px_rgba(15,23,42,0.05)] transition hover:border-cyan-200"
                 >
                   <span>{item.label}</span>
-                  <ArrowUpRight className="h-4 w-4 text-cyan-700" />
+                  <ArrowUpRight className="h-5 w-5 text-cyan-700" />
                 </Link>
               ))}
             </nav>
 
-            <div className="rounded-[24px] border border-orange-100 bg-[#fff5ea] p-4">
+            <div className="mt-6 rounded-[28px] border border-orange-100 bg-[#fff5ea]/95 p-5">
               <div className="text-xs uppercase tracking-[0.22em] text-orange-700">{CONTACTS_TITLE}</div>
 
               {socialLinks.length > 0 ? (
-                <div className="mt-4 grid gap-2">
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {socialLinks.map((item) => (
                     <a
                       key={item.label}
                       href={item.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-3 rounded-2xl border border-orange-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-cyan-300 hover:text-cyan-700"
+                      className="inline-flex items-center gap-3 rounded-2xl border border-orange-200 bg-white px-4 py-4 text-base font-medium text-slate-700 transition hover:border-cyan-300 hover:text-cyan-700"
                     >
                       {item.type === 'telegram' ? (
-                        <Image src="/telegram-logo.svg" alt="Telegram" width={18} height={18} className="h-[18px] w-[18px]" />
+                        <Image src="/telegram-logo.svg" alt="Telegram" width={20} height={20} className="h-5 w-5" />
                       ) : item.type === 'vk' ? (
-                        <MessagesSquare className="h-4 w-4" />
+                        <MessagesSquare className="h-5 w-5" />
                       ) : (
-                        <MessageCircle className="h-4 w-4" />
+                        <MessageCircle className="h-5 w-5" />
                       )}
                       <span>{item.label}</span>
                     </a>
@@ -159,10 +159,10 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
             <a
               href="#contact-form"
               onClick={() => setOpen(false)}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-cyan-300 bg-cyan-50 px-4 py-3 text-sm font-medium text-cyan-800 transition hover:bg-cyan-100"
+              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-cyan-300 bg-cyan-50 px-5 py-4 text-base font-medium text-cyan-800 transition hover:bg-cyan-100"
             >
               {DISCUSS_PROJECT}
-              <ArrowUpRight className="h-4 w-4" />
+              <ArrowUpRight className="h-5 w-5" />
             </a>
           </div>
         </div>
