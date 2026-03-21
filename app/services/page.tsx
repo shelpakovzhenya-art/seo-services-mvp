@@ -5,6 +5,7 @@ import { ArrowRight, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import ServicesCatalogSection from '@/components/services/ServicesCatalogSection'
 import ContactForm from '@/components/ContactForm'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getFullUrl } from '@/lib/site-url'
 import { serviceIndexFaq, servicePages } from '@/lib/service-pages'
 
@@ -13,14 +14,20 @@ const pageDescription =
   'SEO-услуги под разные задачи бизнеса: продвижение, аудит, техническое SEO, локальная оптимизация, контент, консалтинг и развитие коммерческих страниц.'
 
 export const metadata: Metadata = {
-  title: pageTitle,
-  description: pageDescription,
+  title: normalizeMetaTitle(pageTitle, 'SEO-услуги для роста сайта'),
+  description: normalizeMetaDescription(
+    pageDescription,
+    'SEO-услуги под рост заявок и органики: аудит, техническое SEO, локальная оптимизация, контент, консалтинг и развитие коммерческих страниц сайта.'
+  ),
   alternates: {
     canonical: getFullUrl('/services'),
   },
   openGraph: {
-    title: pageTitle,
-    description: pageDescription,
+    title: normalizeMetaTitle(pageTitle, 'SEO-услуги для роста сайта'),
+    description: normalizeMetaDescription(
+      pageDescription,
+      'SEO-услуги под рост заявок и органики: аудит, техническое SEO, локальная оптимизация, контент, консалтинг и развитие коммерческих страниц сайта.'
+    ),
     url: getFullUrl('/services'),
     type: 'website',
   },

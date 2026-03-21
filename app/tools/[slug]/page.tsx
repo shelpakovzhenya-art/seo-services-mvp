@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import SeoToolWorkspace from '@/components/tools/SeoToolWorkspace'
 import ToolCardIcon from '@/components/tools/ToolCardIcon'
 import { Button } from '@/components/ui/button'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getSeoToolBySlug, seoTools } from '@/lib/seo-tools'
 import { getFullUrl } from '@/lib/site-url'
 
@@ -24,18 +25,23 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
     return {}
   }
 
-  const title = `${tool.title} | SEO-инструменты`
+  const title = normalizeMetaTitle(`${tool.title} | SEO-инструменты`, `${tool.title} для SEO`)
+  const description = normalizeMetaDescription(
+    tool.description,
+    `${tool.summary} Работает прямо в браузере и помогает быстро решить прикладную SEO-задачу без лишних ручных действий.`
+  )
+  const canonical = getFullUrl(`/tools/${tool.slug}`)
 
   return {
     title,
-    description: tool.description,
+    description,
     alternates: {
-      canonical: getFullUrl(`/tools/${tool.slug}`),
+      canonical,
     },
     openGraph: {
       title,
-      description: tool.description,
-      url: getFullUrl(`/tools/${tool.slug}`),
+      description,
+      url: canonical,
       type: 'website',
     },
   }

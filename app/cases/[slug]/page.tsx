@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import ContactForm from '@/components/ContactForm'
 import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { prisma } from '@/lib/prisma'
 import { getFullUrl } from '@/lib/site-url'
 
@@ -114,16 +115,20 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   const url = getFullUrl(`/cases/${params.slug}`)
-  const description = caseItem.description || 'Кейс Shelpakov Digital по SEO, структуре сайта и росту заявок.'
+  const title = normalizeMetaTitle(caseItem.title, 'SEO-кейс')
+  const description = normalizeMetaDescription(
+    caseItem.description,
+    'Кейс Shelpakov Digital по SEO, структуре сайта и росту заявок с понятной стратегией, внедрением ключевых правок и акцентом на коммерческий результат.'
+  )
 
   return {
-    title: `${caseItem.title} | Shelpakov Digital`,
+    title,
     description,
     alternates: {
       canonical: url,
     },
     openGraph: {
-      title: `${caseItem.title} | Shelpakov Digital`,
+      title,
       description,
       url,
       type: 'article',

@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, MapPin, Search } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import { Button } from '@/components/ui/button'
 import { isPlaceholderCase } from '@/lib/case-listing'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { prisma } from '@/lib/prisma'
 import { getFullUrl } from '@/lib/site-url'
 import { podocenterCase } from '@/lib/podocenter-case'
@@ -402,16 +403,21 @@ export default async function PodocenterCasePage() {
 
 export function generateMetadata() {
   const url = getFullUrl(podocenterCase.url)
+  const title = normalizeMetaTitle(podocenterCase.title, 'SEO-кейс PodoCenter')
+  const description = normalizeMetaDescription(
+    podocenterCase.description,
+    'Кейс по SEO-продвижению PodoCenter в Казани: усиление структуры сайта, рост видимости, поискового трафика и обращений по приоритетным запросам.'
+  )
 
   return {
-    title: podocenterCase.title,
-    description: podocenterCase.description,
+    title,
+    description,
     alternates: {
       canonical: url,
     },
     openGraph: {
-      title: podocenterCase.title,
-      description: podocenterCase.description,
+      title,
+      description,
       url,
       type: 'article',
     },

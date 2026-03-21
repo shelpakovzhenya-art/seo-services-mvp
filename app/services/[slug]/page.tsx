@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ServicePageTemplate from '@/components/services/ServicePageTemplate'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getServicePage, servicePages } from '@/lib/service-pages'
 import { getMergedServicePricing } from '@/lib/service-pricing-overrides'
 import { getServiceOverrideMap, mergeServiceWithOverride } from '@/lib/service-overrides'
@@ -75,8 +76,14 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
   const mergedService = mergeServiceWithOverride(service, 0, override)
   const canonical = getFullUrl(`/services/${mergedService.slug}`)
   const fallbackMeta = serviceMetadata[mergedService.slug]
-  const metaTitle = override?.title || mergedService.title || fallbackMeta?.title
-  const metaDescription = override?.description || mergedService.description || fallbackMeta?.description
+  const metaTitle = normalizeMetaTitle(
+    override?.title || fallbackMeta?.title || mergedService.title,
+    mergedService.title
+  )
+  const metaDescription = normalizeMetaDescription(
+    override?.description || fallbackMeta?.description || mergedService.description,
+    mergedService.description
+  )
 
   return {
     title: metaTitle,

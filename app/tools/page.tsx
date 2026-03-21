@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react'
 import ToolCardIcon from '@/components/tools/ToolCardIcon'
 import { Button } from '@/components/ui/button'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { seoTools } from '@/lib/seo-tools'
 import { getFullUrl } from '@/lib/site-url'
 
@@ -11,14 +12,20 @@ const pageDescription =
   'Подборка SEO-инструментов, которые работают прямо в браузере: генератор ЧПУ, UTM-меток, meta-тегов, robots.txt и Open Graph.'
 
 export const metadata: Metadata = {
-  title: pageTitle,
-  description: pageDescription,
+  title: normalizeMetaTitle(pageTitle, 'SEO-инструменты для работы с сайтом'),
+  description: normalizeMetaDescription(
+    pageDescription,
+    'Набор SEO-инструментов для браузера: генератор ЧПУ, UTM-меток, meta-тегов, robots.txt и Open Graph без установки лишнего софта.'
+  ),
   alternates: {
     canonical: getFullUrl('/tools'),
   },
   openGraph: {
-    title: pageTitle,
-    description: pageDescription,
+    title: normalizeMetaTitle(pageTitle, 'SEO-инструменты для работы с сайтом'),
+    description: normalizeMetaDescription(
+      pageDescription,
+      'Набор SEO-инструментов для браузера: генератор ЧПУ, UTM-меток, meta-тегов, robots.txt и Open Graph без установки лишнего софта.'
+    ),
     url: getFullUrl('/tools'),
     type: 'website',
   },

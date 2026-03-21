@@ -4,20 +4,21 @@ import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import SiteAtmosphere from '@/components/SiteAtmosphere'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getSiteUrl } from '@/lib/site-url'
 import './globals.css'
 
 const siteUrl = getSiteUrl()
-const defaultDescription =
+const defaultTitle = normalizeMetaTitle(undefined, 'SEO, структура сайта и рост заявок')
+const defaultDescription = normalizeMetaDescription(
+  undefined,
   'SEO-продвижение, аудит и доработка структуры сайта под рост заявок, доверия и органического трафика для услуг, B2B-проектов и экспертных ниш.'
+)
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   manifest: '/site.webmanifest',
-  title: {
-    default: 'SEO-продвижение сайтов | Shelpakov Digital',
-    template: '%s | Shelpakov Digital',
-  },
+  title: defaultTitle,
   description: defaultDescription,
   keywords: [
     'seo-продвижение сайтов',
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
     locale: 'ru_RU',
     url: siteUrl,
     siteName: 'Shelpakov Digital',
-    title: 'SEO-продвижение сайтов | Shelpakov Digital',
+    title: defaultTitle,
     description: defaultDescription,
   },
   robots: {
