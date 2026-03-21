@@ -154,8 +154,8 @@ export default async function HomePage() {
   return (
     <div className="overflow-hidden pb-24">
       <section className="section-grid relative border-b border-white/10">
-        <div className="container relative mx-auto px-4 pb-10 pt-8 md:pb-12 md:pt-10">
-          <div className="hero-panel hero-sheen relative overflow-hidden rounded-[34px] border border-white/70 px-5 py-6 md:px-7 md:py-7 lg:px-9 lg:py-8">
+        <div className="container relative mx-auto px-4 pb-8 pt-6 md:pb-10 md:pt-8">
+          <div className="hero-panel hero-sheen relative overflow-hidden rounded-[32px] border border-white/70 px-4 py-5 md:px-6 md:py-6 lg:px-8 lg:py-7">
             <div className="hero-grid-mask" />
             <div className="hero-orb float-slow left-[-30px] top-10 h-28 w-28 bg-[radial-gradient(circle,rgba(255,163,102,0.34),rgba(255,163,102,0))]" />
             <div className="hero-orb float-reverse right-10 top-[-16px] h-24 w-24 bg-[radial-gradient(circle,rgba(56,189,248,0.28),rgba(56,189,248,0))]" />
@@ -174,17 +174,17 @@ export default async function HomePage() {
             </div>
             <div className="hero-beam drift-right" />
 
-            <div className="relative max-w-6xl">
+            <div className="relative max-w-none">
               <span className="warm-chip">SEO-продвижение под заявки</span>
-              <h1 className="mt-4 max-w-[15.5ch] text-[clamp(2.55rem,4.2vw,4.6rem)] font-semibold leading-[0.91] tracking-[-0.045em] text-slate-950">
+              <h1 className="mt-4 max-w-[1100px] text-[clamp(2.15rem,3.4vw,4rem)] font-semibold leading-[0.93] tracking-[-0.045em] text-slate-950">
                 SEO и структура сайта, которые помогают получать больше обращений, а не просто расти по позициям.
               </h1>
-              <p className="mt-4 max-w-[46rem] text-[0.98rem] leading-7 text-slate-600 md:text-[1.05rem] md:leading-8">
+              <p className="mt-4 max-w-[860px] text-[0.95rem] leading-7 text-slate-600 md:text-[1.02rem] md:leading-7">
                 Помогаю бизнесу усиливать сайт под поиск и под клиента: дорабатываю ключевые страницы, оффер,
                 структуру, коммерческие факторы и логику заявки, чтобы органика становилась каналом роста.
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-wrap gap-3">
                 <a href="#contact-form">
                   <Button size="lg" className="rounded-full px-5 py-5 text-sm">
                     Получить разбор сайта
@@ -214,7 +214,7 @@ export default async function HomePage() {
                 </span>
               </div>
 
-              <div className="mt-5 grid gap-2.5 md:grid-cols-3">
+              <div className="mt-4 grid max-w-[980px] gap-2.5 md:grid-cols-3">
                 {trustMetrics.map((metric) => (
                   <div
                     key={metric.value}
