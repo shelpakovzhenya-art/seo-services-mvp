@@ -8,23 +8,23 @@ import './globals.css'
 
 const siteUrl = getSiteUrl()
 const defaultDescription =
-  'SEO-РїСЂРѕРґРІРёР¶РµРЅРёРµ, Р°СѓРґРёС‚ Рё РґРѕСЂР°Р±РѕС‚РєР° СЃС‚СЂСѓРєС‚СѓСЂС‹ СЃР°Р№С‚Р° РїРѕРґ СЂРѕСЃС‚ Р·Р°СЏРІРѕРє, РґРѕРІРµСЂРёСЏ Рё РѕСЂРіР°РЅРёС‡РµСЃРєРѕРіРѕ С‚СЂР°С„РёРєР° РґР»СЏ СѓСЃР»СѓРі, B2B-РїСЂРѕРµРєС‚РѕРІ Рё СЌРєСЃРїРµСЂС‚РЅС‹С… РЅРёС€.'
+  'SEO-продвижение, аудит и доработка структуры сайта под рост заявок, доверия и органического трафика для услуг, B2B-проектов и экспертных ниш.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   manifest: '/site.webmanifest',
   title: {
-    default: 'SEO-РїСЂРѕРґРІРёР¶РµРЅРёРµ СЃР°Р№С‚РѕРІ | Shelpakov Digital',
+    default: 'SEO-продвижение сайтов | Shelpakov Digital',
     template: '%s | Shelpakov Digital',
   },
   description: defaultDescription,
   keywords: [
-    'seo-РїСЂРѕРґРІРёР¶РµРЅРёРµ СЃР°Р№С‚РѕРІ',
-    'РїРѕРёСЃРєРѕРІРѕРµ РїСЂРѕРґРІРёР¶РµРЅРёРµ',
-    'seo-Р°СѓРґРёС‚',
-    'СЃС‚СЂСѓРєС‚СѓСЂР° СЃР°Р№С‚Р°',
-    'РєРѕРјРјРµСЂС‡РµСЃРєРёРµ С„Р°РєС‚РѕСЂС‹',
-    'СЂРѕСЃС‚ Р·Р°СЏРІРѕРє',
+    'seo-продвижение сайтов',
+    'поисковое продвижение',
+    'seo-аудит',
+    'структура сайта',
+    'коммерческие факторы',
+    'рост заявок',
   ],
   authors: [{ name: 'Shelpakov Digital' }],
   creator: 'Shelpakov Digital',
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     locale: 'ru_RU',
     url: siteUrl,
     siteName: 'Shelpakov Digital',
-    title: 'SEO-РїСЂРѕРґРІРёР¶РµРЅРёРµ СЃР°Р№С‚РѕРІ | Shelpakov Digital',
+    title: 'SEO-продвижение сайтов | Shelpakov Digital',
     description: defaultDescription,
   },
   robots: {

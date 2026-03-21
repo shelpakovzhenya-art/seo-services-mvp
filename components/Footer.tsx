@@ -5,12 +5,12 @@ import { prisma } from '@/lib/prisma'
 import { featuredReads } from '@/lib/site-recommendations'
 
 const DEFAULT_MENU_ITEMS = [
-  { id: '1', label: 'Р“Р»Р°РІРЅР°СЏ', url: '/', order: 1, isActive: true },
-  { id: '2', label: 'РЈСЃР»СѓРіРё', url: '/services', order: 2, isActive: true },
-  { id: '3', label: 'РљРµР№СЃС‹', url: '/cases', order: 3, isActive: true },
-  { id: '4', label: 'РћС‚Р·С‹РІС‹', url: '/reviews', order: 4, isActive: true },
-  { id: '5', label: 'Р‘Р»РѕРі', url: '/blog', order: 5, isActive: true },
-  { id: '6', label: 'РљРѕРЅС‚Р°РєС‚С‹', url: '/contacts', order: 6, isActive: true },
+  { id: '1', label: 'Главная', url: '/', order: 1, isActive: true },
+  { id: '2', label: 'Услуги', url: '/services', order: 2, isActive: true },
+  { id: '3', label: 'Кейсы', url: '/cases', order: 3, isActive: true },
+  { id: '4', label: 'Отзывы', url: '/reviews', order: 4, isActive: true },
+  { id: '5', label: 'Блог', url: '/blog', order: 5, isActive: true },
+  { id: '6', label: 'Контакты', url: '/contacts', order: 6, isActive: true },
 ]
 
 export default async function Footer() {
@@ -63,10 +63,10 @@ export default async function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.75fr_0.8fr_1.1fr]">
           <div className="space-y-5">
             <span className="warm-chip">Shelpakov Digital</span>
-            <h3 className="max-w-xl text-3xl font-semibold text-white">SEO Рё РґРѕСЂР°Р±РѕС‚РєР° СЃР°Р№С‚Р° РїРѕРґ Р·Р°СЏРІРєРё, РґРѕРІРµСЂРёРµ Рё СЂРѕСЃС‚.</h3>
+            <h3 className="max-w-xl text-3xl font-semibold text-white">SEO и доработка сайта под заявки, доверие и рост.</h3>
             <p className="max-w-xl text-sm leading-7 text-slate-400">
               {settings?.footerText ||
-                'РџРѕРјРѕРіР°СЋ СЃРґРµР»Р°С‚СЊ СЃР°Р№С‚ РїРѕРЅСЏС‚РЅРµРµ РґР»СЏ РєР»РёРµРЅС‚Р°, СЃРёР»СЊРЅРµРµ РґР»СЏ РїРѕРёСЃРєРѕРІРёРєРѕРІ Рё РїРѕР»РµР·РЅРµРµ РґР»СЏ Р±РёР·РЅРµСЃР°.'}
+                'Помогаю сделать сайт понятнее для клиента, сильнее для поисковиков и полезнее для бизнеса.'}
             </p>
             {socialLinks.length > 0 ? (
               <div className="flex flex-wrap gap-3 pt-2">
@@ -94,7 +94,7 @@ export default async function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">РќР°РІРёРіР°С†РёСЏ</h3>
+            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">Навигация</h3>
             <ul className="space-y-3">
               {menuItems.map((item) => (
                 <li key={item.id}>
@@ -107,18 +107,18 @@ export default async function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">РљРѕРЅС‚Р°РєС‚С‹</h3>
+            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">Контакты</h3>
             <div className="space-y-3 text-sm">
-              <p>{settings?.workSchedule || 'РџРЅ-РџС‚ 09:00-17:00'}</p>
+              <p>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</p>
               <a href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`} className="transition hover:text-white">
                 {settings?.email || 'shelpakovzhenya@gmail.com'}
               </a>
-              <p className="text-slate-400">РђСѓРґРёС‚, СЃС‚СЂР°С‚РµРіРёСЏ, РєРѕРјРјРµСЂС‡РµСЃРєРёРµ С„Р°РєС‚РѕСЂС‹ Рё СЂРѕСЃС‚ Р·Р°СЏРІРѕРє.</p>
+              <p className="text-slate-400">Аудит, стратегия, коммерческие факторы и рост заявок.</p>
             </div>
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">РџРѕС‡РёС‚Р°С‚СЊ РґР°Р»СЊС€Рµ</h3>
+            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">Почитать дальше</h3>
             <div className="space-y-4">
               {featuredReads.map((item) => (
                 <Link
@@ -135,7 +135,7 @@ export default async function Footer() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-6 text-sm text-slate-500">
-          <p>&copy; {currentYear} Shelpakov Digital. Р’СЃРµ РїСЂР°РІР° Р·Р°С‰РёС‰РµРЅС‹.</p>
+          <p>&copy; {currentYear} Shelpakov Digital. Все права защищены.</p>
         </div>
       </div>
     </footer>

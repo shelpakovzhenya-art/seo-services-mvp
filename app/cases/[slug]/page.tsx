@@ -27,7 +27,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
   return (
     <div className="page-shell">
       <section className="soft-section overflow-hidden p-8 md:p-10">
-        <span className="warm-chip">РљРµР№СЃ</span>
+        <span className="warm-chip">Кейс</span>
         <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">{caseItem.title}</h1>
         {caseItem.description ? (
           <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{caseItem.description}</p>
@@ -36,7 +36,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
         <div className="mt-8 flex flex-wrap gap-4">
           <a href="#case-contact">
             <Button size="lg" className="rounded-full px-7">
-              РћР±СЃСѓРґРёС‚СЊ РїРѕС…РѕР¶РёР№ РїСЂРѕРµРєС‚
+              Обсудить похожий проект
             </Button>
           </a>
         </div>
@@ -58,7 +58,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
 
       {galleryImages.length > 0 ? (
         <section className="page-card mt-8">
-          <h2 className="text-3xl font-semibold text-slate-950">РЎРєСЂРёРЅС‹ Рё СЂРµР·СѓР»СЊС‚Р°С‚С‹</h2>
+          <h2 className="text-3xl font-semibold text-slate-950">Скрины и результаты</h2>
           <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {galleryImages.map((src, index) => (
               <article
@@ -85,12 +85,13 @@ export default async function CasePage({ params }: { params: { slug: string } })
       <section id="case-contact" className="mt-8 soft-section overflow-hidden">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
-            <span className="warm-chip">РћР±СЃСѓРґРёС‚СЊ РїСЂРѕРµРєС‚</span>
+            <span className="warm-chip">Обсудить проект</span>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
-              РќСѓР¶РµРЅ РїРѕС…РѕР¶РёР№ РєРµР№СЃ РґР»СЏ РІР°С€РµРіРѕ СЃР°Р№С‚Р°?
+              Нужен похожий кейс для вашего сайта?
             </h2>
             <p className="mt-5 text-base leading-8 text-slate-600">
-              Р Р°Р·Р±РµСЂСѓ Р·Р°РґР°С‡Сѓ, РїРѕРєР°Р¶Сѓ С‚РѕС‡РєРё СЂРѕСЃС‚Р° Рё РїРѕРґСЃРєР°Р¶Сѓ, СЃ С‡РµРіРѕ Р»РѕРіРёС‡РЅРѕ РЅР°С‡Р°С‚СЊ, С‡С‚РѕР±С‹ SEO Рё СЃС‚СЂСѓРєС‚СѓСЂР° СЃР°Р№С‚Р° СЂР°Р±РѕС‚Р°Р»Рё РЅР° Р·Р°СЏРІРєРё.
+              Разберу задачу, покажу точки роста и подскажу, с чего логично начать, чтобы SEO и структура сайта
+              работали на заявки.
             </p>
           </div>
 
@@ -113,7 +114,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   const url = getFullUrl(`/cases/${params.slug}`)
-  const description = caseItem.description || 'РљРµР№СЃ Shelpakov Digital РїРѕ SEO, СЃС‚СЂСѓРєС‚СѓСЂРµ СЃР°Р№С‚Р° Рё СЂРѕСЃС‚Сѓ Р·Р°СЏРІРѕРє.'
+  const description = caseItem.description || 'Кейс Shelpakov Digital по SEO, структуре сайта и росту заявок.'
 
   return {
     title: `${caseItem.title} | Shelpakov Digital`,

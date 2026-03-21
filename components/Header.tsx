@@ -6,12 +6,12 @@ import { prisma } from '@/lib/prisma'
 import { getWorkStatus } from '@/lib/work-status'
 
 const DEFAULT_MENU_ITEMS = [
-  { id: '1', label: 'Р“Р»Р°РІРЅР°СЏ', url: '/', order: 1, isActive: true },
-  { id: '2', label: 'РЈСЃР»СѓРіРё', url: '/services', order: 2, isActive: true },
-  { id: '3', label: 'РљРµР№СЃС‹', url: '/cases', order: 3, isActive: true },
-  { id: '4', label: 'РћС‚Р·С‹РІС‹', url: '/reviews', order: 4, isActive: true },
-  { id: '5', label: 'Р‘Р»РѕРі', url: '/blog', order: 5, isActive: true },
-  { id: '6', label: 'РљРѕРЅС‚Р°РєС‚С‹', url: '/contacts', order: 6, isActive: true },
+  { id: '1', label: 'Главная', url: '/', order: 1, isActive: true },
+  { id: '2', label: 'Услуги', url: '/services', order: 2, isActive: true },
+  { id: '3', label: 'Кейсы', url: '/cases', order: 3, isActive: true },
+  { id: '4', label: 'Отзывы', url: '/reviews', order: 4, isActive: true },
+  { id: '5', label: 'Блог', url: '/blog', order: 5, isActive: true },
+  { id: '6', label: 'Контакты', url: '/contacts', order: 6, isActive: true },
 ]
 
 export default async function Header() {
@@ -63,7 +63,7 @@ export default async function Header() {
         <div className="flex items-center justify-between gap-4 py-3 text-xs text-slate-300">
           <div className="flex flex-wrap items-center gap-3">
             <span className="warm-chip">Shelpakov Digital</span>
-            <span>{settings?.workSchedule || 'РџРЅ-РџС‚ 09:00-17:00'}</span>
+            <span>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</span>
             <span className={`inline-flex items-center gap-2.5 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold ${workStatus.badgeClass}`}>
               <span className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
                 <span className={`absolute inset-0 inline-flex animate-ping rounded-full opacity-90 ${workStatus.pingClass}`} />
@@ -108,11 +108,11 @@ export default async function Header() {
         <nav className="mb-4 flex items-center justify-between gap-4 rounded-[32px] border border-white/10 bg-white/[0.06] px-4 py-4 shadow-[0_20px_55px_rgba(2,8,23,0.24)]">
           <Link href="/" className="flex items-center gap-3">
             <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-2xl border border-cyan-200/40 bg-white/95 shadow-[0_10px_24px_rgba(15,23,42,0.14)]">
-              <Image src="/favicon-48.png" alt="Р›РѕРіРѕС‚РёРї Shelpakov Digital" width={28} height={28} className="h-7 w-7 object-contain" />
+              <Image src="/favicon-48.png" alt="Логотип Shelpakov Digital" width={28} height={28} className="h-7 w-7 object-contain" />
             </span>
             <span className="flex flex-col">
               <span className="text-lg font-semibold uppercase tracking-[0.16em] text-white">Shelpakov Digital</span>
-              <span className="text-xs uppercase tracking-[0.2em] text-slate-400">SEO, СЃС‚СЂСѓРєС‚СѓСЂР° СЃР°Р№С‚Р°, Р·Р°СЏРІРєРё</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-slate-400">SEO, структура сайта, заявки</span>
             </span>
           </Link>
 
@@ -130,7 +130,7 @@ export default async function Header() {
             href="#contact-form"
             className="hidden items-center gap-2 rounded-full border border-cyan-200/30 bg-[linear-gradient(135deg,rgba(96,227,255,0.95),rgba(255,183,137,0.9))] px-4 py-2 text-sm font-semibold text-slate-950 shadow-[0_14px_32px_rgba(2,8,23,0.22)] transition hover:-translate-y-0.5 lg:inline-flex"
           >
-            РћР±СЃСѓРґРёС‚СЊ РїСЂРѕРµРєС‚
+            Обсудить проект
             <ArrowUpRight className="h-4 w-4" />
           </a>
 
@@ -141,7 +141,7 @@ export default async function Header() {
               url: item.url,
             }))}
             email={settings?.email || 'shelpakovzhenya@gmail.com'}
-            workSchedule={settings?.workSchedule || 'Р СџР Р…-Р СџРЎвЂљ 09:00-17:00'}
+            workSchedule={settings?.workSchedule || 'Пн-Пт 09:00-17:00'}
             workStatus={workStatus}
             socialLinks={socialLinks.map((item) => ({
               href: item.href,

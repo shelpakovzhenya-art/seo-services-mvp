@@ -28,16 +28,16 @@ export default async function BlogPage() {
     <div className="page-shell">
       <section className="surface-cosmos p-8 md:p-10">
         <div className="max-w-4xl">
-          <span className="warm-chip">Р‘Р»РѕРі</span>
-          <h1 className="mt-4 text-4xl font-semibold text-white md:text-6xl">РњР°С‚РµСЂРёР°Р»С‹ РїРѕ SEO Рё СЂР°Р·РІРёС‚РёСЋ СЃР°Р№С‚Р°</h1>
+          <span className="warm-chip">Блог</span>
+          <h1 className="mt-4 text-4xl font-semibold text-white md:text-6xl">Материалы по SEO и развитию сайта</h1>
           <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
-            РџСѓР±Р»РёРєСѓСЋ СЂР°Р·Р±РѕСЂС‹ РїРѕ SEO, СЃС‚СЂСѓРєС‚СѓСЂРµ СЃР°Р№С‚Р°, РєРѕРјРјРµСЂС‡РµСЃРєРёРј С„Р°РєС‚РѕСЂР°Рј Рё РєРѕРЅС‚РµРЅС‚Сѓ, РєРѕС‚РѕСЂС‹Рµ РїРѕРјРѕРіР°СЋС‚ РїСЂРёРЅРёРјР°С‚СЊ
-            РІР·РІРµС€РµРЅРЅС‹Рµ СЂРµС€РµРЅРёСЏ РїРѕ РїСЂРѕРµРєС‚Сѓ.
+            Публикую разборы по SEO, структуре сайта, коммерческим факторам и контенту, которые помогают принимать
+            взвешенные решения по проекту.
           </p>
           <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-200">
-            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">Р Р°Р·Р±РѕСЂС‹ РѕС€РёР±РѕРє Рё С‚РѕС‡РµРє СЂРѕСЃС‚Р°</span>
-            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">РњР°С‚РµСЂРёР°Р»С‹ РґР»СЏ РІР»Р°РґРµР»СЊС†Р° СЃР°Р№С‚Р°</span>
-            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">SEO + СѓРїР°РєРѕРІРєР° + РєРѕРЅРІРµСЂСЃРёСЏ</span>
+            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">Разборы ошибок и точек роста</span>
+            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">Материалы для владельца сайта</span>
+            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">SEO + упаковка + конверсия</span>
           </div>
         </div>
       </section>
@@ -53,7 +53,7 @@ export default async function BlogPage() {
                   </div>
                 )}
                 <div className="p-6">
-                  <div className="text-[11px] uppercase tracking-[0.24em] text-orange-700">РЎС‚Р°С‚СЊСЏ</div>
+                  <div className="text-[11px] uppercase tracking-[0.24em] text-orange-700">Статья</div>
                   <h2 className="mt-4 text-2xl font-semibold text-slate-950">{post.title}</h2>
                   {post.excerpt && <p className="mt-3 text-sm leading-7 text-slate-600">{post.excerpt}</p>}
                   {post.publishedAt && (
@@ -65,7 +65,7 @@ export default async function BlogPage() {
           ))}
         </div>
 
-        {posts.length === 0 && <div className="reading-shell mt-8 text-center text-slate-500">РџРѕРєР° РѕРїСѓР±Р»РёРєРѕРІР°РЅРЅС‹С… СЃС‚Р°С‚РµР№ РЅРµС‚.</div>}
+        {posts.length === 0 && <div className="reading-shell mt-8 text-center text-slate-500">Пока опубликованных статей нет.</div>}
       </section>
     </div>
   )
@@ -74,10 +74,10 @@ export default async function BlogPage() {
 export async function generateMetadata() {
   const { getFullUrl } = await import('@/lib/site-url')
   const blogUrl = getFullUrl('/blog')
-  const title = 'Р‘Р»РѕРі Рѕ SEO Рё СЂР°Р·РІРёС‚РёРё СЃР°Р№С‚Р° | Shelpakov Digital'
+  const title = 'Блог о SEO и развитии сайта | Shelpakov Digital'
   const description = normalizeMetaDescription(
     null,
-    'Р­РєСЃРїРµСЂС‚РЅС‹Рµ СЃС‚Р°С‚СЊРё Рѕ SEO, СЃС‚СЂСѓРєС‚СѓСЂРµ СЃР°Р№С‚Р°, РєРѕРјРјРµСЂС‡РµСЃРєРёС… С„Р°РєС‚РѕСЂР°С… Рё РєРѕРЅС‚РµРЅС‚Рµ: СЃ РїСЂР°РєС‚РёС‡РµСЃРєРёРјРё РІС‹РІРѕРґР°РјРё РґР»СЏ Р±РёР·РЅРµСЃР°, РјР°СЂРєРµС‚РёРЅРіР° Рё СЂРѕСЃС‚Р° Р·Р°СЏРІРѕРє.'
+    'Экспертные статьи о SEO, структуре сайта, коммерческих факторах и контенте: с практическими выводами для бизнеса, маркетинга и роста заявок.'
   )
 
   return {

@@ -15,7 +15,7 @@ function normalizeMetaDescription(excerpt: string | null | undefined) {
     return `${clean.slice(0, 157).trimEnd()}...`
   }
 
-  const fallback = `${clean ? `${clean} ` : ''}Р­РєСЃРїРµСЂС‚РЅС‹Р№ РјР°С‚РµСЂРёР°Р» Shelpakov Digital Рѕ SEO, СЃС‚СЂСѓРєС‚СѓСЂРµ СЃР°Р№С‚Р° Рё СЂРѕСЃС‚Рµ РѕСЂРіР°РЅРёС‡РµСЃРєРѕРіРѕ С‚СЂР°С„РёРєР°.`
+  const fallback = `${clean ? `${clean} ` : ''}Экспертный материал Shelpakov Digital о SEO, структуре сайта и росте органического трафика.`
   return fallback.length > 160 ? `${fallback.slice(0, 157).trimEnd()}...` : fallback
 }
 
@@ -103,7 +103,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   if (!post) {
     return {
-      title: 'РЎС‚Р°С‚СЊСЏ РЅРµ РЅР°Р№РґРµРЅР°',
+      title: 'Статья не найдена',
     }
   }
 

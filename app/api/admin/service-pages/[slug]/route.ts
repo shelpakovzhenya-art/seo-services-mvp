@@ -45,7 +45,7 @@ export async function PUT(
   } catch (error) {
     console.error('Error saving service page override:', error)
     return NextResponse.json(
-      { error: 'РћС€РёР±РєР° РїСЂРё СЃРѕС…СЂР°РЅРµРЅРёРё СЃС‚СЂР°РЅРёС†С‹ СѓСЃР»СѓРіРё' },
+      { error: 'Ошибка при сохранении страницы услуги' },
       { status: 500 }
     )
   }
@@ -67,7 +67,7 @@ export async function DELETE(
     if (error?.code !== 'P2025') {
       console.error('Error deleting service page override:', error)
       return NextResponse.json(
-        { error: 'РћС€РёР±РєР° РїСЂРё СЃР±СЂРѕСЃРµ РїСЂР°РІРѕРє СѓСЃР»СѓРіРё' },
+        { error: 'Ошибка при сбросе правок услуги' },
         { status: 500 }
       )
     }
