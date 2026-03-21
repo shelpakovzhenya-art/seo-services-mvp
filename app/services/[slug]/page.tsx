@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ServicePageTemplate from '@/components/services/ServicePageTemplate'
 import { getServicePage, servicePages } from '@/lib/service-pages'
+import { getMergedServicePricing } from '@/lib/service-pricing-overrides'
 import { getServiceOverrideMap, mergeServiceWithOverride } from '@/lib/service-overrides'
 import { getFullUrl } from '@/lib/site-url'
 
@@ -73,14 +74,13 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 
   const mergedService = mergeServiceWithOverride(service, 0, override)
   const canonical = getFullUrl(`/services/${mergedService.slug}`)
-  const meta = serviceMetadata[mergedService.slug] || {
-    title: mergedService.title,
-    description: mergedService.description,
-  }
+  const fallbackMeta = serviceMetadata[mergedService.slug]
+  const metaTitle = override?.title || mergedService.title || fallbackMeta?.title
+  const metaDescription = override?.description || mergedService.description || fallbackMeta?.description
 
   return {
-    title: meta.title,
-    description: meta.description,
+    title: metaTitle,
+    description: metaDescription,
     keywords: mergedService.overrideKeywords
       ? mergedService.overrideKeywords.split(',').map((item) => item.trim()).filter(Boolean)
       : undefined,
@@ -88,8 +88,8 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
       canonical,
     },
     openGraph: {
-      title: meta.title,
-      description: meta.description,
+      title: metaTitle,
+      description: metaDescription,
       url: canonical,
       type: 'article',
     },
@@ -100,6 +100,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = await params
   const service = getServicePage(slug)
   const overrideMap = await getServiceOverrideMap([slug])
+  const pricing = await getMergedServicePricing(slug)
   const override = overrideMap.get(slug)
 
   if (!service) {
@@ -108,5 +109,5 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
   const mergedService = mergeServiceWithOverride(service, 0, override)
 
-  return <ServicePageTemplate service={mergedService} customContent={mergedService.overrideContent} />
+  return <ServicePageTemplate service={mergedService} pricing={pricing} customContent={mergedService.overrideContent} />
 }

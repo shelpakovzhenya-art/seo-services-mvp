@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import ServicesManager from '@/components/admin/ServicesManager'
 import { isAuthenticated } from '@/lib/auth'
 import { getServiceOverrideMap } from '@/lib/service-overrides'
-import { getServicePricing } from '@/lib/service-pricing'
+import { getMergedServicePricingMap, getServicePricingOverrideMap } from '@/lib/service-pricing-overrides'
 import { servicePages } from '@/lib/service-pages'
 
 const PAGE_TITLE = '\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u044b \u0443\u0441\u043b\u0443\u0433'
@@ -16,10 +16,12 @@ export default async function AdminServicesPage() {
   }
 
   const overrides = await getServiceOverrideMap(servicePages.map((service) => service.slug))
+  const pricingOverrides = await getServicePricingOverrideMap(servicePages.map((service) => service.slug))
+  const pricingMap = await getMergedServicePricingMap(servicePages.map((service) => service.slug))
 
   const serializedServices = servicePages.map((service, index) => {
     const override = overrides.get(service.slug)
-    const pricing = getServicePricing(service.slug)
+    const pricing = pricingMap.get(service.slug)
 
     return {
       id: override?.id || null,
@@ -31,8 +33,14 @@ export default async function AdminServicesPage() {
       keywords: override?.keywords || '',
       content: override?.content || '',
       order: override?.order ?? index,
+      pricingName: pricing?.name || service.shortName,
+      pricingShortDescription: pricing?.shortDescription || service.description,
+      priceFrom: pricing?.priceFrom || 0,
+      priceUnit: pricing?.unit || 'project',
       priceLabel: pricing?.priceLabel || null,
-      hasOverride: Boolean(override),
+      calculatorHint: pricing?.calculatorHint || '',
+      deliverablesText: pricing?.deliverables?.join('\n') || '',
+      hasOverride: Boolean(override || pricingOverrides.get(service.slug)),
     }
   })
 

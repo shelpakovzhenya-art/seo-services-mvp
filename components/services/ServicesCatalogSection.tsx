@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { servicePages, serviceScenarios } from '@/lib/service-pages'
-import { getServicePricing } from '@/lib/service-pricing'
+import { serviceScenarios } from '@/lib/service-pages'
+import { getMergedServicePricingMap } from '@/lib/service-pricing-overrides'
 import { getMergedServicePages } from '@/lib/service-overrides'
 
 type ServicesCatalogSectionProps = {
@@ -11,6 +11,7 @@ type ServicesCatalogSectionProps = {
 
 export default async function ServicesCatalogSection({ compact = false }: ServicesCatalogSectionProps) {
   const services = await getMergedServicePages()
+  const pricingMap = await getMergedServicePricingMap(services.map((service) => service.slug))
 
   return (
     <section className={compact ? 'container mx-auto px-4 py-20' : 'page-shell'}>
@@ -55,7 +56,7 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {services.map((service) => {
-            const pricing = getServicePricing(service.slug)
+            const pricing = pricingMap.get(service.slug)
 
             return (
               <Link

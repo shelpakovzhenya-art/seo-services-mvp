@@ -5,11 +5,12 @@ import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
 import ContactForm from '@/components/ContactForm'
 import { getFullUrl } from '@/lib/site-url'
-import { formatServicePrice, getServicePricing } from '@/lib/service-pricing'
+import { formatServiceBillingUnit, formatServicePrice, type ServicePricing } from '@/lib/service-pricing'
 import { getRelatedServices, type ServicePageContent } from '@/lib/service-pages'
 
 type ServicePageTemplateProps = {
   service: ServicePageContent
+  pricing?: ServicePricing | null
   customContent?: string | null
 }
 
@@ -39,10 +40,9 @@ function VisualCard({
   )
 }
 
-export default function ServicePageTemplate({ service, customContent }: ServicePageTemplateProps) {
+export default function ServicePageTemplate({ service, pricing, customContent }: ServicePageTemplateProps) {
   const relatedServices = getRelatedServices(service.related)
   const pageUrl = getFullUrl(`/services/${service.slug}`)
-  const pricing = getServicePricing(service.slug)
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -153,7 +153,7 @@ export default function ServicePageTemplate({ service, customContent }: ServiceP
                   <div className="mt-5 rounded-[24px] border border-orange-100 bg-white/80 p-5">
                     <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Стартовая стоимость</div>
                     <div className="mt-2 text-3xl font-semibold text-slate-950">{formatServicePrice(pricing.priceFrom)}</div>
-                    <div className="mt-1 text-sm text-slate-500">{pricing.unit === 'month' ? 'в месяц' : 'за проект'}</div>
+                    <div className="mt-1 text-sm text-slate-500">{formatServiceBillingUnit(pricing.unit)}</div>
                     <p className="mt-3 text-sm leading-7 text-slate-600">{pricing.calculatorHint}</p>
                   </div>
                 )}

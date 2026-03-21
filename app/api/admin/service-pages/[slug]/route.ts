@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isAuthenticated } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getServiceOverrideSlug } from '@/lib/service-overrides'
+import {
+  getServicePricingOverrideSlug,
+  normalizeServicePricingOverrideInput,
+} from '@/lib/service-pricing-overrides'
+import { getServicePricing } from '@/lib/service-pricing'
 
 export async function PUT(
   request: NextRequest,
@@ -18,30 +23,70 @@ export async function PUT(
       select: { id: true },
     })
 
-    const page = await prisma.page.upsert({
-      where: { slug: getServiceOverrideSlug(params.slug) },
-      update: {
-        title: body.title,
-        description: body.description || null,
-        keywords: body.keywords || null,
-        h1: body.h1 || null,
-        content: body.content || null,
-        order: body.order || 0,
-        parentId: parent?.id || null,
-      },
-      create: {
-        slug: getServiceOverrideSlug(params.slug),
-        title: body.title,
-        description: body.description || null,
-        keywords: body.keywords || null,
-        h1: body.h1 || null,
-        content: body.content || null,
-        order: body.order || 0,
-        parentId: parent?.id || null,
-      },
-    })
+    const basePricing = getServicePricing(params.slug)
+    const pricingOverride = basePricing
+      ? normalizeServicePricingOverrideInput(
+          {
+            name: body.pricingName,
+            shortDescription: body.pricingShortDescription,
+            priceFrom: body.priceFrom,
+            unit: body.priceUnit,
+            priceLabel: body.priceLabel,
+            calculatorHint: body.calculatorHint,
+            deliverables: body.deliverables,
+          },
+          basePricing
+        )
+      : null
 
-    return NextResponse.json(page)
+    const [page, pricingPage] = await prisma.$transaction([
+      prisma.page.upsert({
+        where: { slug: getServiceOverrideSlug(params.slug) },
+        update: {
+          title: body.title,
+          description: body.description || null,
+          keywords: body.keywords || null,
+          h1: body.h1 || null,
+          content: body.content || null,
+          order: body.order || 0,
+          parentId: parent?.id || null,
+        },
+        create: {
+          slug: getServiceOverrideSlug(params.slug),
+          title: body.title,
+          description: body.description || null,
+          keywords: body.keywords || null,
+          h1: body.h1 || null,
+          content: body.content || null,
+          order: body.order || 0,
+          parentId: parent?.id || null,
+        },
+      }),
+      pricingOverride
+        ? prisma.page.upsert({
+            where: { slug: getServicePricingOverrideSlug(params.slug) },
+            update: {
+              title: pricingOverride.name,
+              description: pricingOverride.shortDescription || null,
+              content: JSON.stringify(pricingOverride),
+              order: body.order || 0,
+              parentId: parent?.id || null,
+            },
+            create: {
+              slug: getServicePricingOverrideSlug(params.slug),
+              title: pricingOverride.name,
+              description: pricingOverride.shortDescription || null,
+              content: JSON.stringify(pricingOverride),
+              order: body.order || 0,
+              parentId: parent?.id || null,
+            },
+          })
+        : prisma.page.findUnique({
+            where: { slug: getServicePricingOverrideSlug(params.slug) },
+          }),
+    ])
+
+    return NextResponse.json({ page, pricingPage })
   } catch (error) {
     console.error('Error saving service page override:', error)
     return NextResponse.json(
@@ -60,8 +105,12 @@ export async function DELETE(
   }
 
   try {
-    await prisma.page.delete({
-      where: { slug: getServiceOverrideSlug(params.slug) },
+    await prisma.page.deleteMany({
+      where: {
+        slug: {
+          in: [getServiceOverrideSlug(params.slug), getServicePricingOverrideSlug(params.slug)],
+        },
+      },
     })
   } catch (error: any) {
     if (error?.code !== 'P2025') {

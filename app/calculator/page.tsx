@@ -3,7 +3,7 @@ import ContactForm from '@/components/ContactForm'
 import RichContent from '@/components/RichContent'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
-import { servicePricing } from '@/lib/service-pricing'
+import { getMergedServicePricingList } from '@/lib/service-pricing-overrides'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 
 const defaultCalculatorTitle = 'Калькулятор SEO-услуг | Shelpakov Digital'
@@ -12,6 +12,7 @@ const defaultCalculatorDescription =
 
 export default async function CalculatorPage() {
   let page: any = null
+  const pricing = await getMergedServicePricingList()
 
   try {
     page = await prisma.page.findUnique({ where: { slug: 'calculator' } })
@@ -42,7 +43,7 @@ export default async function CalculatorPage() {
 
       <section className="mt-10">
         <Calculator
-          services={servicePricing.map((service) => ({
+          services={pricing.map((service) => ({
             id: service.slug,
             slug: service.slug,
             name: service.name,

@@ -3,16 +3,19 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Edit3, RotateCcw } from 'lucide-react'
+import { formatServicePriceLabel } from '@/lib/service-pricing'
 import { Button } from '@/components/ui/button'
 
 const RichTextEditor = dynamic(() => import('./RichTextEditor'), {
   ssr: false,
   loading: () => (
     <div className="flex min-h-[300px] items-center justify-center rounded-lg border bg-gray-50 p-4">
-      <p className="text-gray-400">{'\u0417\u0430\u0433\u0440\u0443\u0437\u043a\u0430 \u0440\u0435\u0434\u0430\u043a\u0442\u043e\u0440\u0430...'}</p>
+      <p className="text-gray-400">Загрузка редактора...</p>
     </div>
   ),
 })
+
+type PriceUnit = 'project' | 'month'
 
 interface ServicePageItem {
   id: string | null
@@ -24,33 +27,55 @@ interface ServicePageItem {
   keywords: string
   content: string
   order: number
+  pricingName: string
+  pricingShortDescription: string
+  priceFrom: number
+  priceUnit: PriceUnit
   priceLabel: string | null
+  calculatorHint: string
+  deliverablesText: string
   hasOverride: boolean
 }
 
 const TEXT = {
-  saveError: '\u041e\u0448\u0438\u0431\u043a\u0430 \u043f\u0440\u0438 \u0441\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u0438\u0438 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u044b \u0443\u0441\u043b\u0443\u0433\u0438',
-  resetError: '\u041e\u0448\u0438\u0431\u043a\u0430 \u043f\u0440\u0438 \u0441\u0431\u0440\u043e\u0441\u0435 \u043f\u0440\u0430\u0432\u043e\u043a',
-  resetConfirm:
-    '\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c \u043f\u0440\u0430\u0432\u043a\u0438 \u0438 \u0432\u0435\u0440\u043d\u0443\u0442\u044c\u0441\u044f \u043a \u0431\u0430\u0437\u043e\u0432\u043e\u0439 \u0432\u0435\u0440\u0441\u0438\u0438 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u044b?',
+  saveError: 'Ошибка при сохранении страницы услуги',
+  resetError: 'Ошибка при сбросе правок',
+  resetConfirm: 'Сбросить правки и вернуться к базовой версии страницы?',
   intro:
-    '\u042d\u0442\u043e\u0442 \u0440\u0430\u0437\u0434\u0435\u043b \u0442\u0435\u043f\u0435\u0440\u044c \u043f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u0430\u043a\u0442\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u044b \u0443\u0441\u043b\u0443\u0433, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u0435\u0441\u0442\u044c \u043d\u0430 \u0441\u0430\u0439\u0442\u0435. \u041f\u0440\u0430\u0432\u043a\u0438 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0430, SEO-\u043e\u043f\u0438\u0441\u0430\u043d\u0438\u044f \u0438 HTML-\u0431\u043b\u043e\u043a\u0430 \u0441\u0440\u0430\u0437\u0443 \u0443\u0445\u043e\u0434\u044f\u0442 \u043d\u0430 \u043f\u0443\u0431\u043b\u0438\u0447\u043d\u044b\u0435 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u044b.',
-  service: '\u0423\u0441\u043b\u0443\u0433\u0430',
-  price: '\u0426\u0435\u043d\u0430',
-  edits: '\u041f\u0440\u0430\u0432\u043a\u0438',
-  actions: '\u0414\u0435\u0439\u0441\u0442\u0432\u0438\u044f',
-  yes: '\u0415\u0441\u0442\u044c',
-  no: '\u041d\u0435\u0442',
-  editService: '\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0443\u0441\u043b\u0443\u0433\u0443',
-  sortOrder: '\u041f\u043e\u0440\u044f\u0434\u043e\u043a \u0441\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u043a\u0438',
-  htmlBlock: 'HTML-\u0431\u043b\u043e\u043a \u043d\u0430 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435',
-  htmlPlaceholder:
-    '\u0414\u043e\u0431\u0430\u0432\u044c\u0442\u0435 HTML-\u043a\u043e\u043d\u0442\u0435\u043d\u0442 \u0438\u043b\u0438 \u0441\u043e\u0431\u0435\u0440\u0438\u0442\u0435 \u0435\u0433\u043e \u0432\u0438\u0437\u0443\u0430\u043b\u044c\u043d\u043e \u0432 \u0440\u0435\u0434\u0430\u043a\u0442\u043e\u0440\u0435...',
-  saving: '\u0421\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u0438\u0435...',
-  save: '\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c',
-  cancel: '\u041e\u0442\u043c\u0435\u043d\u0430',
-  dash: '\u2014',
+    'В этом разделе теперь редактируются и тексты страницы услуги, и коммерческий блок: цена, подпись, подсказка для калькулятора и состав работ. После сохранения изменения уходят на публичные страницы и в калькулятор.',
+  service: 'Услуга',
+  price: 'Цена',
+  edits: 'Правки',
+  actions: 'Действия',
+  yes: 'Есть',
+  no: 'Нет',
+  editService: 'Редактировать услугу',
+  sortOrder: 'Порядок сортировки',
+  htmlBlock: 'HTML-блок на странице',
+  htmlPlaceholder: 'Добавьте HTML-контент или соберите его визуально в редакторе...',
+  pricingBlock: 'Коммерческий блок',
+  pricingName: 'Название услуги в калькуляторе',
+  pricingDescription: 'Короткое описание для калькулятора',
+  priceFrom: 'Цена от, ₽',
+  priceUnit: 'Тип тарифа',
+  priceLabel: 'Подпись цены',
+  calculatorHint: 'Подсказка под ценой',
+  deliverables: 'Что входит в услугу',
+  deliverablesHint: 'По одному пункту на строку',
+  month: 'В месяц',
+  project: 'За проект',
+  saving: 'Сохранение...',
+  save: 'Сохранить',
+  cancel: 'Отмена',
+  dash: '—',
 } as const
+
+function splitDeliverables(value: string) {
+  return value
+    .split(/\r?\n/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
 
 export default function ServicesManager({ initialServices }: { initialServices: ServicePageItem[] }) {
   const [services] = useState(initialServices)
@@ -64,7 +89,10 @@ export default function ServicesManager({ initialServices }: { initialServices: 
       const response = await fetch(`/api/admin/service-pages/${service.serviceSlug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(service),
+        body: JSON.stringify({
+          ...service,
+          deliverables: splitDeliverables(service.deliverablesText),
+        }),
       })
 
       if (response.ok) {
@@ -195,24 +223,43 @@ function ServicePageForm({
 }) {
   const [formData, setFormData] = useState(service)
 
+  const updatePriceLabel = (priceFrom: number, priceUnit: PriceUnit) => {
+    setFormData((current) => ({
+      ...current,
+      priceFrom,
+      priceUnit,
+      priceLabel: formatServicePriceLabel(priceFrom, priceUnit),
+    }))
+  }
+
   return (
     <div className="mb-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <h2 className="mb-4 text-xl font-semibold text-slate-900">
         {TEXT.editService}: {service.name}
       </h2>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         <Field label="Slug">
           <input value={formData.serviceSlug} readOnly className="admin-input bg-slate-50 text-slate-500" />
         </Field>
 
-        <Field label="SEO title">
-          <input
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="admin-input"
-          />
-        </Field>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Field label="SEO title">
+            <input
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="admin-input"
+            />
+          </Field>
+
+          <Field label="H1">
+            <input
+              value={formData.h1}
+              onChange={(e) => setFormData({ ...formData, h1: e.target.value })}
+              className="admin-input"
+            />
+          </Field>
+        </div>
 
         <Field label="Description">
           <textarea
@@ -232,14 +279,6 @@ function ServicePageForm({
           />
         </Field>
 
-        <Field label="H1">
-          <input
-            value={formData.h1}
-            onChange={(e) => setFormData({ ...formData, h1: e.target.value })}
-            className="admin-input"
-          />
-        </Field>
-
         <Field label={TEXT.sortOrder}>
           <input
             type="number"
@@ -248,6 +287,78 @@ function ServicePageForm({
             className="admin-input max-w-[140px]"
           />
         </Field>
+
+        <div className="rounded-3xl border border-slate-200 bg-slate-50/70 p-5">
+          <div className="text-sm font-semibold text-slate-900">{TEXT.pricingBlock}</div>
+          <div className="mt-4 space-y-4">
+            <Field label={TEXT.pricingName}>
+              <input
+                value={formData.pricingName}
+                onChange={(e) => setFormData({ ...formData, pricingName: e.target.value })}
+                className="admin-input"
+              />
+            </Field>
+
+            <Field label={TEXT.pricingDescription}>
+              <textarea
+                value={formData.pricingShortDescription}
+                onChange={(e) => setFormData({ ...formData, pricingShortDescription: e.target.value })}
+                className="admin-input min-h-[96px]"
+                rows={4}
+              />
+            </Field>
+
+            <div className="grid gap-4 lg:grid-cols-[180px_220px_1fr]">
+              <Field label={TEXT.priceFrom}>
+                <input
+                  type="number"
+                  min={0}
+                  step={1000}
+                  value={formData.priceFrom}
+                  onChange={(e) => updatePriceLabel(parseInt(e.target.value, 10) || 0, formData.priceUnit)}
+                  className="admin-input"
+                />
+              </Field>
+
+              <Field label={TEXT.priceUnit}>
+                <select
+                  value={formData.priceUnit}
+                  onChange={(e) => updatePriceLabel(formData.priceFrom, e.target.value as PriceUnit)}
+                  className="admin-input"
+                >
+                  <option value="month">{TEXT.month}</option>
+                  <option value="project">{TEXT.project}</option>
+                </select>
+              </Field>
+
+              <Field label={TEXT.priceLabel}>
+                <input
+                  value={formData.priceLabel || ''}
+                  onChange={(e) => setFormData({ ...formData, priceLabel: e.target.value })}
+                  className="admin-input"
+                />
+              </Field>
+            </div>
+
+            <Field label={TEXT.calculatorHint}>
+              <textarea
+                value={formData.calculatorHint}
+                onChange={(e) => setFormData({ ...formData, calculatorHint: e.target.value })}
+                className="admin-input min-h-[96px]"
+                rows={4}
+              />
+            </Field>
+
+            <Field label={`${TEXT.deliverables} (${TEXT.deliverablesHint})`}>
+              <textarea
+                value={formData.deliverablesText}
+                onChange={(e) => setFormData({ ...formData, deliverablesText: e.target.value })}
+                className="admin-input min-h-[132px]"
+                rows={6}
+              />
+            </Field>
+          </div>
+        </div>
 
         <Field label={TEXT.htmlBlock}>
           <RichTextEditor

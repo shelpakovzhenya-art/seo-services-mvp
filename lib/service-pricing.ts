@@ -111,3 +111,11 @@ export function getServicePricing(slug: string) {
 export function formatServicePrice(price: number) {
   return `${price.toLocaleString('ru-RU')} ₽`
 }
+
+export function formatServicePriceLabel(price: number, unit: ServicePricing['unit']) {
+  return `от ${formatServicePrice(price)} / ${unit === 'month' ? 'мес' : 'проект'}`
+}
+
+export function formatServiceBillingUnit(unit: ServicePricing['unit']) {
+  return unit === 'month' ? 'в месяц' : 'за проект'
+}
