@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs/promises'
 import path from 'path'
+import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 
 const DEFAULT_LEAD_EMAIL = 'shelpakovzhenya@gmail.com'
@@ -20,6 +20,11 @@ type MailCandidate = {
   from: string
   to: string
   transport: Record<string, unknown>
+}
+
+type MailConfig = {
+  candidates: MailCandidate[]
+  errors: string[]
 }
 
 function checkRateLimit(ip: string): boolean {
@@ -63,6 +68,10 @@ function escapeHtml(value: string) {
 
 function looksLikeEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
+
+function looksLikeGmailAppPassword(value: string) {
+  return /^[a-z]{16}$/i.test(value)
 }
 
 function parseBoolean(value: string | undefined) {
@@ -109,72 +118,72 @@ function maskSecret(value: string) {
   return `${value.slice(0, 2)}****${value.slice(-2)}`
 }
 
-function getMailCandidates() {
+function getMailConfig(): MailConfig {
   const recipient = process.env.LEAD_TO_EMAIL?.trim() || DEFAULT_LEAD_EMAIL
-  const gmailPass = process.env.GMAIL_APP_PASSWORD?.replace(/\s+/g, '') || ''
+  const gmailPass =
+    process.env.GMAIL_APP_PASSWORD?.replace(/\s+/g, '').toLowerCase() ||
+    process.env.GOOGLE_APP_PASSWORD?.replace(/\s+/g, '').toLowerCase() ||
+    ''
+  const gmailUser = process.env.GMAIL_USER?.trim() || recipient
   const smtpHost = process.env.SMTP_HOST?.trim()
   const smtpPort = Number(process.env.SMTP_PORT || 587)
-  const smtpUser = process.env.SMTP_USER?.trim()
-  const smtpPass = process.env.SMTP_PASS?.trim()
+  const smtpUser = process.env.SMTP_USER?.trim() || process.env.SMTP_USERNAME?.trim()
+  const smtpPass = process.env.SMTP_PASS?.trim() || process.env.SMTP_PASSWORD?.trim()
   const smtpSecure = parseBoolean(process.env.SMTP_SECURE)
-  const rawFrom = process.env.SMTP_FROM?.trim()
+  const rawFrom = process.env.SMTP_FROM?.trim() || process.env.MAIL_FROM?.trim()
   const candidates: MailCandidate[] = []
+  const errors: string[] = []
 
   if (gmailPass) {
-    const gmailUser = process.env.GMAIL_USER?.trim() || recipient
-    const from = normalizeFromAddress(rawFrom, gmailUser)
+    if (!looksLikeGmailAppPassword(gmailPass)) {
+      errors.push('Для Gmail нужен пароль приложения Google из 16 букв. Текущее значение GMAIL_APP_PASSWORD не похоже на app password.')
+    } else {
+      const from = normalizeFromAddress(rawFrom, gmailUser)
 
-    candidates.push(
-      {
-        label: 'gmail-service',
-        from,
-        to: recipient,
-        transport: {
-          service: 'gmail',
-          auth: {
-            user: gmailUser,
-            pass: gmailPass,
+      candidates.push(
+        {
+          label: 'gmail-465',
+          from,
+          to: recipient,
+          transport: {
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+              user: gmailUser,
+              pass: gmailPass,
+            },
+            authMethod: 'LOGIN',
+            name: 'smtp.gmail.com',
+            tls: {
+              servername: 'smtp.gmail.com',
+              minVersion: 'TLSv1.2',
+            },
           },
         },
-      },
-      {
-        label: 'gmail-465',
-        from,
-        to: recipient,
-        transport: {
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          auth: {
-            user: gmailUser,
-            pass: gmailPass,
+        {
+          label: 'gmail-587',
+          from,
+          to: recipient,
+          transport: {
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            requireTLS: true,
+            auth: {
+              user: gmailUser,
+              pass: gmailPass,
+            },
+            authMethod: 'LOGIN',
+            name: 'smtp.gmail.com',
+            tls: {
+              servername: 'smtp.gmail.com',
+              minVersion: 'TLSv1.2',
+            },
           },
-          tls: {
-            servername: 'smtp.gmail.com',
-            minVersion: 'TLSv1.2',
-          },
-        },
-      },
-      {
-        label: 'gmail-587',
-        from,
-        to: recipient,
-        transport: {
-          host: 'smtp.gmail.com',
-          port: 587,
-          secure: false,
-          requireTLS: true,
-          auth: {
-            user: gmailUser,
-            pass: gmailPass,
-          },
-          tls: {
-            servername: 'smtp.gmail.com',
-            minVersion: 'TLSv1.2',
-          },
-        },
-      }
-    )
+        }
+      )
+    }
   }
 
   if (smtpHost && smtpUser && smtpPass) {
@@ -191,6 +200,8 @@ function getMailCandidates() {
           user: smtpUser,
           pass: smtpPass,
         },
+        authMethod: 'LOGIN',
+        name: smtpHost,
         tls: {
           servername: smtpHost,
           minVersion: 'TLSv1.2',
@@ -199,7 +210,7 @@ function getMailCandidates() {
     })
   }
 
-  return candidates
+  return { candidates, errors }
 }
 
 async function ensureLeadLogDirectory(filePath: string) {
@@ -244,7 +255,7 @@ async function notifyTelegram(record: {
   }
 
   const escape = (value: string) => escapeHtml(value)
-  const statusLabel = record.status === 'sent' ? '✅' : '⚠️'
+  const statusLabel = record.status === 'sent' ? '[sent]' : '[failed]'
   const text = [
     `${statusLabel} <b>Заявка с сайта</b>`,
     `Имя: ${escape(record.payload.name)}`,
@@ -253,7 +264,6 @@ async function notifyTelegram(record: {
     `Источник: ${escape(record.meta.sourceTitle)} (${escape(record.meta.sourceUrl)})`,
     `IP: ${escape(record.meta.ip)}`,
     `UA: ${escape(record.meta.userAgent)}`,
-    `Статус: ${record.status === 'sent' ? 'отправлена' : 'не отправлена, см. логи'}`,
   ].join('\n')
 
   try {
@@ -291,8 +301,6 @@ async function sendLeadMail(
         socketTimeout: 20000,
       })
 
-      await transporter.verify()
-
       const info = await transporter.sendMail({
         from: candidate.from,
         to: candidate.to,
@@ -314,6 +322,33 @@ async function sendLeadMail(
   }
 
   throw new Error(errors.join(' | '))
+}
+
+function getMailFailureMessage(error: unknown) {
+  const rawMessage = error instanceof Error ? error.message : 'Unknown mail error'
+  const message = rawMessage.toLowerCase()
+
+  if (
+    message.includes('gmai_app_password') ||
+    message.includes('app password') ||
+    message.includes('invalid login') ||
+    message.includes('bad credentials') ||
+    message.includes('username and password not accepted') ||
+    message.includes('invalid credentials')
+  ) {
+    return 'Почта не приняла авторизацию. Для Gmail нужен именно пароль приложения Google из 16 букв, а не обычный пароль от аккаунта.'
+  }
+
+  if (
+    message.includes('timeout') ||
+    message.includes('econnrefused') ||
+    message.includes('ehostunreach') ||
+    message.includes('enotfound')
+  ) {
+    return 'Почтовый сервер недоступен по сети. Нужно проверить SMTP-провайдера или ограничения Railway.'
+  }
+
+  return 'Не удалось отправить заявку. Почтовый транспорт отклонил отправку.'
 }
 
 export async function POST(request: NextRequest) {
@@ -351,12 +386,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Заполните обязательные поля формы.' }, { status: 400 })
     }
 
-    const mailCandidates = getMailCandidates()
+    const mailConfig = getMailConfig()
+    const mailCandidates = mailConfig.candidates
 
     if (mailCandidates.length === 0) {
-      console.error('Lead email is not configured. Add GMAIL_APP_PASSWORD or SMTP_* variables.')
+      console.error('Lead email is not configured or invalid.', mailConfig.errors)
       return NextResponse.json(
-        { error: 'Форма временно не настроена. Напишите в Telegram или на почту shelpakovzhenya@gmail.com.' },
+        {
+          error:
+            mailConfig.errors[0] ||
+            'Форма временно не настроена. Добавьте рабочий SMTP или корректный Gmail app password.',
+        },
         { status: 503 }
       )
     }
@@ -430,8 +470,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        error:
-          'Не удалось отправить заявку. Сохраню её на случай ручной проверки и обязательно сообщу. Проверьте, пожалуйста, настройки почты или Telegram.',
+        error: getMailFailureMessage(error),
       },
       { status: 500 }
     )
