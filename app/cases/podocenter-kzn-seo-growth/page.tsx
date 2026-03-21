@@ -264,6 +264,7 @@ export default async function PodocenterCasePage() {
                       alt={item.alt}
                       fill
                       priority={index === 0}
+                      unoptimized
                       className="object-contain p-2 sm:p-4"
                     />
                   </div>

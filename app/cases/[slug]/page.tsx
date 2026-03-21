@@ -44,7 +44,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
         {caseItem.image ? (
           <div className="relative mt-8 overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_20px_50px_rgba(58,97,137,0.12)]">
             <div className="relative aspect-[16/9] w-full">
-              <Image src={caseItem.image} alt={caseItem.title} fill className="object-cover" />
+              <Image src={caseItem.image} alt={caseItem.title} fill unoptimized className="object-cover" />
             </div>
           </div>
         ) : null}
@@ -67,7 +67,13 @@ export default async function CasePage({ params }: { params: { slug: string } })
               >
                 <div className="relative aspect-[16/10] w-full bg-[linear-gradient(180deg,#fffdf8,#f7fbff)] p-3">
                   <div className="relative h-full w-full overflow-hidden rounded-[20px] border border-white/80 bg-white">
-                    <Image src={src} alt={`${caseItem.title} ${index + 1}`} fill className="object-contain p-2" />
+                    <Image
+                      src={src}
+                      alt={`${caseItem.title} ${index + 1}`}
+                      fill
+                      unoptimized
+                      className="object-contain p-2"
+                    />
                   </div>
                 </div>
               </article>
