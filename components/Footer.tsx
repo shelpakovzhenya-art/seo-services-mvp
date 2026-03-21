@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { MessageCircle, MessagesSquare } from 'lucide-react'
+import { ArrowRight, MessageCircle, MessagesSquare } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
+import { seoTools } from '@/lib/seo-tools'
 import { featuredReads } from '@/lib/site-recommendations'
 
 const DEFAULT_MENU_ITEMS = [
@@ -130,6 +131,49 @@ export default async function Footer() {
                   <div className="mt-2 text-sm font-medium leading-6 text-slate-100">{item.title}</div>
                 </Link>
               ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12">
+          <div className="rounded-[36px] border border-cyan-300/16 bg-[linear-gradient(145deg,rgba(7,14,29,0.94),rgba(12,26,46,0.94)_44%,rgba(17,44,58,0.9)_100%)] p-6 shadow-[0_30px_90px_rgba(2,6,23,0.34)] md:p-8">
+            <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-end">
+              <div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="warm-chip">SEO-инструменты</span>
+                  <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-slate-300">
+                    только в футере
+                  </span>
+                </div>
+                <h3 className="mt-5 max-w-2xl text-3xl font-semibold text-white md:text-4xl">
+                  Отдельный раздел с быстрыми SEO-инструментами для повседневной работы.
+                </h3>
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+                  Генераторы и проверки работают прямо в браузере: можно быстро собрать UTM, slug, meta-теги,
+                  Open Graph и черновик robots.txt без лишних сервисов.
+                </p>
+                <Link
+                  href="/tools"
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-200 transition hover:text-white"
+                >
+                  Открыть раздел инструментов
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {seoTools.slice(0, 3).map((tool) => (
+                  <Link
+                    key={tool.slug}
+                    href={`/tools/${tool.slug}`}
+                    className="rounded-[26px] border border-white/10 bg-white/6 p-5 transition hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/10"
+                  >
+                    <div className="text-[11px] uppercase tracking-[0.24em] text-orange-300">{tool.category}</div>
+                    <div className="mt-3 text-lg font-semibold leading-7 text-white">{tool.title}</div>
+                    <div className="mt-3 text-sm leading-6 text-slate-400">{tool.summary}</div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>

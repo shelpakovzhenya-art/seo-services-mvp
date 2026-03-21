@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next'
 import { isPlaceholderCase } from '@/lib/case-listing'
 import { podocenterCase } from '@/lib/podocenter-case'
 import { prisma } from '@/lib/prisma'
+import { seoTools } from '@/lib/seo-tools'
 import { getSiteUrl, getFullUrl } from '@/lib/site-url'
 import { servicePages } from '@/lib/service-pages'
 
@@ -59,11 +60,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
+    {
+      url: getFullUrl('/tools'),
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.78,
+    },
     ...servicePages.map((service) => ({
       url: getFullUrl(`/services/${service.slug}`),
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.85,
+    })),
+    ...seoTools.map((tool) => ({
+      url: getFullUrl(`/tools/${tool.slug}`),
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.68,
     })),
   ]
 
