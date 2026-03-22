@@ -15,6 +15,7 @@ type SeoAuditStoredResult = {
   domain: string
   company: string
   generatedAt: string
+  generatorVersion?: number
   fileName: string
   pdfFileName?: string
   score: number
@@ -211,6 +212,7 @@ async function buildStoredResult(config: SeoAuditJobConfig, tempDir: string): Pr
     domain: String(auditJson.domain || new URL(config.url).hostname),
     company: config.company,
     generatedAt: new Date().toISOString(),
+    generatorVersion: Number(auditJson.generator_version || 1),
     fileName,
     pdfFileName: fileName.replace(/\.docx$/i, '.pdf'),
     score: Number(auditJson.score || 0),

@@ -459,6 +459,417 @@ def analyze_redirects(session: requests.Session, base_url: str) -> list[dict]:
     return results
 
 
+CONTACT_PATH_KEYWORDS = (
+    "contact",
+    "contacts",
+    "kontakt",
+    "kontakty",
+    "callback",
+    "feedback",
+    "request",
+    "lead",
+    "zayav",
+    "svyaz",
+    "consult",
+)
+
+
+def human_path(url: str) -> str:
+    parsed = urlparse(url)
+    path = parsed.path or "/"
+    if parsed.query:
+        path = f"{path}?{parsed.query}"
+    return path
+
+
+def get_contact_related_pages(sample_pages: list[PageSnapshot]) -> list[PageSnapshot]:
+    found: list[PageSnapshot] = []
+    seen: set[str] = set()
+    for snapshot in sample_pages:
+        parsed = urlparse(snapshot.url)
+        haystack = f"{parsed.path} {parsed.query}".lower()
+        if snapshot.has_forms or any(token in haystack for token in CONTACT_PATH_KEYWORDS):
+            if snapshot.url not in seen:
+                seen.add(snapshot.url)
+                found.append(snapshot)
+    return found
+
+
+def get_indexable_query_pages(sample_pages: list[PageSnapshot]) -> list[PageSnapshot]:
+    pages: list[PageSnapshot] = []
+    for snapshot in sample_pages:
+        parsed = urlparse(snapshot.url)
+        if not parsed.query:
+            continue
+        robots_flags = f"{snapshot.meta_robots} {snapshot.x_robots_tag}".lower()
+        if "noindex" in robots_flags:
+            continue
+        pages.append(snapshot)
+    return pages
+
+
+def infer_project_profile(audit: dict) -> dict:
+    sample_pages: list[PageSnapshot] = audit["sample_pages"]
+    product_pages = [snapshot for snapshot in sample_pages if snapshot.page_type == "Товар" or "Product" in snapshot.schema_types]
+    category_pages = [snapshot for snapshot in sample_pages if snapshot.page_type in ("Категория", "Подкатегория")]
+    form_pages = [snapshot for snapshot in sample_pages if snapshot.has_forms]
+    return {
+        "product_pages": product_pages,
+        "category_pages": category_pages,
+        "form_pages": form_pages,
+        "is_catalog": bool(product_pages or category_pages),
+    }
+
+
+def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
+    issues: list[AuditIssue] = []
+    robots_lines = audit["robots_lines"]
+    sample_pages: list[PageSnapshot] = audit["sample_pages"]
+    problematic_titles = [snapshot for snapshot in sample_pages if len(snapshot.title) > 70]
+    problematic_descriptions = [
+        snapshot for snapshot in sample_pages if len(snapshot.description) > 160 or (0 < len(snapshot.description) < 120)
+    ]
+    alt_gaps = [snapshot for snapshot in sample_pages if snapshot.missing_alt_count > 0]
+    redirect_chains = [item for item in audit["redirect_checks"] if len(item["chain"]) > 1]
+    contact_pages = get_contact_related_pages(sample_pages)
+    indexable_query_pages = get_indexable_query_pages(sample_pages)
+
+    disallow_sitemap_lines = [line for line in robots_lines if "sitemap.xml" in line.lower() and "disallow" in line.lower()]
+    sitemap_directive = next((line for line in robots_lines if line.lower().startswith("sitemap:")), "")
+
+    if disallow_sitemap_lines:
+        evidence = [f"В robots.txt найдено правило `{disallow_sitemap_lines[0]}`."]
+        if sitemap_directive:
+            evidence.append(f"Одновременно файл содержит `{sitemap_directive}`.")
+        issues.append(
+            AuditIssue(
+                severity="Critical",
+                title="robots.txt конфликтует с картой сайта",
+                why_it_matters=(
+                    "Когда robots.txt одновременно запрещает sitemap.xml и сам же ссылается на карту сайта, "
+                    "поисковики получают конфликтующий сигнал. Это мешает чистой и предсказуемой индексации."
+                ),
+                evidence=evidence,
+                recommendation=(
+                    "Убрать запрет на sitemap.xml, оставить рабочую директиву Sitemap и синхронизировать robots.txt "
+                    "с каноническим доменом проекта."
+                ),
+            )
+        )
+
+    weak_contact_pages: list[tuple[PageSnapshot, list[str]]] = []
+    for snapshot in contact_pages:
+        missing = []
+        if not snapshot.h1s:
+            missing.append("H1")
+        if not snapshot.title:
+            missing.append("title")
+        if not snapshot.description:
+            missing.append("description")
+        if not snapshot.canonical:
+            missing.append("canonical")
+        if missing:
+            weak_contact_pages.append((snapshot, missing))
+
+    if weak_contact_pages:
+        evidence = [f"На `{human_path(snapshot.url)}` не хватает: {', '.join(missing)}." for snapshot, missing in weak_contact_pages[:3]]
+        issues.append(
+            AuditIssue(
+                severity="High",
+                title="Контактные и lead-страницы недооформлены как SEO-посадочные",
+                why_it_matters=(
+                    "Страницы контактов и заявок участвуют не только в конверсии, но и в доверии, брендовой выдаче "
+                    "и понимании бизнеса поисковиками."
+                ),
+                evidence=evidence,
+                recommendation=(
+                    "Собрать полноценные страницы контакта и заявки: H1, title до 70 символов, description 140–160 символов, "
+                    "canonical, блоки доверия, адреса, телефоны и понятный CTA."
+                ),
+            )
+        )
+
+    weak_query_pages = [
+        snapshot for snapshot in indexable_query_pages if not snapshot.title or not snapshot.description or not snapshot.h1s
+    ]
+    if weak_query_pages:
+        evidence = []
+        for snapshot in weak_query_pages[:3]:
+            missing = []
+            if not snapshot.title:
+                missing.append("title")
+            if not snapshot.description:
+                missing.append("description")
+            if not snapshot.h1s:
+                missing.append("H1")
+            evidence.append(f"URL `{human_path(snapshot.url)}` доступен для обхода, но не хватает: {', '.join(missing)}.")
+        issues.append(
+            AuditIssue(
+                severity="High",
+                title="В выборке есть индексируемые служебные или query-URL без нормальной SEO-обвязки",
+                why_it_matters=(
+                    "Служебные route-страницы и query-URL без title, description и H1 создают шум в индексе, "
+                    "размывают релевантность и тратят crawl budget."
+                ),
+                evidence=evidence,
+                recommendation=(
+                    "Либо закрыть такие URL от индексации и убрать прямые ссылки на них, либо перевести их на нормальные SEO-friendly страницы "
+                    "с полноценным мета-оформлением."
+                ),
+            )
+        )
+
+    if problematic_titles:
+        examples = [f"{human_path(snapshot.url)} — {len(snapshot.title)} симв." for snapshot in problematic_titles[:4]]
+        issues.append(
+            AuditIssue(
+                severity="High",
+                title="На части страниц title выходят за рабочую длину",
+                why_it_matters=(
+                    "Слишком длинные title режутся в выдаче, ухудшают CTR и снижают контроль над тем, "
+                    "какой оффер поисковик покажет пользователю."
+                ),
+                evidence=[
+                    f"В выборке {len(problematic_titles)} из {len(sample_pages)} страниц имеют title длиннее 70 символов.",
+                    *examples,
+                ],
+                recommendation=(
+                    "Пересобрать шаблоны title: сначала ключ и тип страницы, затем ценностный оффер и бренд. "
+                    "Ориентир — диапазон 55–70 символов."
+                ),
+            )
+        )
+
+    if problematic_descriptions:
+        examples = [f"{human_path(snapshot.url)} — {len(snapshot.description)} симв." for snapshot in problematic_descriptions[:4]]
+        issues.append(
+            AuditIssue(
+                severity="Medium",
+                title="Meta description на части страниц вне рабочего диапазона",
+                why_it_matters=(
+                    "Description — это управляемый оффер в сниппете. Когда он слишком короткий или перегруженный, "
+                    "поисковик чаще берет случайный кусок текста со страницы."
+                ),
+                evidence=[
+                    f"В выборке {len(problematic_descriptions)} из {len(sample_pages)} страниц имеют description вне комфортного диапазона.",
+                    *examples,
+                ],
+                recommendation=(
+                    "Собрать шаблоны description по типам страниц: ключ, ценность, доверие, регион и призыв. "
+                    "Ориентир — 140–160 символов."
+                ),
+            )
+        )
+
+    if alt_gaps:
+        issues.append(
+            AuditIssue(
+                severity="Medium",
+                title="Изображения теряют SEO-сигналы из-за пустых alt",
+                why_it_matters=(
+                    "Alt важен и для поиска по картинкам, и для понимания контекста страницы, и для доступности. "
+                    "Когда у изображений нет описаний, сайт теряет дополнительный слой релевантности."
+                ),
+                evidence=[
+                    f"На {len(alt_gaps)} из {len(sample_pages)} проверенных страниц есть изображения без alt.",
+                    f"Всего в выборке найдено {audit['total_missing_alt']} изображений без описаний.",
+                ],
+                recommendation="Ввести шаблонную генерацию alt по типу страницы и типу изображения: объект, интент, модель и бренд.",
+            )
+        )
+
+    if redirect_chains:
+        longest_chain = max(redirect_chains, key=lambda item: len(item["chain"]))
+        issues.append(
+            AuditIssue(
+                severity="Medium",
+                title="Есть лишние redirect-цепочки у доменных вариантов",
+                why_it_matters=(
+                    "Дополнительные редиректы увеличивают задержку на входе и создают лишнюю техническую сложность для ботов и пользователей."
+                ),
+                evidence=[
+                    f"Путь `{longest_chain['url']}` отдает {len(longest_chain['chain'])} последовательных redirect.",
+                    f"Финальный URL — `{longest_chain['final_url']}`.",
+                ],
+                recommendation="Свести все доменные варианты к одному прямому 301-редиректу на канонический HTTPS-домен.",
+            )
+        )
+
+    if audit["home_page"].has_meta_keywords:
+        issues.append(
+            AuditIssue(
+                severity="Low",
+                title="На части шаблона остался meta keywords",
+                why_it_matters=(
+                    "Сам по себе тег уже не дает SEO-ценности, но показывает, что шаблон метаданных не дочищен "
+                    "и стоит привести его к современному виду."
+                ),
+                evidence=["На главной найден тег meta keywords."],
+                recommendation="Убрать meta keywords из шаблона и сосредоточиться на title, description, H1, canonical и schema.",
+            )
+        )
+
+    if audit["sitemap_url_count"] > 5000:
+        issues.append(
+            AuditIssue(
+                severity="Medium",
+                title="Карта сайта уже большая и требует сегментации",
+                why_it_matters=(
+                    "Когда в sitemap несколько тысяч URL в одном потоке, сложнее контролировать индексацию категорий, карточек, "
+                    "служебных страниц и отдельных типов контента."
+                ),
+                evidence=[
+                    f"В sitemap обнаружено {audit['sitemap_url_count']} уникальных URL.",
+                    "При таком объеме удобнее управлять индексом через отдельные sitemap по типам страниц.",
+                ],
+                recommendation="Разделить sitemap минимум по основным типам страниц и отдельно контролировать покрытие каждого набора.",
+            )
+        )
+
+    if audit.get("sitemap_total_entries", 0) > audit["sitemap_url_count"] * 1.3:
+        duplicate_entries = audit["sitemap_total_entries"] - audit["sitemap_url_count"]
+        issues.append(
+            AuditIssue(
+                severity="Medium",
+                title="В sitemap много повторяющихся URL",
+                why_it_matters=(
+                    "Когда один и тот же URL повторяется в карте сайта много раз, поисковики получают лишний шум вместо чистого сигнала."
+                ),
+                evidence=[
+                    f"В sitemap найдено {audit['sitemap_total_entries']} записей, но только {audit['sitemap_url_count']} уникальных URL.",
+                    f"Повторов: {duplicate_entries}.",
+                ],
+                recommendation="Пересобрать генерацию sitemap так, чтобы каждый индексируемый URL попадал туда один раз и без дублей.",
+            )
+        )
+
+    severity_order = {"Critical": 0, "High": 1, "Medium": 2, "Low": 3}
+    issues.sort(key=lambda issue: severity_order.get(issue.severity, 4))
+    return issues
+
+
+def dynamic_build_strengths(audit: dict) -> list[str]:
+    strengths: list[str] = []
+    profile = infer_project_profile(audit)
+    if audit["home_page"].status_code == 200:
+        strengths.append("Главная страница стабильно открывается по HTTPS и отдает 200 код без JS-заглушки.")
+    if audit["average_response_ms"] and audit["average_response_ms"] < 1200:
+        strengths.append(f"Средний ответ по выборке — {audit['average_response_ms']} ms: техническая база не выглядит перегруженной.")
+    if audit["sitemap_url_count"]:
+        strengths.append(f"У сайта уже есть карта сайта с {audit['sitemap_url_count']} уникальными URL, а значит база для управляемой индексации уже существует.")
+    if audit.get("canonical_coverage_ratio", 0) >= 0.6:
+        strengths.append(
+            f"У {math.floor(audit['canonical_coverage_ratio'] * 100)}% страниц в выборке уже проставлен canonical, это хороший фундамент для чистой индексации."
+        )
+    if audit["schema_coverage_ratio"] >= 0.4:
+        strengths.append(f"Schema-разметка уже используется на {math.floor(audit['schema_coverage_ratio'] * 100)}% страниц выборки.")
+    if audit["h1_coverage_ratio"] >= 0.8:
+        strengths.append(f"У {math.floor(audit['h1_coverage_ratio'] * 100)}% проверенных страниц есть H1 — структура документов уже не выглядит хаотичной.")
+    if profile["is_catalog"]:
+        strengths.append("У проекта уже есть каталог или кластерная URL-структура, которую можно усиливать без полной смены архитектуры.")
+    else:
+        strengths.append("У проекта уже есть базовый набор посадочных страниц, который можно докручивать точечно, а не пересобирать с нуля.")
+    if audit["llms_exists"]:
+        strengths.append("У проекта уже есть llms.txt, а значит можно отдельно усиливать видимость в ИИ-ответах и branded-покрытие.")
+    return strengths[:6]
+
+
+def dynamic_build_growth_points(audit: dict) -> list[str]:
+    profile = infer_project_profile(audit)
+    points: list[str] = []
+
+    if profile["is_catalog"]:
+        points.append("Усилить категории и подкатегории: интро-блоки, FAQ, условия покупки, блоки доверия и перелинковку на карточки.")
+        points.append("Пересобрать шаблоны карточек и листингов: короткие title, рабочие description, canonical, alt, schema и коммерческие CTA.")
+    else:
+        points.append("Развести ключевые интенты по отдельным посадочным страницам, а не держать несколько тем внутри одного документа.")
+        points.append("Усилить страницы услуг и лид-страницы блоками доверия, кейсами, FAQ, CTA и answer-first фрагментами.")
+
+    points.append("Собрать единый слой шаблонов для title, description, H1 и canonical по всем типам страниц.")
+
+    if audit["total_missing_alt"] > 0:
+        points.append("Развернуть image SEO: alt-шаблоны, подписи, контроль lazy-load и понятную связь изображения с интентом страницы.")
+
+    if get_contact_related_pages(audit["sample_pages"]):
+        points.append("Доделать контактные и заявочные страницы как полноценные SEO-документы, а не как технические формы.")
+
+    points.append("Добавить answer-first блоки, FAQ и внутреннюю перелинковку между важными разделами для обычной и ИИ-выдачи.")
+
+    if audit["sitemap_url_count"] > 2000 or audit.get("sitemap_total_entries", 0) > audit["sitemap_url_count"] * 1.2:
+        points.append("Сегментировать sitemap и отдельно контролировать индексацию по типам страниц, чтобы быстрее находить сбои и дубли.")
+
+    unique_points: list[str] = []
+    for point in points:
+        if point not in unique_points:
+            unique_points.append(point)
+    return unique_points[:6]
+
+
+def dynamic_build_roadmap(audit: dict) -> list[tuple[str, list[str]]]:
+    profile = infer_project_profile(audit)
+    robots_conflict = any("sitemap.xml" in line.lower() and "disallow" in line.lower() for line in audit["robots_lines"])
+    query_pages = get_indexable_query_pages(audit["sample_pages"])
+    redirect_chains = [item for item in audit["redirect_checks"] if len(item["chain"]) > 1]
+
+    sprint_1 = []
+    if robots_conflict:
+        sprint_1.append("Убрать конфликт в robots.txt и синхронизировать Sitemap, Host и канонический домен.")
+    if redirect_chains:
+        sprint_1.append("Свести все доменные варианты к одному прямому 301-редиректу.")
+    if query_pages:
+        sprint_1.append("Закрыть или нормализовать индексируемые query- и route-страницы с техническими формами.")
+    sprint_1.append("Подготовить единое ТЗ на title, description, H1 и canonical для основных типов страниц.")
+
+    sprint_2 = [
+        "Внедрить alt-шаблоны, проверить lazy-load и подчистить image SEO на ключевых страницах.",
+        "Разделить sitemap по типам страниц и подать отдельные карты в Яндекс.Вебмастер и GSC.",
+        "Обновить шаблоны сниппетов и проверить рост CTR по приоритетным страницам.",
+    ]
+
+    if profile["is_catalog"]:
+        sprint_3 = [
+            "Усилить категории и подкатегории контентом, FAQ, блоками доверия и перелинковкой.",
+            "Пересобрать карточки и листинги так, чтобы они лучше конвертировали SEO-трафик в заявки и продажи.",
+            "Добавить answer-first фрагменты и контент под ИИ-выдачу на главные спросовые кластеры.",
+        ]
+    else:
+        sprint_3 = [
+            "Усилить посадочные страницы услуг, кейсов и контактов блоками доверия, CTA и answer-first контентом.",
+            "Развести ключевые кластеры спроса по отдельным страницам и выстроить между ними перелинковку.",
+            "Добавить FAQ и короткие экспертные блоки под обычную и ИИ-выдачу.",
+        ]
+
+    return [("0-14 дней", sprint_1[:4]), ("15-30 дней", sprint_2), ("31-60 дней", sprint_3)]
+
+
+def build_executive_summary_dynamic(audit: dict) -> list[str]:
+    profile = infer_project_profile(audit)
+    top_issues = audit.get("issues", [])[:3]
+    top_issue_titles = "; ".join(issue.title for issue in top_issues) if top_issues else "технические и шаблонные ограничения"
+    project_shape = "каталог и кластерную структуру URL" if profile["is_catalog"] else "набор посадочных и лид-страниц"
+    growth_target = (
+        "лучше раскрыть спрос через категории, карточки и связанные кластеры"
+        if profile["is_catalog"]
+        else "сильнее забирать спрос через отдельные посадочные страницы и экспертные блоки"
+    )
+
+    return [
+        (
+            f"У {audit['company_name']} уже есть рабочий фундамент: сайт отвечает по HTTPS, в выборке видны sitemap, "
+            f"H1-покрытие {math.floor(audit['h1_coverage_ratio'] * 100)}%, schema-покрытие {math.floor(audit['schema_coverage_ratio'] * 100)}% "
+            f"и {project_shape}, которую можно усиливать без полной пересборки проекта."
+        ),
+        (
+            f"Основные потери сейчас идут не из-за отсутствия спроса, а из-за слоя индексации и шаблонов: {top_issue_titles}. "
+            "Именно эти ограничения сильнее всего влияют на crawl budget, CTR и чистоту коммерческой выдачи."
+        ),
+        (
+            f"Если сначала убрать технический шум, а затем пересобрать шаблоны и приоритетные страницы, проект сможет {growth_target} "
+            "и превратить текущую структуру сайта в более сильный источник SEO-трафика и заявок."
+        ),
+    ]
+
+
 def build_issue_list(audit: dict) -> list[AuditIssue]:
     issues: list[AuditIssue] = []
     robots_lines = audit["robots_lines"]
@@ -783,11 +1194,13 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
     ]
     schema_pages = [snapshot for snapshot in html_pages if snapshot.schema_types]
     h1_pages = [snapshot for snapshot in html_pages if snapshot.h1s]
+    canonical_pages = [snapshot for snapshot in html_pages if snapshot.canonical]
     total_missing_alt = sum(snapshot.missing_alt_count for snapshot in html_pages)
     redirect_checks = analyze_redirects(session, base_url)
     company = company_name or re.sub(r"^www\.", "", base_domain)
 
     audit = {
+        "generator_version": 2,
         "base_url": base_url,
         "domain": base_domain,
         "company_name": company,
@@ -805,6 +1218,7 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
         "description_problem_ratio": (len(description_problem) / len(html_pages)) if html_pages else 0,
         "schema_coverage_ratio": (len(schema_pages) / len(html_pages)) if html_pages else 0,
         "h1_coverage_ratio": (len(h1_pages) / len(html_pages)) if html_pages else 0,
+        "canonical_coverage_ratio": (len(canonical_pages) / len(html_pages)) if html_pages else 0,
         "total_missing_alt": total_missing_alt,
         "average_response_ms": round(statistics.mean([snapshot.response_time_ms for snapshot in html_pages]), 1)
         if html_pages
@@ -815,11 +1229,11 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
         "average_words": round(statistics.mean([snapshot.word_count for snapshot in html_pages]), 1) if html_pages else 0,
         "redirect_checks": redirect_checks,
     }
-    issues = build_issue_list(audit)
+    issues = dynamic_build_issue_list(audit)
     audit["issues"] = issues
-    audit["strengths"] = build_strengths(audit)
-    audit["growth_points"] = build_growth_points()
-    audit["roadmap"] = build_roadmap()
+    audit["strengths"] = dynamic_build_strengths(audit)
+    audit["growth_points"] = dynamic_build_growth_points(audit)
+    audit["roadmap"] = dynamic_build_roadmap(audit)
     audit["score"] = build_score(audit, issues)
     return audit
 
@@ -1141,7 +1555,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
         "Где проект уже силён и где он теряет рост",
         "Ниже — выжимка по тем точкам, которые сильнее всего влияют на индексацию, кликабельность и масштабирование спроса.",
     )
-    for paragraph in build_executive_summary(audit):
+    for paragraph in build_executive_summary_dynamic(audit):
         add_text_paragraph(doc, paragraph, size=11.4, color=BRAND_TEXT, space_after=6)
     add_metric_grid(doc, audit)
 

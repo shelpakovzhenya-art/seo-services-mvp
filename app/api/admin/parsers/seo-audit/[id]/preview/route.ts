@@ -29,6 +29,13 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
     return NextResponse.json({ error: 'HTML-превью ещё не готово.' }, { status: 409 })
   }
 
+  if ((result.generatorVersion || 1) < 2) {
+    return NextResponse.json(
+      { error: 'Этот аудит собран старой версией генератора. Запустите аудит заново, чтобы получить корректный отчет.' },
+      { status: 409 }
+    )
+  }
+
   return new NextResponse(result.previewHtml, {
     headers: {
       'Content-Type': 'text/html; charset=utf-8',

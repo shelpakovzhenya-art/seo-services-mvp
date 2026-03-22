@@ -30,6 +30,13 @@ export async function GET(request: Request, { params }: { params: { id: string }
     return NextResponse.json({ error: 'Файл аудита ещё не готов.' }, { status: 409 })
   }
 
+  if ((result.generatorVersion || 1) < 2) {
+    return NextResponse.json(
+      { error: 'Этот аудит собран старой версией генератора. Запустите аудит заново, чтобы получить корректный отчет.' },
+      { status: 409 }
+    )
+  }
+
   const format = new URL(request.url).searchParams.get('format') === 'docx' ? 'docx' : 'pdf'
   const fileBase64 = format === 'pdf' ? result.pdfBase64 : result.docxBase64
 
