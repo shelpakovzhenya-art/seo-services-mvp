@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { topicalBlogPackVersion, topicalBlogPosts } from './blog-content-pack'
 
 const prisma = new PrismaClient()
 
@@ -183,7 +184,7 @@ async function main() {
   console.log(`✅ Menu items created/updated: ${menuItems.length} items`)
 
   // Create site settings
-  await prisma.siteSettings.upsert({
+  const siteSettings = await prisma.siteSettings.upsert({
     where: { id: '1' },
     update: {},
     create: {
@@ -191,6 +192,7 @@ async function main() {
       workSchedule: 'ПН–ПТ 9:00–17:00',
       email: 'shelpakovzhenya@gmail.com',
       footerText: 'Профессиональные SEO услуги для вашего бизнеса',
+      blogSeedVersion: 0,
       globalDiscountEnabled: false,
       globalDiscountPercent: 0,
     },
@@ -1090,6 +1092,30 @@ GEO и ИИ-выдача меняют не только способ поиск�
   await prisma.blogPost.deleteMany({
     where: { slug: 'welcome-to-seo-services' },
   })
+
+  if ((siteSettings.blogSeedVersion ?? 0) < topicalBlogPackVersion) {
+    for (const post of topicalBlogPosts) {
+      await prisma.blogPost.upsert({
+        where: { slug: post.slug },
+        update: {
+          title: post.title,
+          excerpt: post.excerpt,
+          content: post.content,
+          coverImage: post.coverImage,
+          published: post.published,
+          publishedAt: post.publishedAt,
+        },
+        create: post,
+      })
+    }
+
+    await prisma.siteSettings.update({
+      where: { id: '1' },
+      data: { blogSeedVersion: topicalBlogPackVersion },
+    })
+
+    console.log(`✅ Topical blog pack imported: ${topicalBlogPosts.length} posts`)
+  }
 
   // Create sample case
   const existingCase = await prisma.case.findFirst({

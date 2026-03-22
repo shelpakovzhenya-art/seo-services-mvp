@@ -90,6 +90,57 @@ function getRelatedServices(slug: string) {
         description: 'Помогает стабилизировать рост после изменений в структуре, контенте и логике сайта.',
       },
     ],
+    'geo-i-ii-vydacha-kak-poluchat-trafik-v-2026': [
+      {
+        href: '/services/seo',
+        label: 'SEO-продвижение',
+        description: 'Подходит, если нужно перестроить сайт под новый формат поиска, а не просто поднять отдельные страницы.',
+      },
+      {
+        href: '/services/seo-content',
+        label: 'SEO-контент',
+        description: 'Помогает собрать answer-first материалы, хабы и внутренние связи под GEO и ИИ-выдачу.',
+      },
+      {
+        href: '/services/website-development',
+        label: 'Разработка сайтов',
+        description: 'Нужна, когда для новой выдачи нужно усиливать не только тексты, но и саму структуру сайта.',
+      },
+    ],
+    'seo-trendy-2026-chto-rabotaet-segodnya': [
+      {
+        href: '/services/seo',
+        label: 'SEO-продвижение',
+        description: 'Собирает техническую базу, структуру страниц и стратегию роста в одну рабочую систему.',
+      },
+      {
+        href: '/services/technical-seo',
+        label: 'Техническое SEO',
+        description: 'Полезно, если тренды уже упираются в индексацию, шаблоны, скорость и архитектуру сайта.',
+      },
+      {
+        href: '/services/b2b-seo',
+        label: 'B2B SEO',
+        description: 'Подходит проектам со сложным спросом, длинным циклом сделки и высокой ценой ошибки.',
+      },
+    ],
+    'kak-izmerit-effektivnost-seo-i-ai-trafika': [
+      {
+        href: '/services/seo-consulting',
+        label: 'SEO-консалтинг',
+        description: 'Помогает собрать зрелую модель аналитики и связать SEO-данные с бизнес-решениями.',
+      },
+      {
+        href: '/services/seo-audit',
+        label: 'SEO-аудит',
+        description: 'Нужен, если важно понять, какие страницы реально мешают росту и где теряется эффект от органики.',
+      },
+      {
+        href: '/services/b2b-seo',
+        label: 'B2B SEO',
+        description: 'Актуально для экспертных и сложных проектов, где важна не посещаемость сама по себе, а качественные обращения.',
+      },
+    ],
   }
 
   return (

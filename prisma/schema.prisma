@@ -97,6 +97,7 @@ model SiteSettings {
   whatsappUrl           String?
   maxUrl                String?
   footerText            String?
+  blogSeedVersion       Int      @default(0)
   globalDiscountEnabled Boolean  @default(false)
   globalDiscountPercent Float    @default(0)
   yandexReviewsEmbed    String?
