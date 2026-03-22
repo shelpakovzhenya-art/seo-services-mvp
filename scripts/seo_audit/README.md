@@ -21,6 +21,20 @@ audits/akvarium-akvas-2026-03-22.html
 
 Он генерируется автоматически и показывает тот же аудит в браузере вместе со скриншотами.
 
+Чтобы открыть последний аудит напрямую в системе, не через VS Code preview:
+
+```powershell
+npm run seo:audit:open
+```
+
+Откроется последний `.html` из папки `audits/`.
+
+Если нужен именно `.docx`:
+
+```powershell
+npm run seo:audit:open -- --format docx
+```
+
 Можно указать свой путь для файла:
 
 ```powershell

@@ -18,7 +18,8 @@
     "check:prod": "node scripts/check-production.js",
     "setup": "node scripts/setup.js",
     "seo:audit": "powershell -ExecutionPolicy Bypass -File scripts/run-seo-audit.ps1",
-    "seo:audit:python": "python scripts/seo_audit/generate_audit.py"
+    "seo:audit:python": "python scripts/seo_audit/generate_audit.py",
+    "seo:audit:open": "powershell -ExecutionPolicy Bypass -File scripts/open-audit.ps1"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
