@@ -163,11 +163,14 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
                 обложкой, выжимкой для бизнеса, приоритетами, примерами страниц, визуальными доказательствами и дорожной картой
                 внедрения.
               </p>
-              <div className="uniform-grid-4 mt-6 gap-4">
+              <div className="mt-6 grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
                 {seoAuditDeliverables.map((item) => (
-                  <div key={item.title} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
-                    <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                  <div
+                    key={item.title}
+                    className="flex min-h-[260px] flex-col rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 md:min-h-[220px]"
+                  >
+                    <h3 className="text-2xl font-semibold leading-tight text-slate-950">{item.title}</h3>
+                    <p className="mt-3 text-base leading-8 text-slate-600">{item.text}</p>
                   </div>
                 ))}
               </div>
@@ -178,7 +181,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
                 <div className="text-sm uppercase tracking-[0.24em] text-orange-700">Что получает клиент</div>
                 <div className="mt-4 rounded-[26px] border border-white/70 bg-gradient-to-br from-white via-orange-50 to-cyan-50 p-6">
                   <div className="text-xs uppercase tracking-[0.24em] text-slate-500">Итоговый пакет</div>
-                  <div className="mt-3 text-2xl font-semibold text-slate-950">Branded DOCX + HTML preview + growth map</div>
+                  <div className="mt-3 text-2xl font-semibold text-slate-950">Branded PDF + DOCX + HTML preview</div>
                   <p className="mt-4 text-sm leading-7 text-slate-600">
                     Такой формат удобно и показывать клиенту, и передавать в работу команде. Документ не теряет ценность после выдачи,
                     а становится основой следующего шага.
