@@ -53,19 +53,29 @@ export default async function CalculatorPage() {
   return (
     <div className="page-shell">
       <section className="surface-grid surface-pad">
-        <div className="grid gap-6 xl:grid-cols-[1.04fr_0.96fr] xl:items-end">
-          <div>
-            <span className="warm-chip">Калькулятор SEO-услуг</span>
-            <h1 className="mt-5 max-w-5xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">
-              {page?.h1 || 'Подберите формат SEO-работ и получите ориентир по бюджету'}
-            </h1>
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
-              {page?.description ||
-                'Собрал калькулятор по текущей линейке услуг: от аудита и технической базы до системного SEO, контента и запуска новых разделов под рост заявок.'}
-            </p>
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.04fr)_minmax(320px,0.96fr)] xl:items-start">
+          <div className="flex flex-col gap-8 xl:self-stretch xl:justify-between xl:pr-6">
+            <div>
+              <span className="warm-chip">Калькулятор SEO-услуг</span>
+              <h1 className="mt-5 max-w-5xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">
+                {page?.h1 || 'Подберите формат SEO-работ и получите ориентир по бюджету'}
+              </h1>
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+                {page?.description ||
+                  'Собрал калькулятор по текущей линейке услуг: от аудита и технической базы до системного SEO, контента и запуска новых разделов под рост заявок.'}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3 text-sm text-slate-600">
+              {calculatorHighlights.map((item) => (
+                <span key={item} className="rounded-full border border-orange-200 bg-white px-4 py-2">
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
 
-          <div className="glass-panel p-6">
+          <div className="glass-panel self-start p-6">
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Как пользоваться</p>
             <div className="mt-4 space-y-3">
               {calculatorSteps.map((item, index) => (
@@ -79,14 +89,6 @@ export default async function CalculatorPage() {
               ))}
             </div>
           </div>
-        </div>
-
-        <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate-600">
-          {calculatorHighlights.map((item) => (
-            <span key={item} className="rounded-full border border-orange-200 bg-white px-4 py-2">
-              {item}
-            </span>
-          ))}
         </div>
       </section>
 
