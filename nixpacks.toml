@@ -1,0 +1,10 @@
+providers = ["...", "python"]
+
+[variables]
+PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
+
+[phases.setup]
+nixPkgs = ["...", "python311", "chromium"]
+
+[phases.install]
+cmds = ["...", "python3 -m pip install -r requirements.txt"]

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from html import escape
 from pathlib import Path
+import shutil
 from urllib.parse import urlparse
 
 
@@ -47,8 +48,19 @@ def capture_screenshots(audit_payload: dict, assets_dir: Path) -> list[dict]:
     assets_dir.mkdir(parents=True, exist_ok=True)
     screenshots: list[dict] = []
 
+    executable_path = (
+        shutil.which("chromium")
+        or shutil.which("chromium-browser")
+        or shutil.which("google-chrome")
+        or shutil.which("google-chrome-stable")
+    )
+
+    launch_kwargs = {"headless": True}
+    if executable_path:
+        launch_kwargs["executable_path"] = executable_path
+
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True)
+        browser = playwright.chromium.launch(**launch_kwargs)
         context = browser.new_context(viewport={"width": 1440, "height": 960}, locale="ru-RU")
         for index, target in enumerate(targets, start=1):
             page = context.new_page()

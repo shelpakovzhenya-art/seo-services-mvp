@@ -1,7 +1,7 @@
-import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
-import { isAuthenticated } from '@/lib/auth'
 import ParsersManager from '@/components/admin/ParsersManager'
+import { isAuthenticated } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
 export default async function AdminParsersPage() {
   const authenticated = await isAuthenticated()
@@ -9,16 +9,24 @@ export default async function AdminParsersPage() {
     redirect('/admin/login')
   }
 
-  const jobs = await prisma.parserJob.findMany({
+  const jobsRaw = await prisma.parserJob.findMany({
     orderBy: { createdAt: 'desc' },
-    take: 20
+    take: 20,
+    select: {
+      id: true,
+      type: true,
+      status: true,
+      error: true,
+      config: true,
+      createdAt: true,
+      completedAt: true,
+    },
   })
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Парсеры</h1>
-      <ParsersManager initialJobs={jobs} />
+      <h1 className="mb-8 text-3xl font-bold">Парсеры и SEO-аудит</h1>
+      <ParsersManager initialJobs={jobsRaw} />
     </div>
   )
 }
-

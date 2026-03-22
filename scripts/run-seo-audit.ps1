@@ -24,9 +24,19 @@ if ($LASTEXITCODE -ne 0) {
 
 $browserCheck = @'
 from playwright.sync_api import sync_playwright
+import shutil
 try:
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        executable_path = (
+            shutil.which("chromium")
+            or shutil.which("chromium-browser")
+            or shutil.which("google-chrome")
+            or shutil.which("google-chrome-stable")
+        )
+        kwargs = {"headless": True}
+        if executable_path:
+            kwargs["executable_path"] = executable_path
+        browser = p.chromium.launch(**kwargs)
         browser.close()
 except Exception:
     raise SystemExit(1)
