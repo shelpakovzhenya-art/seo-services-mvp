@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { FileText, MessageCircle, MessagesSquare, Wrench } from 'lucide-react'
+import { MessageCircle, MessagesSquare, Wrench } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { featuredReads } from '@/lib/site-recommendations'
 
@@ -121,27 +121,15 @@ export default async function Footer() {
               </div>
 
               <div className="pt-6">
-                <div className="flex w-fit flex-col gap-3">
-                  <Link
-                    href="/tools"
-                    className="inline-flex w-fit items-center gap-3 border border-white/14 bg-[#09111d]/88 px-5 py-4 text-sm font-medium uppercase tracking-[0.22em] text-slate-200 transition hover:border-cyan-300/34 hover:bg-[#0d1624] hover:text-white"
-                  >
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/5 text-slate-100">
-                      <Wrench className="h-4 w-4" />
-                    </span>
-                    <span>SEO-TOOLS</span>
-                  </Link>
-
-                  <a
-                    href="/sitemap.xml"
-                    className="inline-flex w-fit items-center gap-3 border border-white/14 bg-[#09111d]/88 px-5 py-4 text-sm font-medium uppercase tracking-[0.22em] text-slate-200 transition hover:border-cyan-300/34 hover:bg-[#0d1624] hover:text-white"
-                  >
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/5 text-slate-100">
-                      <FileText className="h-4 w-4" />
-                    </span>
-                    <span>Карта сайта</span>
-                  </a>
-                </div>
+                <Link
+                  href="/tools"
+                  className="inline-flex w-fit items-center gap-3 border border-white/14 bg-[#09111d]/88 px-5 py-4 text-sm font-medium uppercase tracking-[0.22em] text-slate-200 transition hover:border-cyan-300/34 hover:bg-[#0d1624] hover:text-white"
+                >
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/5 text-slate-100">
+                    <Wrench className="h-4 w-4" />
+                  </span>
+                  <span>SEO-TOOLS</span>
+                </Link>
               </div>
             </div>
           </div>
@@ -163,7 +151,13 @@ export default async function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-6 text-sm text-slate-500">
+        <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+          <Link
+            href="/sitemap.xml"
+            className="w-fit text-sm text-slate-500 transition hover:text-white"
+          >
+            Карта сайта
+          </Link>
           <p>&copy; {currentYear} Shelpakov Digital. Все права защищены.</p>
         </div>
       </div>
