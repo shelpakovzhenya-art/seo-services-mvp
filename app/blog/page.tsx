@@ -1,7 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import JsonLd from '@/components/JsonLd'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription } from '@/lib/seo-meta'
+import { createCollectionPageSchema, createItemListSchema } from '@/lib/structured-data'
 
 function getFallbackCover(slug: string) {
   const coverMap: Record<string, string> = {
@@ -32,8 +34,27 @@ export default async function BlogPage() {
     posts = []
   }
 
+  const collectionSchema = createCollectionPageSchema({
+    path: '/blog',
+    name: 'Блог о SEO и развитии сайта',
+    description:
+      'Экспертные статьи о SEO, структуре сайта, контенте, коммерческих факторах и росте заявок с понятными выводами для бизнеса.',
+  })
+  const itemListSchema = createItemListSchema({
+    path: '/blog',
+    name: 'Статьи блога Shelpakov Digital',
+    items: posts.map((post) => ({
+      name: post.title,
+      path: `/blog/${post.slug}`,
+      description: post.excerpt || undefined,
+    })),
+  })
+
   return (
     <div className="page-shell">
+      <JsonLd id="blog-collection-schema" data={collectionSchema} />
+      <JsonLd id="blog-item-list-schema" data={itemListSchema} />
+
       <section className="surface-cosmos surface-pad">
         <div className="max-w-4xl">
           <span className="warm-chip">Блог</span>

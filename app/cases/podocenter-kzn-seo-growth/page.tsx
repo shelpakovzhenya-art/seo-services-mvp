@@ -1,12 +1,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, CheckCircle2, MapPin, Search } from 'lucide-react'
+import JsonLd from '@/components/JsonLd'
 import LazyContactForm from '@/components/LazyContactForm'
 import { Button } from '@/components/ui/button'
 import { isPlaceholderCase } from '@/lib/case-listing'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { prisma } from '@/lib/prisma'
 import { getFullUrl } from '@/lib/site-url'
+import { createBreadcrumbSchema, createCaseArticleSchema, createFaqSchema } from '@/lib/structured-data'
 import { podocenterCase } from '@/lib/podocenter-case'
 
 const serviceLinks = [
@@ -91,37 +93,25 @@ export default async function PodocenterCasePage() {
       'Скриншот из проекта с динамикой роста по поиску, видимости и обращениям.',
   }))
 
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Главная',
-        item: getFullUrl('/'),
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Кейсы',
-        item: getFullUrl('/cases'),
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: podocenterCase.h1,
-        item: getFullUrl(podocenterCase.url),
-      },
-    ],
-  }
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: 'Главная', path: '/' },
+    { name: 'Кейсы', path: '/cases' },
+    { name: podocenterCase.h1, path: podocenterCase.url },
+  ])
+  const faqSchema = createFaqSchema(podocenterCase.faq)
+  const caseArticleSchema = createCaseArticleSchema({
+    path: podocenterCase.url,
+    title: podocenterCase.title,
+    description: podocenterCase.description,
+    image: galleryImages[0]?.src,
+    about: ['SEO-продвижение', 'Локальное SEO', 'Структура сайта', 'Рост заявок'],
+  })
 
   return (
     <div className="page-shell">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
+      <JsonLd id="podocenter-breadcrumbs-schema" data={breadcrumbSchema} />
+      <JsonLd id="podocenter-faq-schema" data={faqSchema} />
+      <JsonLd id="podocenter-case-schema" data={caseArticleSchema} />
 
       <section className="soft-section surface-pad">
         <span className="warm-chip">SEO-кейс локального проекта</span>

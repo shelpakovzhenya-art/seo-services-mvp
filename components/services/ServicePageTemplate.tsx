@@ -1,10 +1,11 @@
 import Link from 'next/link'
-import Script from 'next/script'
 import { ArrowRight, Check, ChevronRight, Clock3 } from 'lucide-react'
+import JsonLd from '@/components/JsonLd'
 import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
 import LazyContactForm from '@/components/LazyContactForm'
 import { getFullUrl } from '@/lib/site-url'
+import { createBreadcrumbSchema, createFaqSchema, createServiceSchema } from '@/lib/structured-data'
 import { formatServiceBillingUnit, formatServicePrice, type ServicePricing } from '@/lib/service-pricing'
 import { getRelatedServices, type ServicePageContent } from '@/lib/service-pages'
 
@@ -12,10 +13,6 @@ type ServicePageTemplateProps = {
   service: ServicePageContent
   pricing?: ServicePricing | null
   customContent?: string | null
-}
-
-function JsonLd({ data, id }: { data: object; id: string }) {
-  return <Script id={id} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
 }
 
 function VisualCard({
@@ -43,52 +40,13 @@ function VisualCard({
 export default function ServicePageTemplate({ service, pricing, customContent }: ServicePageTemplateProps) {
   const relatedServices = getRelatedServices(service.related)
   const pageUrl = getFullUrl(`/services/${service.slug}`)
-
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: service.faq.map((item) => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
-      },
-    })),
-  }
-
-  const serviceSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Service',
-    name: service.h1,
-    description: service.description,
-    serviceType: service.shortName,
-    areaServed: 'RU',
-    provider: {
-      '@type': 'Organization',
-      name: 'Shelpakov Digital',
-      url: getFullUrl('/'),
-    },
-    url: pageUrl,
-    offers: pricing
-      ? {
-          '@type': 'Offer',
-          priceCurrency: 'RUB',
-          price: pricing.priceFrom,
-          description: pricing.priceLabel,
-        }
-      : undefined,
-  }
-
-  const breadcrumbsSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Главная', item: getFullUrl('/') },
-      { '@type': 'ListItem', position: 2, name: 'Услуги', item: getFullUrl('/services') },
-      { '@type': 'ListItem', position: 3, name: service.shortName, item: pageUrl },
-    ],
-  }
+  const faqSchema = createFaqSchema(service.faq)
+  const serviceSchema = createServiceSchema(service, pricing)
+  const breadcrumbsSchema = createBreadcrumbSchema([
+    { name: 'Главная', path: '/' },
+    { name: 'Услуги', path: '/services' },
+    { name: service.shortName, url: pageUrl },
+  ])
 
   return (
     <>
@@ -167,6 +125,32 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
             </div>
           </div>
         </section>
+
+        {service.slug === 'seo' ? (
+          <section className="mt-8 page-card">
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Короткий ответ</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950">Что такое SEO-продвижение</h2>
+            <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">
+              SEO-продвижение сайта — это системная работа над технической базой, структурой страниц, контентом,
+              внутренними сигналами доверия и логикой заявки, чтобы сайт лучше отвечал на поисковый спрос и получал
+              больше целевых обращений из органики.
+            </p>
+            <div className="mt-6 grid gap-3 md:grid-cols-3">
+              <div className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+                Техническая часть отвечает за индексацию, скорость, чистую структуру URL, sitemap и отсутствие
+                критичных ошибок.
+              </div>
+              <div className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+                Содержательная часть помогает собрать сильные страницы услуг, экспертный контент и понятную логику
+                ответа на интент пользователя.
+              </div>
+              <div className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+                Коммерческая часть усиливает доверие к сайту и помогает превратить поисковый трафик в заявку, а не
+                просто в посещение.
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         <section className="uniform-grid-4 mt-8">
           {service.benefits.map((item) => (

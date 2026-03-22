@@ -3,10 +3,12 @@ import { headers } from 'next/headers'
 import Script from 'next/script'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
+import JsonLd from '@/components/JsonLd'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import SiteAtmosphere from '@/components/SiteAtmosphere'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getSiteUrl } from '@/lib/site-url'
+import { createOrganizationSchema, createWebsiteSchema } from '@/lib/structured-data'
 import './globals.css'
 
 const siteUrl = getSiteUrl()
@@ -78,10 +80,18 @@ export default async function RootLayout({
   const headersList = await headers()
   const pathname = headersList.get('x-pathname') || ''
   const isAdmin = pathname.startsWith('/admin')
+  const organizationSchema = createOrganizationSchema()
+  const websiteSchema = createWebsiteSchema()
 
   return (
     <html lang="ru">
       <body className={isAdmin ? 'admin-theme admin-body' : 'site-shell'}>
+        {!isAdmin ? (
+          <>
+            <JsonLd id="site-organization-schema" data={organizationSchema} />
+            <JsonLd id="site-website-schema" data={websiteSchema} />
+          </>
+        ) : null}
         {!isAdmin ? (
           <>
             <Script

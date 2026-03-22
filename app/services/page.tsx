@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
-import Script from 'next/script'
 import Link from 'next/link'
 import { ArrowRight, ChevronRight } from 'lucide-react'
+import JsonLd from '@/components/JsonLd'
 import { Button } from '@/components/ui/button'
 import ServicesCatalogSection from '@/components/services/ServicesCatalogSection'
 import LazyContactForm from '@/components/LazyContactForm'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getFullUrl } from '@/lib/site-url'
 import { servicePages } from '@/lib/service-pages'
+import { createBreadcrumbSchema, createCollectionPageSchema, createFaqSchema, createItemListSchema } from '@/lib/structured-data'
 
 const pageTitle = 'SEO и разработка сайтов под заявки'
 const pageDescription =
@@ -57,32 +58,32 @@ export const metadata: Metadata = {
 }
 
 export default function ServicesIndexPage() {
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: serviceFaq.map((item) => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
-      },
+  const faqSchema = createFaqSchema(serviceFaq)
+  const breadcrumbsSchema = createBreadcrumbSchema([
+    { name: 'Главная', path: '/' },
+    { name: 'Услуги', path: '/services' },
+  ])
+  const collectionSchema = createCollectionPageSchema({
+    path: '/services',
+    name: pageTitle,
+    description: pageDescription,
+  })
+  const itemListSchema = createItemListSchema({
+    path: '/services',
+    name: 'SEO-услуги и разработка сайтов',
+    items: servicePages.map((service) => ({
+      name: service.shortName,
+      path: `/services/${service.slug}`,
+      description: service.description,
     })),
-  }
-
-  const breadcrumbsSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Главная', item: getFullUrl('/') },
-      { '@type': 'ListItem', position: 2, name: 'Услуги', item: getFullUrl('/services') },
-    ],
-  }
+  })
 
   return (
     <>
-      <Script id="services-faq-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      <Script id="services-breadcrumbs-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }} />
+      <JsonLd id="services-faq-schema" data={faqSchema} />
+      <JsonLd id="services-breadcrumbs-schema" data={breadcrumbsSchema} />
+      <JsonLd id="services-collection-schema" data={collectionSchema} />
+      <JsonLd id="services-item-list-schema" data={itemListSchema} />
 
       <div className="page-shell">
         <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500">

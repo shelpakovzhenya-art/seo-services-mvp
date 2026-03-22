@@ -1,10 +1,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import JsonLd from '@/components/JsonLd'
 import RichContent from '@/components/RichContent'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
+import { createBlogPostingSchema, createBreadcrumbSchema } from '@/lib/structured-data'
 
 function getFallbackCover(slug: string) {
   const coverMap: Record<string, string> = {
@@ -130,13 +132,44 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const coverImage = post.coverImage || getFallbackCover(post.slug)
   const content = stripLeadingMarkdownH1(post.content, post.title)
   const relatedServices = getRelatedServices(post.slug)
+  const articleDescription = normalizeMetaDescription(
+    post.excerpt,
+    'Экспертный материал Shelpakov Digital о SEO, структуре сайта, контенте и росте заявок с практическими выводами для бизнеса.'
+  )
+  const articleSchema = createBlogPostingSchema({
+    slug: post.slug,
+    title: post.title,
+    description: articleDescription,
+    coverImage,
+    publishedAt: post.publishedAt,
+    updatedAt: post.updatedAt,
+    relatedServices,
+  })
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: 'Главная', path: '/' },
+    { name: 'Блог', path: '/blog' },
+    { name: post.title, path: `/blog/${post.slug}` },
+  ])
 
   return (
     <article className="page-shell max-w-5xl">
+      <JsonLd id={`blog-post-schema-${post.slug}`} data={articleSchema} />
+      <JsonLd id={`blog-breadcrumbs-schema-${post.slug}`} data={breadcrumbSchema} />
+
       <header className="surface-cosmos surface-pad overflow-hidden">
         <div className="max-w-3xl">
+          <nav className="flex flex-wrap items-center gap-2 text-sm text-slate-300/85">
+            <Link href="/" className="transition hover:text-white">
+              Главная
+            </Link>
+            <span>/</span>
+            <Link href="/blog" className="transition hover:text-white">
+              Блог
+            </Link>
+          </nav>
+
           {post.publishedAt && (
-            <p className="text-sm text-slate-400">
+            <p className="mt-4 text-sm text-slate-400">
               {new Date(post.publishedAt).toLocaleDateString('ru-RU', {
                 year: 'numeric',
                 month: 'long',
@@ -147,6 +180,16 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
           <h1 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-6xl">{post.title}</h1>
           {post.excerpt && <p className="mt-5 text-lg leading-8 text-slate-300">{post.excerpt}</p>}
+          <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-200">
+            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">Автор: Shelpakov Digital</span>
+            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">Тема: SEO, структура сайта и заявки</span>
+            <Link
+              href="/services"
+              className="rounded-full border border-cyan-300/24 bg-cyan-400/10 px-4 py-2 transition hover:border-cyan-200/50 hover:text-white"
+            >
+              Перейти к услугам
+            </Link>
+          </div>
         </div>
 
         {coverImage && (
