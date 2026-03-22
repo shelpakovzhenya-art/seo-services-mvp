@@ -187,7 +187,7 @@ export default function BlogManager({ initialPosts }: { initialPosts: BlogPost[]
           {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('ru-RU') : '—'}
         </td>
         <td className="px-4 py-3">
-          <div className="flex gap-2">
+          <div className="relative z-10 flex gap-2">
             <Button variant="ghost" size="sm" onClick={() => startEdit(post)}>
               <Edit className="h-4 w-4" />
             </Button>

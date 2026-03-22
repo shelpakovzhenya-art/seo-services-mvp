@@ -58,7 +58,7 @@ export default async function Footer() {
 
   return (
     <footer className="relative mt-auto overflow-hidden border-t border-white/10 bg-[#07101d]/88 text-slate-300">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,176,128,0.16),transparent_26%),radial-gradient(circle_at_82%_22%,rgba(96,227,255,0.12),transparent_22%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,176,128,0.16),transparent_26%),radial-gradient(circle_at_82%_22%,rgba(96,227,255,0.12),transparent_22%)]" />
       <div className="container relative mx-auto px-4 py-16">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.75fr_0.8fr_1.1fr]">
           <div className="space-y-5">

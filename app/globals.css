@@ -61,6 +61,12 @@
     min-height: 100vh;
   }
 
+  a,
+  button,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+
   body.site-shell {
     background:
       radial-gradient(circle at 12% 12%, rgba(255, 165, 114, 0.22), transparent 22%),
@@ -505,14 +511,6 @@
     @apply transition-all duration-500;
   }
 
-  .interactive-card:hover {
-    transform: translateY(-8px);
-    border-color: rgba(96, 227, 255, 0.34);
-    box-shadow:
-      0 34px 90px rgba(2, 8, 23, 0.28),
-      0 0 0 1px rgba(96, 227, 255, 0.14);
-  }
-
   .hero-panel {
     background:
       radial-gradient(circle at 12% 16%, rgba(255, 173, 120, 0.28), rgba(255, 173, 120, 0) 24%),
@@ -951,16 +949,6 @@
       transform 180ms ease;
   }
 
-  .site-nav-link:hover {
-    transform: translateY(-1px);
-    color: rgba(255, 255, 255, 0.98);
-  }
-
-  .site-nav-link:hover::after {
-    opacity: 1;
-    transform: scaleX(1);
-  }
-
   .site-cta-button {
     display: inline-flex;
     align-items: center;
@@ -980,14 +968,6 @@
       transform 180ms ease,
       box-shadow 180ms ease,
       filter 180ms ease;
-  }
-
-  .site-cta-button:hover {
-    transform: translateY(-2px);
-    filter: saturate(1.04);
-    box-shadow:
-      0 20px 40px rgba(2, 8, 23, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.72);
   }
 
   .scroll-top-button {
@@ -1016,18 +996,46 @@
       border-color 220ms ease;
   }
 
+  .scroll-top-button--hidden {
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .interactive-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(96, 227, 255, 0.34);
+    box-shadow:
+      0 34px 90px rgba(2, 8, 23, 0.28),
+      0 0 0 1px rgba(96, 227, 255, 0.14);
+  }
+
+  .site-nav-link:hover {
+    transform: translateY(-1px);
+    color: rgba(255, 255, 255, 0.98);
+  }
+
+  .site-nav-link:hover::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  .site-cta-button:hover {
+    transform: translateY(-2px);
+    filter: saturate(1.04);
+    box-shadow:
+      0 20px 40px rgba(2, 8, 23, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  }
+
   .scroll-top-button:hover {
     transform: translateY(-3px);
     border-color: rgba(96, 227, 255, 0.42);
     box-shadow:
       0 28px 56px rgba(2, 8, 23, 0.38),
       0 0 0 1px rgba(96, 227, 255, 0.1);
-  }
-
-  .scroll-top-button--hidden {
-    pointer-events: none;
-    opacity: 0;
-    transform: translate3d(0, 18px, 0);
   }
 }
 

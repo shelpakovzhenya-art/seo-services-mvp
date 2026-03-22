@@ -113,7 +113,7 @@ export default function CasesManager({ initialCases }: { initialCases: Case[] })
                 <td className="px-4 py-3 text-sm text-gray-600">{caseItem.description || '—'}</td>
                 <td className="px-4 py-3">{caseItem.order}</td>
                 <td className="px-4 py-3">
-                  <div className="flex gap-2">
+                  <div className="relative z-10 flex gap-2">
                     <Button
                       variant="ghost"
                       size="sm"

@@ -180,7 +180,7 @@ export default function ServicesManager({ initialServices }: { initialServices: 
                     </span>
                   </td>
                   <td className="px-4 py-4">
-                    <div className="flex gap-2">
+                    <div className="relative z-10 flex gap-2">
                       <Button
                         variant="ghost"
                         size="sm"
