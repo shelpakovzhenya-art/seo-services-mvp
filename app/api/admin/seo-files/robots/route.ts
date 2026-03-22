@@ -3,6 +3,7 @@ import { isAuthenticated } from '@/lib/auth'
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
+import { getDefaultRobotsContent } from '@/lib/robots-content'
 
 const ROBOTS_PATH = join(process.cwd(), 'public', 'robots.txt')
 
@@ -16,11 +17,7 @@ export async function GET() {
     if (existsSync(ROBOTS_PATH)) {
       content = await readFile(ROBOTS_PATH, 'utf-8')
     } else {
-      // Default robots.txt
-      content = `User-agent: *
-Allow: /
-
-Sitemap: ${process.env.SITE_URL || 'http://localhost:3000'}/sitemap.xml`
+      content = getDefaultRobotsContent()
     }
 
     return NextResponse.json({ content })

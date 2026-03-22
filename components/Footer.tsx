@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { MessageCircle, MessagesSquare, Wrench } from 'lucide-react'
+import { FileText, MessageCircle, MessagesSquare, Wrench } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { featuredReads } from '@/lib/site-recommendations'
 
@@ -63,11 +63,14 @@ export default async function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.75fr_0.8fr_1.1fr]">
           <div className="space-y-5">
             <span className="warm-chip">Shelpakov Digital</span>
-            <h3 className="max-w-xl text-3xl font-semibold text-white">SEO и доработка сайта под заявки, доверие и рост.</h3>
+            <h3 className="max-w-xl text-3xl font-semibold text-white">
+              SEO и доработка сайта под заявки, доверие и рост.
+            </h3>
             <p className="max-w-xl text-sm leading-7 text-slate-400">
               {settings?.footerText ||
                 'Помогаю сделать сайт понятнее для клиента, сильнее для поисковиков и полезнее для бизнеса.'}
             </p>
+
             {socialLinks.length > 0 ? (
               <div className="flex flex-wrap gap-3 pt-2">
                 {socialLinks.map((item) => (
@@ -118,15 +121,27 @@ export default async function Footer() {
               </div>
 
               <div className="pt-6">
-                <Link
-                  href="/tools"
-                  className="inline-flex w-fit items-center gap-3 border border-white/14 bg-[#09111d]/88 px-5 py-4 text-sm font-medium uppercase tracking-[0.22em] text-slate-200 transition hover:border-cyan-300/34 hover:bg-[#0d1624] hover:text-white"
-                >
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/5 text-slate-100">
-                    <Wrench className="h-4 w-4" />
-                  </span>
-                  <span>SEO-TOOLS</span>
-                </Link>
+                <div className="flex w-fit flex-col gap-3">
+                  <Link
+                    href="/tools"
+                    className="inline-flex w-fit items-center gap-3 border border-white/14 bg-[#09111d]/88 px-5 py-4 text-sm font-medium uppercase tracking-[0.22em] text-slate-200 transition hover:border-cyan-300/34 hover:bg-[#0d1624] hover:text-white"
+                  >
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/5 text-slate-100">
+                      <Wrench className="h-4 w-4" />
+                    </span>
+                    <span>SEO-TOOLS</span>
+                  </Link>
+
+                  <a
+                    href="/sitemap.xml"
+                    className="inline-flex w-fit items-center gap-3 border border-white/14 bg-[#09111d]/88 px-5 py-4 text-sm font-medium uppercase tracking-[0.22em] text-slate-200 transition hover:border-cyan-300/34 hover:bg-[#0d1624] hover:text-white"
+                  >
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/5 text-slate-100">
+                      <FileText className="h-4 w-4" />
+                    </span>
+                    <span>Карта сайта</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
