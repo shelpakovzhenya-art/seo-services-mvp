@@ -16,7 +16,9 @@
     "admin:reset": "tsx scripts/reset-admin.ts",
     "admin:fix": "node scripts/fix-admin-production.js",
     "check:prod": "node scripts/check-production.js",
-    "setup": "node scripts/setup.js"
+    "setup": "node scripts/setup.js",
+    "seo:audit": "powershell -ExecutionPolicy Bypass -File scripts/run-seo-audit.ps1",
+    "seo:audit:python": "python scripts/seo_audit/generate_audit.py"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

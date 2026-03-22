@@ -1,0 +1,1035 @@
+{
+  "base_url": "https://akvarium-akvas.ru",
+  "domain": "akvarium-akvas.ru",
+  "company_name": "Аквас",
+  "generated_at": "22.03.2026 14:12",
+  "home_page": {
+    "url": "https://akvarium-akvas.ru",
+    "page_type": "Главная",
+    "status_code": 200,
+    "response_time_ms": 1714,
+    "content_type": "text/html; charset=utf-8",
+    "title": "Аквас - официальный сайт производства аквариумов и террариумов",
+    "description": "Компания Аквас уже более 15 лет производит аквариумы и террариумы стандартных размеров от 10 до 600 литров, с гарантией 5 лет!",
+    "canonical": "https://akvarium-akvas.ru",
+    "h1s": [
+      "Добро пожаловать в интернет-магазин аквариумов Аквас"
+    ],
+    "meta_robots": "",
+    "x_robots_tag": "",
+    "image_count": 62,
+    "missing_alt_count": 7,
+    "lazy_missing_count": 13,
+    "schema_types": [
+      "LocalBusiness"
+    ],
+    "internal_links": 255,
+    "word_count": 1504,
+    "has_meta_keywords": true,
+    "has_forms": false,
+    "html_size_kb": 213.5
+  },
+  "robots_status": 200,
+  "robots_lines": [
+    "User-agent: *",
+    "Disallow: /*route=account/",
+    "Disallow: /*route=affiliate/",
+    "Disallow: /*route=checkout/",
+    "Disallow: /*route=common/",
+    "Disallow: /*route=product/compare",
+    "Disallow: /*route=product/search",
+    "Disallow: /*route=product/product*&manufacturer_id=",
+    "Disallow: /catalog/controller",
+    "Disallow: /catalog/language",
+    "Disallow: /catalog/model",
+    "Disallow: /download",
+    "Disallow: /system",
+    "Disallow: /search",
+    "Disallow: */storage/",
+    "Disallow: /*?sort=",
+    "Disallow: *?manufs*",
+    "Disallow: /index.php?route=product/",
+    "Disallow: /*optv",
+    "Disallow: /*&sort=",
+    "Disallow: /*?order=",
+    "Disallow: /*&order=",
+    "Disallow: /*?limit=",
+    "Disallow: /*&limit=",
+    "Disallow: /*?filter=",
+    "Disallow: /*&filter=",
+    "Disallow: /*?filter_name=",
+    "Disallow: /*&filter_name=",
+    "Disallow: /*?filter_sub_category=",
+    "Disallow: /*&filter_sub_category=",
+    "Disallow: /*?filter_description=",
+    "Disallow: /*&filter_description=",
+    "Disallow: /*?tracking=",
+    "Disallow: /*&tracking=",
+    "Disallow: /*&tag=*",
+    "Disallow: /*?tag=*",
+    "Disallow: *?route*",
+    "Disallow: */?cat_id*",
+    "Disallow: */?attrb*",
+    "Disallow: */specials*",
+    "Disallow: *sitemap.xml",
+    "Disallow: *?page*",
+    "Allow: *.css",
+    "Allow: *.js",
+    "Allow: *.jpg",
+    "Allow: *.jpeg",
+    "Allow: *.gif",
+    "Allow: *.png",
+    "Allow: *.svg",
+    "Allow: *.webp",
+    "Allow: *.ttf",
+    "Allow: *.woff",
+    "Allow: *.woff2",
+    "Host: https://akvarium-akvas.ru/",
+    "Sitemap: https://akvarium-akvas.ru/sitemap.xml",
+    "# AI discovery",
+    "LLMs: https://akvarium-akvas.ru/llms.txt",
+    "AI-Policy: https://akvarium-akvas.ru/llms.txt",
+    "AI-Sitemap: https://akvarium-akvas.ru/sitemap.xml"
+  ],
+  "llms_exists": true,
+  "sitemap_url_count": 1370,
+  "sitemap_total_entries": 6971,
+  "processed_sitemaps": [
+    "https://akvarium-akvas.ru/sitemap.xml"
+  ],
+  "sample_pages": [
+    {
+      "url": "https://akvarium-akvas.ru",
+      "page_type": "Главная",
+      "status_code": 200,
+      "response_time_ms": 560,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Аквас - официальный сайт производства аквариумов и террариумов",
+      "description": "Компания Аквас уже более 15 лет производит аквариумы и террариумы стандартных размеров от 10 до 600 литров, с гарантией 5 лет!",
+      "canonical": "https://akvarium-akvas.ru",
+      "h1s": [
+        "Добро пожаловать в интернет-магазин аквариумов Аквас"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 62,
+      "missing_alt_count": 7,
+      "lazy_missing_count": 13,
+      "schema_types": [
+        "LocalBusiness"
+      ],
+      "internal_links": 255,
+      "word_count": 1504,
+      "has_meta_keywords": true,
+      "has_forms": false,
+      "html_size_kb": 213.5
+    },
+    {
+      "url": "https://akvarium-akvas.ru/contacts",
+      "page_type": "Категория",
+      "status_code": 200,
+      "response_time_ms": 455,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Связаться с нами",
+      "description": "",
+      "canonical": "",
+      "h1s": [],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 2,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 2,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Invalid JSON-LD"
+      ],
+      "internal_links": 144,
+      "word_count": 673,
+      "has_meta_keywords": false,
+      "has_forms": true,
+      "html_size_kb": 82.4
+    },
+    {
+      "url": "https://akvarium-akvas.ru/index.php?route=information/contactform",
+      "page_type": "Служебная",
+      "status_code": 200,
+      "response_time_ms": 199,
+      "content_type": "text/html; charset=utf-8",
+      "title": "",
+      "description": "",
+      "canonical": "",
+      "h1s": [],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 0,
+      "missing_alt_count": 0,
+      "lazy_missing_count": 0,
+      "schema_types": [],
+      "internal_links": 1,
+      "word_count": 16,
+      "has_meta_keywords": false,
+      "has_forms": true,
+      "html_size_kb": 2.7
+    },
+    {
+      "url": "https://akvarium-akvas.ru/news",
+      "page_type": "Категория",
+      "status_code": 200,
+      "response_time_ms": 488,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Новости",
+      "description": "",
+      "canonical": "https://akvarium-akvas.ru/news",
+      "h1s": [
+        "Новости"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 57,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 9,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList"
+      ],
+      "internal_links": 207,
+      "word_count": 2860,
+      "has_meta_keywords": false,
+      "has_forms": false,
+      "html_size_kb": 176.2
+    },
+    {
+      "url": "https://akvarium-akvas.ru/tumby",
+      "page_type": "Категория",
+      "status_code": 200,
+      "response_time_ms": 785,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Тумбы под аквариумы и террариумы купить с доставкой | Аквас",
+      "description": "Купить тумбы под аквариумы и террариумы с доставкой по всей России. Прямоугольные и панорамные тумбы под аквариумы и террариумы от производителя Аквас.",
+      "canonical": "https://akvarium-akvas.ru/tumby",
+      "h1s": [
+        "Тумбы"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 58,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 15,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList"
+      ],
+      "internal_links": 357,
+      "word_count": 1596,
+      "has_meta_keywords": true,
+      "has_forms": false,
+      "html_size_kb": 331.2
+    },
+    {
+      "url": "https://akvarium-akvas.ru/gallery",
+      "page_type": "Категория",
+      "status_code": 200,
+      "response_time_ms": 415,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Наши аквариумы",
+      "description": "",
+      "canonical": "",
+      "h1s": [
+        "Наши аквариумы"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 31,
+      "missing_alt_count": 30,
+      "lazy_missing_count": 31,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList"
+      ],
+      "internal_links": 173,
+      "word_count": 538,
+      "has_meta_keywords": false,
+      "has_forms": false,
+      "html_size_kb": 90.3
+    },
+    {
+      "url": "https://akvarium-akvas.ru/privacy",
+      "page_type": "Категория",
+      "status_code": 200,
+      "response_time_ms": 413,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Privacy Policy",
+      "description": "",
+      "canonical": "",
+      "h1s": [
+        "Политика безопасности"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 2,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 2,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Article"
+      ],
+      "internal_links": 143,
+      "word_count": 1438,
+      "has_meta_keywords": false,
+      "has_forms": false,
+      "html_size_kb": 99.9
+    },
+    {
+      "url": "https://akvarium-akvas.ru/about_us",
+      "page_type": "Категория",
+      "status_code": 200,
+      "response_time_ms": 413,
+      "content_type": "text/html; charset=utf-8",
+      "title": "О нашей компании, магазине",
+      "description": "Добро пожаловать в компанию АКВАС- с 2004 года является лидером производства аквариумов и террариумов в России. Мы используем только качественные материалы при изготовлении нашей продукции",
+      "canonical": "",
+      "h1s": [
+        "О компании"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 18,
+      "missing_alt_count": 13,
+      "lazy_missing_count": 14,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Article"
+      ],
+      "internal_links": 154,
+      "word_count": 911,
+      "has_meta_keywords": true,
+      "has_forms": false,
+      "html_size_kb": 90.0
+    },
+    {
+      "url": "https://akvarium-akvas.ru/delivery",
+      "page_type": "Категория",
+      "status_code": 200,
+      "response_time_ms": 436,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Оплата и доставка",
+      "description": "Доставка и самовывоз в Москве и Московской области. Курьерская доставка крупногабаритного и хрупкого товара, аквариумы, террариумы и тумбы.",
+      "canonical": "",
+      "h1s": [
+        "Оплата и доставка"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 2,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 2,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Invalid JSON-LD"
+      ],
+      "internal_links": 143,
+      "word_count": 1224,
+      "has_meta_keywords": true,
+      "has_forms": false,
+      "html_size_kb": 86.1
+    },
+    {
+      "url": "https://akvarium-akvas.ru/specials",
+      "page_type": "Категория",
+      "status_code": 200,
+      "response_time_ms": 698,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Акции",
+      "description": "",
+      "canonical": "https://akvarium-akvas.ru/specials",
+      "h1s": [
+        "Акции"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 55,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 50,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList"
+      ],
+      "internal_links": 294,
+      "word_count": 1703,
+      "has_meta_keywords": false,
+      "has_forms": false,
+      "html_size_kb": 277.2
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvariumy",
+      "page_type": "Категория",
+      "status_code": 200,
+      "response_time_ms": 1008,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Купить аквариум от производителя по выгодной цене в Москве | Интернет-магазин Аквас",
+      "description": "Купить аквариумы по доступной цене и доставкой из Москвы по всей России. Широкий ассортимент аквариумов в комплекте с тумбами от производителя в интернет-магазине Аквас.",
+      "canonical": "https://akvarium-akvas.ru/akvariumy",
+      "h1s": [
+        "Аквариумы"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 58,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 15,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList"
+      ],
+      "internal_links": 389,
+      "word_count": 1976,
+      "has_meta_keywords": true,
+      "has_forms": false,
+      "html_size_kb": 360.8
+    },
+    {
+      "url": "https://akvarium-akvas.ru/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 559,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Aquanic AQ-500 Внешний канистровый фильтр,500л/ч , для пресных и морских аквариумов | Аквас",
+      "description": "Внешний канистровый фильтр Aquanic AQ-500,500л/ч, для пресных и морских аквариумов в интернет магазине Аквас по доступной цене. Гарантия и качество от производителя. Оперативная доставка по всей территории РФ. Широкий выбор различных товаров по аквариумис",
+      "canonical": "https://akvarium-akvas.ru/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov",
+      "h1s": [
+        "Aquanic AQ-500 Внешний канистровый фильтр,500л/ч"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 25,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 10,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 189,
+      "word_count": 1072,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 176.5
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 527,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Аквариум панорамный 100 литров с тумбой и оборудованием, в стиле псевдоморе (810х360х460 мм)",
+      "description": "Аквариум, выполненный в морском стиле, и вправду привлекает внимание своим прекрасным дизайном. Одним из его основных плюсов является доступная цена. Украшение аквариума в таком декоре обходится намного дешевле, чем создание настоящего морского аквариума.",
+      "canonical": "https://akvarium-akvas.ru/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm",
+      "h1s": [
+        "Аквариум панорамный 100 литров с тумбой и оборудованием, в стиле псевдоморе (810х360х460 мм)"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 30,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 11,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 191,
+      "word_count": 1165,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 189.1
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-220-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-920x470x640-mm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 517,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Аквариум панорамный 220 литров с тумбой и оборудованием, в стиле псевдоморе (920х470х640 мм)",
+      "description": "Аквариум, выполненный в морском стиле, действительно впечатляет своей красотой. Одним из его основных преимуществ является доступная цена. Обустройство такого аквариума обходится значительно дешевле, чем создание полноценного морского биотопа.",
+      "canonical": "https://akvarium-akvas.ru/akvarium-panoramnyj-220-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-920x470x640-mm",
+      "h1s": [
+        "Аквариум панорамный 220 литров с тумбой и оборудованием, в стиле псевдоморе (920х470х640 мм)"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 30,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 11,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 191,
+      "word_count": 1165,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 189.0
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-300-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1210x510x640-mm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 497,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Аквариум панорамный 300 литров с тумбой и оборудованием, в стиле псевдоморе (1210х510х640 мм)",
+      "description": "Морской дизайн аквариума поражает своим великолепием и является одним из его главных достоинств благодаря экономичности. Стоимость такого оформления намного ниже, чем установка полноценного морского аквариума.",
+      "canonical": "https://akvarium-akvas.ru/akvarium-panoramnyj-300-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1210x510x640-mm",
+      "h1s": [
+        "Аквариум панорамный 300 литров с тумбой и оборудованием, в стиле псевдоморе (1210х510х640 мм)"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 32,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 11,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 191,
+      "word_count": 1165,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 193.0
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1400%D1%85560%D1%85460-mm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 493,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Аквариум панорамный 400 литров с тумбой и оборудованием, в стиле псевдоморе (1400х560х640 мм)",
+      "description": "Аквариум с морским оформлением поражает своей красотой. Одно из его главных преимуществ — низкая стоимость. Создание аквариума в таком стиле гораздо экономичнее, чем установка настоящего морского аквариума.",
+      "canonical": "https://akvarium-akvas.ru/akvarium-panoramnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1400%D1%85560%D1%85460-mm",
+      "h1s": [
+        "Аквариум панорамный 400 литров с тумбой и оборудованием, в стиле псевдоморе (1400х560х640 мм)"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 25,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 10,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 191,
+      "word_count": 1165,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 182.5
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85560%D1%85730-mm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 569,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Аквариум панорамный 500 литров с тумбой и оборудованием, в стиле псевдоморе (1510х560х730 мм)",
+      "description": "Аквариум, оформленный под морскую тематику, действительно восхищает своей красотой. Одно из его ключевых преимуществ - доступная цена. Обустройство аквариума в таком стиле обходится значительно дешевле, чем создание настоящего морского аквариума.",
+      "canonical": "https://akvarium-akvas.ru/akvarium-panoramnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85560%D1%85730-mm",
+      "h1s": [
+        "Аквариум панорамный 500 литров с тумбой и оборудованием, в стиле псевдоморе (1510х560х730 мм)"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 28,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 11,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 191,
+      "word_count": 1165,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 186.3
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-600-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85660%D1%85730-mm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 566,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Аквариум панорамный 600 литров с тумбой и оборудованием, в стиле псевдоморе (1510х660х730 мм)",
+      "description": "Аквариум, выполненный в морском стиле, поражает своей красотой. Одно из его главных достоинств — низкая стоимость. Оформление аквариума в таком дизайне требует меньших затрат по сравнению с обустройством настоящего морского аквариума.",
+      "canonical": "https://akvarium-akvas.ru/akvarium-panoramnyj-600-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85660%D1%85730-mm",
+      "h1s": [
+        "Аквариум панорамный 600 литров с тумбой и оборудованием, в стиле псевдоморе (1510х660х730 мм)"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 28,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 11,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 191,
+      "word_count": 1165,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 186.5
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-200-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1010x410x570-mm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 516,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Аквариум прямоугольный 200 литров с тумбой и оборудованием, в стиле псевдоморе (1010х410х570 мм)",
+      "description": "Купить аквариум под ключ в интернет-магазине.",
+      "canonical": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-200-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1010x410x570-mm",
+      "h1s": [
+        "Аквариум прямоугольный 200 литров с тумбой и оборудованием, в стиле псевдоморе (1010х410х570 мм)"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 30,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 11,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 191,
+      "word_count": 1158,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 188.8
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-300-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1210x410x670-mm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 452,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Аквариум прямоугольный 300 литров с тумбой и оборудованием, в стиле псевдоморе (1210х410х670 мм)",
+      "description": "Аквариум, выполненный в морском стиле, действительно поражает своим великолепием. Одним из главных достоинств является доступность цены. Обустройство подобного аквариума обходится значительно дешевле, чем создание настоящего морского аквариума.",
+      "canonical": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-300-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1210x410x670-mm",
+      "h1s": [
+        "Аквариум прямоугольный 300 литров с тумбой и оборудованием, в стиле псевдоморе (1210х410х670 мм)"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 30,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 11,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 191,
+      "word_count": 1139,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 188.1
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1410x510x650-mm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 455,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Аквариум прямоугольный 400 литров с тумбой и оборудованием, в стиле псевдоморе (1410х510х650 мм)",
+      "description": "Купить аквариум под ключ в интернет-магазине.",
+      "canonical": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1410x510x650-mm",
+      "h1s": [
+        "Аквариум прямоугольный 400 литров с тумбой и оборудованием, в стиле псевдоморе (1410х510х650 мм)"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 25,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 10,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 191,
+      "word_count": 1165,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 182.1
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510x510x720-mm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 455,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Аквариум прямоугольный 500 литров с тумбой и оборудованием, в стиле псевдоморе (1510х510х720 мм)",
+      "description": "Аквариум, выполненный в морском стиле, является поистине прекрасным. Одним из его главных плюсов является доступная цена. Обустройство аквариума в таком дизайне обходится гораздо дешевле, чем создание подлинного морского аквариума.",
+      "canonical": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510x510x720-mm",
+      "h1s": [
+        "Аквариум прямоугольный 500 литров с тумбой и оборудованием, в стиле псевдоморе (1510х510х720 мм)"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 30,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 11,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 191,
+      "word_count": 1165,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 189.7
+    },
+    {
+      "url": "https://akvarium-akvas.ru/hagen-lampa-exo-terra-reptile-natural-light-t8-15vt-60sm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 476,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Лампа EXO TERRA REPTILE NATURAL LIGHT Т8 15Вт, 45см | Akvas",
+      "description": "Лампа с UVA излучением подходит для животных с низкой потребностью в ультрафиолете (амфибии, рептилии и беспозвоночные). К таким обитателям относятся лягушки, жабы, саламандры, змеи и другие.",
+      "canonical": "https://akvarium-akvas.ru/hagen-lampa-exo-terra-reptile-natural-light-t8-15vt-60sm",
+      "h1s": [
+        "Лампа EXO TERRA REPTILE NATURAL LIGHT Т8 15Вт, 45см"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 25,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 10,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 188,
+      "word_count": 1080,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 171.8
+    },
+    {
+      "url": "https://akvarium-akvas.ru/lampa-exo-terra-reptile-natural-light-t8-18vt-60sm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 463,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Лампа EXO TERRA REPTILE NATURAL LIGHT Т8 18Вт, 60см | Akvas",
+      "description": "Лампа с UVA излучением подходит для животных с низкой потребностью в ультрафиолете (амфибии, рептилии и беспозвоночные). К таким обитателям относятся лягушки, жабы, саламандры, змеи и другие.",
+      "canonical": "https://akvarium-akvas.ru/lampa-exo-terra-reptile-natural-light-t8-18vt-60sm",
+      "h1s": [
+        "Лампа EXO TERRA REPTILE NATURAL LIGHT Т8 18Вт, 60см"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 25,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 10,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 188,
+      "word_count": 1080,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 171.7
+    },
+    {
+      "url": "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-25vt-75sm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 446,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Лампа Hagen Exo-Terra Reptile UVB100 Т8 15Вт, 45см | Akvas",
+      "description": "Купить Лампу Hagen Exo-Terra Reptile UVB100 Т8 15Вт, 45см в интернет-магазине. Описание, характеристики и цена Лампы Hagen Exo-Terra Reptile, а также огромный выбор товаров для аквариумистики. Материалы только высокого качества. Заказ и доставка по Москве",
+      "canonical": "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-25vt-75sm",
+      "h1s": [
+        "Лампа Hagen Exo-Terra Reptile UVB100 Т8 15Вт, 45см"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 25,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 10,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 188,
+      "word_count": 1099,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 172.5
+    },
+    {
+      "url": "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-18vt-60sm",
+      "page_type": "Товар",
+      "status_code": 200,
+      "response_time_ms": 460,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Лампа Hagen Exo-Terra Reptile UVB100 Т8 18Вт, 60 см | Akvas",
+      "description": "Купить Лампу Hagen Exo-Terra Reptile UVB100 в интернет-магазине. Описание, характеристики и цена люминесцентной лампы Hagen Exo-Terra Reptile UVB100, а также огромный выбор товаров для аквариумистики. Материалы только высокого качества. Заказ и доставка п",
+      "canonical": "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-18vt-60sm",
+      "h1s": [
+        "Лампа Hagen Exo-Terra Reptile UVB100 Т8 18Вт, 60см"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 25,
+      "missing_alt_count": 3,
+      "lazy_missing_count": 10,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList",
+        "Product"
+      ],
+      "internal_links": 188,
+      "word_count": 1097,
+      "has_meta_keywords": true,
+      "has_forms": true,
+      "html_size_kb": 172.5
+    }
+  ],
+  "raw_sampled_urls": [
+    "https://akvarium-akvas.ru",
+    "https://akvarium-akvas.ru/contacts",
+    "https://akvarium-akvas.ru/index.php?route=information/contactform",
+    "https://akvarium-akvas.ru/news",
+    "https://akvarium-akvas.ru/tumby",
+    "https://akvarium-akvas.ru/gallery",
+    "https://akvarium-akvas.ru/privacy",
+    "https://akvarium-akvas.ru/about_us",
+    "https://akvarium-akvas.ru/delivery",
+    "https://akvarium-akvas.ru/specials",
+    "https://akvarium-akvas.ru/akvariumy",
+    "https://akvarium-akvas.ru/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov",
+    "https://akvarium-akvas.ru/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm",
+    "https://akvarium-akvas.ru/akvarium-panoramnyj-220-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-920x470x640-mm",
+    "https://akvarium-akvas.ru/akvarium-panoramnyj-300-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1210x510x640-mm",
+    "https://akvarium-akvas.ru/akvarium-panoramnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1400%D1%85560%D1%85460-mm",
+    "https://akvarium-akvas.ru/akvarium-panoramnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85560%D1%85730-mm",
+    "https://akvarium-akvas.ru/akvarium-panoramnyj-600-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85660%D1%85730-mm",
+    "https://akvarium-akvas.ru/akvarium-pryamougolnyj-200-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1010x410x570-mm",
+    "https://akvarium-akvas.ru/akvarium-pryamougolnyj-300-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1210x410x670-mm",
+    "https://akvarium-akvas.ru/akvarium-pryamougolnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1410x510x650-mm",
+    "https://akvarium-akvas.ru/akvarium-pryamougolnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510x510x720-mm",
+    "https://akvarium-akvas.ru/hagen-lampa-exo-terra-reptile-natural-light-t8-15vt-60sm",
+    "https://akvarium-akvas.ru/lampa-exo-terra-reptile-natural-light-t8-18vt-60sm",
+    "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-25vt-75sm",
+    "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-18vt-60sm"
+  ],
+  "title_long_ratio": 0.46153846153846156,
+  "description_problem_ratio": 0.6538461538461539,
+  "schema_coverage_ratio": 0.9615384615384616,
+  "h1_coverage_ratio": 0.9230769230769231,
+  "total_missing_alt": 104,
+  "average_response_ms": 512.3,
+  "average_html_kb": 175.0,
+  "average_words": 1210.9,
+  "redirect_checks": [
+    {
+      "url": "http://akvarium-akvas.ru/",
+      "error": "",
+      "chain": [
+        {
+          "status": 301,
+          "location": "https://akvarium-akvas.ru/"
+        }
+      ],
+      "final_url": "https://akvarium-akvas.ru/"
+    },
+    {
+      "url": "https://www.akvarium-akvas.ru/",
+      "error": "",
+      "chain": [
+        {
+          "status": 301,
+          "location": "https://akvarium-akvas.ru/"
+        }
+      ],
+      "final_url": "https://akvarium-akvas.ru/"
+    },
+    {
+      "url": "http://www.akvarium-akvas.ru/",
+      "error": "",
+      "chain": [
+        {
+          "status": 301,
+          "location": "https://www.akvarium-akvas.ru/"
+        },
+        {
+          "status": 301,
+          "location": "https://akvarium-akvas.ru/"
+        }
+      ],
+      "final_url": "https://akvarium-akvas.ru/"
+    }
+  ],
+  "issues": [
+    {
+      "severity": "Critical",
+      "title": "robots.txt конфликтует с собственной картой сайта",
+      "why_it_matters": "Сейчас в robots.txt одновременно указан Sitemap и стоит Disallow на sitemap.xml. Для Яндекса и части сервисов это выглядит как конфликт сигналов и мешает чистой индексации.",
+      "evidence": [
+        "В robots.txt найдено правило `Disallow: *sitemap.xml`.",
+        "Одновременно файл содержит `Sitemap: https://akvarium-akvas.ru/sitemap.xml`."
+      ],
+      "recommendation": "Удалить запрет на sitemap.xml, оставить только директиву Sitemap и привести Host к чистому домену без протокола."
+    },
+    {
+      "severity": "High",
+      "title": "Контактные и lead-страницы недооптимизированы",
+      "why_it_matters": "Контактные страницы участвуют в доверии, конверсии и брендовой выдаче. Когда у них нет базовой SEO-разметки, сайт теряет и кликабельность, и качество индекса.",
+      "evidence": [
+        "Страница /contacts открывается без H1.",
+        "На /contacts отсутствует meta description.",
+        "На /contacts отсутствует canonical."
+      ],
+      "recommendation": "Сделать полноценную контактную страницу: H1, title до 70 символов, description 140-160 символов, canonical, контент про производство, доставку, гарантию, адрес, телефоны и CTA."
+    },
+    {
+      "severity": "High",
+      "title": "Внутренний служебный URL с формой обратного звонка доступен без SEO-контроля",
+      "why_it_matters": "Indexable-страницы без title, description и H1 создают шум в индексе, размывают релевантность и тянут crawl budget.",
+      "evidence": [
+        "URL `/index.php?route=information/contactform` доступен по 200.",
+        "На странице нет title, description и H1.",
+        "Ссылка на этот URL есть в шапке как `Обратный звонок`."
+      ],
+      "recommendation": "Либо закрыть route-страницу от индексации и убрать прямые ссылки, либо перевести ее на нормальный SEO-friendly URL с оформлением."
+    },
+    {
+      "severity": "High",
+      "title": "Шаблоны title на товарах и категориях слишком длинные",
+      "why_it_matters": "Длинные title режутся в выдаче, ухудшают CTR и снижают контроль над тем, какой оффер поисковик покажет пользователю.",
+      "evidence": [
+        "В выборке 12 из 26 страниц имеют title длиннее 70 символов.",
+        "/akvariumy — 83 симв.",
+        "/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov — 91 симв.",
+        "/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm — 92 симв.",
+        "/akvarium-panoramnyj-220-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-920x470x640-mm — 92 симв."
+      ],
+      "recommendation": "Пересобрать шаблоны title: сначала ключ + модель/категория, затем оффер и бренд. Для каталога держать диапазон 55-70 символов."
+    },
+    {
+      "severity": "Medium",
+      "title": "Meta description на части страниц обрезается или не дотягивает до нормального сниппета",
+      "why_it_matters": "Сниппет — это коммерческий оффер в выдаче. Когда description слишком короткий или перегруженный, поисковик чаще берет случайный кусок текста со страницы.",
+      "evidence": [
+        "В выборке 17 из 26 страниц имеют description вне комфортного диапазона.",
+        "/about_us — 188 симв.",
+        "/akvariumy — 169 симв.",
+        "/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov — 255 симв.",
+        "/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm — 255 симв."
+      ],
+      "recommendation": "Собрать шаблоны description под типы страниц: ключ, ценность, доставка/гарантия, регион, призыв. Ориентир — 140-160 символов."
+    },
+    {
+      "severity": "Medium",
+      "title": "Изображения теряют поисковый трафик и контекст карточек",
+      "why_it_matters": "Для товарного проекта alt влияет и на картинки, и на понимание ассортимента, и на доступность.",
+      "evidence": [
+        "На 25 из 26 проверенных страниц есть изображения без alt.",
+        "На главной найдено 7 изображений без alt."
+      ],
+      "recommendation": "Ввести шаблонную генерацию alt по типу карточки: товар + объем/размер + бренд/серия, а для категорий — общий интент страницы."
+    },
+    {
+      "severity": "Medium",
+      "title": "Есть лишняя redirect-цепочка у части доменных вариантов",
+      "why_it_matters": "Дополнительный редирект добавляет задержку на входе и создает ненужную техническую сложность для ботов и пользователей.",
+      "evidence": [
+        "Путь `http://www.akvarium-akvas.ru/` отдает две последовательные 301-переадресации.",
+        "Финальный канонический домен — `https://akvarium-akvas.ru/`."
+      ],
+      "recommendation": "Свести все варианты домена к одному 301-редиректу напрямую на канонический HTTPS без промежуточного `https://www`."
+    },
+    {
+      "severity": "Medium",
+      "title": "Карта сайта раздута повторяющимися URL",
+      "why_it_matters": "Когда один и тот же URL повторяется в sitemap много раз, поисковики получают лишний шум вместо чистого сигнала, а анализ индексации становится менее управляемым.",
+      "evidence": [
+        "В sitemap найдено 6971 записей, но только 1370 уникальных URL.",
+        "Повторов: 5601."
+      ],
+      "recommendation": "Пересобрать генерацию sitemap так, чтобы каждый индексируемый URL попадал туда один раз, а карта сайта отражала реальную структуру проекта без дублей."
+    },
+    {
+      "severity": "Low",
+      "title": "На главной остался meta keywords, который уже не дает SEO-ценности",
+      "why_it_matters": "Сам по себе тег не вредит, но это сигнал, что шаблон меты стоит почистить и поддерживать в актуальном виде.",
+      "evidence": [
+        "На главной найден тег meta keywords."
+      ],
+      "recommendation": "Убрать meta keywords из шаблона и сосредоточиться на title, description, H1, schema и коммерческих блоках."
+    }
+  ],
+  "strengths": [
+    "Сайт стабильно отвечает по HTTPS и главная страница отдает 200 код без JS-заглушки.",
+    "Сайт уже имеет индексируемую карту сайта с 1370 URL и image-тегами для карточек.",
+    "На ключевых коммерческих страницах проставлены canonical, что помогает удерживать основной URL.",
+    "На товарах и категориях уже используется schema-разметка (Product / BreadcrumbList / LocalBusiness).",
+    "У большинства проверенных коммерческих страниц есть H1, что хорошо для масштабного каталога.",
+    "URL-структура в каталоге понятная и хорошо дробит спрос по литражу, форме, назначению и комплектации.",
+    "У проекта уже есть llms.txt, а значит можно дополнительно усиливать AI-видимость и branded-ответы."
+  ],
+  "growth_points": [
+    "Усилить страницы категорий уникальными интро-блоками, FAQ, доставкой, гарантией, сроками производства и объяснением, как выбрать модель.",
+    "Сделать отдельные посадочные под высокий спрос: по литражу, форме, назначению, типу комплектации и готовым решениям под ключ.",
+    "Добавить в категории и карточки блоки доверия: производство в России, гарантия, доставка по РФ, кастомизация размеров, комплектация.",
+    "Развернуть image SEO: alt-шаблоны, подписи, structured data и подбор визуалов под поисковый спрос по аквариумам и террариумам.",
+    "Собрать шаблонный слой сниппетов: короткие title, коммерческие description, аккуратный canonical и понятные H1 на всех типах страниц.",
+    "Сегментировать sitemap и параллельно настроить контроль индексации категорий, товаров, фильтров и служебных route-страниц."
+  ],
+  "roadmap": [
+    [
+      "0-14 дней",
+      [
+        "Исправить robots.txt: убрать конфликт с sitemap.xml и нормализовать Host.",
+        "Закрыть или переработать `/index.php?route=information/contactform`.",
+        "Доделать SEO-шаблон страницы контактов: H1, title, description, canonical, коммерческий контент.",
+        "Подготовить новое правило генерации title и description для товаров и категорий."
+      ]
+    ],
+    [
+      "15-30 дней",
+      [
+        "Внедрить alt-шаблоны для карточек и категорий.",
+        "Свести доменные редиректы к одному шагу на канонический HTTPS.",
+        "Разделить sitemap по типам страниц и подать их отдельно в Яндекс Вебмастер и GSC.",
+        "Обновить сниппеты и протестировать рост CTR по категориям и товарным кластерам."
+      ]
+    ],
+    [
+      "31-60 дней",
+      [
+        "Усилить спросовые категории контентом, FAQ, коммерческими блоками и перелинковкой.",
+        "Собрать посадочные под ключевые кластеры спроса: литраж, форма, сценарий использования, комплектация.",
+        "Добавить контент-слой под AI-ответы: краткие определения, таблицы сравнения, ответы на частые вопросы."
+      ]
+    ]
+  ],
+  "score": 45
+}
