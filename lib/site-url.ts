@@ -3,7 +3,20 @@
  * Works in both development and production
  */
 function normalizeSiteUrl(value: string) {
-  return value.replace(/\/$/, '').replace(/^https:\/\/www\./i, 'https://')
+  const trimmed = value.replace(/\/$/, '')
+
+  try {
+    const url = new URL(trimmed)
+
+    // Keep the canonical base on www until the apex domain is moved to Railway.
+    if (process.env.NODE_ENV !== 'development' && url.hostname === 'shelpakov.online') {
+      url.hostname = 'www.shelpakov.online'
+    }
+
+    return url.toString().replace(/\/$/, '')
+  } catch {
+    return trimmed
+  }
 }
 
 export function getSiteUrl(): string {
@@ -15,7 +28,7 @@ export function getSiteUrl(): string {
     return 'http://localhost:3000'
   }
 
-  return 'https://shelpakov.online'
+  return 'https://www.shelpakov.online'
 }
 
 /**
@@ -26,4 +39,3 @@ export function getFullUrl(path: string): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`
   return `${baseUrl}${cleanPath}`
 }
-

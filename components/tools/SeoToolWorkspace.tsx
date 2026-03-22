@@ -376,7 +376,7 @@ function SlugGeneratorTool({ tool }: { tool: SeoToolDefinition }) {
 }
 
 function UtmBuilderTool({ tool }: { tool: SeoToolDefinition }) {
-  const [baseUrl, setBaseUrl] = useState('https://shelpakov.online/services/seo')
+  const [baseUrl, setBaseUrl] = useState('https://www.shelpakov.online/services/seo')
   const [source, setSource] = useState('telegram')
   const [medium, setMedium] = useState('post')
   const [campaign, setCampaign] = useState('spring_launch')
@@ -461,7 +461,7 @@ function MetaCounterTool({ tool }: { tool: SeoToolDefinition }) {
   const [description, setDescription] = useState(
     'SEO-продвижение, аудит и доработка структуры сайта под заявки, доверие и рост органического трафика для услуг, B2B-проектов и локального бизнеса.'
   )
-  const [url, setUrl] = useState('https://shelpakov.online/services/seo')
+  const [url, setUrl] = useState('https://www.shelpakov.online/services/seo')
 
   const titleLength = title.length
   const descriptionLength = description.length
@@ -550,12 +550,12 @@ function MetaCounterTool({ tool }: { tool: SeoToolDefinition }) {
 }
 
 function RobotsGeneratorTool({ tool }: { tool: SeoToolDefinition }) {
-  const [domain, setDomain] = useState('shelpakov.online')
+  const [domain, setDomain] = useState('www.shelpakov.online')
   const [agents, setAgents] = useState('*\nGooglebot')
   const [allowLines, setAllowLines] = useState('/\n/wp-content/uploads/')
   const [disallowLines, setDisallowLines] = useState('/admin/\n/api/\n/tmp/')
   const [extraSitemaps, setExtraSitemaps] = useState('')
-  const [host, setHost] = useState('shelpakov.online')
+  const [host, setHost] = useState('www.shelpakov.online')
 
   const normalizedDomain = normalizeUrl(domain)
   const sitemapLines = [
@@ -649,8 +649,8 @@ function OpenGraphGeneratorTool({ tool }: { tool: SeoToolDefinition }) {
   const [description, setDescription] = useState(
     'SEO-продвижение, аудит и доработка структуры сайта под заявки, доверие и рост органического трафика.'
   )
-  const [url, setUrl] = useState('https://shelpakov.online/services/seo')
-  const [image, setImage] = useState('https://shelpakov.online/og-default.jpg')
+  const [url, setUrl] = useState('https://www.shelpakov.online/services/seo')
+  const [image, setImage] = useState('https://www.shelpakov.online/og-default.jpg')
   const [siteName, setSiteName] = useState('Shelpakov Digital')
   const [type, setType] = useState('website')
 
