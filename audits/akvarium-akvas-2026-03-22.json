@@ -1,13 +1,14 @@
 {
+  "generator_version": 2,
   "base_url": "https://akvarium-akvas.ru",
   "domain": "akvarium-akvas.ru",
-  "company_name": "Аквас",
-  "generated_at": "22.03.2026 14:58",
+  "company_name": "Аквариум Аквас",
+  "generated_at": "22.03.2026 20:40",
   "home_page": {
     "url": "https://akvarium-akvas.ru",
     "page_type": "Главная",
     "status_code": 200,
-    "response_time_ms": 12074,
+    "response_time_ms": 1034,
     "content_type": "text/html; charset=utf-8",
     "title": "Аквас - официальный сайт производства аквариумов и террариумов",
     "description": "Компания Аквас уже более 15 лет производит аквариумы и террариумы стандартных размеров от 10 до 600 литров, с гарантией 5 лет!",
@@ -20,6 +21,7 @@
     "image_count": 62,
     "missing_alt_count": 7,
     "lazy_missing_count": 13,
+    "missing_dimensions_count": 1,
     "schema_types": [
       "LocalBusiness"
     ],
@@ -97,12 +99,13 @@
   "processed_sitemaps": [
     "https://akvarium-akvas.ru/sitemap.xml"
   ],
+  "home_links_count": 12,
   "sample_pages": [
     {
       "url": "https://akvarium-akvas.ru",
       "page_type": "Главная",
       "status_code": 200,
-      "response_time_ms": 544,
+      "response_time_ms": 557,
       "content_type": "text/html; charset=utf-8",
       "title": "Аквас - официальный сайт производства аквариумов и террариумов",
       "description": "Компания Аквас уже более 15 лет производит аквариумы и террариумы стандартных размеров от 10 до 600 литров, с гарантией 5 лет!",
@@ -115,6 +118,7 @@
       "image_count": 62,
       "missing_alt_count": 7,
       "lazy_missing_count": 13,
+      "missing_dimensions_count": 1,
       "schema_types": [
         "LocalBusiness"
       ],
@@ -128,7 +132,7 @@
       "url": "https://akvarium-akvas.ru/contacts",
       "page_type": "Категория",
       "status_code": 200,
-      "response_time_ms": 432,
+      "response_time_ms": 458,
       "content_type": "text/html; charset=utf-8",
       "title": "Связаться с нами",
       "description": "",
@@ -139,6 +143,7 @@
       "image_count": 2,
       "missing_alt_count": 1,
       "lazy_missing_count": 2,
+      "missing_dimensions_count": 1,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList",
@@ -154,7 +159,7 @@
       "url": "https://akvarium-akvas.ru/index.php?route=information/contactform",
       "page_type": "Служебная",
       "status_code": 200,
-      "response_time_ms": 223,
+      "response_time_ms": 226,
       "content_type": "text/html; charset=utf-8",
       "title": "",
       "description": "",
@@ -165,6 +170,7 @@
       "image_count": 0,
       "missing_alt_count": 0,
       "lazy_missing_count": 0,
+      "missing_dimensions_count": 0,
       "schema_types": [],
       "internal_links": 1,
       "word_count": 16,
@@ -176,7 +182,7 @@
       "url": "https://akvarium-akvas.ru/news",
       "page_type": "Категория",
       "status_code": 200,
-      "response_time_ms": 504,
+      "response_time_ms": 512,
       "content_type": "text/html; charset=utf-8",
       "title": "Новости",
       "description": "",
@@ -189,6 +195,7 @@
       "image_count": 57,
       "missing_alt_count": 3,
       "lazy_missing_count": 9,
+      "missing_dimensions_count": 8,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList"
@@ -203,7 +210,7 @@
       "url": "https://akvarium-akvas.ru/tumby",
       "page_type": "Категория",
       "status_code": 200,
-      "response_time_ms": 835,
+      "response_time_ms": 816,
       "content_type": "text/html; charset=utf-8",
       "title": "Тумбы под аквариумы и террариумы купить с доставкой | Аквас",
       "description": "Купить тумбы под аквариумы и террариумы с доставкой по всей России. Прямоугольные и панорамные тумбы под аквариумы и террариумы от производителя Аквас.",
@@ -216,6 +223,7 @@
       "image_count": 58,
       "missing_alt_count": 1,
       "lazy_missing_count": 15,
+      "missing_dimensions_count": 9,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList"
@@ -230,7 +238,7 @@
       "url": "https://akvarium-akvas.ru/gallery",
       "page_type": "Категория",
       "status_code": 200,
-      "response_time_ms": 413,
+      "response_time_ms": 769,
       "content_type": "text/html; charset=utf-8",
       "title": "Наши аквариумы",
       "description": "",
@@ -243,6 +251,7 @@
       "image_count": 31,
       "missing_alt_count": 30,
       "lazy_missing_count": 31,
+      "missing_dimensions_count": 30,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList"
@@ -257,7 +266,7 @@
       "url": "https://akvarium-akvas.ru/privacy",
       "page_type": "Категория",
       "status_code": 200,
-      "response_time_ms": 401,
+      "response_time_ms": 406,
       "content_type": "text/html; charset=utf-8",
       "title": "Privacy Policy",
       "description": "",
@@ -270,6 +279,7 @@
       "image_count": 2,
       "missing_alt_count": 1,
       "lazy_missing_count": 2,
+      "missing_dimensions_count": 1,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList",
@@ -285,7 +295,7 @@
       "url": "https://akvarium-akvas.ru/about_us",
       "page_type": "Категория",
       "status_code": 200,
-      "response_time_ms": 403,
+      "response_time_ms": 552,
       "content_type": "text/html; charset=utf-8",
       "title": "О нашей компании, магазине",
       "description": "Добро пожаловать в компанию АКВАС- с 2004 года является лидером производства аквариумов и террариумов в России. Мы используем только качественные материалы при изготовлении нашей продукции",
@@ -298,6 +308,7 @@
       "image_count": 18,
       "missing_alt_count": 13,
       "lazy_missing_count": 14,
+      "missing_dimensions_count": 13,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList",
@@ -313,7 +324,7 @@
       "url": "https://akvarium-akvas.ru/delivery",
       "page_type": "Категория",
       "status_code": 200,
-      "response_time_ms": 413,
+      "response_time_ms": 928,
       "content_type": "text/html; charset=utf-8",
       "title": "Оплата и доставка",
       "description": "Доставка и самовывоз в Москве и Московской области. Курьерская доставка крупногабаритного и хрупкого товара, аквариумы, террариумы и тумбы.",
@@ -326,6 +337,7 @@
       "image_count": 2,
       "missing_alt_count": 1,
       "lazy_missing_count": 2,
+      "missing_dimensions_count": 1,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList",
@@ -341,7 +353,7 @@
       "url": "https://akvarium-akvas.ru/specials",
       "page_type": "Категория",
       "status_code": 200,
-      "response_time_ms": 732,
+      "response_time_ms": 692,
       "content_type": "text/html; charset=utf-8",
       "title": "Акции",
       "description": "",
@@ -354,6 +366,7 @@
       "image_count": 55,
       "missing_alt_count": 1,
       "lazy_missing_count": 50,
+      "missing_dimensions_count": 49,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList"
@@ -368,7 +381,7 @@
       "url": "https://akvarium-akvas.ru/akvariumy",
       "page_type": "Категория",
       "status_code": 200,
-      "response_time_ms": 944,
+      "response_time_ms": 1001,
       "content_type": "text/html; charset=utf-8",
       "title": "Купить аквариум от производителя по выгодной цене в Москве | Интернет-магазин Аквас",
       "description": "Купить аквариумы по доступной цене и доставкой из Москвы по всей России. Широкий ассортимент аквариумов в комплекте с тумбами от производителя в интернет-магазине Аквас.",
@@ -381,6 +394,7 @@
       "image_count": 58,
       "missing_alt_count": 1,
       "lazy_missing_count": 15,
+      "missing_dimensions_count": 9,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList"
@@ -395,7 +409,7 @@
       "url": "https://akvarium-akvas.ru/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov",
       "page_type": "Товар",
       "status_code": 200,
-      "response_time_ms": 552,
+      "response_time_ms": 520,
       "content_type": "text/html; charset=utf-8",
       "title": "Aquanic AQ-500 Внешний канистровый фильтр,500л/ч , для пресных и морских аквариумов | Аквас",
       "description": "Внешний канистровый фильтр Aquanic AQ-500,500л/ч, для пресных и морских аквариумов в интернет магазине Аквас по доступной цене. Гарантия и качество от производителя. Оперативная доставка по всей территории РФ. Широкий выбор различных товаров по аквариумис",
@@ -408,6 +422,7 @@
       "image_count": 25,
       "missing_alt_count": 3,
       "lazy_missing_count": 10,
+      "missing_dimensions_count": 1,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList",
@@ -423,7 +438,7 @@
       "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm",
       "page_type": "Товар",
       "status_code": 200,
-      "response_time_ms": 535,
+      "response_time_ms": 547,
       "content_type": "text/html; charset=utf-8",
       "title": "Аквариум панорамный 100 литров с тумбой и оборудованием, в стиле псевдоморе (810х360х460 мм)",
       "description": "Аквариум, выполненный в морском стиле, и вправду привлекает внимание своим прекрасным дизайном. Одним из его основных плюсов является доступная цена. Украшение аквариума в таком декоре обходится намного дешевле, чем создание настоящего морского аквариума.",
@@ -436,6 +451,7 @@
       "image_count": 30,
       "missing_alt_count": 3,
       "lazy_missing_count": 11,
+      "missing_dimensions_count": 1,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList",
@@ -451,7 +467,7 @@
       "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-220-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-920x470x640-mm",
       "page_type": "Товар",
       "status_code": 200,
-      "response_time_ms": 553,
+      "response_time_ms": 540,
       "content_type": "text/html; charset=utf-8",
       "title": "Аквариум панорамный 220 литров с тумбой и оборудованием, в стиле псевдоморе (920х470х640 мм)",
       "description": "Аквариум, выполненный в морском стиле, действительно впечатляет своей красотой. Одним из его основных преимуществ является доступная цена. Обустройство такого аквариума обходится значительно дешевле, чем создание полноценного морского биотопа.",
@@ -464,6 +480,7 @@
       "image_count": 30,
       "missing_alt_count": 3,
       "lazy_missing_count": 11,
+      "missing_dimensions_count": 1,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList",
@@ -479,7 +496,7 @@
       "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-300-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1210x510x640-mm",
       "page_type": "Товар",
       "status_code": 200,
-      "response_time_ms": 572,
+      "response_time_ms": 561,
       "content_type": "text/html; charset=utf-8",
       "title": "Аквариум панорамный 300 литров с тумбой и оборудованием, в стиле псевдоморе (1210х510х640 мм)",
       "description": "Морской дизайн аквариума поражает своим великолепием и является одним из его главных достоинств благодаря экономичности. Стоимость такого оформления намного ниже, чем установка полноценного морского аквариума.",
@@ -492,6 +509,7 @@
       "image_count": 32,
       "missing_alt_count": 3,
       "lazy_missing_count": 11,
+      "missing_dimensions_count": 1,
       "schema_types": [
         "LocalBusiness",
         "BreadcrumbList",
@@ -504,312 +522,368 @@
       "html_size_kb": 193.0
     },
     {
-      "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1400%D1%85560%D1%85460-mm",
-      "page_type": "Товар",
+      "url": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu",
+      "page_type": "Подкатегория",
       "status_code": 200,
-      "response_time_ms": 511,
+      "response_time_ms": 1009,
       "content_type": "text/html; charset=utf-8",
-      "title": "Аквариум панорамный 400 литров с тумбой и оборудованием, в стиле псевдоморе (1400х560х640 мм)",
-      "description": "Аквариум с морским оформлением поражает своей красотой. Одно из его главных преимуществ — низкая стоимость. Создание аквариума в таком стиле гораздо экономичнее, чем установка настоящего морского аквариума.",
-      "canonical": "https://akvarium-akvas.ru/akvarium-panoramnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1400%D1%85560%D1%85460-mm",
+      "title": "Аквариумы по литражу от 10 до 1000 литров с доставкой | Aквас",
+      "description": "В интернет-магазине аквариумы 100, 150, 200, 250, 300, 350, 500, 1000 литров от небольших размеров до объемных моделей емкостью более 300 литров. Закажите аквариум для вашего дома, квартиры ,офиса, кафе и ресторана в магазине аквариумов.",
+      "canonical": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu",
       "h1s": [
-        "Аквариум панорамный 400 литров с тумбой и оборудованием, в стиле псевдоморе (1400х560х640 мм)"
+        "Аквариумы по литражу"
       ],
       "meta_robots": "",
       "x_robots_tag": "",
-      "image_count": 25,
-      "missing_alt_count": 3,
-      "lazy_missing_count": 10,
+      "image_count": 58,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 15,
+      "missing_dimensions_count": 9,
       "schema_types": [
         "LocalBusiness",
-        "BreadcrumbList",
-        "Product"
+        "BreadcrumbList"
       ],
-      "internal_links": 191,
-      "word_count": 1165,
+      "internal_links": 362,
+      "word_count": 1736,
       "has_meta_keywords": true,
-      "has_forms": true,
-      "html_size_kb": 182.5
+      "has_forms": false,
+      "html_size_kb": 355.3
     },
     {
-      "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85560%D1%85730-mm",
-      "page_type": "Товар",
+      "url": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-forme",
+      "page_type": "Подкатегория",
       "status_code": 200,
-      "response_time_ms": 459,
+      "response_time_ms": 1015,
       "content_type": "text/html; charset=utf-8",
-      "title": "Аквариум панорамный 500 литров с тумбой и оборудованием, в стиле псевдоморе (1510х560х730 мм)",
-      "description": "Аквариум, оформленный под морскую тематику, действительно восхищает своей красотой. Одно из его ключевых преимуществ - доступная цена. Обустройство аквариума в таком стиле обходится значительно дешевле, чем создание настоящего морского аквариума.",
-      "canonical": "https://akvarium-akvas.ru/akvarium-panoramnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85560%D1%85730-mm",
+      "title": "Аквариумы по форме купить по доступным ценам с доставкой из Москвы | Аквас",
+      "description": "Купить аквариумы по форме по доступной цене и доставкой по всей России из Москвы. Широкий ассортимент аквариумов разных форм в комплекте с тумбой от производителя Аквас.",
+      "canonical": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-forme",
       "h1s": [
-        "Аквариум панорамный 500 литров с тумбой и оборудованием, в стиле псевдоморе (1510х560х730 мм)"
+        "Классификация аквариумов по форме"
       ],
       "meta_robots": "",
       "x_robots_tag": "",
-      "image_count": 28,
-      "missing_alt_count": 3,
-      "lazy_missing_count": 11,
+      "image_count": 58,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 15,
+      "missing_dimensions_count": 9,
       "schema_types": [
         "LocalBusiness",
-        "BreadcrumbList",
-        "Product"
+        "BreadcrumbList"
       ],
-      "internal_links": 191,
-      "word_count": 1165,
+      "internal_links": 364,
+      "word_count": 1781,
       "has_meta_keywords": true,
-      "has_forms": true,
-      "html_size_kb": 186.3
+      "has_forms": false,
+      "html_size_kb": 357.7
     },
     {
-      "url": "https://akvarium-akvas.ru/akvarium-panoramnyj-600-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85660%D1%85730-mm",
-      "page_type": "Товар",
+      "url": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-komplektacii",
+      "page_type": "Подкатегория",
       "status_code": 200,
-      "response_time_ms": 510,
+      "response_time_ms": 908,
       "content_type": "text/html; charset=utf-8",
-      "title": "Аквариум панорамный 600 литров с тумбой и оборудованием, в стиле псевдоморе (1510х660х730 мм)",
-      "description": "Аквариум, выполненный в морском стиле, поражает своей красотой. Одно из его главных достоинств — низкая стоимость. Оформление аквариума в таком дизайне требует меньших затрат по сравнению с обустройством настоящего морского аквариума.",
-      "canonical": "https://akvarium-akvas.ru/akvarium-panoramnyj-600-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85660%D1%85730-mm",
+      "title": "Аквариумы с полной комплектацией купить по доступным ценам с доставкой из Москвы | интернет-магазин Аквас",
+      "description": "Купить аквариумы по комплектации по доступной цене и доставкой по всей России из Москвы. Широкий ассортимент аквариумов разных комплектаций от производителя Аквас.",
+      "canonical": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-komplektacii",
       "h1s": [
-        "Аквариум панорамный 600 литров с тумбой и оборудованием, в стиле псевдоморе (1510х660х730 мм)"
+        "Аквариумы по комплектации"
       ],
       "meta_robots": "",
       "x_robots_tag": "",
-      "image_count": 28,
-      "missing_alt_count": 3,
-      "lazy_missing_count": 11,
+      "image_count": 114,
+      "missing_alt_count": 57,
+      "lazy_missing_count": 71,
+      "missing_dimensions_count": 9,
       "schema_types": [
         "LocalBusiness",
-        "BreadcrumbList",
-        "Product"
+        "BreadcrumbList"
       ],
-      "internal_links": 191,
-      "word_count": 1165,
+      "internal_links": 424,
+      "word_count": 1859,
       "has_meta_keywords": true,
-      "has_forms": true,
-      "html_size_kb": 186.5
+      "has_forms": false,
+      "html_size_kb": 398.6
     },
     {
-      "url": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-200-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1010x410x570-mm",
-      "page_type": "Товар",
+      "url": "https://akvarium-akvas.ru/akvariumy/akvarium-po-razmeru",
+      "page_type": "Подкатегория",
       "status_code": 200,
-      "response_time_ms": 496,
+      "response_time_ms": 988,
       "content_type": "text/html; charset=utf-8",
-      "title": "Аквариум прямоугольный 200 литров с тумбой и оборудованием, в стиле псевдоморе (1010х410х570 мм)",
-      "description": "Купить аквариум под ключ в интернет-магазине.",
-      "canonical": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-200-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1010x410x570-mm",
+      "title": "Аквариум по размеру купить по доступным ценам с доставкой из Москвы | Аквас",
+      "description": "Купить аквариумы по размеру по доступной цене и доставкой по всей России из Москвы. Широкий ассортимент аквариумов разных размеров в комплекте с тумбой от производителя Аквас.",
+      "canonical": "https://akvarium-akvas.ru/akvariumy/akvarium-po-razmeru",
       "h1s": [
-        "Аквариум прямоугольный 200 литров с тумбой и оборудованием, в стиле псевдоморе (1010х410х570 мм)"
+        "Аквариум по размеру"
       ],
       "meta_robots": "",
       "x_robots_tag": "",
-      "image_count": 30,
-      "missing_alt_count": 3,
-      "lazy_missing_count": 11,
+      "image_count": 62,
+      "missing_alt_count": 5,
+      "lazy_missing_count": 19,
+      "missing_dimensions_count": 9,
       "schema_types": [
         "LocalBusiness",
-        "BreadcrumbList",
-        "Product"
+        "BreadcrumbList"
       ],
-      "internal_links": 191,
-      "word_count": 1158,
+      "internal_links": 366,
+      "word_count": 1699,
       "has_meta_keywords": true,
-      "has_forms": true,
-      "html_size_kb": 188.8
+      "has_forms": false,
+      "html_size_kb": 359.3
     },
     {
-      "url": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-300-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1210x410x670-mm",
-      "page_type": "Товар",
+      "url": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-naznacheniyu",
+      "page_type": "Подкатегория",
       "status_code": 200,
-      "response_time_ms": 456,
+      "response_time_ms": 816,
       "content_type": "text/html; charset=utf-8",
-      "title": "Аквариум прямоугольный 300 литров с тумбой и оборудованием, в стиле псевдоморе (1210х410х670 мм)",
-      "description": "Аквариум, выполненный в морском стиле, действительно поражает своим великолепием. Одним из главных достоинств является доступность цены. Обустройство подобного аквариума обходится значительно дешевле, чем создание настоящего морского аквариума.",
-      "canonical": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-300-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1210x410x670-mm",
+      "title": "Аквариумы по назначению купить по доступным ценам с доставкой из Москвы | Аквас",
+      "description": "Купить аквариумы по назначению по доступной цене и доставкой по всей России из Москвы. Широкий ассортимент аквариумов для различных назначений от производителя Аквас.",
+      "canonical": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-naznacheniyu",
       "h1s": [
-        "Аквариум прямоугольный 300 литров с тумбой и оборудованием, в стиле псевдоморе (1210х410х670 мм)"
+        "Аквариумы по назначению"
       ],
       "meta_robots": "",
       "x_robots_tag": "",
-      "image_count": 30,
-      "missing_alt_count": 3,
-      "lazy_missing_count": 11,
+      "image_count": 47,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 15,
+      "missing_dimensions_count": 9,
       "schema_types": [
         "LocalBusiness",
-        "BreadcrumbList",
-        "Product"
+        "BreadcrumbList"
       ],
-      "internal_links": 191,
-      "word_count": 1139,
+      "internal_links": 312,
+      "word_count": 1442,
       "has_meta_keywords": true,
-      "has_forms": true,
-      "html_size_kb": 188.1
+      "has_forms": false,
+      "html_size_kb": 291.1
     },
     {
-      "url": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1410x510x650-mm",
-      "page_type": "Товар",
+      "url": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-modelnomu-ryadu",
+      "page_type": "Подкатегория",
       "status_code": 200,
-      "response_time_ms": 491,
+      "response_time_ms": 957,
       "content_type": "text/html; charset=utf-8",
-      "title": "Аквариум прямоугольный 400 литров с тумбой и оборудованием, в стиле псевдоморе (1410х510х650 мм)",
-      "description": "Купить аквариум под ключ в интернет-магазине.",
-      "canonical": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1410x510x650-mm",
+      "title": "Аквариумы по модельному ряду",
+      "description": "",
+      "canonical": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-modelnomu-ryadu",
       "h1s": [
-        "Аквариум прямоугольный 400 литров с тумбой и оборудованием, в стиле псевдоморе (1410х510х650 мм)"
+        "Аквариумы по модельному ряду"
       ],
       "meta_robots": "",
       "x_robots_tag": "",
-      "image_count": 25,
-      "missing_alt_count": 3,
-      "lazy_missing_count": 10,
+      "image_count": 57,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 14,
+      "missing_dimensions_count": 8,
       "schema_types": [
         "LocalBusiness",
-        "BreadcrumbList",
-        "Product"
+        "BreadcrumbList"
       ],
-      "internal_links": 191,
-      "word_count": 1165,
-      "has_meta_keywords": true,
-      "has_forms": true,
-      "html_size_kb": 182.1
+      "internal_links": 362,
+      "word_count": 1679,
+      "has_meta_keywords": false,
+      "has_forms": false,
+      "html_size_kb": 355.2
     },
     {
-      "url": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510x510x720-mm",
-      "page_type": "Товар",
+      "url": "https://akvarium-akvas.ru/terrariumy/terrariumy-po-obyomu-i-razmeru",
+      "page_type": "Подкатегория",
       "status_code": 200,
-      "response_time_ms": 470,
+      "response_time_ms": 603,
       "content_type": "text/html; charset=utf-8",
-      "title": "Аквариум прямоугольный 500 литров с тумбой и оборудованием, в стиле псевдоморе (1510х510х720 мм)",
-      "description": "Аквариум, выполненный в морском стиле, является поистине прекрасным. Одним из его главных плюсов является доступная цена. Обустройство аквариума в таком дизайне обходится гораздо дешевле, чем создание подлинного морского аквариума.",
-      "canonical": "https://akvarium-akvas.ru/akvarium-pryamougolnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510x510x720-mm",
+      "title": "Террариумы для черепахи купить недорого",
+      "description": "Террариумы для черепах изготавливаются различными размерами, комплектацией, формами и материалами. Основным критерием выбора емкости является ее размеры, зависящие от количества обитателей, которых вы хотите разместить и их размеров.",
+      "canonical": "https://akvarium-akvas.ru/terrariumy/terrariumy-po-obyomu-i-razmeru",
       "h1s": [
-        "Аквариум прямоугольный 500 литров с тумбой и оборудованием, в стиле псевдоморе (1510х510х720 мм)"
+        "Террариумы по объёму и размеру"
       ],
       "meta_robots": "",
       "x_robots_tag": "",
-      "image_count": 30,
-      "missing_alt_count": 3,
-      "lazy_missing_count": 11,
+      "image_count": 19,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 14,
+      "missing_dimensions_count": 8,
       "schema_types": [
         "LocalBusiness",
-        "BreadcrumbList",
-        "Product"
+        "BreadcrumbList"
       ],
-      "internal_links": 191,
-      "word_count": 1165,
+      "internal_links": 194,
+      "word_count": 1060,
       "has_meta_keywords": true,
-      "has_forms": true,
-      "html_size_kb": 189.7
+      "has_forms": false,
+      "html_size_kb": 170.6
     },
     {
-      "url": "https://akvarium-akvas.ru/hagen-lampa-exo-terra-reptile-natural-light-t8-15vt-60sm",
-      "page_type": "Товар",
+      "url": "https://akvarium-akvas.ru/terrariumy/forma-terrariuma",
+      "page_type": "Подкатегория",
       "status_code": 200,
-      "response_time_ms": 476,
+      "response_time_ms": 630,
       "content_type": "text/html; charset=utf-8",
-      "title": "Лампа EXO TERRA REPTILE NATURAL LIGHT Т8 15Вт, 45см | Akvas",
-      "description": "Лампа с UVA излучением подходит для животных с низкой потребностью в ультрафиолете (амфибии, рептилии и беспозвоночные). К таким обитателям относятся лягушки, жабы, саламандры, змеи и другие.",
-      "canonical": "https://akvarium-akvas.ru/hagen-lampa-exo-terra-reptile-natural-light-t8-15vt-60sm",
+      "title": "Террариумы различной формы",
+      "description": "Террариумы закрытые и открытые можно купить в интернет магазине по доступным ценам. Наша компания предлагает большой выбор закрытых и открытых террариумов разных размеров и конфигураций. Обращаясь к нам, вы всегда можете быть уверены в качестве нашей прод",
+      "canonical": "https://akvarium-akvas.ru/terrariumy/forma-terrariuma",
       "h1s": [
-        "Лампа EXO TERRA REPTILE NATURAL LIGHT Т8 15Вт, 45см"
+        "Форма террариума"
       ],
       "meta_robots": "",
       "x_robots_tag": "",
-      "image_count": 25,
-      "missing_alt_count": 3,
-      "lazy_missing_count": 10,
+      "image_count": 19,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 14,
+      "missing_dimensions_count": 8,
       "schema_types": [
         "LocalBusiness",
-        "BreadcrumbList",
-        "Product"
+        "BreadcrumbList"
       ],
-      "internal_links": 188,
-      "word_count": 1080,
+      "internal_links": 194,
+      "word_count": 923,
       "has_meta_keywords": true,
-      "has_forms": true,
-      "html_size_kb": 171.8
+      "has_forms": false,
+      "html_size_kb": 168.6
     },
     {
-      "url": "https://akvarium-akvas.ru/lampa-exo-terra-reptile-natural-light-t8-18vt-60sm",
-      "page_type": "Товар",
+      "url": "https://akvarium-akvas.ru/terrariumy/komplektaciya-terrariuma",
+      "page_type": "Подкатегория",
       "status_code": 200,
-      "response_time_ms": 547,
+      "response_time_ms": 718,
       "content_type": "text/html; charset=utf-8",
-      "title": "Лампа EXO TERRA REPTILE NATURAL LIGHT Т8 18Вт, 60см | Akvas",
-      "description": "Лампа с UVA излучением подходит для животных с низкой потребностью в ультрафиолете (амфибии, рептилии и беспозвоночные). К таким обитателям относятся лягушки, жабы, саламандры, змеи и другие.",
-      "canonical": "https://akvarium-akvas.ru/lampa-exo-terra-reptile-natural-light-t8-18vt-60sm",
+      "title": "Террариумы различной комплектации в магазине Аквас",
+      "description": "Террариумы различной комплектации с крышкой, тумбой, мостиком и другим оборудованием",
+      "canonical": "https://akvarium-akvas.ru/terrariumy/komplektaciya-terrariuma",
       "h1s": [
-        "Лампа EXO TERRA REPTILE NATURAL LIGHT Т8 18Вт, 60см"
+        "Комплектация террариума"
       ],
       "meta_robots": "",
       "x_robots_tag": "",
-      "image_count": 25,
-      "missing_alt_count": 3,
-      "lazy_missing_count": 10,
+      "image_count": 19,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 14,
+      "missing_dimensions_count": 8,
       "schema_types": [
         "LocalBusiness",
-        "BreadcrumbList",
-        "Product"
+        "BreadcrumbList"
       ],
-      "internal_links": 188,
-      "word_count": 1080,
+      "internal_links": 195,
+      "word_count": 923,
       "has_meta_keywords": true,
-      "has_forms": true,
-      "html_size_kb": 171.7
+      "has_forms": false,
+      "html_size_kb": 169.1
     },
     {
-      "url": "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-25vt-75sm",
-      "page_type": "Товар",
+      "url": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov",
+      "page_type": "Внутренняя",
       "status_code": 200,
-      "response_time_ms": 545,
+      "response_time_ms": 616,
       "content_type": "text/html; charset=utf-8",
-      "title": "Лампа Hagen Exo-Terra Reptile UVB100 Т8 15Вт, 45см | Akvas",
-      "description": "Купить Лампу Hagen Exo-Terra Reptile UVB100 Т8 15Вт, 45см в интернет-магазине. Описание, характеристики и цена Лампы Hagen Exo-Terra Reptile, а также огромный выбор товаров для аквариумистики. Материалы только высокого качества. Заказ и доставка по Москве",
-      "canonical": "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-25vt-75sm",
+      "title": "Аквариумы от 10 до 50 литров  купить по доступным ценам с доставкой | Аквас",
+      "description": "Купить аквариумы 10, 20, 30, 40, 50 литров по доступной цене и доставкой по всей России. Широкий ассортимент аквариумов разных размеров в комплекте с тумбой от производителя Аквас.",
+      "canonical": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov",
       "h1s": [
-        "Лампа Hagen Exo-Terra Reptile UVB100 Т8 15Вт, 45см"
+        "Аквариумы от 10 до 50 литров"
       ],
       "meta_robots": "",
       "x_robots_tag": "",
-      "image_count": 25,
-      "missing_alt_count": 3,
-      "lazy_missing_count": 10,
+      "image_count": 23,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 14,
+      "missing_dimensions_count": 8,
       "schema_types": [
         "LocalBusiness",
-        "BreadcrumbList",
-        "Product"
+        "BreadcrumbList"
       ],
-      "internal_links": 188,
-      "word_count": 1099,
+      "internal_links": 219,
+      "word_count": 1020,
       "has_meta_keywords": true,
-      "has_forms": true,
-      "html_size_kb": 172.5
+      "has_forms": false,
+      "html_size_kb": 187.8
     },
     {
-      "url": "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-18vt-60sm",
-      "page_type": "Товар",
+      "url": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov/10-litrov",
+      "page_type": "Внутренняя",
       "status_code": 200,
-      "response_time_ms": 518,
+      "response_time_ms": 482,
       "content_type": "text/html; charset=utf-8",
-      "title": "Лампа Hagen Exo-Terra Reptile UVB100 Т8 18Вт, 60 см | Akvas",
-      "description": "Купить Лампу Hagen Exo-Terra Reptile UVB100 в интернет-магазине. Описание, характеристики и цена люминесцентной лампы Hagen Exo-Terra Reptile UVB100, а также огромный выбор товаров для аквариумистики. Материалы только высокого качества. Заказ и доставка п",
-      "canonical": "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-18vt-60sm",
+      "title": "Аквариум 10 литров купить от производителя | Магазин Аквас",
+      "description": "Купить аквариумы 10 литров по доступной цене и доставкой из Москвы по всей России. Широкий ассортимент аквариумов разных размеров в комплекте с тумбой от производителя в интернет-магазине Аквас.",
+      "canonical": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov/10-litrov",
       "h1s": [
-        "Лампа Hagen Exo-Terra Reptile UVB100 Т8 18Вт, 60см"
+        "Аквариумы 10 литров"
       ],
       "meta_robots": "",
       "x_robots_tag": "",
-      "image_count": 25,
-      "missing_alt_count": 3,
-      "lazy_missing_count": 10,
+      "image_count": 7,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 7,
+      "missing_dimensions_count": 4,
       "schema_types": [
         "LocalBusiness",
-        "BreadcrumbList",
-        "Product"
+        "BreadcrumbList"
       ],
-      "internal_links": 188,
-      "word_count": 1097,
+      "internal_links": 162,
+      "word_count": 860,
       "has_meta_keywords": true,
-      "has_forms": true,
-      "html_size_kb": 172.5
+      "has_forms": false,
+      "html_size_kb": 128.1
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov/20-litrov",
+      "page_type": "Внутренняя",
+      "status_code": 200,
+      "response_time_ms": 490,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Купить аквариум 20 литров от производителя | Магазин Аквас",
+      "description": "Купить аквариумы 20 литров по доступной цене и доставкой из Москвы по всей России. Широкий ассортимент аквариумов разных размеров в комплекте с тумбой от производителя в интернет-магазине Аквас.",
+      "canonical": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov/20-litrov",
+      "h1s": [
+        "Аквариумы 20 литров"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 7,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 7,
+      "missing_dimensions_count": 4,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList"
+      ],
+      "internal_links": 162,
+      "word_count": 834,
+      "has_meta_keywords": true,
+      "has_forms": false,
+      "html_size_kb": 127.8
+    },
+    {
+      "url": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov/30-litrov",
+      "page_type": "Внутренняя",
+      "status_code": 200,
+      "response_time_ms": 558,
+      "content_type": "text/html; charset=utf-8",
+      "title": "Купить аквариум 30 литров от производителя | Магазин Аквас",
+      "description": "Купить аквариумы 30 литров по доступной цене и доставкой из Москвы по всей России. Широкий ассортимент аквариумов разных размеров в комплекте с тумбой от производителя в интернет-магазине Аквас.",
+      "canonical": "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov/30-litrov",
+      "h1s": [
+        "Аквариумы 30 литров"
+      ],
+      "meta_robots": "",
+      "x_robots_tag": "",
+      "image_count": 12,
+      "missing_alt_count": 1,
+      "lazy_missing_count": 12,
+      "missing_dimensions_count": 7,
+      "schema_types": [
+        "LocalBusiness",
+        "BreadcrumbList"
+      ],
+      "internal_links": 173,
+      "word_count": 948,
+      "has_meta_keywords": true,
+      "has_forms": false,
+      "html_size_kb": 140.2
     }
   ],
   "raw_sampled_urls": [
@@ -828,26 +902,29 @@
     "https://akvarium-akvas.ru/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm",
     "https://akvarium-akvas.ru/akvarium-panoramnyj-220-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-920x470x640-mm",
     "https://akvarium-akvas.ru/akvarium-panoramnyj-300-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1210x510x640-mm",
-    "https://akvarium-akvas.ru/akvarium-panoramnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1400%D1%85560%D1%85460-mm",
-    "https://akvarium-akvas.ru/akvarium-panoramnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85560%D1%85730-mm",
-    "https://akvarium-akvas.ru/akvarium-panoramnyj-600-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510%D1%85660%D1%85730-mm",
-    "https://akvarium-akvas.ru/akvarium-pryamougolnyj-200-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1010x410x570-mm",
-    "https://akvarium-akvas.ru/akvarium-pryamougolnyj-300-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1210x410x670-mm",
-    "https://akvarium-akvas.ru/akvarium-pryamougolnyj-400-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1410x510x650-mm",
-    "https://akvarium-akvas.ru/akvarium-pryamougolnyj-500-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-1510x510x720-mm",
-    "https://akvarium-akvas.ru/hagen-lampa-exo-terra-reptile-natural-light-t8-15vt-60sm",
-    "https://akvarium-akvas.ru/lampa-exo-terra-reptile-natural-light-t8-18vt-60sm",
-    "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-25vt-75sm",
-    "https://akvarium-akvas.ru/lampa-hagen-exo-terra-reptile-uvb100-t8-18vt-60sm"
+    "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu",
+    "https://akvarium-akvas.ru/akvariumy/akvariumy-po-forme",
+    "https://akvarium-akvas.ru/akvariumy/akvariumy-po-komplektacii",
+    "https://akvarium-akvas.ru/akvariumy/akvarium-po-razmeru",
+    "https://akvarium-akvas.ru/akvariumy/akvariumy-po-naznacheniyu",
+    "https://akvarium-akvas.ru/akvariumy/akvariumy-po-modelnomu-ryadu",
+    "https://akvarium-akvas.ru/terrariumy/terrariumy-po-obyomu-i-razmeru",
+    "https://akvarium-akvas.ru/terrariumy/forma-terrariuma",
+    "https://akvarium-akvas.ru/terrariumy/komplektaciya-terrariuma",
+    "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov",
+    "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov/10-litrov",
+    "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov/20-litrov",
+    "https://akvarium-akvas.ru/akvariumy/akvariumy-po-litrazhu/akvariumy-ot-10-do-50-litrov/30-litrov"
   ],
-  "title_long_ratio": 0.46153846153846156,
-  "description_problem_ratio": 0.6538461538461539,
-  "schema_coverage_ratio": 0.9615384615384616,
-  "h1_coverage_ratio": 0.9230769230769231,
-  "total_missing_alt": 104,
-  "average_response_ms": 520.6,
-  "average_html_kb": 175.0,
-  "average_words": 1210.9,
+  "title_long_ratio": 0.35714285714285715,
+  "description_problem_ratio": 0.6428571428571429,
+  "schema_coverage_ratio": 0.9642857142857143,
+  "h1_coverage_ratio": 0.9285714285714286,
+  "canonical_coverage_ratio": 0.7857142857142857,
+  "total_missing_alt": 144,
+  "average_response_ms": 674.1,
+  "average_html_kb": 206.0,
+  "average_words": 1277.5,
   "redirect_checks": [
     {
       "url": "http://akvarium-akvas.ru/",
@@ -890,166 +967,725 @@
   "issues": [
     {
       "severity": "Critical",
-      "title": "robots.txt конфликтует с собственной картой сайта",
-      "why_it_matters": "Сейчас в robots.txt одновременно указан Sitemap и стоит Disallow на sitemap.xml. Для Яндекса и части сервисов это выглядит как конфликт сигналов и мешает чистой индексации.",
+      "title": "robots.txt конфликтует с картой сайта",
+      "why_it_matters": "Когда robots.txt одновременно запрещает sitemap.xml и сам же ссылается на карту сайта, поисковики получают конфликтующий сигнал. Это мешает чистой и предсказуемой индексации.",
       "evidence": [
         "В robots.txt найдено правило `Disallow: *sitemap.xml`.",
         "Одновременно файл содержит `Sitemap: https://akvarium-akvas.ru/sitemap.xml`."
       ],
-      "recommendation": "Удалить запрет на sitemap.xml, оставить только директиву Sitemap и привести Host к чистому домену без протокола."
+      "recommendation": "Убрать запрет на sitemap.xml, оставить рабочую директиву Sitemap и синхронизировать robots.txt с каноническим доменом проекта."
     },
     {
       "severity": "High",
-      "title": "Контактные и lead-страницы недооптимизированы",
-      "why_it_matters": "Контактные страницы участвуют в доверии, конверсии и брендовой выдаче. Когда у них нет базовой SEO-разметки, сайт теряет и кликабельность, и качество индекса.",
+      "title": "Контактные и lead-страницы недооформлены как SEO-посадочные",
+      "why_it_matters": "Страницы контактов и заявок участвуют не только в конверсии, но и в доверии, брендовой выдаче и понимании бизнеса поисковиками.",
       "evidence": [
-        "Страница /contacts открывается без H1.",
-        "На /contacts отсутствует meta description.",
-        "На /contacts отсутствует canonical."
+        "На `/contacts` не хватает: H1, description, canonical.",
+        "На `/index.php?route=information/contactform` не хватает: H1, title, description, canonical."
       ],
-      "recommendation": "Сделать полноценную контактную страницу: H1, title до 70 символов, description 140-160 символов, canonical, контент про производство, доставку, гарантию, адрес, телефоны и CTA."
+      "recommendation": "Собрать полноценные страницы контакта и заявки: H1, title до 70 символов, description 140–160 символов, canonical, блоки доверия, адреса, телефоны и понятный CTA."
     },
     {
       "severity": "High",
-      "title": "Внутренний служебный URL с формой обратного звонка доступен без SEO-контроля",
-      "why_it_matters": "Indexable-страницы без title, description и H1 создают шум в индексе, размывают релевантность и тянут crawl budget.",
+      "title": "В выборке есть индексируемые служебные или query-URL без нормальной SEO-обвязки",
+      "why_it_matters": "Служебные route-страницы и query-URL без title, description и H1 создают шум в индексе, размывают релевантность и тратят crawl budget.",
       "evidence": [
-        "URL `/index.php?route=information/contactform` доступен по 200.",
-        "На странице нет title, description и H1.",
-        "Ссылка на этот URL есть в шапке как `Обратный звонок`."
+        "URL `/index.php?route=information/contactform` доступен для обхода, но не хватает: title, description, H1."
       ],
-      "recommendation": "Либо закрыть route-страницу от индексации и убрать прямые ссылки, либо перевести ее на нормальный SEO-friendly URL с оформлением."
+      "recommendation": "Либо закрыть такие URL от индексации и убрать прямые ссылки на них, либо перевести их на нормальные SEO-friendly страницы с полноценным мета-оформлением."
     },
     {
       "severity": "High",
-      "title": "Шаблоны title на товарах и категориях слишком длинные",
-      "why_it_matters": "Длинные title режутся в выдаче, ухудшают CTR и снижают контроль над тем, какой оффер поисковик покажет пользователю.",
+      "title": "На части страниц title выходят за рабочую длину",
+      "why_it_matters": "Слишком длинные title режутся в выдаче, ухудшают CTR и снижают контроль над тем, какой оффер поисковик покажет пользователю.",
       "evidence": [
-        "В выборке 12 из 26 страниц имеют title длиннее 70 символов.",
+        "В выборке 10 из 28 страниц имеют title длиннее 70 символов.",
         "/akvariumy — 83 симв.",
         "/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov — 91 симв.",
         "/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm — 92 симв.",
         "/akvarium-panoramnyj-220-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-920x470x640-mm — 92 симв."
       ],
-      "recommendation": "Пересобрать шаблоны title: сначала ключ + модель/категория, затем оффер и бренд. Для каталога держать диапазон 55-70 символов."
+      "recommendation": "Пересобрать шаблоны title: сначала ключ и тип страницы, затем ценностный оффер и бренд. Ориентир — диапазон 55–70 символов."
     },
     {
       "severity": "Medium",
-      "title": "Meta description на части страниц обрезается или не дотягивает до нормального сниппета",
-      "why_it_matters": "Сниппет — это коммерческий оффер в выдаче. Когда description слишком короткий или перегруженный, поисковик чаще берет случайный кусок текста со страницы.",
+      "title": "Meta description на части страниц вне рабочего диапазона",
+      "why_it_matters": "Description — это управляемый оффер в сниппете. Когда он слишком короткий или перегруженный, поисковик чаще берет случайный кусок текста со страницы.",
       "evidence": [
-        "В выборке 17 из 26 страниц имеют description вне комфортного диапазона.",
+        "В выборке 18 из 28 страниц имеют description вне комфортного диапазона.",
         "/about_us — 188 симв.",
         "/akvariumy — 169 симв.",
         "/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov — 255 симв.",
         "/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm — 255 симв."
       ],
-      "recommendation": "Собрать шаблоны description под типы страниц: ключ, ценность, доставка/гарантия, регион, призыв. Ориентир — 140-160 символов."
+      "recommendation": "Собрать шаблоны description по типам страниц: ключ, ценность, доверие, регион и призыв. Ориентир — 140–160 символов."
     },
     {
       "severity": "Medium",
-      "title": "Изображения теряют поисковый трафик и контекст карточек",
-      "why_it_matters": "Для товарного проекта alt влияет и на картинки, и на понимание ассортимента, и на доступность.",
+      "title": "Изображения теряют SEO-сигналы из-за пустых alt",
+      "why_it_matters": "Alt важен и для поиска по картинкам, и для понимания контекста страницы, и для доступности. Когда у изображений нет описаний, сайт теряет дополнительный слой релевантности.",
       "evidence": [
-        "На 25 из 26 проверенных страниц есть изображения без alt.",
-        "На главной найдено 7 изображений без alt."
+        "На 27 из 28 проверенных страниц есть изображения без alt.",
+        "Всего в выборке найдено 144 изображений без описаний."
       ],
-      "recommendation": "Ввести шаблонную генерацию alt по типу карточки: товар + объем/размер + бренд/серия, а для категорий — общий интент страницы."
+      "recommendation": "Ввести шаблонную генерацию alt по типу страницы и типу изображения: объект, интент, модель и бренд."
     },
     {
       "severity": "Medium",
-      "title": "Есть лишняя redirect-цепочка у части доменных вариантов",
-      "why_it_matters": "Дополнительный редирект добавляет задержку на входе и создает ненужную техническую сложность для ботов и пользователей.",
+      "title": "Есть лишние redirect-цепочки у доменных вариантов",
+      "why_it_matters": "Дополнительные редиректы увеличивают задержку на входе и создают лишнюю техническую сложность для ботов и пользователей.",
       "evidence": [
-        "Путь `http://www.akvarium-akvas.ru/` отдает две последовательные 301-переадресации.",
-        "Финальный канонический домен — `https://akvarium-akvas.ru/`."
+        "Путь `http://www.akvarium-akvas.ru/` отдает 2 последовательных redirect.",
+        "Финальный URL — `https://akvarium-akvas.ru/`."
       ],
-      "recommendation": "Свести все варианты домена к одному 301-редиректу напрямую на канонический HTTPS без промежуточного `https://www`."
+      "recommendation": "Свести все доменные варианты к одному прямому 301-редиректу на канонический HTTPS-домен."
     },
     {
       "severity": "Medium",
-      "title": "Карта сайта раздута повторяющимися URL",
-      "why_it_matters": "Когда один и тот же URL повторяется в sitemap много раз, поисковики получают лишний шум вместо чистого сигнала, а анализ индексации становится менее управляемым.",
+      "title": "В sitemap много повторяющихся URL",
+      "why_it_matters": "Когда один и тот же URL повторяется в карте сайта много раз, поисковики получают лишний шум вместо чистого сигнала.",
       "evidence": [
         "В sitemap найдено 6971 записей, но только 1370 уникальных URL.",
         "Повторов: 5601."
       ],
-      "recommendation": "Пересобрать генерацию sitemap так, чтобы каждый индексируемый URL попадал туда один раз, а карта сайта отражала реальную структуру проекта без дублей."
+      "recommendation": "Пересобрать генерацию sitemap так, чтобы каждый индексируемый URL попадал туда один раз и без дублей."
     },
     {
       "severity": "Low",
-      "title": "На главной остался meta keywords, который уже не дает SEO-ценности",
-      "why_it_matters": "Сам по себе тег не вредит, но это сигнал, что шаблон меты стоит почистить и поддерживать в актуальном виде.",
+      "title": "На части шаблона остался meta keywords",
+      "why_it_matters": "Сам по себе тег уже не дает SEO-ценности, но показывает, что шаблон метаданных не дочищен и стоит привести его к современному виду.",
       "evidence": [
         "На главной найден тег meta keywords."
       ],
-      "recommendation": "Убрать meta keywords из шаблона и сосредоточиться на title, description, H1, schema и коммерческих блоках."
+      "recommendation": "Убрать meta keywords из шаблона и сосредоточиться на title, description, H1, canonical и schema."
     }
   ],
   "strengths": [
-    "Сайт стабильно отвечает по HTTPS и главная страница отдает 200 код без JS-заглушки.",
-    "Сайт уже имеет индексируемую карту сайта с 1370 URL и image-тегами для карточек.",
-    "На ключевых коммерческих страницах проставлены canonical, что помогает удерживать основной URL.",
-    "На товарах и категориях уже используется schema-разметка (Product / BreadcrumbList / LocalBusiness).",
-    "У большинства проверенных коммерческих страниц есть H1, что хорошо для масштабного каталога.",
-    "URL-структура в каталоге понятная и хорошо дробит спрос по литражу, форме, назначению и комплектации.",
-    "У проекта уже есть llms.txt, а значит можно дополнительно усиливать AI-видимость и branded-ответы."
+    "Главная страница стабильно открывается по HTTPS и отдает 200 код без JS-заглушки.",
+    "Средний ответ по выборке — 674.1 ms: техническая база не выглядит перегруженной.",
+    "У сайта уже есть карта сайта с 1370 уникальными URL, а значит база для управляемой индексации уже существует.",
+    "У 78% страниц в выборке уже проставлен canonical, это хороший фундамент для чистой индексации.",
+    "Schema-разметка уже используется на 96% страниц выборки.",
+    "У 92% проверенных страниц есть H1 — структура документов уже не выглядит хаотичной."
   ],
   "growth_points": [
-    "Усилить страницы категорий уникальными интро-блоками, FAQ, доставкой, гарантией, сроками производства и объяснением, как выбрать модель.",
-    "Сделать отдельные посадочные под высокий спрос: по литражу, форме, назначению, типу комплектации и готовым решениям под ключ.",
-    "Добавить в категории и карточки блоки доверия: производство в России, гарантия, доставка по РФ, кастомизация размеров, комплектация.",
-    "Развернуть image SEO: alt-шаблоны, подписи, structured data и подбор визуалов под поисковый спрос по аквариумам и террариумам.",
-    "Собрать шаблонный слой сниппетов: короткие title, коммерческие description, аккуратный canonical и понятные H1 на всех типах страниц.",
-    "Сегментировать sitemap и параллельно настроить контроль индексации категорий, товаров, фильтров и служебных route-страниц."
+    "Усилить категории и подкатегории: интро-блоки, FAQ, условия покупки, блоки доверия и перелинковку на карточки.",
+    "Пересобрать шаблоны карточек и листингов: короткие title, рабочие description, canonical, alt, schema и коммерческие CTA.",
+    "Собрать единый слой шаблонов для title, description, H1 и canonical по всем типам страниц.",
+    "Развернуть image SEO: alt-шаблоны, подписи, контроль lazy-load и понятную связь изображения с интентом страницы.",
+    "Доделать контактные и заявочные страницы как полноценные SEO-документы, а не как технические формы.",
+    "Добавить answer-first блоки, FAQ и внутреннюю перелинковку между важными разделами для обычной и ИИ-выдачи."
   ],
   "roadmap": [
     [
       "0-14 дней",
       [
-        "Исправить robots.txt: убрать конфликт с sitemap.xml и нормализовать Host.",
-        "Закрыть или переработать `/index.php?route=information/contactform`.",
-        "Доделать SEO-шаблон страницы контактов: H1, title, description, canonical, коммерческий контент.",
-        "Подготовить новое правило генерации title и description для товаров и категорий."
+        "Убрать конфликт в robots.txt и синхронизировать Sitemap, Host и канонический домен.",
+        "Свести все доменные варианты к одному прямому 301-редиректу.",
+        "Закрыть или нормализовать индексируемые query- и route-страницы с техническими формами.",
+        "Подготовить единое ТЗ на title, description, H1 и canonical для основных типов страниц."
       ]
     ],
     [
       "15-30 дней",
       [
-        "Внедрить alt-шаблоны для карточек и категорий.",
-        "Свести доменные редиректы к одному шагу на канонический HTTPS.",
-        "Разделить sitemap по типам страниц и подать их отдельно в Яндекс Вебмастер и GSC.",
-        "Обновить сниппеты и протестировать рост CTR по категориям и товарным кластерам."
+        "Внедрить alt-шаблоны, проверить lazy-load и подчистить image SEO на ключевых страницах.",
+        "Разделить sitemap по типам страниц и подать отдельные карты в Яндекс.Вебмастер и GSC.",
+        "Обновить шаблоны сниппетов и проверить рост CTR по приоритетным страницам."
       ]
     ],
     [
       "31-60 дней",
       [
-        "Усилить спросовые категории контентом, FAQ, коммерческими блоками и перелинковкой.",
-        "Собрать посадочные под ключевые кластеры спроса: литраж, форма, сценарий использования, комплектация.",
-        "Добавить контент-слой под AI-ответы: краткие определения, таблицы сравнения, ответы на частые вопросы."
+        "Усилить категории и подкатегории контентом, FAQ, блоками доверия и перелинковкой.",
+        "Пересобрать карточки и листинги так, чтобы они лучше конвертировали SEO-трафик в заявки и продажи.",
+        "Добавить answer-first фрагменты и контент под ИИ-выдачу на главные спросовые кластеры."
       ]
     ]
   ],
-  "score": 45,
-  "screenshots": [
+  "priority_matrix": [
     {
-      "label": "Главная",
-      "page_type": "Главная",
-      "url": "https://akvarium-akvas.ru",
-      "path": "audits\\akvarium-akvas-2026-03-22-assets\\01-home.png"
+      "problem": "robots.txt конфликтует с картой сайта",
+      "severity": "Critical",
+      "impact": 10,
+      "risk": 9,
+      "business": 10,
+      "total": 29,
+      "owner": "Backend / SEO"
     },
     {
-      "label": "Контакты",
-      "page_type": "Категория",
-      "url": "https://akvarium-akvas.ru/contacts",
-      "path": "audits\\akvarium-akvas-2026-03-22-assets\\02-contacts.png"
+      "problem": "Контактные и lead-страницы недооформлены как SEO-посадочные",
+      "severity": "High",
+      "impact": 9,
+      "risk": 8,
+      "business": 9,
+      "total": 26,
+      "owner": "Backend / SEO"
     },
     {
-      "label": "Товар",
-      "page_type": "Товар",
-      "url": "https://akvarium-akvas.ru/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov",
-      "path": "audits\\akvarium-akvas-2026-03-22-assets\\03-aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov.png"
+      "problem": "В выборке есть индексируемые служебные или query-URL без нормальной SEO-обвязки",
+      "severity": "High",
+      "impact": 9,
+      "risk": 8,
+      "business": 8,
+      "total": 25,
+      "owner": "Backend / SEO"
+    },
+    {
+      "problem": "На части страниц title выходят за рабочую длину",
+      "severity": "High",
+      "impact": 8,
+      "risk": 7,
+      "business": 9,
+      "total": 24,
+      "owner": "Frontend / SEO"
+    },
+    {
+      "problem": "Meta description на части страниц вне рабочего диапазона",
+      "severity": "Medium",
+      "impact": 6,
+      "risk": 5,
+      "business": 7,
+      "total": 18,
+      "owner": "Frontend / SEO"
+    },
+    {
+      "problem": "Изображения теряют SEO-сигналы из-за пустых alt",
+      "severity": "Medium",
+      "impact": 6,
+      "risk": 5,
+      "business": 6,
+      "total": 17,
+      "owner": "Frontend / SEO"
+    },
+    {
+      "problem": "Есть лишние redirect-цепочки у доменных вариантов",
+      "severity": "Medium",
+      "impact": 7,
+      "risk": 5,
+      "business": 6,
+      "total": 18,
+      "owner": "Backend / SEO"
+    },
+    {
+      "problem": "В sitemap много повторяющихся URL",
+      "severity": "Medium",
+      "impact": 7,
+      "risk": 5,
+      "business": 6,
+      "total": 18,
+      "owner": "Backend / SEO"
     }
-  ]
+  ],
+  "critical_errors": [
+    {
+      "severity": "Critical",
+      "title": "robots.txt конфликтует с картой сайта",
+      "why_it_matters": "Когда robots.txt одновременно запрещает sitemap.xml и сам же ссылается на карту сайта, поисковики получают конфликтующий сигнал. Это мешает чистой и предсказуемой индексации.",
+      "evidence": [
+        "В robots.txt найдено правило `Disallow: *sitemap.xml`.",
+        "Одновременно файл содержит `Sitemap: https://akvarium-akvas.ru/sitemap.xml`."
+      ],
+      "recommendation": "Убрать запрет на sitemap.xml, оставить рабочую директиву Sitemap и синхронизировать robots.txt с каноническим доменом проекта."
+    },
+    {
+      "severity": "High",
+      "title": "Контактные и lead-страницы недооформлены как SEO-посадочные",
+      "why_it_matters": "Страницы контактов и заявок участвуют не только в конверсии, но и в доверии, брендовой выдаче и понимании бизнеса поисковиками.",
+      "evidence": [
+        "На `/contacts` не хватает: H1, description, canonical.",
+        "На `/index.php?route=information/contactform` не хватает: H1, title, description, canonical."
+      ],
+      "recommendation": "Собрать полноценные страницы контакта и заявки: H1, title до 70 символов, description 140–160 символов, canonical, блоки доверия, адреса, телефоны и понятный CTA."
+    },
+    {
+      "severity": "High",
+      "title": "В выборке есть индексируемые служебные или query-URL без нормальной SEO-обвязки",
+      "why_it_matters": "Служебные route-страницы и query-URL без title, description и H1 создают шум в индексе, размывают релевантность и тратят crawl budget.",
+      "evidence": [
+        "URL `/index.php?route=information/contactform` доступен для обхода, но не хватает: title, description, H1."
+      ],
+      "recommendation": "Либо закрыть такие URL от индексации и убрать прямые ссылки на них, либо перевести их на нормальные SEO-friendly страницы с полноценным мета-оформлением."
+    },
+    {
+      "severity": "High",
+      "title": "На части страниц title выходят за рабочую длину",
+      "why_it_matters": "Слишком длинные title режутся в выдаче, ухудшают CTR и снижают контроль над тем, какой оффер поисковик покажет пользователю.",
+      "evidence": [
+        "В выборке 10 из 28 страниц имеют title длиннее 70 символов.",
+        "/akvariumy — 83 симв.",
+        "/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov — 91 симв.",
+        "/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm — 92 симв.",
+        "/akvarium-panoramnyj-220-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-920x470x640-mm — 92 симв."
+      ],
+      "recommendation": "Пересобрать шаблоны title: сначала ключ и тип страницы, затем ценностный оффер и бренд. Ориентир — диапазон 55–70 символов."
+    }
+  ],
+  "weak_contact_pages": [
+    {
+      "url": "https://akvarium-akvas.ru/contacts",
+      "missing": [
+        "H1",
+        "description",
+        "canonical"
+      ]
+    },
+    {
+      "url": "https://akvarium-akvas.ru/index.php?route=information/contactform",
+      "missing": [
+        "H1",
+        "title",
+        "description",
+        "canonical"
+      ]
+    }
+  ],
+  "invalid_schema_count": 2,
+  "title_missing_count": 1,
+  "description_missing_count": 7,
+  "indexable_query_count": 1,
+  "phase_sections": [
+    {
+      "title": "Этап 1 — Crawl & Indexability",
+      "intro": "Проверяю, насколько чисто сайт отдает поисковикам сигналы для обхода и индексации.",
+      "checks": [
+        {
+          "name": "robots.txt и карта сайта",
+          "checked": "Доступность robots.txt, директивы, sitemap, чистота сигналов для робота.",
+          "method": "HTTP-запрос + разбор robots.txt и XML sitemap.",
+          "metrics": [
+            [
+              "robots.txt",
+              "200"
+            ],
+            [
+              "Уникальных URL в sitemap",
+              "1370"
+            ],
+            [
+              "Всего записей в sitemap",
+              "6971"
+            ],
+            [
+              "Файлов sitemap обработано",
+              "1"
+            ]
+          ],
+          "findings": [
+            "Есть конфликт между robots.txt и sitemap.xml.",
+            "Карта сайта раздута дублями.",
+            "Есть llms.txt, значит сайт уже можно дожимать и под ИИ-видимость."
+          ],
+          "priority": "HIGH",
+          "owner": "Backend / SEO",
+          "recommendation": "Синхронизировать robots.txt, sitemap и канонический домен так, чтобы робот видел один непротиворечивый сценарий обхода."
+        },
+        {
+          "name": "Статус-коды, редиректы и каноникализация",
+          "checked": "HTTP-коды ключевых URL, доменные редиректы, покрытие canonical.",
+          "method": "HTTP-проверка доменных вариантов + парсинг rel=canonical по выборке страниц.",
+          "metrics": [
+            [
+              "Страниц 200 в выборке",
+              "28"
+            ],
+            [
+              "Redirect-цепочек > 1 шага",
+              "1"
+            ],
+            [
+              "Canonical coverage",
+              "78%"
+            ],
+            [
+              "Индексируемых query-URL",
+              "1"
+            ]
+          ],
+          "findings": [
+            "В выборке 28 страниц отвечают кодом 200.",
+            "Есть лишняя redirect-цепочка на доменных вариантах.",
+            "Есть индексируемые query- или route-URL, которые лучше почистить."
+          ],
+          "priority": "HIGH",
+          "owner": "Backend / SEO",
+          "recommendation": "Свести все доменные варианты к одному канону и либо закрыть служебные URL от индексации, либо перевести их на чистые SEO-friendly маршруты."
+        }
+      ]
+    },
+    {
+      "title": "Этап 2 — Архитектура и внутренняя структура",
+      "intro": "Смотрю, насколько понятна архитектура сайта и как распределяются ссылки внутри выборки.",
+      "checks": [
+        {
+          "name": "Типы страниц и покрытие выборки",
+          "checked": "Какие типы URL реально попали в разбор и как сайт дробит спрос.",
+          "method": "Классификация URL по глубине, query-параметрам и типам schema.",
+          "metrics": [
+            [
+              "Главная",
+              "1"
+            ],
+            [
+              "Категории / подкатегории",
+              "18"
+            ],
+            [
+              "Внутренние страницы",
+              "4"
+            ],
+            [
+              "Служебные URL",
+              "1"
+            ]
+          ],
+          "findings": [
+            "Выборка уже покрывает разные уровни структуры, поэтому видно не только главную, но и шаблоны внутренних страниц.",
+            "В архитектуре есть служебные или route-страницы, которые смешиваются с коммерческими URL.",
+            "Длинных путей в выборке: 4."
+          ],
+          "priority": "MEDIUM",
+          "owner": "SEO / Backend",
+          "recommendation": "Держать архитектуру спроса отдельной от служебной логики и не смешивать route/query URL с посадочными и коммерческими страницами."
+        },
+        {
+          "name": "Внутренняя перелинковка и видимость ключевых страниц",
+          "checked": "Сколько внутренних ссылок получают страницы и где есть просадки по вниманию сайта.",
+          "method": "Подсчет внутренних ссылок на каждой странице выборки.",
+          "metrics": [
+            [
+              "Среднее число внутренних ссылок",
+              "232.5"
+            ],
+            [
+              "Минимум внутренних ссылок",
+              "1"
+            ],
+            [
+              "Максимум внутренних ссылок",
+              "424"
+            ],
+            [
+              "Контактных/lead-страниц",
+              "6"
+            ]
+          ],
+          "findings": [
+            "Слабее всего по внутренним ссылкам выглядят: /index.php?route=information/contactform, /privacy, /delivery.",
+            "Контактные страницы есть, но часть из них недооформлена как полноценные SEO-посадки.",
+            "Разумно добавить больше контекстных ссылок между близкими услугами, кейсами, блогом и лид-страницами."
+          ],
+          "priority": "MEDIUM",
+          "owner": "SEO / Marketing",
+          "recommendation": "Усилить перелинковку вокруг приоритетных услуг и лид-страниц: связать спросовые страницы, кейсы, FAQ и CTA, а не надеяться только на меню и футер."
+        }
+      ]
+    },
+    {
+      "title": "Этап 3 — On-Page SEO",
+      "intro": "Разбираю шаблоны title, description, H1 и то, насколько страницы готовы к нормальному сниппету.",
+      "checks": [
+        {
+          "name": "Title и meta description",
+          "checked": "Покрытие, длина и пригодность сниппетов к управляемой выдаче.",
+          "method": "Парсинг title и meta description по репрезентативной выборке страниц.",
+          "metrics": [
+            [
+              "Title > 70 символов",
+              "10"
+            ],
+            [
+              "Title отсутствует",
+              "1"
+            ],
+            [
+              "Description отсутствует",
+              "7"
+            ],
+            [
+              "Description вне диапазона",
+              "18"
+            ]
+          ],
+          "findings": [
+            "Шаблоны title на части страниц перегружены по длине.",
+            "Есть страницы без description, из-за чего сниппет будет собираться случайно.",
+            "Пустой title найден на: /index.php?route=information/contactform."
+          ],
+          "priority": "HIGH",
+          "owner": "SEO / Frontend",
+          "recommendation": "Пересобрать правила генерации title и description под каждый тип страницы: коротко, конкретно, с ключом, оффером и контролем длины."
+        },
+        {
+          "name": "H1, контентный каркас и тонкие страницы",
+          "checked": "Наличие H1, плотность текстового слоя и качество базового on-page каркаса.",
+          "method": "Парсинг H1 и подсчет слов в видимом контенте.",
+          "metrics": [
+            [
+              "H1 coverage",
+              "92%"
+            ],
+            [
+              "Страниц без H1",
+              "2"
+            ],
+            [
+              "Среднее число слов",
+              "1277.5"
+            ],
+            [
+              "Тонких страниц (<250 слов)",
+              "1"
+            ]
+          ],
+          "findings": [
+            "У части страниц нет H1, поэтому поисковику сложнее понять главный интент URL.",
+            "Есть тонкие страницы с минимальным текстовым слоем.",
+            "Даже при нормальном объеме текста нужно отдельно проверить, насколько хорошо он поддерживает коммерческий интент и FAQ-слой."
+          ],
+          "priority": "MEDIUM",
+          "owner": "SEO / Content",
+          "recommendation": "На каждом ключевом URL закрепить понятный H1, интро, ответы на частые вопросы и короткие коммерческие блоки, чтобы страница работала не только на индекс, но и на конверсию."
+        }
+      ]
+    },
+    {
+      "title": "Этап 4 — Performance и CWV",
+      "intro": "Смотрю на скорость ответа, вес HTML и то, как медиа-слой может мешать загрузке.",
+      "checks": [
+        {
+          "name": "Ответ сервера и вес страниц",
+          "checked": "TTFB-подобная скорость ответа и примерный вес HTML по выборке.",
+          "method": "HTTP-ответы по ключевым URL без отдельного Lighthouse-прогона.",
+          "metrics": [
+            [
+              "Средний ответ",
+              "674.1 ms"
+            ],
+            [
+              "Средний HTML",
+              "206.0 KB"
+            ],
+            [
+              "Максимум изображений на странице",
+              "114"
+            ],
+            [
+              "Страниц в выборке",
+              "28"
+            ]
+          ],
+          "findings": [
+            "Средний ответ уже стоит держать в зоне внимания.",
+            "Реальные риски здесь чаще сидят в медиа-слое, шаблонах и клиентском рендеринге, чем в голом TTFB."
+          ],
+          "priority": "MEDIUM",
+          "owner": "Frontend / Backend",
+          "recommendation": "Проверить приоритетные страницы отдельным CWV-прогоном и зафиксировать LCP/CLS/INP после чистки медиа и шаблонов."
+        },
+        {
+          "name": "Изображения, lazy loading и атрибуты размеров",
+          "checked": "Насколько медиа-слой помогает или мешает SEO и стабильности верстки.",
+          "method": "Парсинг img-тегов по репрезентативной выборке страниц.",
+          "metrics": [
+            [
+              "Всего пропусков alt",
+              "144"
+            ],
+            [
+              "Пропусков lazy loading",
+              "427"
+            ],
+            [
+              "Изображений без width/height",
+              "226"
+            ],
+            [
+              "Изображений на главной",
+              "62"
+            ]
+          ],
+          "findings": [
+            "Изображения уже теряют SEO-сигналы из-за пропусков alt.",
+            "Отсутствие width/height повышает риск CLS и визуальной нестабильности.",
+            "Lazy loading стоит выровнять шаблонно, а не править вручную по одной странице."
+          ],
+          "priority": "MEDIUM",
+          "owner": "Frontend / SEO",
+          "recommendation": "Сделать единый image-шаблон: alt, width/height, lazy loading и, при необходимости, отдельную image-схему/карту сайта."
+        }
+      ]
+    },
+    {
+      "title": "Этап 5 — Structured Data",
+      "intro": "Проверяю, насколько хорошо сайт объясняет поисковику сущности бизнеса, страниц и предложений.",
+      "checks": [
+        {
+          "name": "Покрытие schema-разметкой",
+          "checked": "Какие типы schema реально встречаются и насколько широко они покрывают выборку.",
+          "method": "Парсинг application/ld+json и сбор @type по ключевым URL.",
+          "metrics": [
+            [
+              "Schema coverage",
+              "96%"
+            ],
+            [
+              "Страниц с битой JSON-LD",
+              "2"
+            ],
+            [
+              "Страниц без schema",
+              "1"
+            ],
+            [
+              "Топ schema types",
+              "LocalBusiness (27), BreadcrumbList (26), Product (4)"
+            ]
+          ],
+          "findings": [
+            "Есть страницы с невалидной JSON-LD.",
+            "Часть коммерческих страниц пока без schema-разметки.",
+            "Даже при наличии schema важно, чтобы она соответствовала типу страницы и была валидной по синтаксису."
+          ],
+          "priority": "HIGH",
+          "owner": "Frontend / SEO",
+          "recommendation": "Покрыть ключевые шаблоны валидной schema-разметкой и держать ее синхронной с реальным типом страницы: Organization, Service, Product, BreadcrumbList, FAQ, Article."
+        }
+      ]
+    },
+    {
+      "title": "Этап 6 — Коммерческие страницы и контент",
+      "intro": "Смотрю, насколько сайт готов не только собирать индекс, но и превращать спрос в заявку.",
+      "checks": [
+        {
+          "name": "Контактные и лид-страницы",
+          "checked": "Есть ли на сайте страницы, которые можно продвигать как точки входа в заявку.",
+          "method": "Поиск форм, контактных URL и базовой SEO-обвязки этих страниц.",
+          "metrics": [
+            [
+              "Контактных/lead-страниц",
+              "6"
+            ],
+            [
+              "Форм в выборке",
+              "6"
+            ],
+            [
+              "Слабых contact-страниц",
+              "2"
+            ],
+            [
+              "Индексируемых route/query-страниц",
+              "1"
+            ]
+          ],
+          "findings": [
+            "Контактная зона уже есть, но часть страниц не оформлена как полноценные SEO-посадки.",
+            "Есть формы, но нужно проверять, насколько вокруг них собран доверительный и коммерческий слой.",
+            "Служебные query/route URL не должны конкурировать с нормальными посадочными страницами."
+          ],
+          "priority": "HIGH",
+          "owner": "SEO / Marketing",
+          "recommendation": "Сделать из контактов и заявки сильные посадочные: с оффером, ответами на возражения, блоками доверия, FAQ и аккуратной SEO-обвязкой."
+        },
+        {
+          "name": "Контентная глубина приоритетных страниц",
+          "checked": "Хватает ли страницам фактуры, чтобы закрывать интент, а не просто существовать в индексе.",
+          "method": "Подсчет слов и просмотр коммерческих шаблонов внутри репрезентативной выборки.",
+          "metrics": [
+            [
+              "Коммерческих страниц в выборке",
+              "28"
+            ],
+            [
+              "Среднее число слов",
+              "1277.5"
+            ],
+            [
+              "Тонких страниц",
+              "1"
+            ],
+            [
+              "Страниц без schema среди коммерческих",
+              "1"
+            ]
+          ],
+          "findings": [
+            "Одного объема текста недостаточно: страницы должны объяснять выбор, цену, процесс, сроки и следующий шаг.",
+            "Часть страниц остается тонкой по фактуре.",
+            "Потенциал роста лежит не только в SEO-текстах, но и в блоках доверия, FAQ, таблицах сравнения и ответах на спрос."
+          ],
+          "priority": "MEDIUM",
+          "owner": "SEO / Content / Marketing",
+          "recommendation": "Пересобрать приоритетные посадочные под коммерческий интент: добавить доказательства, FAQ, answer-first блоки, цены/сценарии и перелинковку на соседние точки спроса."
+        }
+      ]
+    }
+  ],
+  "quick_wins": [
+    {
+      "title": "Починить конфликт robots.txt и sitemap.xml",
+      "effort": "10-20 минут",
+      "impact": "Снимет конфликт сигналов для Яндекса и Google",
+      "action": "Убрать запрет на sitemap.xml и оставить одну корректную директиву Sitemap."
+    },
+    {
+      "title": "Свести доменные редиректы к одному шагу",
+      "effort": "15-30 минут",
+      "impact": "Уберет лишнюю задержку и технический шум на входе",
+      "action": "Оставить единый 301 сразу на канонический HTTPS-домен без промежуточных хопов."
+    },
+    {
+      "title": "Нормально оформить контакты и лид-страницы",
+      "effort": "30-60 минут",
+      "impact": "Поднимет доверие, брендовый запрос и конверсию",
+      "action": "Добавить H1, title, description, canonical и блоки доверия на страницу контактов/формы."
+    },
+    {
+      "title": "Исправить битую JSON-LD разметку",
+      "effort": "15-40 минут",
+      "impact": "Вернет валидную structured data в индекс",
+      "action": "Проверить синтаксис JSON-LD и пересобрать проблемные блоки schema на ключевых страницах."
+    },
+    {
+      "title": "Закрыть дыры в title и description",
+      "effort": "1-2 часа",
+      "impact": "Даст быстрый прирост управляемости сниппетов",
+      "action": "Дописать шаблоны генерации title/description для страниц без SEO-обвязки."
+    },
+    {
+      "title": "Разрулить индексируемые query и route URL",
+      "effort": "30-90 минут",
+      "impact": "Сократит шум в индексе и освободит crawl budget",
+      "action": "Закрыть служебные query-страницы от индексации или перевести их на чистые SEO-friendly URL."
+    }
+  ],
+  "strategic_moves": [
+    {
+      "title": "Пересобрать шаблоны коммерческих страниц как growth-layer",
+      "impact": "Высокое",
+      "effort": "5-10 дней",
+      "details": "Собрать единые требования к H1, title, description, canonical, FAQ, CTA, trust-блокам и перелинковке по всем ключевым типам страниц."
+    },
+    {
+      "title": "Сделать управляемую архитектуру индексации",
+      "impact": "Высокое",
+      "effort": "3-7 дней",
+      "details": "Разделить sitemap по типам страниц, зачистить служебные route/query URL и настроить единый контроль над каноническими доменами и редиректами."
+    },
+    {
+      "title": "Усилить structured data и entity-сигналы",
+      "impact": "Среднее / высокое",
+      "effort": "2-5 дней",
+      "details": "Покрыть ключевые страницы валидной schema-разметкой и собрать данные так, чтобы сайт был понятнее обычной и ИИ-выдаче."
+    },
+    {
+      "title": "Развить спросовые кластеры через категории и карточки",
+      "impact": "Высокое",
+      "effort": "2-4 недели",
+      "details": "Собрать отдельные посадочные под главные кластеры спроса, усилить категории FAQ и ответами на выбор, а карточки сделать более конверсионными."
+    }
+  ],
+  "score": 45,
+  "screenshots": []
 }

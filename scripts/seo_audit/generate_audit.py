@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import math
 import re
@@ -21,7 +22,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Inches, Pt, RGBColor
-from preview_export import capture_screenshots, write_preview_html, write_preview_pdf
+from preview_export import write_preview_html, write_preview_pdf
 
 BRAND_NAME = "Shelpakov Digital"
 BRAND_DARK = "101C2B"
@@ -56,6 +57,7 @@ class PageSnapshot:
     image_count: int
     missing_alt_count: int
     lazy_missing_count: int
+    missing_dimensions_count: int
     schema_types: list[str]
     internal_links: int
     word_count: int
@@ -352,6 +354,7 @@ def analyse_page(session: requests.Session, url: str, base_domain: str) -> PageS
             image_count=0,
             missing_alt_count=0,
             lazy_missing_count=0,
+            missing_dimensions_count=0,
             schema_types=[],
             internal_links=0,
             word_count=0,
@@ -371,6 +374,7 @@ def analyse_page(session: requests.Session, url: str, base_domain: str) -> PageS
     images = soup.find_all("img")
     missing_alt_count = sum(1 for image in images if not (image.get("alt") or "").strip())
     lazy_missing_count = sum(1 for image in images if image.get("loading") != "lazy")
+    missing_dimensions_count = sum(1 for image in images if not image.get("width") or not image.get("height"))
     schema_types = parse_jsonld_types(soup)
     internal_links = 0
     for anchor in soup.find_all("a", href=True):
@@ -401,6 +405,7 @@ def analyse_page(session: requests.Session, url: str, base_domain: str) -> PageS
         image_count=len(images),
         missing_alt_count=missing_alt_count,
         lazy_missing_count=lazy_missing_count,
+        missing_dimensions_count=missing_dimensions_count,
         schema_types=schema_types,
         internal_links=internal_links,
         word_count=word_count,
@@ -471,6 +476,17 @@ CONTACT_PATH_KEYWORDS = (
     "zayav",
     "svyaz",
     "consult",
+)
+
+BLOG_PATH_KEYWORDS = (
+    "blog",
+    "blogs",
+    "article",
+    "articles",
+    "news",
+    "novosti",
+    "stati",
+    "aktuelles",
 )
 
 
@@ -870,6 +886,542 @@ def build_executive_summary_dynamic(audit: dict) -> list[str]:
     ]
 
 
+def select_representative_urls(base_url: str, home_links: list[str], sitemap_urls: list[str], sample_size: int) -> list[str]:
+    selected: list[str] = []
+    seen: set[str] = set()
+
+    def normalize(url: str) -> str:
+        return url.rstrip("/") or url
+
+    def add(url: str) -> None:
+        normalized = normalize(url)
+        if not normalized or normalized in seen:
+            return
+        seen.add(normalized)
+        selected.append(normalized)
+
+    add(base_url)
+    for url in home_links[:10]:
+        add(url)
+
+    buckets: dict[str, list[str]] = {
+        "contact": [],
+        "query": [],
+        "blog": [],
+        "root": [],
+        "mid": [],
+        "deep": [],
+        "other": [],
+    }
+    for url in sitemap_urls:
+        parsed = urlparse(url)
+        path = parsed.path.lower()
+        depth = len([segment for segment in parsed.path.split("/") if segment])
+        if parsed.query:
+            buckets["query"].append(url)
+        elif any(token in path for token in CONTACT_PATH_KEYWORDS):
+            buckets["contact"].append(url)
+        elif any(token in path for token in BLOG_PATH_KEYWORDS):
+            buckets["blog"].append(url)
+        elif depth <= 1:
+            buckets["root"].append(url)
+        elif depth == 2:
+            buckets["mid"].append(url)
+        elif depth >= 3:
+            buckets["deep"].append(url)
+        else:
+            buckets["other"].append(url)
+
+    quotas = {
+        "contact": 2,
+        "query": 2,
+        "blog": 3,
+        "root": 4,
+        "mid": max(6, sample_size // 2),
+        "deep": max(6, sample_size // 2),
+        "other": 4,
+    }
+    for bucket_name in ("contact", "query", "blog", "root", "mid", "deep", "other"):
+        for url in buckets[bucket_name][: quotas[bucket_name]]:
+            add(url)
+
+    for bucket_name in ("contact", "query", "blog", "root", "mid", "deep", "other"):
+        for url in buckets[bucket_name]:
+            if len(selected) >= sample_size + 10:
+                break
+            add(url)
+
+    return selected[: sample_size + 10]
+
+
+def infer_issue_owner(issue: AuditIssue) -> str:
+    haystack = f"{issue.title} {issue.recommendation}".lower()
+    if any(token in haystack for token in ("robots", "sitemap", "redirect", "canonical", "query-url", "route", "host")):
+        return "Backend / SEO"
+    if any(token in haystack for token in ("schema", "json", "title", "description", "h1", "alt", "image", "snippet")):
+        return "Frontend / SEO"
+    if any(token in haystack for token in ("контакт", "lead", "cta", "content", "faq", "перелинков")):
+        return "SEO / Marketing"
+    return "SEO"
+
+
+def build_priority_matrix(audit: dict) -> list[dict]:
+    rows: list[dict] = []
+    severity_base = {
+        "Critical": (10, 9, 10),
+        "High": (8, 7, 8),
+        "Medium": (6, 5, 6),
+        "Low": (3, 3, 4),
+    }
+    for issue in audit.get("issues", [])[:8]:
+        impact, risk, business = severity_base.get(issue.severity, (4, 4, 4))
+        haystack = f"{issue.title} {issue.recommendation}".lower()
+        if any(token in haystack for token in ("robots", "sitemap", "индекса", "canonical", "redirect")):
+            impact = min(10, impact + 1)
+        if any(token in haystack for token in ("title", "description", "ctr", "snippet", "schema")):
+            business = min(10, business + 1)
+        if any(token in haystack for token in ("контакт", "lead", "route", "query-url")):
+            risk = min(10, risk + 1)
+        rows.append(
+            {
+                "problem": issue.title,
+                "severity": issue.severity,
+                "impact": impact,
+                "risk": risk,
+                "business": business,
+                "total": impact + risk + business,
+                "owner": infer_issue_owner(issue),
+            }
+        )
+    return rows
+
+
+def build_critical_errors(audit: dict) -> list[dict]:
+    return [asdict(issue) for issue in audit.get("issues", []) if issue.severity in ("Critical", "High")][:4]
+
+
+def build_quick_wins(audit: dict) -> list[dict]:
+    quick_wins: list[dict] = []
+    issue_titles = {issue.title for issue in audit.get("issues", [])}
+
+    if any("robots.txt" in title for title in issue_titles):
+        quick_wins.append(
+            {
+                "title": "Починить конфликт robots.txt и sitemap.xml",
+                "effort": "10-20 минут",
+                "impact": "Снимет конфликт сигналов для Яндекса и Google",
+                "action": "Убрать запрет на sitemap.xml и оставить одну корректную директиву Sitemap.",
+            }
+        )
+
+    if any("redirect" in title.lower() for title in issue_titles):
+        quick_wins.append(
+            {
+                "title": "Свести доменные редиректы к одному шагу",
+                "effort": "15-30 минут",
+                "impact": "Уберет лишнюю задержку и технический шум на входе",
+                "action": "Оставить единый 301 сразу на канонический HTTPS-домен без промежуточных хопов.",
+            }
+        )
+
+    weak_contacts = audit.get("weak_contact_pages", [])
+    if weak_contacts:
+        quick_wins.append(
+            {
+                "title": "Нормально оформить контакты и лид-страницы",
+                "effort": "30-60 минут",
+                "impact": "Поднимет доверие, брендовый запрос и конверсию",
+                "action": "Добавить H1, title, description, canonical и блоки доверия на страницу контактов/формы.",
+            }
+        )
+
+    if audit.get("invalid_schema_count", 0):
+        quick_wins.append(
+            {
+                "title": "Исправить битую JSON-LD разметку",
+                "effort": "15-40 минут",
+                "impact": "Вернет валидную structured data в индекс",
+                "action": "Проверить синтаксис JSON-LD и пересобрать проблемные блоки schema на ключевых страницах.",
+            }
+        )
+
+    if audit.get("title_missing_count", 0) or audit.get("description_missing_count", 0):
+        quick_wins.append(
+            {
+                "title": "Закрыть дыры в title и description",
+                "effort": "1-2 часа",
+                "impact": "Даст быстрый прирост управляемости сниппетов",
+                "action": "Дописать шаблоны генерации title/description для страниц без SEO-обвязки.",
+            }
+        )
+
+    if audit.get("indexable_query_count", 0):
+        quick_wins.append(
+            {
+                "title": "Разрулить индексируемые query и route URL",
+                "effort": "30-90 минут",
+                "impact": "Сократит шум в индексе и освободит crawl budget",
+                "action": "Закрыть служебные query-страницы от индексации или перевести их на чистые SEO-friendly URL.",
+            }
+        )
+
+    if audit.get("total_missing_alt", 0):
+        quick_wins.append(
+            {
+                "title": "Запустить шаблон alt для изображений",
+                "effort": "1-2 часа",
+                "impact": "Усилит image SEO и понятность карточек",
+                "action": "Собрать правила alt по типу страницы, товару, категории и ключевой сущности изображения.",
+            }
+        )
+
+    return quick_wins[:6]
+
+
+def build_strategic_moves(audit: dict) -> list[dict]:
+    profile = infer_project_profile(audit)
+    moves = [
+        {
+            "title": "Пересобрать шаблоны коммерческих страниц как growth-layer",
+            "impact": "Высокое",
+            "effort": "5-10 дней",
+            "details": "Собрать единые требования к H1, title, description, canonical, FAQ, CTA, trust-блокам и перелинковке по всем ключевым типам страниц.",
+        },
+        {
+            "title": "Сделать управляемую архитектуру индексации",
+            "impact": "Высокое",
+            "effort": "3-7 дней",
+            "details": "Разделить sitemap по типам страниц, зачистить служебные route/query URL и настроить единый контроль над каноническими доменами и редиректами.",
+        },
+        {
+            "title": "Усилить structured data и entity-сигналы",
+            "impact": "Среднее / высокое",
+            "effort": "2-5 дней",
+            "details": "Покрыть ключевые страницы валидной schema-разметкой и собрать данные так, чтобы сайт был понятнее обычной и ИИ-выдаче.",
+        },
+    ]
+    if profile["is_catalog"]:
+        moves.append(
+            {
+                "title": "Развить спросовые кластеры через категории и карточки",
+                "impact": "Высокое",
+                "effort": "2-4 недели",
+                "details": "Собрать отдельные посадочные под главные кластеры спроса, усилить категории FAQ и ответами на выбор, а карточки сделать более конверсионными.",
+            }
+        )
+    else:
+        moves.append(
+            {
+                "title": "Развести услуги по отдельным SEO-посадочным",
+                "impact": "Высокое",
+                "effort": "1-3 недели",
+                "details": "Вынести ключевые интенты в самостоятельные посадочные страницы и связать их перелинковкой, кейсами, FAQ и экспертными блоками.",
+            }
+        )
+    return moves
+
+
+def build_phase_sections(audit: dict) -> list[dict]:
+    sample_pages: list[PageSnapshot] = audit["sample_pages"]
+    page_type_counter = Counter(page.page_type for page in sample_pages)
+    status_counter = Counter(page.status_code for page in sample_pages)
+    schema_counter = Counter(
+        schema_type
+        for page in sample_pages
+        for schema_type in page.schema_types
+        if schema_type and schema_type != "Invalid JSON-LD"
+    )
+    contact_pages = get_contact_related_pages(sample_pages)
+    query_pages = get_indexable_query_pages(sample_pages)
+    invalid_schema_pages = [page for page in sample_pages if "Invalid JSON-LD" in page.schema_types]
+    missing_title_pages = [page for page in sample_pages if not page.title]
+    missing_description_pages = [page for page in sample_pages if not page.description]
+    missing_h1_pages = [page for page in sample_pages if not page.h1s]
+    low_link_pages = sorted(sample_pages, key=lambda page: page.internal_links)[:3]
+    long_path_pages = [page for page in sample_pages if len(urlparse(page.url).path) > 75]
+    thin_pages = [page for page in sample_pages if 0 < page.word_count < 250]
+    weak_contact_pages = []
+    for page in contact_pages:
+        gaps = []
+        if not page.h1s:
+            gaps.append("H1")
+        if not page.title:
+            gaps.append("title")
+        if not page.description:
+            gaps.append("description")
+        if not page.canonical:
+            gaps.append("canonical")
+        if gaps:
+            weak_contact_pages.append({"url": page.url, "missing": gaps})
+    audit["weak_contact_pages"] = weak_contact_pages
+    audit["invalid_schema_count"] = len(invalid_schema_pages)
+    audit["title_missing_count"] = len(missing_title_pages)
+    audit["description_missing_count"] = len(missing_description_pages)
+    audit["indexable_query_count"] = len(query_pages)
+
+    average_internal_links = round(statistics.mean([page.internal_links for page in sample_pages]), 1) if sample_pages else 0
+    total_lazy_gaps = sum(page.lazy_missing_count for page in sample_pages)
+    total_dimension_gaps = sum(page.missing_dimensions_count for page in sample_pages)
+    commercial_pages = [
+        page
+        for page in sample_pages
+        if page.page_type in ("Главная", "Категория", "Подкатегория", "Товар", "Внутренняя") or page.has_forms
+    ]
+    missing_schema_commercial = [page for page in commercial_pages if not page.schema_types]
+    average_commercial_words = (
+        round(statistics.mean([page.word_count for page in commercial_pages if page.word_count]), 1)
+        if commercial_pages
+        else 0
+    )
+
+    return [
+        {
+            "title": "Этап 1 — Crawl & Indexability",
+            "intro": "Проверяю, насколько чисто сайт отдает поисковикам сигналы для обхода и индексации.",
+            "checks": [
+                {
+                    "name": "robots.txt и карта сайта",
+                    "checked": "Доступность robots.txt, директивы, sitemap, чистота сигналов для робота.",
+                    "method": "HTTP-запрос + разбор robots.txt и XML sitemap.",
+                    "metrics": [
+                        ("robots.txt", f"{audit['robots_status']}"),
+                        ("Уникальных URL в sitemap", str(audit["sitemap_url_count"])),
+                        ("Всего записей в sitemap", str(audit.get("sitemap_total_entries", audit["sitemap_url_count"]))),
+                        ("Файлов sitemap обработано", str(len(audit.get("processed_sitemaps", [])))),
+                    ],
+                    "findings": [
+                        "Есть конфликт между robots.txt и sitemap.xml." if any("robots.txt" in issue.title for issue in audit["issues"]) else "Критичного конфликта между robots.txt и sitemap.xml в выборке не видно.",
+                        "Карта сайта раздута дублями." if audit.get("sitemap_total_entries", 0) > audit["sitemap_url_count"] * 1.3 else "Сильного раздувания sitemap дублями в выборке не видно.",
+                        "Есть llms.txt, значит сайт уже можно дожимать и под ИИ-видимость." if audit.get("llms_exists") else "Отдельного llms.txt не найдено.",
+                    ],
+                    "priority": "HIGH" if any(issue.severity == "Critical" for issue in audit["issues"]) else "MEDIUM",
+                    "owner": "Backend / SEO",
+                    "recommendation": "Синхронизировать robots.txt, sitemap и канонический домен так, чтобы робот видел один непротиворечивый сценарий обхода.",
+                },
+                {
+                    "name": "Статус-коды, редиректы и каноникализация",
+                    "checked": "HTTP-коды ключевых URL, доменные редиректы, покрытие canonical.",
+                    "method": "HTTP-проверка доменных вариантов + парсинг rel=canonical по выборке страниц.",
+                    "metrics": [
+                        ("Страниц 200 в выборке", str(status_counter.get(200, 0))),
+                        ("Redirect-цепочек > 1 шага", str(len([item for item in audit["redirect_checks"] if len(item["chain"]) > 1]))),
+                        ("Canonical coverage", f"{math.floor(audit['canonical_coverage_ratio'] * 100)}%"),
+                        ("Индексируемых query-URL", str(len(query_pages))),
+                    ],
+                    "findings": [
+                        f"В выборке {status_counter.get(200, 0)} страниц отвечают кодом 200." if status_counter else "Статус-коды в выборке проверить не удалось.",
+                        "Есть лишняя redirect-цепочка на доменных вариантах." if any("redirect" in issue.title.lower() for issue in audit["issues"]) else "Лишних доменных redirect-цепочек в ключевых вариантах не обнаружено.",
+                        "Есть индексируемые query- или route-URL, которые лучше почистить." if query_pages else "Шума от индексируемых query-страниц в выборке почти нет.",
+                    ],
+                    "priority": "HIGH" if query_pages else "MEDIUM",
+                    "owner": "Backend / SEO",
+                    "recommendation": "Свести все доменные варианты к одному канону и либо закрыть служебные URL от индексации, либо перевести их на чистые SEO-friendly маршруты.",
+                },
+            ],
+        },
+        {
+            "title": "Этап 2 — Архитектура и внутренняя структура",
+            "intro": "Смотрю, насколько понятна архитектура сайта и как распределяются ссылки внутри выборки.",
+            "checks": [
+                {
+                    "name": "Типы страниц и покрытие выборки",
+                    "checked": "Какие типы URL реально попали в разбор и как сайт дробит спрос.",
+                    "method": "Классификация URL по глубине, query-параметрам и типам schema.",
+                    "metrics": [
+                        ("Главная", str(page_type_counter.get("Главная", 0))),
+                        ("Категории / подкатегории", str(page_type_counter.get("Категория", 0) + page_type_counter.get("Подкатегория", 0))),
+                        ("Внутренние страницы", str(page_type_counter.get("Внутренняя", 0))),
+                        ("Служебные URL", str(page_type_counter.get("Служебная", 0))),
+                    ],
+                    "findings": [
+                        "Выборка уже покрывает разные уровни структуры, поэтому видно не только главную, но и шаблоны внутренних страниц.",
+                        "В архитектуре есть служебные или route-страницы, которые смешиваются с коммерческими URL." if page_type_counter.get("Служебная", 0) else "Явного давления служебных URL на выборку почти нет.",
+                        f"Длинных путей в выборке: {len(long_path_pages)}." if long_path_pages else "Сильного перекоса в сторону слишком длинных URL в выборке не видно.",
+                    ],
+                    "priority": "MEDIUM",
+                    "owner": "SEO / Backend",
+                    "recommendation": "Держать архитектуру спроса отдельной от служебной логики и не смешивать route/query URL с посадочными и коммерческими страницами.",
+                },
+                {
+                    "name": "Внутренняя перелинковка и видимость ключевых страниц",
+                    "checked": "Сколько внутренних ссылок получают страницы и где есть просадки по вниманию сайта.",
+                    "method": "Подсчет внутренних ссылок на каждой странице выборки.",
+                    "metrics": [
+                        ("Среднее число внутренних ссылок", str(average_internal_links)),
+                        ("Минимум внутренних ссылок", str(low_link_pages[0].internal_links if low_link_pages else 0)),
+                        ("Максимум внутренних ссылок", str(max([page.internal_links for page in sample_pages], default=0))),
+                        ("Контактных/lead-страниц", str(len(contact_pages))),
+                    ],
+                    "findings": [
+                        f"Слабее всего по внутренним ссылкам выглядят: {', '.join(human_path(page.url) for page in low_link_pages if page.url)}." if low_link_pages else "Слабые страницы по перелинковке не выделяются.",
+                        "Контактные страницы есть, но часть из них недооформлена как полноценные SEO-посадки." if weak_contact_pages else "Контактная зона в выборке выглядит цельно.",
+                        "Разумно добавить больше контекстных ссылок между близкими услугами, кейсами, блогом и лид-страницами.",
+                    ],
+                    "priority": "MEDIUM",
+                    "owner": "SEO / Marketing",
+                    "recommendation": "Усилить перелинковку вокруг приоритетных услуг и лид-страниц: связать спросовые страницы, кейсы, FAQ и CTA, а не надеяться только на меню и футер.",
+                },
+            ],
+        },
+        {
+            "title": "Этап 3 — On-Page SEO",
+            "intro": "Разбираю шаблоны title, description, H1 и то, насколько страницы готовы к нормальному сниппету.",
+            "checks": [
+                {
+                    "name": "Title и meta description",
+                    "checked": "Покрытие, длина и пригодность сниппетов к управляемой выдаче.",
+                    "method": "Парсинг title и meta description по репрезентативной выборке страниц.",
+                    "metrics": [
+                        ("Title > 70 символов", str(len([page for page in sample_pages if len(page.title) > 70]))),
+                        ("Title отсутствует", str(len(missing_title_pages))),
+                        ("Description отсутствует", str(len(missing_description_pages))),
+                        ("Description вне диапазона", str(len([page for page in sample_pages if len(page.description) > 160 or (0 < len(page.description) < 120)]))),
+                    ],
+                    "findings": [
+                        "Шаблоны title на части страниц перегружены по длине." if any("title" in issue.title.lower() for issue in audit["issues"]) else "Критической ямы по title в выборке не видно.",
+                        "Есть страницы без description, из-за чего сниппет будет собираться случайно." if missing_description_pages else "Description покрыты достаточно ровно.",
+                        f"Пустой title найден на: {', '.join(human_path(page.url) for page in missing_title_pages[:3])}." if missing_title_pages else "Пустых title в выборке почти нет.",
+                    ],
+                    "priority": "HIGH",
+                    "owner": "SEO / Frontend",
+                    "recommendation": "Пересобрать правила генерации title и description под каждый тип страницы: коротко, конкретно, с ключом, оффером и контролем длины.",
+                },
+                {
+                    "name": "H1, контентный каркас и тонкие страницы",
+                    "checked": "Наличие H1, плотность текстового слоя и качество базового on-page каркаса.",
+                    "method": "Парсинг H1 и подсчет слов в видимом контенте.",
+                    "metrics": [
+                        ("H1 coverage", f"{math.floor(audit['h1_coverage_ratio'] * 100)}%"),
+                        ("Страниц без H1", str(len(missing_h1_pages))),
+                        ("Среднее число слов", str(audit.get("average_words", 0))),
+                        ("Тонких страниц (<250 слов)", str(len(thin_pages))),
+                    ],
+                    "findings": [
+                        "У части страниц нет H1, поэтому поисковику сложнее понять главный интент URL." if missing_h1_pages else "По H1 каркас у выборки в целом собран неплохо.",
+                        "Есть тонкие страницы с минимальным текстовым слоем." if thin_pages else "Сильно пустых страниц в выборке немного.",
+                        "Даже при нормальном объеме текста нужно отдельно проверить, насколько хорошо он поддерживает коммерческий интент и FAQ-слой.",
+                    ],
+                    "priority": "MEDIUM",
+                    "owner": "SEO / Content",
+                    "recommendation": "На каждом ключевом URL закрепить понятный H1, интро, ответы на частые вопросы и короткие коммерческие блоки, чтобы страница работала не только на индекс, но и на конверсию.",
+                },
+            ],
+        },
+        {
+            "title": "Этап 4 — Performance и CWV",
+            "intro": "Смотрю на скорость ответа, вес HTML и то, как медиа-слой может мешать загрузке.",
+            "checks": [
+                {
+                    "name": "Ответ сервера и вес страниц",
+                    "checked": "TTFB-подобная скорость ответа и примерный вес HTML по выборке.",
+                    "method": "HTTP-ответы по ключевым URL без отдельного Lighthouse-прогона.",
+                    "metrics": [
+                        ("Средний ответ", f"{audit.get('average_response_ms', 0)} ms"),
+                        ("Средний HTML", f"{audit.get('average_html_kb', 0)} KB"),
+                        ("Максимум изображений на странице", str(max([page.image_count for page in sample_pages], default=0))),
+                        ("Страниц в выборке", str(len(sample_pages))),
+                    ],
+                    "findings": [
+                        "Скорость ответа сервера сама по себе не выглядит главным стоп-фактором." if audit.get("average_response_ms", 0) < 600 else "Средний ответ уже стоит держать в зоне внимания.",
+                        "Реальные риски здесь чаще сидят в медиа-слое, шаблонах и клиентском рендеринге, чем в голом TTFB.",
+                    ],
+                    "priority": "MEDIUM",
+                    "owner": "Frontend / Backend",
+                    "recommendation": "Проверить приоритетные страницы отдельным CWV-прогоном и зафиксировать LCP/CLS/INP после чистки медиа и шаблонов.",
+                },
+                {
+                    "name": "Изображения, lazy loading и атрибуты размеров",
+                    "checked": "Насколько медиа-слой помогает или мешает SEO и стабильности верстки.",
+                    "method": "Парсинг img-тегов по репрезентативной выборке страниц.",
+                    "metrics": [
+                        ("Всего пропусков alt", str(audit.get("total_missing_alt", 0))),
+                        ("Пропусков lazy loading", str(total_lazy_gaps)),
+                        ("Изображений без width/height", str(total_dimension_gaps)),
+                        ("Изображений на главной", str(audit["home_page"].image_count)),
+                    ],
+                    "findings": [
+                        "Изображения уже теряют SEO-сигналы из-за пропусков alt." if audit.get("total_missing_alt", 0) else "Массового провала по alt в выборке не видно.",
+                        "Отсутствие width/height повышает риск CLS и визуальной нестабильности." if total_dimension_gaps else "Атрибуты размеров на картинках в целом присутствуют.",
+                        "Lazy loading стоит выровнять шаблонно, а не править вручную по одной странице." if total_lazy_gaps else "Явной массовой проблемы по lazy loading в выборке не видно.",
+                    ],
+                    "priority": "MEDIUM",
+                    "owner": "Frontend / SEO",
+                    "recommendation": "Сделать единый image-шаблон: alt, width/height, lazy loading и, при необходимости, отдельную image-схему/карту сайта.",
+                },
+            ],
+        },
+        {
+            "title": "Этап 5 — Structured Data",
+            "intro": "Проверяю, насколько хорошо сайт объясняет поисковику сущности бизнеса, страниц и предложений.",
+            "checks": [
+                {
+                    "name": "Покрытие schema-разметкой",
+                    "checked": "Какие типы schema реально встречаются и насколько широко они покрывают выборку.",
+                    "method": "Парсинг application/ld+json и сбор @type по ключевым URL.",
+                    "metrics": [
+                        ("Schema coverage", f"{math.floor(audit['schema_coverage_ratio'] * 100)}%"),
+                        ("Страниц с битой JSON-LD", str(len(invalid_schema_pages))),
+                        ("Страниц без schema", str(len([page for page in sample_pages if not page.schema_types]))),
+                        ("Топ schema types", ", ".join(f"{name} ({count})" for name, count in schema_counter.most_common(3)) or "нет"),
+                    ],
+                    "findings": [
+                        "Есть страницы с невалидной JSON-LD." if invalid_schema_pages else "Явных поломок JSON-LD в выборке не видно.",
+                        "Часть коммерческих страниц пока без schema-разметки." if missing_schema_commercial else "Коммерческие страницы в выборке уже неплохо покрыты schema.",
+                        "Даже при наличии schema важно, чтобы она соответствовала типу страницы и была валидной по синтаксису.",
+                    ],
+                    "priority": "HIGH" if invalid_schema_pages else "MEDIUM",
+                    "owner": "Frontend / SEO",
+                    "recommendation": "Покрыть ключевые шаблоны валидной schema-разметкой и держать ее синхронной с реальным типом страницы: Organization, Service, Product, BreadcrumbList, FAQ, Article.",
+                },
+            ],
+        },
+        {
+            "title": "Этап 6 — Коммерческие страницы и контент",
+            "intro": "Смотрю, насколько сайт готов не только собирать индекс, но и превращать спрос в заявку.",
+            "checks": [
+                {
+                    "name": "Контактные и лид-страницы",
+                    "checked": "Есть ли на сайте страницы, которые можно продвигать как точки входа в заявку.",
+                    "method": "Поиск форм, контактных URL и базовой SEO-обвязки этих страниц.",
+                    "metrics": [
+                        ("Контактных/lead-страниц", str(len(contact_pages))),
+                        ("Форм в выборке", str(len([page for page in sample_pages if page.has_forms]))),
+                        ("Слабых contact-страниц", str(len(weak_contact_pages))),
+                        ("Индексируемых route/query-страниц", str(len(query_pages))),
+                    ],
+                    "findings": [
+                        "Контактная зона уже есть, но часть страниц не оформлена как полноценные SEO-посадки." if weak_contact_pages else "Контактные страницы в выборке выглядят собранно.",
+                        "Есть формы, но нужно проверять, насколько вокруг них собран доверительный и коммерческий слой.",
+                        "Служебные query/route URL не должны конкурировать с нормальными посадочными страницами." if query_pages else "Шума от служебных лид-URL в выборке немного.",
+                    ],
+                    "priority": "HIGH",
+                    "owner": "SEO / Marketing",
+                    "recommendation": "Сделать из контактов и заявки сильные посадочные: с оффером, ответами на возражения, блоками доверия, FAQ и аккуратной SEO-обвязкой.",
+                },
+                {
+                    "name": "Контентная глубина приоритетных страниц",
+                    "checked": "Хватает ли страницам фактуры, чтобы закрывать интент, а не просто существовать в индексе.",
+                    "method": "Подсчет слов и просмотр коммерческих шаблонов внутри репрезентативной выборки.",
+                    "metrics": [
+                        ("Коммерческих страниц в выборке", str(len(commercial_pages))),
+                        ("Среднее число слов", str(average_commercial_words)),
+                        ("Тонких страниц", str(len(thin_pages))),
+                        ("Страниц без schema среди коммерческих", str(len(missing_schema_commercial))),
+                    ],
+                    "findings": [
+                        "Одного объема текста недостаточно: страницы должны объяснять выбор, цену, процесс, сроки и следующий шаг.",
+                        "Часть страниц остается тонкой по фактуре." if thin_pages else "Сильно пустых коммерческих страниц в выборке немного.",
+                        "Потенциал роста лежит не только в SEO-текстах, но и в блоках доверия, FAQ, таблицах сравнения и ответах на спрос.",
+                    ],
+                    "priority": "MEDIUM",
+                    "owner": "SEO / Content / Marketing",
+                    "recommendation": "Пересобрать приоритетные посадочные под коммерческий интент: добавить доказательства, FAQ, answer-first блоки, цены/сценарии и перелинковку на соседние точки спроса.",
+                },
+            ],
+        },
+    ]
+
+
 def build_issue_list(audit: dict) -> list[AuditIssue]:
     issues: list[AuditIssue] = []
     robots_lines = audit["robots_lines"]
@@ -1178,13 +1730,16 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
     )
     home_links = discover_home_links(session, base_url, base_domain)
     preferred_urls = [
-        base_url,
         urljoin(f"{base_url}/", "contacts"),
         urljoin(f"{base_url}/", "index.php?route=information/contactform"),
-        *home_links[:8],
-        *sitemap_urls[: max(10, sample_size)],
+        *home_links[:10],
     ]
-    unique_urls = list(dict.fromkeys(preferred_urls))[: sample_size + 8]
+    unique_urls = select_representative_urls(
+        base_url,
+        preferred_urls,
+        sitemap_urls,
+        max(sample_size, 18),
+    )
     snapshots = [analyse_page(session, item, base_domain) for item in unique_urls]
     html_pages = [snapshot for snapshot in snapshots if snapshot.status_code == 200 and "html" in snapshot.content_type]
 
@@ -1212,6 +1767,7 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
         "sitemap_url_count": len(sitemap_urls),
         "sitemap_total_entries": sitemap_total_entries,
         "processed_sitemaps": processed_sitemaps,
+        "home_links_count": len(home_links),
         "sample_pages": html_pages,
         "raw_sampled_urls": unique_urls,
         "title_long_ratio": (len(title_long) / len(html_pages)) if html_pages else 0,
@@ -1234,6 +1790,11 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
     audit["strengths"] = dynamic_build_strengths(audit)
     audit["growth_points"] = dynamic_build_growth_points(audit)
     audit["roadmap"] = dynamic_build_roadmap(audit)
+    audit["priority_matrix"] = build_priority_matrix(audit)
+    audit["critical_errors"] = build_critical_errors(audit)
+    audit["phase_sections"] = build_phase_sections(audit)
+    audit["quick_wins"] = build_quick_wins(audit)
+    audit["strategic_moves"] = build_strategic_moves(audit)
     audit["score"] = build_score(audit, issues)
     return audit
 
@@ -1495,6 +2056,108 @@ def add_snapshot_table(doc: Document, snapshots: list[PageSnapshot]) -> None:
             set_font(run, size=9.2, color=BRAND_TEXT)
 
 
+def add_priority_matrix_table(doc: Document, rows: list[dict]) -> None:
+    if not rows:
+        return
+    table = doc.add_table(rows=1, cols=7)
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    remove_table_borders(table)
+    headers = ["Проблема", "Impact", "Risk", "Business", "Итог", "Приоритет", "Ответственный"]
+    for idx, header in enumerate(headers):
+        cell = table.rows[0].cells[idx]
+        set_cell_shading(cell, BRAND_DARK)
+        set_cell_margins(cell, 80, 70, 80, 70)
+        paragraph = cell.paragraphs[0]
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = paragraph.add_run(header)
+        set_font(run, size=8.7, bold=True, color="FFFFFF")
+    for row_data in rows:
+        row = table.add_row().cells
+        values = [
+            row_data.get("problem", ""),
+            str(row_data.get("impact", "")),
+            str(row_data.get("risk", "")),
+            str(row_data.get("business", "")),
+            str(row_data.get("total", "")),
+            row_data.get("severity", ""),
+            row_data.get("owner", ""),
+        ]
+        for idx, value in enumerate(values):
+            cell = row[idx]
+            set_cell_shading(cell, BRAND_SOFT if idx % 2 == 0 else "FFFFFF")
+            set_cell_margins(cell, 70, 70, 70, 70)
+            paragraph = cell.paragraphs[0]
+            if idx in (1, 2, 3, 4):
+                paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = paragraph.add_run(value)
+            set_font(run, size=8.9, color=BRAND_TEXT)
+
+
+def add_metrics_list(container, metrics: list[tuple[str, str]]) -> None:
+    for label, value in metrics:
+        paragraph = container.add_paragraph()
+        paragraph.paragraph_format.space_after = Pt(2)
+        key_run = paragraph.add_run(f"{label}: ")
+        set_font(key_run, size=10.1, bold=True, color=BRAND_TEXT)
+        value_run = paragraph.add_run(value)
+        set_font(value_run, size=10.1, color=BRAND_MUTED)
+
+
+def add_phase_sections_doc(doc: Document, phase_sections: list[dict]) -> None:
+    for section in phase_sections:
+        add_section_heading(doc, "Глубокий разбор", section.get("title", ""), section.get("intro"))
+        for idx, check in enumerate(section.get("checks", []), start=1):
+            card = doc.add_table(rows=2, cols=1)
+            card.alignment = WD_TABLE_ALIGNMENT.CENTER
+            remove_table_borders(card)
+            head = card.rows[0].cells[0]
+            body = card.rows[1].cells[0]
+            set_cell_shading(head, BRAND_SOFT)
+            set_cell_shading(body, "FFFFFF")
+            set_cell_margins(head, 90, 110, 80, 110)
+            set_cell_margins(body, 100, 110, 110, 110)
+            title_run = head.paragraphs[0].add_run(f"{idx}. {check.get('name', '')}")
+            set_font(title_run, size=11.4, bold=True, color=BRAND_TEXT)
+
+            add_text_paragraph(body, f"Что проверялось: {check.get('checked', '')}", size=10.7, color=BRAND_TEXT, space_after=3)
+            add_text_paragraph(body, f"Как проверялось: {check.get('method', '')}", size=10.5, color=BRAND_MUTED, space_after=4)
+            add_metrics_list(body, check.get("metrics", []))
+            add_text_paragraph(body, "Что нашли:", size=10.5, bold=True, color=BRAND_TEXT, space_after=3)
+            add_bullet_list(body, check.get("findings", []), size=10.4)
+            add_text_paragraph(
+                body,
+                f"Приоритет: {check.get('priority', '')}  |  Ответственный: {check.get('owner', '')}",
+                size=10.2,
+                bold=True,
+                color=BRAND_ORANGE,
+                space_after=3,
+            )
+            add_text_paragraph(body, f"Что делать: {check.get('recommendation', '')}", size=10.4, color=BRAND_TEXT, bold=True, space_after=4)
+            doc.add_paragraph().paragraph_format.space_after = Pt(4)
+
+
+def add_action_cards_doc(doc: Document, items: list[dict], value_key: str, extra_key: str) -> None:
+    if not items:
+        return
+    for item in items:
+        card = doc.add_table(rows=2, cols=1)
+        card.alignment = WD_TABLE_ALIGNMENT.CENTER
+        remove_table_borders(card)
+        head = card.rows[0].cells[0]
+        body = card.rows[1].cells[0]
+        set_cell_shading(head, BRAND_ACCENT_SOFT)
+        set_cell_shading(body, "FFFFFF")
+        set_cell_margins(head, 90, 110, 80, 110)
+        set_cell_margins(body, 100, 110, 110, 110)
+        title_run = head.paragraphs[0].add_run(item.get("title", ""))
+        set_font(title_run, size=11.2, bold=True, color=BRAND_TEXT)
+        add_text_paragraph(body, f"{value_key.capitalize()}: {item.get(value_key.lower(), item.get(value_key, ''))}", size=10.2, color=BRAND_ORANGE, bold=True, space_after=2)
+        add_text_paragraph(body, f"{extra_key.capitalize()}: {item.get(extra_key.lower(), item.get(extra_key, ''))}", size=10.2, color=BRAND_MUTED, bold=True, space_after=3)
+        main_text = item.get("action") or item.get("details") or ""
+        add_text_paragraph(body, main_text, size=10.5, color=BRAND_TEXT, space_after=4)
+        doc.add_paragraph().paragraph_format.space_after = Pt(4)
+
+
 def build_executive_summary(audit: dict) -> list[str]:
     return [
         (
@@ -1553,7 +2216,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
         doc,
         "Executive summary",
         "Где проект уже силён и где он теряет рост",
-        "Ниже — выжимка по тем точкам, которые сильнее всего влияют на индексацию, кликабельность и масштабирование спроса.",
+        "Ниже не просто список замечаний, а концентрат тех зон, которые сильнее всего влияют на индекс, сниппеты, спрос и конверсию.",
     )
     for paragraph in build_executive_summary_dynamic(audit):
         add_text_paragraph(doc, paragraph, size=11.4, color=BRAND_TEXT, space_after=6)
@@ -1564,36 +2227,63 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
 
     add_section_heading(
         doc,
-        "Приоритеты",
-        "Главные точки роста, которые нужно зафиксировать первыми",
-        "Список отсортирован по бизнес-риску: сверху то, что сильнее всего влияет на индекс, crawl budget, CTR и доверие.",
+        "Таблица приоритетов",
+        "Матрица проблем по влиянию на рост",
+        "Здесь задачи не просто перечислены, а разложены по impact, risk и business-effect, чтобы было понятно, что делать первым.",
     )
-    add_issue_cards(doc, audit["issues"])
+    add_priority_matrix_table(doc, audit.get("priority_matrix", []))
 
     add_section_heading(
         doc,
-        "Что усиливать",
-        "Как превратить текущую структуру в источник роста",
-        "Ниже — не технические правки, а те улучшения, которые помогут глубже забрать спрос и лучше конвертировать трафик в заявки и продажи.",
+        "Критические ошибки",
+        "Что сейчас реально блокирует рост",
+        "Это не весь backlog, а ограничения, которые первыми режут индекс, сниппеты, crawl budget и способность сайта забирать спрос.",
     )
+    critical_issue_cards = [AuditIssue(**item) for item in audit.get("critical_errors", [])] or audit["issues"][:4]
+    add_issue_cards(doc, critical_issue_cards)
+
+    add_section_heading(
+        doc,
+        "Фазы аудита",
+        "Глубокий разбор по ключевым слоям сайта",
+        "Ниже аудит разобран по этапам, чтобы было видно не только список ошибок, но и реальную логику проверки проекта.",
+    )
+    add_phase_sections_doc(doc, audit.get("phase_sections", []))
+
+    add_section_heading(
+        doc,
+        "Quick wins",
+        "Быстрые победы на ближайший спринт",
+        "Эти правки можно внедрить быстро и получить заметный эффект без большой перестройки проекта.",
+    )
+    add_action_cards_doc(doc, audit.get("quick_wins", []), "effort", "impact")
+
+    add_section_heading(
+        doc,
+        "Стратегические улучшения",
+        "Что усилит проект поверх базовых фиксов",
+        "Это уже не тушение пожара, а слой изменений, который превращает сайт в более сильный источник заявок и роста видимости.",
+    )
+    add_action_cards_doc(doc, audit.get("strategic_moves", []), "impact", "effort")
+
+    add_section_heading(doc, "Точки роста", "Куда масштабировать проект после фиксов")
     add_bullet_list(doc, audit["growth_points"], size=11.1)
 
     add_section_heading(
         doc,
         "Roadmap",
         "План внедрения на 60 дней",
-        "Такой порядок даёт самый быстрый эффект: сначала чистим индексацию и шаблоны, затем усиливаем кластеры спроса.",
+        "Порядок выстроен так, чтобы сначала снять технические стоп-факторы, потом усилить шаблоны и только после этого наращивать слой роста.",
     )
     add_roadmap_table(doc, audit["roadmap"])
 
     add_section_heading(
         doc,
         "Приложение",
-        "Фрагмент выборки страниц, которые легли в основу аудита",
-        "Это не полный crawl всего проекта, а репрезентативная выборка по главным, категорийным, товарным и служебным URL.",
+        "Какие страницы реально легли в основу разбора",
+        "Это не случайная выборка: сюда собраны главная, коммерческие, контактные, служебные и глубинные URL, по которым видно качество шаблонов проекта.",
     )
     add_snapshot_table(doc, audit["sample_pages"])
-    add_screenshot_gallery(doc, audit.get("screenshots", []))
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(output_path))
@@ -1619,7 +2309,7 @@ def main() -> None:
     parser.add_argument("--no-json", action="store_true", help="Do not save raw audit JSON next to the DOCX")
     parser.add_argument("--no-preview", action="store_true", help="Do not save HTML preview next to the DOCX")
     parser.add_argument("--no-pdf", action="store_true", help="Do not save PDF preview next to the DOCX")
-    parser.add_argument("--no-screenshots", action="store_true", help="Do not capture page screenshots for the audit")
+    parser.add_argument("--no-screenshots", action="store_true", help="Deprecated: screenshots block has been removed from the audit")
     args = parser.parse_args()
 
     BRAND_NAME = args.brand
@@ -1629,12 +2319,7 @@ def main() -> None:
     output = Path(args.output) if args.output else Path("audits") / f"{slugify_for_filename(target)}-{today}.docx"
 
     audit = build_audit(target, args.company, args.sample_size)
-    assets_dir = output.parent / f"{output.stem}-assets"
-    if not args.no_screenshots:
-        audit_payload = serialize_audit(audit)
-        audit["screenshots"] = capture_screenshots(audit_payload, assets_dir)
-    else:
-        audit["screenshots"] = []
+    audit["screenshots"] = []
     logo_path = Path("public") / "android-chrome-512x512.png"
     generate_docx(audit, output, logo_path)
     audit_payload = serialize_audit(audit)

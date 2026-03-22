@@ -103,7 +103,7 @@
       font-weight: 800;
       color: var(--text);
     }
-    section {
+    section, .phase-section {
       margin: 26px 0;
       background: rgba(255,255,255,0.82);
       border: 1px solid rgba(216,231,246,0.9);
@@ -124,9 +124,14 @@
       font-size: clamp(28px, 3.5vw, 44px);
       line-height: 1.08;
     }
+    h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      line-height: 1.15;
+    }
     .lead { color: var(--muted); font-size: 18px; max-width: 920px; }
-    .issue-list { display: grid; gap: 14px; }
-    .issue-card {
+    .issue-list, .phase-checks { display: grid; gap: 14px; }
+    .issue-card, .phase-check {
       border-radius: 26px;
       overflow: hidden;
       border: 1px solid var(--line);
@@ -150,8 +155,43 @@
     .issue-high .issue-head { background: var(--high); color: #b54708; }
     .issue-medium .issue-head { background: var(--medium); color: #175cd3; }
     .issue-low .issue-head { background: #f4f6fa; color: var(--muted); }
-    .issue-body { padding: 18px; }
-    .issue-body ul, .two-col ul, .roadmap-card ul { padding-left: 18px; margin: 12px 0 0; }
+    .issue-body, .phase-check {
+      padding: 18px;
+    }
+    .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .phase-box {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      background: var(--bg-soft);
+    }
+    .phase-box-title {
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .phase-meta {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .phase-meta span {
+      display: inline-block;
+      margin: 0 8px;
+    }
+    .issue-body ul, .two-col ul, .roadmap-card ul, .phase-box ul {
+      padding-left: 18px;
+      margin: 12px 0 0;
+    }
     .recommendation {
       margin-top: 12px;
       padding: 12px 14px;
@@ -163,11 +203,21 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 18px;
     }
-    .list-card {
+    .list-card, .action-card {
       border: 1px solid var(--line);
       border-radius: 24px;
       background: #fff;
       padding: 22px;
+    }
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .action-meta {
+      margin: 6px 0;
+      color: var(--muted);
+      font-size: 14px;
     }
     .roadmap {
       display: grid;
@@ -187,31 +237,41 @@
       letter-spacing: .16em;
       font-size: 12px;
     }
-    .shots {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-    .shot-card {
-      margin: 0;
-      border-radius: 26px;
-      overflow: hidden;
+    .table-wrap {
+      overflow: auto;
       border: 1px solid var(--line);
+      border-radius: 22px;
       background: #fff;
     }
-    .shot-card img {
-      display: block;
+    .priority-table {
       width: 100%;
-      aspect-ratio: 16 / 10;
-      object-fit: cover;
-      background: #edf3fa;
+      border-collapse: collapse;
+      min-width: 920px;
     }
-    .shot-card figcaption {
-      display: grid;
-      gap: 5px;
-      padding: 14px 16px 18px;
+    .priority-table th, .priority-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
     }
-    .shot-card span { color: var(--muted); font-size: 13px; word-break: break-all; }
+    .priority-table th {
+      background: #132238;
+      color: #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .priority-table td:nth-child(2),
+    .priority-table td:nth-child(3),
+    .priority-table td:nth-child(4),
+    .priority-table td:nth-child(5) {
+      text-align: center;
+      font-weight: 700;
+    }
+    .empty-note {
+      margin: 0;
+      color: var(--muted);
+    }
     .footer-note {
       margin: 28px auto 40px;
       padding-bottom: 20px;
@@ -223,7 +283,8 @@
       .grid-4,
       .roadmap,
       .two-col,
-      .shots { grid-template-columns: 1fr; }
+      .phase-grid,
+      .action-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -237,8 +298,8 @@
       </div>
       <aside class="hero-side">
         <div class="section-kicker">Паспорт проекта</div>
-        <h2 style="font-size:32px;margin-bottom:8px;">Аквас</h2>
-        <p class="lead" style="font-size:16px;">Дата: 22.03.2026 14:58<br/>Домен: https://akvarium-akvas.ru</p>
+        <h2 style="font-size:32px;margin-bottom:8px;">Аквариум Аквас</h2>
+        <p class="lead" style="font-size:16px;">Дата: 22.03.2026 20:40<br/>Домен: https://akvarium-akvas.ru</p>
         <div class="score">45</div>
         <div style="color:var(--muted);font-weight:700;">Индекс SEO-готовности из 100</div>
       </aside>
@@ -247,126 +308,383 @@
     <div class="grid-4">
       <div class="metric"><div class="metric-label">Sitemap unique</div><div class="metric-value">1370</div></div>
       <div class="metric"><div class="metric-label">Sitemap entries</div><div class="metric-value">6971</div></div>
-      <div class="metric"><div class="metric-label">Средний ответ</div><div class="metric-value">520.6 ms</div></div>
-      <div class="metric"><div class="metric-label">HTML выборки</div><div class="metric-value">175.0 KB</div></div>
+      <div class="metric"><div class="metric-label">Средний ответ</div><div class="metric-value">674.1 ms</div></div>
+      <div class="metric"><div class="metric-label">HTML выборки</div><div class="metric-value">206.0 KB</div></div>
     </div>
 
     <section>
       <div class="section-kicker">Приоритеты</div>
-      <h2>Что сейчас сильнее всего мешает росту</h2>
-      <p class="lead">Ниже не формальные замечания, а те ограничения, которые реально влияют на индексацию, CTR, crawl budget и качество коммерческой выдачи.</p>
+      <h2>Матрица проблем по влиянию на рост</h2>
+      <p class="lead">Здесь задачи не просто перечислены, а разложены по impact, risk и business-effect, чтобы было понятно, что делать первым.</p>
+      <div class='table-wrap'><table class='priority-table'><thead><tr><th>Проблема</th><th>Impact</th><th>Risk</th><th>Business</th><th>Итог</th><th>Приоритет</th><th>Ответственный</th></tr></thead><tbody><tr><td>robots.txt конфликтует с картой сайта</td><td>10</td><td>9</td><td>10</td><td>29</td><td>Critical</td><td>Backend / SEO</td></tr><tr><td>Контактные и lead-страницы недооформлены как SEO-посадочные</td><td>9</td><td>8</td><td>9</td><td>26</td><td>High</td><td>Backend / SEO</td></tr><tr><td>В выборке есть индексируемые служебные или query-URL без нормальной SEO-обвязки</td><td>9</td><td>8</td><td>8</td><td>25</td><td>High</td><td>Backend / SEO</td></tr><tr><td>На части страниц title выходят за рабочую длину</td><td>8</td><td>7</td><td>9</td><td>24</td><td>High</td><td>Frontend / SEO</td></tr><tr><td>Meta description на части страниц вне рабочего диапазона</td><td>6</td><td>5</td><td>7</td><td>18</td><td>Medium</td><td>Frontend / SEO</td></tr><tr><td>Изображения теряют SEO-сигналы из-за пустых alt</td><td>6</td><td>5</td><td>6</td><td>17</td><td>Medium</td><td>Frontend / SEO</td></tr><tr><td>Есть лишние redirect-цепочки у доменных вариантов</td><td>7</td><td>5</td><td>6</td><td>18</td><td>Medium</td><td>Backend / SEO</td></tr><tr><td>В sitemap много повторяющихся URL</td><td>7</td><td>5</td><td>6</td><td>18</td><td>Medium</td><td>Backend / SEO</td></tr></tbody></table></div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Критические ошибки</div>
+      <h2>Что сейчас реально блокирует рост</h2>
+      <p class="lead">Это не весь backlog, а ограничения, которые первыми режут индекс, сниппеты, crawl budget и способность сайта забирать спрос.</p>
       <div class="issue-list">
     <article class="issue-card issue-critical">
-      <div class="issue-head"><span>Critical</span><strong>robots.txt конфликтует с собственной картой сайта</strong></div>
+      <div class="issue-head"><span>Critical</span><strong>robots.txt конфликтует с картой сайта</strong></div>
       <div class="issue-body">
-        <p>Сейчас в robots.txt одновременно указан Sitemap и стоит Disallow на sitemap.xml. Для Яндекса и части сервисов это выглядит как конфликт сигналов и мешает чистой индексации.</p>
+        <p>Когда robots.txt одновременно запрещает sitemap.xml и сам же ссылается на карту сайта, поисковики получают конфликтующий сигнал. Это мешает чистой и предсказуемой индексации.</p>
         <ul><li>В robots.txt найдено правило `Disallow: *sitemap.xml`.</li><li>Одновременно файл содержит `Sitemap: https://akvarium-akvas.ru/sitemap.xml`.</li></ul>
-        <p class="recommendation"><strong>Что делать:</strong> Удалить запрет на sitemap.xml, оставить только директиву Sitemap и привести Host к чистому домену без протокола.</p>
+        <p class="recommendation"><strong>Что делать:</strong> Убрать запрет на sitemap.xml, оставить рабочую директиву Sitemap и синхронизировать robots.txt с каноническим доменом проекта.</p>
       </div>
     </article>
     
     <article class="issue-card issue-high">
-      <div class="issue-head"><span>High</span><strong>Контактные и lead-страницы недооптимизированы</strong></div>
+      <div class="issue-head"><span>High</span><strong>Контактные и lead-страницы недооформлены как SEO-посадочные</strong></div>
       <div class="issue-body">
-        <p>Контактные страницы участвуют в доверии, конверсии и брендовой выдаче. Когда у них нет базовой SEO-разметки, сайт теряет и кликабельность, и качество индекса.</p>
-        <ul><li>Страница /contacts открывается без H1.</li><li>На /contacts отсутствует meta description.</li><li>На /contacts отсутствует canonical.</li></ul>
-        <p class="recommendation"><strong>Что делать:</strong> Сделать полноценную контактную страницу: H1, title до 70 символов, description 140-160 символов, canonical, контент про производство, доставку, гарантию, адрес, телефоны и CTA.</p>
+        <p>Страницы контактов и заявок участвуют не только в конверсии, но и в доверии, брендовой выдаче и понимании бизнеса поисковиками.</p>
+        <ul><li>На `/contacts` не хватает: H1, description, canonical.</li><li>На `/index.php?route=information/contactform` не хватает: H1, title, description, canonical.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Собрать полноценные страницы контакта и заявки: H1, title до 70 символов, description 140–160 символов, canonical, блоки доверия, адреса, телефоны и понятный CTA.</p>
       </div>
     </article>
     
     <article class="issue-card issue-high">
-      <div class="issue-head"><span>High</span><strong>Внутренний служебный URL с формой обратного звонка доступен без SEO-контроля</strong></div>
+      <div class="issue-head"><span>High</span><strong>В выборке есть индексируемые служебные или query-URL без нормальной SEO-обвязки</strong></div>
       <div class="issue-body">
-        <p>Indexable-страницы без title, description и H1 создают шум в индексе, размывают релевантность и тянут crawl budget.</p>
-        <ul><li>URL `/index.php?route=information/contactform` доступен по 200.</li><li>На странице нет title, description и H1.</li><li>Ссылка на этот URL есть в шапке как `Обратный звонок`.</li></ul>
-        <p class="recommendation"><strong>Что делать:</strong> Либо закрыть route-страницу от индексации и убрать прямые ссылки, либо перевести ее на нормальный SEO-friendly URL с оформлением.</p>
+        <p>Служебные route-страницы и query-URL без title, description и H1 создают шум в индексе, размывают релевантность и тратят crawl budget.</p>
+        <ul><li>URL `/index.php?route=information/contactform` доступен для обхода, но не хватает: title, description, H1.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Либо закрыть такие URL от индексации и убрать прямые ссылки на них, либо перевести их на нормальные SEO-friendly страницы с полноценным мета-оформлением.</p>
       </div>
     </article>
     
     <article class="issue-card issue-high">
-      <div class="issue-head"><span>High</span><strong>Шаблоны title на товарах и категориях слишком длинные</strong></div>
+      <div class="issue-head"><span>High</span><strong>На части страниц title выходят за рабочую длину</strong></div>
       <div class="issue-body">
-        <p>Длинные title режутся в выдаче, ухудшают CTR и снижают контроль над тем, какой оффер поисковик покажет пользователю.</p>
-        <ul><li>В выборке 12 из 26 страниц имеют title длиннее 70 символов.</li><li>/akvariumy — 83 симв.</li><li>/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov — 91 симв.</li><li>/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm — 92 симв.</li><li>/akvarium-panoramnyj-220-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-920x470x640-mm — 92 симв.</li></ul>
-        <p class="recommendation"><strong>Что делать:</strong> Пересобрать шаблоны title: сначала ключ + модель/категория, затем оффер и бренд. Для каталога держать диапазон 55-70 символов.</p>
-      </div>
-    </article>
-    
-    <article class="issue-card issue-medium">
-      <div class="issue-head"><span>Medium</span><strong>Meta description на части страниц обрезается или не дотягивает до нормального сниппета</strong></div>
-      <div class="issue-body">
-        <p>Сниппет — это коммерческий оффер в выдаче. Когда description слишком короткий или перегруженный, поисковик чаще берет случайный кусок текста со страницы.</p>
-        <ul><li>В выборке 17 из 26 страниц имеют description вне комфортного диапазона.</li><li>/about_us — 188 симв.</li><li>/akvariumy — 169 симв.</li><li>/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov — 255 симв.</li><li>/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm — 255 симв.</li></ul>
-        <p class="recommendation"><strong>Что делать:</strong> Собрать шаблоны description под типы страниц: ключ, ценность, доставка/гарантия, регион, призыв. Ориентир — 140-160 символов.</p>
-      </div>
-    </article>
-    
-    <article class="issue-card issue-medium">
-      <div class="issue-head"><span>Medium</span><strong>Изображения теряют поисковый трафик и контекст карточек</strong></div>
-      <div class="issue-body">
-        <p>Для товарного проекта alt влияет и на картинки, и на понимание ассортимента, и на доступность.</p>
-        <ul><li>На 25 из 26 проверенных страниц есть изображения без alt.</li><li>На главной найдено 7 изображений без alt.</li></ul>
-        <p class="recommendation"><strong>Что делать:</strong> Ввести шаблонную генерацию alt по типу карточки: товар + объем/размер + бренд/серия, а для категорий — общий интент страницы.</p>
-      </div>
-    </article>
-    
-    <article class="issue-card issue-medium">
-      <div class="issue-head"><span>Medium</span><strong>Есть лишняя redirect-цепочка у части доменных вариантов</strong></div>
-      <div class="issue-body">
-        <p>Дополнительный редирект добавляет задержку на входе и создает ненужную техническую сложность для ботов и пользователей.</p>
-        <ul><li>Путь `http://www.akvarium-akvas.ru/` отдает две последовательные 301-переадресации.</li><li>Финальный канонический домен — `https://akvarium-akvas.ru/`.</li></ul>
-        <p class="recommendation"><strong>Что делать:</strong> Свести все варианты домена к одному 301-редиректу напрямую на канонический HTTPS без промежуточного `https://www`.</p>
-      </div>
-    </article>
-    
-    <article class="issue-card issue-medium">
-      <div class="issue-head"><span>Medium</span><strong>Карта сайта раздута повторяющимися URL</strong></div>
-      <div class="issue-body">
-        <p>Когда один и тот же URL повторяется в sitemap много раз, поисковики получают лишний шум вместо чистого сигнала, а анализ индексации становится менее управляемым.</p>
-        <ul><li>В sitemap найдено 6971 записей, но только 1370 уникальных URL.</li><li>Повторов: 5601.</li></ul>
-        <p class="recommendation"><strong>Что делать:</strong> Пересобрать генерацию sitemap так, чтобы каждый индексируемый URL попадал туда один раз, а карта сайта отражала реальную структуру проекта без дублей.</p>
-      </div>
-    </article>
-    
-    <article class="issue-card issue-low">
-      <div class="issue-head"><span>Low</span><strong>На главной остался meta keywords, который уже не дает SEO-ценности</strong></div>
-      <div class="issue-body">
-        <p>Сам по себе тег не вредит, но это сигнал, что шаблон меты стоит почистить и поддерживать в актуальном виде.</p>
-        <ul><li>На главной найден тег meta keywords.</li></ul>
-        <p class="recommendation"><strong>Что делать:</strong> Убрать meta keywords из шаблона и сосредоточиться на title, description, H1, schema и коммерческих блоках.</p>
+        <p>Слишком длинные title режутся в выдаче, ухудшают CTR и снижают контроль над тем, какой оффер поисковик покажет пользователю.</p>
+        <ul><li>В выборке 10 из 28 страниц имеют title длиннее 70 символов.</li><li>/akvariumy — 83 симв.</li><li>/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov — 91 симв.</li><li>/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm — 92 симв.</li><li>/akvarium-panoramnyj-220-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-920x470x640-mm — 92 симв.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Пересобрать шаблоны title: сначала ключ и тип страницы, затем ценностный оффер и бренд. Ориентир — диапазон 55–70 символов.</p>
       </div>
     </article>
     </div>
     </section>
 
+    
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Этап 1 — Crawl &amp; Indexability</h2>
+              <p class="lead">Проверяю, насколько чисто сайт отдает поисковикам сигналы для обхода и индексации.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>robots.txt и карта сайта</h3>
+                  <p><strong>Что проверялось:</strong> Доступность robots.txt, директивы, sitemap, чистота сигналов для робота.</p>
+                  <p><strong>Как проверялось:</strong> HTTP-запрос + разбор robots.txt и XML sitemap.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>robots.txt:</strong> 200</li><li><strong>Уникальных URL в sitemap:</strong> 1370</li><li><strong>Всего записей в sitemap:</strong> 6971</li><li><strong>Файлов sitemap обработано:</strong> 1</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>Есть конфликт между robots.txt и sitemap.xml.</li><li>Карта сайта раздута дублями.</li><li>Есть llms.txt, значит сайт уже можно дожимать и под ИИ-видимость.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> HIGH <span>•</span> <strong>Ответственный:</strong> Backend / SEO</p>
+                  <p class="recommendation"><strong>Что делать:</strong> Синхронизировать robots.txt, sitemap и канонический домен так, чтобы робот видел один непротиворечивый сценарий обхода.</p>
+                </article>
+                
+                <article class="phase-check">
+                  <h3>Статус-коды, редиректы и каноникализация</h3>
+                  <p><strong>Что проверялось:</strong> HTTP-коды ключевых URL, доменные редиректы, покрытие canonical.</p>
+                  <p><strong>Как проверялось:</strong> HTTP-проверка доменных вариантов + парсинг rel=canonical по выборке страниц.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Страниц 200 в выборке:</strong> 28</li><li><strong>Redirect-цепочек &gt; 1 шага:</strong> 1</li><li><strong>Canonical coverage:</strong> 78%</li><li><strong>Индексируемых query-URL:</strong> 1</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>В выборке 28 страниц отвечают кодом 200.</li><li>Есть лишняя redirect-цепочка на доменных вариантах.</li><li>Есть индексируемые query- или route-URL, которые лучше почистить.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> HIGH <span>•</span> <strong>Ответственный:</strong> Backend / SEO</p>
+                  <p class="recommendation"><strong>Что делать:</strong> Свести все доменные варианты к одному канону и либо закрыть служебные URL от индексации, либо перевести их на чистые SEO-friendly маршруты.</p>
+                </article>
+                </div>
+            </section>
+            
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Этап 2 — Архитектура и внутренняя структура</h2>
+              <p class="lead">Смотрю, насколько понятна архитектура сайта и как распределяются ссылки внутри выборки.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>Типы страниц и покрытие выборки</h3>
+                  <p><strong>Что проверялось:</strong> Какие типы URL реально попали в разбор и как сайт дробит спрос.</p>
+                  <p><strong>Как проверялось:</strong> Классификация URL по глубине, query-параметрам и типам schema.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Главная:</strong> 1</li><li><strong>Категории / подкатегории:</strong> 18</li><li><strong>Внутренние страницы:</strong> 4</li><li><strong>Служебные URL:</strong> 1</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>Выборка уже покрывает разные уровни структуры, поэтому видно не только главную, но и шаблоны внутренних страниц.</li><li>В архитектуре есть служебные или route-страницы, которые смешиваются с коммерческими URL.</li><li>Длинных путей в выборке: 4.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> SEO / Backend</p>
+                  <p class="recommendation"><strong>Что делать:</strong> Держать архитектуру спроса отдельной от служебной логики и не смешивать route/query URL с посадочными и коммерческими страницами.</p>
+                </article>
+                
+                <article class="phase-check">
+                  <h3>Внутренняя перелинковка и видимость ключевых страниц</h3>
+                  <p><strong>Что проверялось:</strong> Сколько внутренних ссылок получают страницы и где есть просадки по вниманию сайта.</p>
+                  <p><strong>Как проверялось:</strong> Подсчет внутренних ссылок на каждой странице выборки.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Среднее число внутренних ссылок:</strong> 232.5</li><li><strong>Минимум внутренних ссылок:</strong> 1</li><li><strong>Максимум внутренних ссылок:</strong> 424</li><li><strong>Контактных/lead-страниц:</strong> 6</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>Слабее всего по внутренним ссылкам выглядят: /index.php?route=information/contactform, /privacy, /delivery.</li><li>Контактные страницы есть, но часть из них недооформлена как полноценные SEO-посадки.</li><li>Разумно добавить больше контекстных ссылок между близкими услугами, кейсами, блогом и лид-страницами.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> SEO / Marketing</p>
+                  <p class="recommendation"><strong>Что делать:</strong> Усилить перелинковку вокруг приоритетных услуг и лид-страниц: связать спросовые страницы, кейсы, FAQ и CTA, а не надеяться только на меню и футер.</p>
+                </article>
+                </div>
+            </section>
+            
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Этап 3 — On-Page SEO</h2>
+              <p class="lead">Разбираю шаблоны title, description, H1 и то, насколько страницы готовы к нормальному сниппету.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>Title и meta description</h3>
+                  <p><strong>Что проверялось:</strong> Покрытие, длина и пригодность сниппетов к управляемой выдаче.</p>
+                  <p><strong>Как проверялось:</strong> Парсинг title и meta description по репрезентативной выборке страниц.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Title &gt; 70 символов:</strong> 10</li><li><strong>Title отсутствует:</strong> 1</li><li><strong>Description отсутствует:</strong> 7</li><li><strong>Description вне диапазона:</strong> 18</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>Шаблоны title на части страниц перегружены по длине.</li><li>Есть страницы без description, из-за чего сниппет будет собираться случайно.</li><li>Пустой title найден на: /index.php?route=information/contactform.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> HIGH <span>•</span> <strong>Ответственный:</strong> SEO / Frontend</p>
+                  <p class="recommendation"><strong>Что делать:</strong> Пересобрать правила генерации title и description под каждый тип страницы: коротко, конкретно, с ключом, оффером и контролем длины.</p>
+                </article>
+                
+                <article class="phase-check">
+                  <h3>H1, контентный каркас и тонкие страницы</h3>
+                  <p><strong>Что проверялось:</strong> Наличие H1, плотность текстового слоя и качество базового on-page каркаса.</p>
+                  <p><strong>Как проверялось:</strong> Парсинг H1 и подсчет слов в видимом контенте.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>H1 coverage:</strong> 92%</li><li><strong>Страниц без H1:</strong> 2</li><li><strong>Среднее число слов:</strong> 1277.5</li><li><strong>Тонких страниц (&lt;250 слов):</strong> 1</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>У части страниц нет H1, поэтому поисковику сложнее понять главный интент URL.</li><li>Есть тонкие страницы с минимальным текстовым слоем.</li><li>Даже при нормальном объеме текста нужно отдельно проверить, насколько хорошо он поддерживает коммерческий интент и FAQ-слой.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> SEO / Content</p>
+                  <p class="recommendation"><strong>Что делать:</strong> На каждом ключевом URL закрепить понятный H1, интро, ответы на частые вопросы и короткие коммерческие блоки, чтобы страница работала не только на индекс, но и на конверсию.</p>
+                </article>
+                </div>
+            </section>
+            
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Этап 4 — Performance и CWV</h2>
+              <p class="lead">Смотрю на скорость ответа, вес HTML и то, как медиа-слой может мешать загрузке.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>Ответ сервера и вес страниц</h3>
+                  <p><strong>Что проверялось:</strong> TTFB-подобная скорость ответа и примерный вес HTML по выборке.</p>
+                  <p><strong>Как проверялось:</strong> HTTP-ответы по ключевым URL без отдельного Lighthouse-прогона.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Средний ответ:</strong> 674.1 ms</li><li><strong>Средний HTML:</strong> 206.0 KB</li><li><strong>Максимум изображений на странице:</strong> 114</li><li><strong>Страниц в выборке:</strong> 28</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>Средний ответ уже стоит держать в зоне внимания.</li><li>Реальные риски здесь чаще сидят в медиа-слое, шаблонах и клиентском рендеринге, чем в голом TTFB.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> Frontend / Backend</p>
+                  <p class="recommendation"><strong>Что делать:</strong> Проверить приоритетные страницы отдельным CWV-прогоном и зафиксировать LCP/CLS/INP после чистки медиа и шаблонов.</p>
+                </article>
+                
+                <article class="phase-check">
+                  <h3>Изображения, lazy loading и атрибуты размеров</h3>
+                  <p><strong>Что проверялось:</strong> Насколько медиа-слой помогает или мешает SEO и стабильности верстки.</p>
+                  <p><strong>Как проверялось:</strong> Парсинг img-тегов по репрезентативной выборке страниц.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Всего пропусков alt:</strong> 144</li><li><strong>Пропусков lazy loading:</strong> 427</li><li><strong>Изображений без width/height:</strong> 226</li><li><strong>Изображений на главной:</strong> 62</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>Изображения уже теряют SEO-сигналы из-за пропусков alt.</li><li>Отсутствие width/height повышает риск CLS и визуальной нестабильности.</li><li>Lazy loading стоит выровнять шаблонно, а не править вручную по одной странице.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> Frontend / SEO</p>
+                  <p class="recommendation"><strong>Что делать:</strong> Сделать единый image-шаблон: alt, width/height, lazy loading и, при необходимости, отдельную image-схему/карту сайта.</p>
+                </article>
+                </div>
+            </section>
+            
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Этап 5 — Structured Data</h2>
+              <p class="lead">Проверяю, насколько хорошо сайт объясняет поисковику сущности бизнеса, страниц и предложений.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>Покрытие schema-разметкой</h3>
+                  <p><strong>Что проверялось:</strong> Какие типы schema реально встречаются и насколько широко они покрывают выборку.</p>
+                  <p><strong>Как проверялось:</strong> Парсинг application/ld+json и сбор @type по ключевым URL.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Schema coverage:</strong> 96%</li><li><strong>Страниц с битой JSON-LD:</strong> 2</li><li><strong>Страниц без schema:</strong> 1</li><li><strong>Топ schema types:</strong> LocalBusiness (27), BreadcrumbList (26), Product (4)</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>Есть страницы с невалидной JSON-LD.</li><li>Часть коммерческих страниц пока без schema-разметки.</li><li>Даже при наличии schema важно, чтобы она соответствовала типу страницы и была валидной по синтаксису.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> HIGH <span>•</span> <strong>Ответственный:</strong> Frontend / SEO</p>
+                  <p class="recommendation"><strong>Что делать:</strong> Покрыть ключевые шаблоны валидной schema-разметкой и держать ее синхронной с реальным типом страницы: Organization, Service, Product, BreadcrumbList, FAQ, Article.</p>
+                </article>
+                </div>
+            </section>
+            
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Этап 6 — Коммерческие страницы и контент</h2>
+              <p class="lead">Смотрю, насколько сайт готов не только собирать индекс, но и превращать спрос в заявку.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>Контактные и лид-страницы</h3>
+                  <p><strong>Что проверялось:</strong> Есть ли на сайте страницы, которые можно продвигать как точки входа в заявку.</p>
+                  <p><strong>Как проверялось:</strong> Поиск форм, контактных URL и базовой SEO-обвязки этих страниц.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Контактных/lead-страниц:</strong> 6</li><li><strong>Форм в выборке:</strong> 6</li><li><strong>Слабых contact-страниц:</strong> 2</li><li><strong>Индексируемых route/query-страниц:</strong> 1</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>Контактная зона уже есть, но часть страниц не оформлена как полноценные SEO-посадки.</li><li>Есть формы, но нужно проверять, насколько вокруг них собран доверительный и коммерческий слой.</li><li>Служебные query/route URL не должны конкурировать с нормальными посадочными страницами.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> HIGH <span>•</span> <strong>Ответственный:</strong> SEO / Marketing</p>
+                  <p class="recommendation"><strong>Что делать:</strong> Сделать из контактов и заявки сильные посадочные: с оффером, ответами на возражения, блоками доверия, FAQ и аккуратной SEO-обвязкой.</p>
+                </article>
+                
+                <article class="phase-check">
+                  <h3>Контентная глубина приоритетных страниц</h3>
+                  <p><strong>Что проверялось:</strong> Хватает ли страницам фактуры, чтобы закрывать интент, а не просто существовать в индексе.</p>
+                  <p><strong>Как проверялось:</strong> Подсчет слов и просмотр коммерческих шаблонов внутри репрезентативной выборки.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Коммерческих страниц в выборке:</strong> 28</li><li><strong>Среднее число слов:</strong> 1277.5</li><li><strong>Тонких страниц:</strong> 1</li><li><strong>Страниц без schema среди коммерческих:</strong> 1</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>Одного объема текста недостаточно: страницы должны объяснять выбор, цену, процесс, сроки и следующий шаг.</li><li>Часть страниц остается тонкой по фактуре.</li><li>Потенциал роста лежит не только в SEO-текстах, но и в блоках доверия, FAQ, таблицах сравнения и ответах на спрос.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> SEO / Content / Marketing</p>
+                  <p class="recommendation"><strong>Что делать:</strong> Пересобрать приоритетные посадочные под коммерческий интент: добавить доказательства, FAQ, answer-first блоки, цены/сценарии и перелинковку на соседние точки спроса.</p>
+                </article>
+                </div>
+            </section>
+            
+
     <section>
-      <div class="section-kicker">Скриншоты</div>
-      <h2>Как выглядит проект в момент аудита</h2>
-      <p class="lead">Автоскриншоты помогают не спорить о контексте: в документе сразу видно, какие страницы легли в разбор и как они выглядят на старте.</p>
-      <div class="shots">
-            <figure class="shot-card">
-              <img src="akvarium-akvas-2026-03-22-assets/01-home.png" alt="Главная" />
-              <figcaption>
-                <strong>Главная</strong>
-                <span>https://akvarium-akvas.ru</span>
-              </figcaption>
-            </figure>
+      <div class="section-kicker">Quick wins</div>
+      <h2>Быстрые победы на ближайший спринт</h2>
+      <p class="lead">Эти правки можно внедрить быстро и получить заметный эффект без большой перестройки проекта.</p>
+      <div class="action-grid">
+            <article class="action-card">
+              <h3>Починить конфликт robots.txt и sitemap.xml</h3>
+              <p class="action-meta"><strong>Effort:</strong> 10-20 минут</p>
+              <p class="action-meta"><strong>Impact:</strong> Снимет конфликт сигналов для Яндекса и Google</p>
+              <p>Убрать запрет на sitemap.xml и оставить одну корректную директиву Sitemap.</p>
+            </article>
             
-            <figure class="shot-card">
-              <img src="akvarium-akvas-2026-03-22-assets/02-contacts.png" alt="Контакты" />
-              <figcaption>
-                <strong>Контакты</strong>
-                <span>https://akvarium-akvas.ru/contacts</span>
-              </figcaption>
-            </figure>
+            <article class="action-card">
+              <h3>Свести доменные редиректы к одному шагу</h3>
+              <p class="action-meta"><strong>Effort:</strong> 15-30 минут</p>
+              <p class="action-meta"><strong>Impact:</strong> Уберет лишнюю задержку и технический шум на входе</p>
+              <p>Оставить единый 301 сразу на канонический HTTPS-домен без промежуточных хопов.</p>
+            </article>
             
-            <figure class="shot-card">
-              <img src="akvarium-akvas-2026-03-22-assets/03-aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov.png" alt="Товар" />
-              <figcaption>
-                <strong>Товар</strong>
-                <span>https://akvarium-akvas.ru/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov</span>
-              </figcaption>
-            </figure>
+            <article class="action-card">
+              <h3>Нормально оформить контакты и лид-страницы</h3>
+              <p class="action-meta"><strong>Effort:</strong> 30-60 минут</p>
+              <p class="action-meta"><strong>Impact:</strong> Поднимет доверие, брендовый запрос и конверсию</p>
+              <p>Добавить H1, title, description, canonical и блоки доверия на страницу контактов/формы.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>Исправить битую JSON-LD разметку</h3>
+              <p class="action-meta"><strong>Effort:</strong> 15-40 минут</p>
+              <p class="action-meta"><strong>Impact:</strong> Вернет валидную structured data в индекс</p>
+              <p>Проверить синтаксис JSON-LD и пересобрать проблемные блоки schema на ключевых страницах.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>Закрыть дыры в title и description</h3>
+              <p class="action-meta"><strong>Effort:</strong> 1-2 часа</p>
+              <p class="action-meta"><strong>Impact:</strong> Даст быстрый прирост управляемости сниппетов</p>
+              <p>Дописать шаблоны генерации title/description для страниц без SEO-обвязки.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>Разрулить индексируемые query и route URL</h3>
+              <p class="action-meta"><strong>Effort:</strong> 30-90 минут</p>
+              <p class="action-meta"><strong>Impact:</strong> Сократит шум в индексе и освободит crawl budget</p>
+              <p>Закрыть служебные query-страницы от индексации или перевести их на чистые SEO-friendly URL.</p>
+            </article>
+            </div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Стратегические улучшения</div>
+      <h2>Что усилит проект поверх базовых фиксов</h2>
+      <p class="lead">Это уже не тушение пожара, а слой изменений, который превращает сайт в более сильный источник заявок и роста видимости.</p>
+      <div class="action-grid">
+            <article class="action-card">
+              <h3>Пересобрать шаблоны коммерческих страниц как growth-layer</h3>
+              <p class="action-meta"><strong>Impact:</strong> Высокое</p>
+              <p class="action-meta"><strong>Effort:</strong> 5-10 дней</p>
+              <p>Собрать единые требования к H1, title, description, canonical, FAQ, CTA, trust-блокам и перелинковке по всем ключевым типам страниц.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>Сделать управляемую архитектуру индексации</h3>
+              <p class="action-meta"><strong>Impact:</strong> Высокое</p>
+              <p class="action-meta"><strong>Effort:</strong> 3-7 дней</p>
+              <p>Разделить sitemap по типам страниц, зачистить служебные route/query URL и настроить единый контроль над каноническими доменами и редиректами.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>Усилить structured data и entity-сигналы</h3>
+              <p class="action-meta"><strong>Impact:</strong> Среднее / высокое</p>
+              <p class="action-meta"><strong>Effort:</strong> 2-5 дней</p>
+              <p>Покрыть ключевые страницы валидной schema-разметкой и собрать данные так, чтобы сайт был понятнее обычной и ИИ-выдаче.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>Развить спросовые кластеры через категории и карточки</h3>
+              <p class="action-meta"><strong>Impact:</strong> Высокое</p>
+              <p class="action-meta"><strong>Effort:</strong> 2-4 недели</p>
+              <p>Собрать отдельные посадочные под главные кластеры спроса, усилить категории FAQ и ответами на выбор, а карточки сделать более конверсионными.</p>
+            </article>
             </div>
     </section>
 
@@ -375,11 +693,11 @@
       <h2>На что уже можно опираться</h2>
       <div class="two-col">
         <div class="list-card">
-          <ul><li>Сайт стабильно отвечает по HTTPS и главная страница отдает 200 код без JS-заглушки.</li><li>Сайт уже имеет индексируемую карту сайта с 1370 URL и image-тегами для карточек.</li><li>На ключевых коммерческих страницах проставлены canonical, что помогает удерживать основной URL.</li><li>На товарах и категориях уже используется schema-разметка (Product / BreadcrumbList / LocalBusiness).</li><li>У большинства проверенных коммерческих страниц есть H1, что хорошо для масштабного каталога.</li><li>URL-структура в каталоге понятная и хорошо дробит спрос по литражу, форме, назначению и комплектации.</li><li>У проекта уже есть llms.txt, а значит можно дополнительно усиливать AI-видимость и branded-ответы.</li></ul>
+          <ul><li>Главная страница стабильно открывается по HTTPS и отдает 200 код без JS-заглушки.</li><li>Средний ответ по выборке — 674.1 ms: техническая база не выглядит перегруженной.</li><li>У сайта уже есть карта сайта с 1370 уникальными URL, а значит база для управляемой индексации уже существует.</li><li>У 78% страниц в выборке уже проставлен canonical, это хороший фундамент для чистой индексации.</li><li>Schema-разметка уже используется на 96% страниц выборки.</li><li>У 92% проверенных страниц есть H1 — структура документов уже не выглядит хаотичной.</li></ul>
         </div>
         <div class="list-card">
-          <div class="section-kicker" style="margin-bottom:8px;">Что усиливать</div>
-          <ul><li>Усилить страницы категорий уникальными интро-блоками, FAQ, доставкой, гарантией, сроками производства и объяснением, как выбрать модель.</li><li>Сделать отдельные посадочные под высокий спрос: по литражу, форме, назначению, типу комплектации и готовым решениям под ключ.</li><li>Добавить в категории и карточки блоки доверия: производство в России, гарантия, доставка по РФ, кастомизация размеров, комплектация.</li><li>Развернуть image SEO: alt-шаблоны, подписи, structured data и подбор визуалов под поисковый спрос по аквариумам и террариумам.</li><li>Собрать шаблонный слой сниппетов: короткие title, коммерческие description, аккуратный canonical и понятные H1 на всех типах страниц.</li><li>Сегментировать sitemap и параллельно настроить контроль индексации категорий, товаров, фильтров и служебных route-страниц.</li></ul>
+          <div class="section-kicker" style="margin-bottom:8px;">Точки роста</div>
+          <ul><li>Усилить категории и подкатегории: интро-блоки, FAQ, условия покупки, блоки доверия и перелинковку на карточки.</li><li>Пересобрать шаблоны карточек и листингов: короткие title, рабочие description, canonical, alt, schema и коммерческие CTA.</li><li>Собрать единый слой шаблонов для title, description, H1 и canonical по всем типам страниц.</li><li>Развернуть image SEO: alt-шаблоны, подписи, контроль lazy-load и понятную связь изображения с интентом страницы.</li><li>Доделать контактные и заявочные страницы как полноценные SEO-документы, а не как технические формы.</li><li>Добавить answer-first блоки, FAQ и внутреннюю перелинковку между важными разделами для обычной и ИИ-выдачи.</li></ul>
         </div>
       </div>
     </section>
@@ -387,26 +705,26 @@
     <section>
       <div class="section-kicker">Roadmap</div>
       <h2>План внедрения на 60 дней</h2>
-      <p class="lead">Такой порядок даёт быстрый эффект: сначала чистим индексацию и шаблоны, потом усиливаем спросовые кластеры и коммерческие посадочные.</p>
+      <p class="lead">Порядок выстроен так, чтобы сначала снять технические стоп-факторы, потом усилить шаблоны и только после этого наращивать слой роста.</p>
       <div class="roadmap">
             <div class="roadmap-card">
               <div class="roadmap-period">0-14 дней</div>
-              <ul><li>Исправить robots.txt: убрать конфликт с sitemap.xml и нормализовать Host.</li><li>Закрыть или переработать `/index.php?route=information/contactform`.</li><li>Доделать SEO-шаблон страницы контактов: H1, title, description, canonical, коммерческий контент.</li><li>Подготовить новое правило генерации title и description для товаров и категорий.</li></ul>
+              <ul><li>Убрать конфликт в robots.txt и синхронизировать Sitemap, Host и канонический домен.</li><li>Свести все доменные варианты к одному прямому 301-редиректу.</li><li>Закрыть или нормализовать индексируемые query- и route-страницы с техническими формами.</li><li>Подготовить единое ТЗ на title, description, H1 и canonical для основных типов страниц.</li></ul>
             </div>
             
             <div class="roadmap-card">
               <div class="roadmap-period">15-30 дней</div>
-              <ul><li>Внедрить alt-шаблоны для карточек и категорий.</li><li>Свести доменные редиректы к одному шагу на канонический HTTPS.</li><li>Разделить sitemap по типам страниц и подать их отдельно в Яндекс Вебмастер и GSC.</li><li>Обновить сниппеты и протестировать рост CTR по категориям и товарным кластерам.</li></ul>
+              <ul><li>Внедрить alt-шаблоны, проверить lazy-load и подчистить image SEO на ключевых страницах.</li><li>Разделить sitemap по типам страниц и подать отдельные карты в Яндекс.Вебмастер и GSC.</li><li>Обновить шаблоны сниппетов и проверить рост CTR по приоритетным страницам.</li></ul>
             </div>
             
             <div class="roadmap-card">
               <div class="roadmap-period">31-60 дней</div>
-              <ul><li>Усилить спросовые категории контентом, FAQ, коммерческими блоками и перелинковкой.</li><li>Собрать посадочные под ключевые кластеры спроса: литраж, форма, сценарий использования, комплектация.</li><li>Добавить контент-слой под AI-ответы: краткие определения, таблицы сравнения, ответы на частые вопросы.</li></ul>
+              <ul><li>Усилить категории и подкатегории контентом, FAQ, блоками доверия и перелинковкой.</li><li>Пересобрать карточки и листинги так, чтобы они лучше конвертировали SEO-трафик в заявки и продажи.</li><li>Добавить answer-first фрагменты и контент под ИИ-выдачу на главные спросовые кластеры.</li></ul>
             </div>
             </div>
     </section>
 
-    <div class="footer-note">Аудит подготовлен 22.03.2026 14:58 • akvarium-akvas.ru • Shelpakov Digital</div>
+    <div class="footer-note">Аудит подготовлен 22.03.2026 20:40 • akvarium-akvas.ru • Shelpakov Digital</div>
   </div>
 </body>
 </html>

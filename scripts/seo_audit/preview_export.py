@@ -3,93 +3,23 @@ from __future__ import annotations
 from html import escape
 from pathlib import Path
 import shutil
-from urllib.parse import urlparse
-
-
-def _slugify(value: str) -> str:
-    import re
-
-    value = value.strip().lower()
-    value = re.sub(r"[^a-z0-9.-]+", "-", value)
-    value = re.sub(r"-{2,}", "-", value).strip("-")
-    return value or "page"
-
-
-def _choose_screenshot_targets(audit_payload: dict) -> list[dict]:
-    pages = audit_payload.get("sample_pages", [])
-    selected: list[dict] = []
-
-    def add(page: dict | None, label: str) -> None:
-        if not page:
-            return
-        url = page.get("url", "")
-        if not url or any(item["url"] == url for item in selected):
-            return
-        selected.append({"url": url, "label": label, "page_type": page.get("page_type", "")})
-
-    add(audit_payload.get("home_page"), "Главная")
-    add(next((page for page in pages if "/contacts" in page.get("url", "")), None), "Контакты")
-    add(next((page for page in pages if page.get("page_type") == "Категория"), None), "Категория")
-    add(next((page for page in pages if page.get("page_type") == "Товар"), None), "Товар")
-    add(next((page for page in pages if page.get("page_type") == "Подкатегория"), None), "Подкатегория")
-    return selected[:4]
 
 
 def _playwright_launch_kwargs() -> dict:
-    executable_path = (
-        shutil.which("chromium")
-        or shutil.which("chromium-browser")
-        or shutil.which("google-chrome")
-        or shutil.which("google-chrome-stable")
-    )
+    try:
+        executable_path = (
+            shutil.which("chromium")
+            or shutil.which("chromium-browser")
+            or shutil.which("google-chrome")
+            or shutil.which("google-chrome-stable")
+        )
+    except Exception:
+        executable_path = None
 
     launch_kwargs = {"headless": True}
     if executable_path:
         launch_kwargs["executable_path"] = executable_path
-
     return launch_kwargs
-
-
-def capture_screenshots(audit_payload: dict, assets_dir: Path) -> list[dict]:
-    try:
-        from playwright.sync_api import sync_playwright
-    except Exception:
-        return []
-
-    targets = _choose_screenshot_targets(audit_payload)
-    if not targets:
-        return []
-
-    assets_dir.mkdir(parents=True, exist_ok=True)
-    screenshots: list[dict] = []
-
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(**_playwright_launch_kwargs())
-        context = browser.new_context(viewport={"width": 1440, "height": 960}, locale="ru-RU")
-        for index, target in enumerate(targets, start=1):
-            page = context.new_page()
-            try:
-                page.goto(target["url"], wait_until="domcontentloaded", timeout=45000)
-                page.wait_for_timeout(1800)
-                parsed = urlparse(target["url"])
-                slug = _slugify(parsed.path.strip("/") or "home")
-                file_path = assets_dir / f"{index:02d}-{slug}.png"
-                page.screenshot(path=str(file_path), full_page=False)
-                screenshots.append(
-                    {
-                        "label": target["label"],
-                        "page_type": target.get("page_type", ""),
-                        "url": target["url"],
-                        "path": str(file_path),
-                    }
-                )
-            except Exception:
-                pass
-            finally:
-                page.close()
-        browser.close()
-
-    return screenshots
 
 
 def write_preview_pdf(html_path: Path, pdf_path: Path) -> bool:
@@ -139,9 +69,76 @@ def _issue_card(issue: dict) -> str:
     """
 
 
-def _roadmap_columns(audit_payload: dict) -> str:
+def _priority_table(rows: list[dict]) -> str:
+    if not rows:
+        return "<p class='empty-note'>Матрица приоритетов будет доступна после генерации аудита.</p>"
+    body = []
+    for row in rows:
+        body.append(
+            "<tr>"
+            f"<td>{escape(row.get('problem', ''))}</td>"
+            f"<td>{escape(str(row.get('impact', '')))}</td>"
+            f"<td>{escape(str(row.get('risk', '')))}</td>"
+            f"<td>{escape(str(row.get('business', '')))}</td>"
+            f"<td>{escape(str(row.get('total', '')))}</td>"
+            f"<td>{escape(row.get('severity', ''))}</td>"
+            f"<td>{escape(row.get('owner', ''))}</td>"
+            "</tr>"
+        )
+    return (
+        "<div class='table-wrap'><table class='priority-table'>"
+        "<thead><tr><th>Проблема</th><th>Impact</th><th>Risk</th><th>Business</th><th>Итог</th><th>Приоритет</th><th>Ответственный</th></tr></thead>"
+        f"<tbody>{''.join(body)}</tbody></table></div>"
+    )
+
+
+def _phase_checks_html(phase_sections: list[dict]) -> str:
+    blocks = []
+    for section in phase_sections:
+        checks_html = []
+        for check in section.get("checks", []):
+            metrics = "".join(
+                f"<li><strong>{escape(str(label))}:</strong> {escape(str(value))}</li>"
+                for label, value in check.get("metrics", [])
+            )
+            findings = "".join(f"<li>{escape(item)}</li>" for item in check.get("findings", []))
+            checks_html.append(
+                f"""
+                <article class="phase-check">
+                  <h3>{escape(check.get('name', ''))}</h3>
+                  <p><strong>Что проверялось:</strong> {escape(check.get('checked', ''))}</p>
+                  <p><strong>Как проверялось:</strong> {escape(check.get('method', ''))}</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul>{metrics}</ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul>{findings}</ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> {escape(check.get('priority', ''))} <span>•</span> <strong>Ответственный:</strong> {escape(check.get('owner', ''))}</p>
+                  <p class="recommendation"><strong>Что делать:</strong> {escape(check.get('recommendation', ''))}</p>
+                </article>
+                """
+            )
+        blocks.append(
+            f"""
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>{escape(section.get('title', ''))}</h2>
+              <p class="lead">{escape(section.get('intro', ''))}</p>
+              <div class="phase-checks">{''.join(checks_html)}</div>
+            </section>
+            """
+        )
+    return "".join(blocks)
+
+
+def _roadmap_columns(roadmap: list[list]) -> str:
     chunks = []
-    for period, tasks in audit_payload.get("roadmap", []):
+    for period, tasks in roadmap:
         items = "".join(f"<li>{escape(task)}</li>" for task in tasks)
         chunks.append(
             f"""
@@ -154,30 +151,32 @@ def _roadmap_columns(audit_payload: dict) -> str:
     return "".join(chunks)
 
 
-def _screenshot_cards(audit_payload: dict, html_path: Path) -> str:
+def _action_cards(items: list[dict], value_key: str, extra_key: str) -> str:
     cards = []
-    for shot in audit_payload.get("screenshots", []):
-        image_path = Path(shot["path"])
-        relative = image_path.relative_to(html_path.parent).as_posix()
+    for item in items:
         cards.append(
             f"""
-            <figure class="shot-card">
-              <img src="{escape(relative)}" alt="{escape(shot.get('label', 'Скриншот'))}" />
-              <figcaption>
-                <strong>{escape(shot.get('label', ''))}</strong>
-                <span>{escape(shot.get('url', ''))}</span>
-              </figcaption>
-            </figure>
+            <article class="action-card">
+              <h3>{escape(item.get('title', ''))}</h3>
+              <p class="action-meta"><strong>{escape(value_key.capitalize())}:</strong> {escape(item.get(value_key, ''))}</p>
+              <p class="action-meta"><strong>{escape(extra_key.capitalize())}:</strong> {escape(item.get(extra_key, ''))}</p>
+              <p>{escape(item.get('action') or item.get('details') or '')}</p>
+            </article>
             """
         )
     return "".join(cards)
 
 
 def write_preview_html(audit_payload: dict, html_path: Path) -> None:
-    issues_html = "".join(_issue_card(issue) for issue in audit_payload.get("issues", []))
+    critical_source = audit_payload.get("critical_errors") or audit_payload.get("issues", [])
+    issues_html = "".join(_issue_card(issue) for issue in critical_source)
     strengths_html = "".join(f"<li>{escape(item)}</li>" for item in audit_payload.get("strengths", []))
     growth_html = "".join(f"<li>{escape(item)}</li>" for item in audit_payload.get("growth_points", []))
-    screenshots_html = _screenshot_cards(audit_payload, html_path)
+    priority_html = _priority_table(audit_payload.get("priority_matrix", []))
+    phases_html = _phase_checks_html(audit_payload.get("phase_sections", []))
+    quick_wins_html = _action_cards(audit_payload.get("quick_wins", []), "effort", "impact")
+    strategic_html = _action_cards(audit_payload.get("strategic_moves", []), "impact", "effort")
+
     html = f"""<!doctype html>
 <html lang="ru">
 <head>
@@ -283,7 +282,7 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       font-weight: 800;
       color: var(--text);
     }}
-    section {{
+    section, .phase-section {{
       margin: 26px 0;
       background: rgba(255,255,255,0.82);
       border: 1px solid rgba(216,231,246,0.9);
@@ -304,9 +303,14 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       font-size: clamp(28px, 3.5vw, 44px);
       line-height: 1.08;
     }}
+    h3 {{
+      margin: 0 0 10px;
+      font-size: 24px;
+      line-height: 1.15;
+    }}
     .lead {{ color: var(--muted); font-size: 18px; max-width: 920px; }}
-    .issue-list {{ display: grid; gap: 14px; }}
-    .issue-card {{
+    .issue-list, .phase-checks {{ display: grid; gap: 14px; }}
+    .issue-card, .phase-check {{
       border-radius: 26px;
       overflow: hidden;
       border: 1px solid var(--line);
@@ -330,8 +334,43 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     .issue-high .issue-head {{ background: var(--high); color: #b54708; }}
     .issue-medium .issue-head {{ background: var(--medium); color: #175cd3; }}
     .issue-low .issue-head {{ background: #f4f6fa; color: var(--muted); }}
-    .issue-body {{ padding: 18px; }}
-    .issue-body ul, .two-col ul, .roadmap-card ul {{ padding-left: 18px; margin: 12px 0 0; }}
+    .issue-body, .phase-check {{
+      padding: 18px;
+    }}
+    .phase-grid {{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }}
+    .phase-box {{
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      background: var(--bg-soft);
+    }}
+    .phase-box-title {{
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }}
+    .phase-meta {{
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }}
+    .phase-meta span {{
+      display: inline-block;
+      margin: 0 8px;
+    }}
+    .issue-body ul, .two-col ul, .roadmap-card ul, .phase-box ul {{
+      padding-left: 18px;
+      margin: 12px 0 0;
+    }}
     .recommendation {{
       margin-top: 12px;
       padding: 12px 14px;
@@ -343,11 +382,21 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 18px;
     }}
-    .list-card {{
+    .list-card, .action-card {{
       border: 1px solid var(--line);
       border-radius: 24px;
       background: #fff;
       padding: 22px;
+    }}
+    .action-grid {{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }}
+    .action-meta {{
+      margin: 6px 0;
+      color: var(--muted);
+      font-size: 14px;
     }}
     .roadmap {{
       display: grid;
@@ -367,31 +416,41 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       letter-spacing: .16em;
       font-size: 12px;
     }}
-    .shots {{
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }}
-    .shot-card {{
-      margin: 0;
-      border-radius: 26px;
-      overflow: hidden;
+    .table-wrap {{
+      overflow: auto;
       border: 1px solid var(--line);
+      border-radius: 22px;
       background: #fff;
     }}
-    .shot-card img {{
-      display: block;
+    .priority-table {{
       width: 100%;
-      aspect-ratio: 16 / 10;
-      object-fit: cover;
-      background: #edf3fa;
+      border-collapse: collapse;
+      min-width: 920px;
     }}
-    .shot-card figcaption {{
-      display: grid;
-      gap: 5px;
-      padding: 14px 16px 18px;
+    .priority-table th, .priority-table td {{
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
     }}
-    .shot-card span {{ color: var(--muted); font-size: 13px; word-break: break-all; }}
+    .priority-table th {{
+      background: #132238;
+      color: #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }}
+    .priority-table td:nth-child(2),
+    .priority-table td:nth-child(3),
+    .priority-table td:nth-child(4),
+    .priority-table td:nth-child(5) {{
+      text-align: center;
+      font-weight: 700;
+    }}
+    .empty-note {{
+      margin: 0;
+      color: var(--muted);
+    }}
     .footer-note {{
       margin: 28px auto 40px;
       padding-bottom: 20px;
@@ -403,7 +462,8 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       .grid-4,
       .roadmap,
       .two-col,
-      .shots {{ grid-template-columns: 1fr; }}
+      .phase-grid,
+      .action-grid {{ grid-template-columns: 1fr; }}
     }}
   </style>
 </head>
@@ -433,16 +493,32 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
 
     <section>
       <div class="section-kicker">Приоритеты</div>
-      <h2>Что сейчас сильнее всего мешает росту</h2>
-      <p class="lead">Ниже не формальные замечания, а те ограничения, которые реально влияют на индексацию, CTR, crawl budget и качество коммерческой выдачи.</p>
-      <div class="issue-list">{issues_html}</div>
+      <h2>Матрица проблем по влиянию на рост</h2>
+      <p class="lead">Здесь задачи не просто перечислены, а разложены по impact, risk и business-effect, чтобы было понятно, что делать первым.</p>
+      {priority_html}
     </section>
 
     <section>
-      <div class="section-kicker">Скриншоты</div>
-      <h2>Как выглядит проект в момент аудита</h2>
-      <p class="lead">Автоскриншоты помогают не спорить о контексте: в документе сразу видно, какие страницы легли в разбор и как они выглядят на старте.</p>
-      <div class="shots">{screenshots_html}</div>
+      <div class="section-kicker">Критические ошибки</div>
+      <h2>Что сейчас реально блокирует рост</h2>
+      <p class="lead">Это не весь backlog, а ограничения, которые первыми режут индекс, сниппеты, crawl budget и способность сайта забирать спрос.</p>
+      <div class="issue-list">{issues_html}</div>
+    </section>
+
+    {phases_html}
+
+    <section>
+      <div class="section-kicker">Quick wins</div>
+      <h2>Быстрые победы на ближайший спринт</h2>
+      <p class="lead">Эти правки можно внедрить быстро и получить заметный эффект без большой перестройки проекта.</p>
+      <div class="action-grid">{quick_wins_html}</div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Стратегические улучшения</div>
+      <h2>Что усилит проект поверх базовых фиксов</h2>
+      <p class="lead">Это уже не тушение пожара, а слой изменений, который превращает сайт в более сильный источник заявок и роста видимости.</p>
+      <div class="action-grid">{strategic_html}</div>
     </section>
 
     <section>
@@ -453,7 +529,7 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
           <ul>{strengths_html}</ul>
         </div>
         <div class="list-card">
-          <div class="section-kicker" style="margin-bottom:8px;">Что усиливать</div>
+          <div class="section-kicker" style="margin-bottom:8px;">Точки роста</div>
           <ul>{growth_html}</ul>
         </div>
       </div>
@@ -462,8 +538,8 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     <section>
       <div class="section-kicker">Roadmap</div>
       <h2>План внедрения на 60 дней</h2>
-      <p class="lead">Такой порядок даёт быстрый эффект: сначала чистим индексацию и шаблоны, потом усиливаем спросовые кластеры и коммерческие посадочные.</p>
-      <div class="roadmap">{_roadmap_columns(audit_payload)}</div>
+      <p class="lead">Порядок выстроен так, чтобы сначала снять технические стоп-факторы, потом усилить шаблоны и только после этого наращивать слой роста.</p>
+      <div class="roadmap">{_roadmap_columns(audit_payload.get("roadmap", []))}</div>
     </section>
 
     <div class="footer-note">Аудит подготовлен {escape(audit_payload.get("generated_at", ""))} • {escape(audit_payload.get("domain", ""))} • Shelpakov Digital</div>
