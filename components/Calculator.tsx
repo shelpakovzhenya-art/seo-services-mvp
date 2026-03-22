@@ -20,6 +20,11 @@ interface CalculatorProps {
   services: Service[]
 }
 
+const summaryNotes = [
+  'Отвечу в течение дня и подскажу, с чего логичнее стартовать именно в вашем проекте.',
+  'Если задача смешанная, покажу, что делать сейчас, а что можно спокойно отложить на следующий этап.',
+]
+
 export default function Calculator({ services }: CalculatorProps) {
   const [selectedServices, setSelectedServices] = useState<string[]>([])
 
@@ -37,7 +42,7 @@ export default function Calculator({ services }: CalculatorProps) {
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.12fr)_minmax(320px,0.88fr)] xl:items-start">
       <div className="space-y-4">
         {services.map((service) => {
           const serviceKey = service.id || service.slug || service.name
@@ -47,18 +52,19 @@ export default function Calculator({ services }: CalculatorProps) {
             <button
               key={serviceKey}
               type="button"
+              aria-pressed={isSelected}
               onClick={() => toggleService(serviceKey)}
-              className={`uniform-card w-full rounded-[28px] border p-5 text-left transition ${
+              className={`uniform-card w-full rounded-[30px] border p-5 text-left transition md:p-6 ${
                 isSelected
                   ? 'border-cyan-300 bg-cyan-50 shadow-[0_16px_40px_rgba(34,211,238,0.16)]'
                   : 'border-orange-100 bg-white hover:border-orange-200 hover:bg-[#fffaf5]'
               }`}
             >
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                <div className="max-w-2xl">
+              <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                <div className="min-w-0 max-w-2xl">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`flex h-6 w-6 items-center justify-center rounded-full border text-xs ${
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs ${
                         isSelected
                           ? 'border-cyan-500 bg-cyan-500 text-white'
                           : 'border-slate-300 bg-white text-transparent'
@@ -68,19 +74,20 @@ export default function Calculator({ services }: CalculatorProps) {
                     </div>
                     <div className="text-xs uppercase tracking-[0.22em] text-orange-700">{service.unit}</div>
                   </div>
+
                   <h3 className="mt-3 text-2xl font-semibold text-slate-950">{service.name}</h3>
-                  {service.description && <p className="mt-3 text-sm leading-7 text-slate-600">{service.description}</p>}
-                  {service.hint && <p className="mt-3 text-sm leading-7 text-slate-500">{service.hint}</p>}
+                  {service.description ? <p className="mt-3 text-sm leading-7 text-slate-600">{service.description}</p> : null}
+                  {service.hint ? <p className="mt-3 text-sm leading-7 text-slate-500">{service.hint}</p> : null}
                 </div>
 
-                <div className="min-w-[220px] rounded-[22px] border border-white/80 bg-white/80 p-4">
+                <div className="shrink-0 rounded-[24px] border border-white/80 bg-white/85 p-4 md:min-w-[228px]">
                   <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Стартовая стоимость</div>
                   <div className="mt-2 text-3xl font-semibold text-slate-950">{formatServicePrice(service.price)}</div>
                   <div className="mt-1 text-sm text-slate-500">{service.unit}</div>
                 </div>
               </div>
 
-              {service.deliverables && service.deliverables.length > 0 && (
+              {service.deliverables && service.deliverables.length > 0 ? (
                 <div className="mt-4 flex flex-wrap gap-2">
                   {service.deliverables.map((item) => (
                     <span key={item} className="rounded-full border border-orange-100 bg-white px-3 py-2 text-xs text-slate-600">
@@ -88,24 +95,23 @@ export default function Calculator({ services }: CalculatorProps) {
                     </span>
                   ))}
                 </div>
-              )}
+              ) : null}
             </button>
           )
         })}
       </div>
 
-      <aside className="h-fit rounded-[32px] border border-orange-100 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+      <aside className="h-fit rounded-[32px] border border-orange-100 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] xl:sticky xl:top-32">
         <div className="rounded-[24px] border border-orange-100 bg-gradient-to-br from-orange-50 via-white to-cyan-50 p-5">
           <div className="text-xs uppercase tracking-[0.22em] text-orange-700">Предварительная оценка</div>
           <div className="mt-3 text-4xl font-semibold text-slate-950">{formatServicePrice(total)}</div>
           <p className="mt-3 text-sm leading-7 text-slate-600">
-            Это ориентир по выбранным услугам. Точный бюджет зависит от масштаба сайта, количества разделов, состояния
-            текущей базы и объёма внедрения.
+            Это ориентир по выбранным услугам. Точный бюджет зависит от масштаба сайта, количества разделов, состояния текущей базы и объёма внедрения.
           </p>
         </div>
 
         <div className="mt-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <h3 className="text-lg font-semibold text-slate-950">Выбрано направлений</h3>
             <span className="rounded-full border border-orange-100 bg-[#fffaf5] px-3 py-1 text-sm text-slate-700">
               {selectedItems.length}
@@ -117,11 +123,11 @@ export default function Calculator({ services }: CalculatorProps) {
               {selectedItems.map((item) => (
                 <div key={item.id || item.slug || item.name} className="rounded-2xl border border-slate-200 px-4 py-4">
                   <div className="flex items-start justify-between gap-4">
-                    <div>
+                    <div className="min-w-0">
                       <div className="font-medium text-slate-950">{item.name}</div>
                       <div className="mt-1 text-sm text-slate-500">{item.unit}</div>
                     </div>
-                    <div className="text-right text-sm font-semibold text-slate-900">{formatServicePrice(item.price)}</div>
+                    <div className="shrink-0 text-right text-sm font-semibold text-slate-900">{formatServicePrice(item.price)}</div>
                   </div>
                 </div>
               ))}
@@ -134,11 +140,14 @@ export default function Calculator({ services }: CalculatorProps) {
         </div>
 
         <div className="mt-6 space-y-3 text-sm text-slate-600">
-          <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-4">Ответим в течение дня и подскажем, с чего логичнее стартовать.</div>
-          <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-4">Если задача смешанная, покажу, что делать сейчас, а что можно отложить.</div>
+          {summaryNotes.map((item) => (
+            <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-4">
+              {item}
+            </div>
+          ))}
         </div>
 
-        <a href="#contact-form" className="mt-6 inline-flex w-full">
+        <a href="#contact-form" className="mt-6 block w-full">
           <Button size="lg" className="w-full rounded-full">
             Обсудить расчёт и получить план
             <ArrowRight className="ml-2 h-4 w-4" />
