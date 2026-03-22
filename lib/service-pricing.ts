@@ -1,3 +1,5 @@
+import { websiteDevelopmentPricing } from './website-development-pricing-data'
+
 export type ServicePricing = {
   slug: string
   name: string
@@ -100,6 +102,7 @@ export const servicePricing: ServicePricing[] = [
     calculatorHint: 'Подходит, если внедряет ваша команда, а вам нужна сильная SEO-экспертиза и контроль.',
     deliverables: ['Разбор проекта', 'Стратегические рекомендации', 'Сопровождение решений'],
   },
+  websiteDevelopmentPricing,
 ]
 
 export const servicePricingMap = Object.fromEntries(servicePricing.map((item) => [item.slug, item]))

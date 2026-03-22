@@ -1,3 +1,5 @@
+import { websiteDevelopmentService } from './website-development-service-data'
+
 export type ServiceImageSet = {
   hero: string
   process: string
@@ -15,6 +17,18 @@ export type ServiceFaqItem = {
 export type ServiceSectionItem = {
   title: string
   text: string
+}
+
+export type ServiceFormatCard = {
+  title: string
+  description: string
+  price: string
+  note?: string
+}
+
+export type ServiceStackGroup = {
+  label: string
+  items: string[]
 }
 
 export type ServicePageContent = {
@@ -39,6 +53,8 @@ export type ServicePageContent = {
   faq: ServiceFaqItem[]
   seoBlockTitle: string
   seoParagraphs: string[]
+  formats?: ServiceFormatCard[]
+  stack?: ServiceStackGroup[]
   ctas: {
     soft: string
     rational: string
@@ -691,6 +707,7 @@ export const servicePages: ServicePageContent[] = [
     related: ['seo-audit', 'seo', 'b2b-seo', 'technical-seo'],
     images: imageSet('seo-consulting', 'Иллюстрация SEO-консалтинга и стратегической работы', 'Схема процесса SEO-консалтинга и контроля проекта', 'Визуал результата SEO-консалтинга для команды и стратегии'),
   },
+  websiteDevelopmentService,
 ]
 
 export const servicePageMap: Record<string, ServicePageContent> = Object.fromEntries(

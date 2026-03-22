@@ -5,36 +5,68 @@ import MobileMenu from '@/components/MobileMenu'
 import { prisma } from '@/lib/prisma'
 import { getWorkStatus } from '@/lib/work-status'
 
-const DEFAULT_MENU_ITEMS = [
-  { id: '1', label: 'Главная', url: '/', order: 1, isActive: true },
-  { id: '2', label: 'Услуги', url: '/services', order: 2, isActive: true },
-  { id: '3', label: 'Кейсы', url: '/cases', order: 3, isActive: true },
-  { id: '4', label: 'Отзывы', url: '/reviews', order: 4, isActive: true },
-  { id: '5', label: 'Блог', url: '/blog', order: 5, isActive: true },
-  { id: '6', label: 'Контакты', url: '/contacts', order: 6, isActive: true },
+type HeaderMenuItem = {
+  id: string
+  label: string
+  url: string
+  order: number
+  isActive: boolean
+}
+
+const DEFAULT_MENU_ITEMS: HeaderMenuItem[] = [
+  { id: '2', label: 'SEO-услуги', url: '/services', order: 2, isActive: true },
+  { id: 'development', label: 'Разработка', url: '/services/website-development', order: 3, isActive: true },
+  { id: '3', label: 'Кейсы', url: '/cases', order: 4, isActive: true },
+  { id: '4', label: 'Отзывы', url: '/reviews', order: 5, isActive: true },
+  { id: '5', label: 'Блог', url: '/blog', order: 6, isActive: true },
+  { id: '6', label: 'Контакты', url: '/contacts', order: 7, isActive: true },
 ]
+
+const DEVELOPMENT_ITEM: HeaderMenuItem = {
+  id: 'development',
+  label: 'Разработка',
+  url: '/services/website-development',
+  order: 3,
+  isActive: true,
+}
 
 const CONTACT_FORM_HREF = '/contacts#contact-form'
 
+function normalizeMenuItems(items: HeaderMenuItem[]) {
+  const filtered = items
+    .filter((item) => item.isActive !== false)
+    .filter((item) => item.url !== '/')
+    .filter((item) => item.url !== DEVELOPMENT_ITEM.url)
+    .map((item) => (item.url === '/services' ? { ...item, label: 'SEO-услуги' } : item))
+
+  const servicesIndex = filtered.findIndex((item) => item.url === '/services')
+
+  if (servicesIndex >= 0) {
+    filtered.splice(servicesIndex + 1, 0, DEVELOPMENT_ITEM)
+    return filtered
+  }
+
+  return [DEFAULT_MENU_ITEMS[0], DEVELOPMENT_ITEM, ...filtered]
+}
+
 export default async function Header() {
   let settings: any = null
-  let menuItems: any[] = []
+  let menuItems: HeaderMenuItem[] = []
 
   try {
     settings = await prisma.siteSettings.findFirst()
-    menuItems = await prisma.menuItem.findMany({
+    const dbMenuItems = await prisma.menuItem.findMany({
       where: { isActive: true },
       orderBy: { order: 'asc' },
     })
 
-    if (menuItems.length === 0) {
-      menuItems = DEFAULT_MENU_ITEMS
-    }
+    menuItems = dbMenuItems.length > 0 ? (dbMenuItems as HeaderMenuItem[]) : DEFAULT_MENU_ITEMS
   } catch (error) {
     console.error('Error loading header data:', error)
     menuItems = DEFAULT_MENU_ITEMS
   }
 
+  const normalizedMenuItems = normalizeMenuItems(menuItems)
   const workStatus = getWorkStatus(settings?.workSchedule)
   const socialLinks = [
     {
@@ -121,13 +153,15 @@ export default async function Header() {
               </span>
               <span className="flex min-w-0 flex-col">
                 <span className="truncate text-[0.92rem] font-semibold uppercase tracking-[0.12em] text-white sm:text-[1rem] md:text-lg md:tracking-[0.16em]">Shelpakov Digital</span>
-                <span className="hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-300/86 sm:block md:text-xs md:tracking-[0.2em]">SEO, структура сайта, заявки</span>
+                <span className="hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-300/86 sm:block md:text-xs md:tracking-[0.2em]">
+                  SEO, структура сайта, заявки
+                </span>
               </span>
             </Link>
 
             <ul className="hidden items-center gap-7 lg:flex">
-              {menuItems.map((item) => (
-                <li key={item.id}>
+              {normalizedMenuItems.map((item) => (
+                <li key={`${item.url}-${item.id}`}>
                   <Link href={item.url} className="site-nav-link">
                     {item.label}
                   </Link>
@@ -141,7 +175,7 @@ export default async function Header() {
             </Link>
 
             <MobileMenu
-              menuItems={menuItems.map((item) => ({
+              menuItems={normalizedMenuItems.map((item) => ({
                 id: String(item.id),
                 label: item.label,
                 url: item.url,

@@ -126,16 +126,16 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
                 </a>
                 <Link href="/services">
                   <Button size="lg" variant="outline" className="rounded-full border-slate-300 bg-white px-7 text-slate-900 hover:bg-slate-50">
-                    Все SEO-услуги
+                    Все услуги
                   </Button>
                 </Link>
-                {pricing && (
+                {pricing ? (
                   <Link href="/calculator">
                     <Button size="lg" variant="outline" className="rounded-full border-orange-200 bg-[#fffaf5] px-7 text-slate-900 hover:bg-orange-50">
                       {pricing.priceLabel}
                     </Button>
                   </Link>
-                )}
+                ) : null}
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-600">
@@ -149,16 +149,21 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
               <div className="glass-panel p-6">
                 <div className="text-sm uppercase tracking-[0.24em] text-orange-700">Ключевая задача</div>
                 <p className="mt-3 text-base leading-8 text-slate-700">{service.intro}</p>
-                {pricing && (
+                {pricing ? (
                   <div className="mt-5 rounded-[24px] border border-orange-100 bg-white/80 p-5">
                     <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Стартовая стоимость</div>
                     <div className="mt-2 text-3xl font-semibold text-slate-950">{formatServicePrice(pricing.priceFrom)}</div>
                     <div className="mt-1 text-sm text-slate-500">{formatServiceBillingUnit(pricing.unit)}</div>
                     <p className="mt-3 text-sm leading-7 text-slate-600">{pricing.calculatorHint}</p>
                   </div>
-                )}
+                ) : null}
               </div>
-              <VisualCard eyebrow="Фокус услуги" title={service.images.heroAlt} description="Основной смысл услуги, её роль в проекте и тот результат, к которому она должна привести сайт." />
+
+              <VisualCard
+                eyebrow="Фокус услуги"
+                title={service.images.heroAlt}
+                description="Основной смысл услуги, ее роль в проекте и тот результат, к которому она должна привести сайт."
+              />
             </div>
           </div>
         </section>
@@ -172,14 +177,44 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           ))}
         </section>
 
+        {service.formats?.length ? (
+          <section className="mt-8 page-card">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Форматы разработки</p>
+                <h2 className="mt-3 text-3xl font-semibold text-slate-950">Можно стартовать с понятного масштаба проекта</h2>
+              </div>
+              {pricing ? (
+                <div className="rounded-full border border-orange-200 bg-[#fffaf5] px-4 py-2 text-sm font-medium text-slate-700">
+                  {pricing.priceLabel}
+                </div>
+              ) : null}
+            </div>
+
+            <div className="uniform-grid-4 mt-6 gap-5">
+              {service.formats.map((format) => (
+                <div
+                  key={`${format.title}-${format.price}`}
+                  className="uniform-card rounded-[26px] border border-orange-100 bg-white/85 p-6 shadow-[0_18px_34px_rgba(15,23,42,0.08)]"
+                >
+                  <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{format.price}</div>
+                  <h3 className="mt-4 text-2xl font-semibold text-slate-950">{format.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{format.description}</p>
+                  {format.note ? (
+                    <div className="mt-4 rounded-2xl border border-cyan-100 bg-cyan-50/60 px-4 py-3 text-sm leading-6 text-slate-700">
+                      {format.note}
+                    </div>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         {customContent ? (
           <section className="reading-shell mt-8">
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{'\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u0443\u0435\u043c\u044b\u0439 \u0431\u043b\u043e\u043a'}</p>
-            <RichContent
-              content={customContent}
-              title={service.h1}
-              className="editorial-prose mt-6 max-w-none"
-            />
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Дополнительный блок</p>
+            <RichContent content={customContent} title={service.h1} className="editorial-prose mt-6 max-w-none" />
           </section>
         ) : null}
 
@@ -221,19 +256,18 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
             </a>
           </div>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600">
-            Достаточно коротко описать задачу, сайт и текущую ситуацию. В ответ покажу, где у проекта основной потенциал и
-            какой формат работы будет уместен именно сейчас.
+            Достаточно коротко описать задачу, сайт и текущую ситуацию. В ответ покажу, где у проекта основной потенциал и какой формат работы будет уместен именно сейчас.
           </p>
         </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[1.04fr_0.96fr] lg:items-start">
           <div className="page-card">
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Этапы работ</p>
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Этапы работы</p>
             <h2 className="mt-3 text-3xl font-semibold text-slate-950">Как обычно строится работа</h2>
             <div className="mt-6 space-y-4">
               {service.steps.map((step, index) => (
                 <div key={step.title} className="flex gap-5 rounded-[24px] border border-orange-100 bg-white/70 p-5">
-                  <div className="text-3xl font-semibold text-cyan-700">0{index + 1}</div>
+                  <div className="text-3xl font-semibold text-cyan-700">{`0${index + 1}`}</div>
                   <div>
                     <h3 className="text-xl font-semibold text-slate-950">{step.title}</h3>
                     <p className="mt-2 text-sm leading-7 text-slate-600">{step.text}</p>
@@ -244,7 +278,11 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </div>
 
           <div className="space-y-6">
-            <VisualCard eyebrow="Процесс работы" title={service.images.processAlt} description="Этапы реализации, по которым услуга переходит от анализа к внедрению и контролю результата." />
+            <VisualCard
+              eyebrow="Процесс работы"
+              title={service.images.processAlt}
+              description="Этапы реализации, по которым услуга переходит от анализа к внедрению и контролю результата."
+            />
             <div className="page-card">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Что получает клиент</p>
               <h2 className="mt-3 text-3xl font-semibold text-slate-950">Результат на уровне процесса и сайта</h2>
@@ -259,6 +297,37 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
             </div>
           </div>
         </section>
+
+        {service.stack?.length ? (
+          <section className="mt-8 grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <div className="page-card">
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Технологии и интеграции</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">Собираю сайт так, чтобы он не мешал дальнейшему развитию</h2>
+              <p className="mt-5 text-sm leading-7 text-slate-600">
+                Важно не только то, как выглядит первый экран, но и то, насколько гибко сайт можно развивать: добавлять новые разделы, подключать интеграции, усиливать контент и наращивать SEO-посадочные без полной пересборки.
+              </p>
+            </div>
+
+            <div className="uniform-grid-3 gap-5">
+              {service.stack.map((group) => (
+                <div
+                  key={group.label}
+                  className="uniform-card rounded-[26px] border border-orange-100 bg-white/85 p-6 shadow-[0_18px_34px_rgba(15,23,42,0.08)]"
+                >
+                  <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{group.label}</div>
+                  <div className="mt-5 space-y-3">
+                    {group.items.map((item) => (
+                      <div key={item} className="flex gap-3 rounded-2xl border border-cyan-100 bg-cyan-50/60 px-4 py-3">
+                        <Check className="mt-1 h-4 w-4 shrink-0 text-cyan-700" />
+                        <span className="text-sm leading-6 text-slate-700">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="page-card">
@@ -275,15 +344,18 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </div>
 
           <div className="space-y-6">
-            <VisualCard eyebrow="Ожидаемый эффект" title={service.images.resultsAlt} description="Итоговое усиление структуры, индексации, подачи и тех зон сайта, которые помогают проекту расти стабильнее." />
+            <VisualCard
+              eyebrow="Ожидаемый эффект"
+              title={service.images.resultsAlt}
+              description="Итоговое усиление структуры, индексации, подачи и тех зон сайта, которые помогают проекту расти стабильнее."
+            />
             <div className="rounded-[30px] border border-orange-100 bg-gradient-to-r from-white via-orange-50 to-white p-6">
               <div className="flex items-center gap-3 text-slate-900">
                 <Clock3 className="h-5 w-5 text-cyan-700" />
                 <span className="font-medium">{service.ctas.fast}</span>
               </div>
               <p className="mt-3 text-sm leading-7 text-slate-600">
-                Если задача срочная, можно быстро обсудить текущую ситуацию, получить первичный ориентир и понять, нужен ли
-                проекту аудит, системное продвижение или точечная экспертиза.
+                Если задача срочная, можно быстро обсудить текущую ситуацию, получить первичный ориентир и понять, нужен ли проекту аудит, разработка, системное продвижение или точечная доработка.
               </p>
               <a href="#contact-form" className="mt-5 inline-flex">
                 <Button className="rounded-full">Обсудить проект сегодня</Button>
@@ -346,28 +418,27 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
 
         <section id="contact-form" className="mt-8 scroll-mt-32 surface-grid p-4 md:p-6">
           <div className="soft-section overflow-hidden">
-          <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-            <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Консультация</p>
-              <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{service.ctas.rational}</h2>
-              <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">
-                Опишите сайт, задачу и текущую ситуацию. Я помогу понять, какой формат работ подойдёт, покажу точки роста и
-                скажу, с чего логичнее начать.
-              </p>
-              <div className="mt-8 space-y-4">
-                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
-                  Ответим в течение дня и подскажем, нужен ли проекту аудит, сопровождение или точечная задача.
-                </div>
-                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
-                  Без лишних обязательств: сначала разбираем задачу, потом предлагаем уместный формат работы.
+            <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
+              <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
+                <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Консультация</p>
+                <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{service.ctas.rational}</h2>
+                <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">
+                  Опишите сайт, задачу и текущую ситуацию. Я помогу понять, какой формат работ подойдет, покажу точки роста и скажу, с чего логичнее начать.
+                </p>
+                <div className="mt-8 space-y-4">
+                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
+                    Ответим в течение дня и подскажем, нужен ли проекту аудит, сопровождение, разработка или точечная задача.
+                  </div>
+                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
+                    Без лишних обязательств: сначала разбираем задачу, потом предлагаем уместный формат работы.
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="p-8">
-              <LazyContactForm />
+              <div className="p-8">
+                <LazyContactForm />
+              </div>
             </div>
-          </div>
           </div>
         </section>
 
