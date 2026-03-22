@@ -4,12 +4,14 @@
   <circle cx="1330" cy="730" r="170" fill="#7DD3FC" fill-opacity="0.18"/>
   <rect x="118" y="128" width="440" height="74" rx="37" fill="#FFF8F1" fill-opacity="0.92"/>
   <text x="162" y="176" fill="#C2410C" font-family="Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="6">SEO 2026</text>
-  <text x="118" y="314" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="88" font-weight="700">Что реально работает</text>
-  <text x="118" y="416" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="38">Тренды для сайтов услуг, B2B и коммерческих страниц</text>
-  <rect x="118" y="510" width="468" height="196" rx="34" fill="#FFFFFF" fill-opacity="0.9"/>
-  <text x="162" y="578" fill="#0F172A" font-family="Arial, sans-serif" font-size="34" font-weight="700">AI-поиск</text>
-  <text x="162" y="624" fill="#334155" font-family="Arial, sans-serif" font-size="28">Структура сайта</text>
-  <text x="162" y="670" fill="#334155" font-family="Arial, sans-serif" font-size="28">Коммерческие факторы</text>
+  <text x="118" y="286" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="72" font-weight="700">Что реально</text>
+  <text x="118" y="364" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="72" font-weight="700">работает в SEO</text>
+  <text x="118" y="442" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="34">Тренды для сайтов услуг, B2B</text>
+  <text x="118" y="486" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="34">и коммерческих страниц</text>
+  <rect x="118" y="560" width="468" height="146" rx="34" fill="#FFFFFF" fill-opacity="0.9"/>
+  <text x="162" y="618" fill="#0F172A" font-family="Arial, sans-serif" font-size="34" font-weight="700">AI-поиск</text>
+  <text x="354" y="618" fill="#334155" font-family="Arial, sans-serif" font-size="28">Структура сайта</text>
+  <text x="162" y="662" fill="#334155" font-family="Arial, sans-serif" font-size="28">Коммерческие факторы</text>
   <rect x="936" y="170" width="360" height="470" rx="42" fill="#0F172A" fill-opacity="0.72" stroke="#F8FAFC" stroke-opacity="0.18"/>
   <path d="M1010 560L1080 440L1160 490L1240 338L1320 380" stroke="#67E8F9" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
   <circle cx="1080" cy="440" r="18" fill="#67E8F9"/>
