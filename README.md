@@ -53,7 +53,7 @@ npm run dev
 4. Set `SITE_URL` to your Railway public domain, for example `https://your-app.up.railway.app`.
 5. Optional: set `ADMIN_USER`, `ADMIN_PASS`, `LEAD_TO_EMAIL`, and mail variables before the first production start.
 6. Deploy the web service. On startup, the app will sync the schema and seed the initial admin/content automatically.
-7. The admin SEO audit generator relies on the included `nixpacks.toml` and `requirements.txt`, so Railway can install Python plus Chromium for DOCX audits with screenshots.
+7. The admin SEO audit generator relies on the included `nixpacks.toml` and Python requirements, so Railway can install Python plus Chromium for DOCX audits with screenshots.
 
 ### Почта для заявок
 Для Railway надёжнее всего использовать Resend по HTTPS:
