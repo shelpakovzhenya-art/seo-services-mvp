@@ -35,6 +35,21 @@ def _choose_screenshot_targets(audit_payload: dict) -> list[dict]:
     return selected[:4]
 
 
+def _playwright_launch_kwargs() -> dict:
+    executable_path = (
+        shutil.which("chromium")
+        or shutil.which("chromium-browser")
+        or shutil.which("google-chrome")
+        or shutil.which("google-chrome-stable")
+    )
+
+    launch_kwargs = {"headless": True}
+    if executable_path:
+        launch_kwargs["executable_path"] = executable_path
+
+    return launch_kwargs
+
+
 def capture_screenshots(audit_payload: dict, assets_dir: Path) -> list[dict]:
     try:
         from playwright.sync_api import sync_playwright
@@ -48,19 +63,8 @@ def capture_screenshots(audit_payload: dict, assets_dir: Path) -> list[dict]:
     assets_dir.mkdir(parents=True, exist_ok=True)
     screenshots: list[dict] = []
 
-    executable_path = (
-        shutil.which("chromium")
-        or shutil.which("chromium-browser")
-        or shutil.which("google-chrome")
-        or shutil.which("google-chrome-stable")
-    )
-
-    launch_kwargs = {"headless": True}
-    if executable_path:
-        launch_kwargs["executable_path"] = executable_path
-
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(**launch_kwargs)
+        browser = playwright.chromium.launch(**_playwright_launch_kwargs())
         context = browser.new_context(viewport={"width": 1440, "height": 960}, locale="ru-RU")
         for index, target in enumerate(targets, start=1):
             page = context.new_page()
@@ -86,6 +90,35 @@ def capture_screenshots(audit_payload: dict, assets_dir: Path) -> list[dict]:
         browser.close()
 
     return screenshots
+
+
+def write_preview_pdf(html_path: Path, pdf_path: Path) -> bool:
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception:
+        return False
+
+    if not html_path.exists():
+        return False
+
+    pdf_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(**_playwright_launch_kwargs())
+        page = browser.new_page(viewport={"width": 1440, "height": 960}, locale="ru-RU")
+        try:
+            page.goto(html_path.resolve().as_uri(), wait_until="networkidle", timeout=45000)
+            page.emulate_media(media="screen")
+            page.pdf(
+                path=str(pdf_path),
+                format="A4",
+                print_background=True,
+                margin={"top": "14mm", "right": "12mm", "bottom": "16mm", "left": "12mm"},
+            )
+            return True
+        finally:
+            page.close()
+            browser.close()
 
 
 def _issue_card(issue: dict) -> str:

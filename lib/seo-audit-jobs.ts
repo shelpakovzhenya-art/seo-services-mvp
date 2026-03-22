@@ -16,13 +16,15 @@ type SeoAuditStoredResult = {
   company: string
   generatedAt: string
   fileName: string
+  pdfFileName?: string
   score: number
   issuesCount: number
   growthPoints: string[]
   strengths: string[]
   auditJson: Record<string, unknown>
   previewHtml: string
-  docxBase64: string
+  docxBase64?: string
+  pdfBase64?: string
 }
 
 type PythonCommand = {
@@ -190,13 +192,15 @@ async function buildStoredResult(config: SeoAuditJobConfig, tempDir: string): Pr
   const outputStem = fileName.replace(/\.docx$/i, '')
   const htmlPath = path.join(tempDir, `${outputStem}.html`)
   const jsonPath = path.join(tempDir, `${outputStem}.json`)
+  const pdfPath = path.join(tempDir, `${outputStem}.pdf`)
 
   await runPythonGenerator(config, outputPath)
 
-  const [docxBuffer, htmlRaw, jsonRaw] = await Promise.all([
+  const [docxBuffer, htmlRaw, jsonRaw, pdfBuffer] = await Promise.all([
     fs.readFile(outputPath),
     fs.readFile(htmlPath, 'utf-8'),
     fs.readFile(jsonPath, 'utf-8'),
+    fs.readFile(pdfPath).catch(() => null),
   ])
 
   const previewHtml = await embedPreviewAssets(htmlRaw, tempDir)
@@ -208,6 +212,7 @@ async function buildStoredResult(config: SeoAuditJobConfig, tempDir: string): Pr
     company: config.company,
     generatedAt: new Date().toISOString(),
     fileName,
+    pdfFileName: fileName.replace(/\.docx$/i, '.pdf'),
     score: Number(auditJson.score || 0),
     issuesCount: Array.isArray(auditJson.issues) ? auditJson.issues.length : 0,
     growthPoints: Array.isArray(auditJson.growth_points)
@@ -217,6 +222,7 @@ async function buildStoredResult(config: SeoAuditJobConfig, tempDir: string): Pr
     auditJson,
     previewHtml,
     docxBase64: docxBuffer.toString('base64'),
+    pdfBase64: pdfBuffer ? pdfBuffer.toString('base64') : undefined,
   }
 }
 
@@ -227,7 +233,7 @@ export function parseSeoAuditJobResult(value: string | null) {
 
   try {
     const parsed = JSON.parse(value) as Partial<SeoAuditStoredResult>
-    if (parsed.kind !== 'seo_audit' || !parsed.docxBase64) {
+    if (parsed.kind !== 'seo_audit' || (!parsed.docxBase64 && !parsed.pdfBase64)) {
       return null
     }
 

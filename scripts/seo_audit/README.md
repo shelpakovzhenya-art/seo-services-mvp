@@ -1,8 +1,9 @@
 # Shelpakov Digital SEO Audit Generator
 
-Этот подпроект делает брендовый SEO-аудит в `.docx` и сохраняет его в папку `audits/`.
+Этот подпроект делает брендовый SEO-аудит в `.pdf` и `.docx` и сохраняет его в папку `audits/`.
 По умолчанию рядом создаются:
 
+- `.pdf` — основной клиентский файл аудита
 - `.html` — визуальный preview, который легко открыть без Word
 - `.json` — сырые данные аудита
 - папка `*-assets` — автоскриншоты ключевых страниц
@@ -13,7 +14,7 @@
 npm run seo:audit -- --url https://akvarium-akvas.ru --company "Аквас"
 ```
 
-Если `.docx` неудобно открывать из VS Code или встроенного превью, смотри рядом созданный `.html`:
+Если `.pdf` или `.docx` неудобно открывать из VS Code или встроенного превью, смотри рядом созданный `.html`:
 
 ```powershell
 audits/akvarium-akvas-2026-03-22.html
@@ -46,7 +47,7 @@ npm run seo:audit -- --url https://example.com --company "Example" --output audi
 - забирает `robots.txt`, `sitemap.xml`, `llms.txt`
 - собирает выборку ключевых URL
 - проверяет `title`, `description`, `H1`, `canonical`, schema, alt, служебные route-страницы
-- формирует брендовый `.docx`-аудит в стиле Shelpakov Digital
+- формирует брендовый `.pdf`-аудит и `.docx`-версию в стиле Shelpakov Digital
 - дополнительно сохраняет `.json` со всеми сырыми данными аудита
 
 ## Основная команда
@@ -73,8 +74,9 @@ python scripts/seo_audit/generate_audit.py --url https://site.ru --company "На
 
 - `--url` — обязательный URL сайта
 - `--company` — название клиента/проекта на обложке
-- `--output` — куда сохранить `.docx`
+- `--output` — куда сохранить `.docx`-версию, рядом автоматически появится `.pdf`
 - `--sample-size` — сколько URL проверять в рамках выборки
 - `--no-json` — не сохранять сырые данные рядом с `.docx`
 - `--no-preview` — не создавать HTML-preview
+- `--no-pdf` — не создавать PDF-версию
 - `--no-screenshots` — не делать автоскриншоты страниц

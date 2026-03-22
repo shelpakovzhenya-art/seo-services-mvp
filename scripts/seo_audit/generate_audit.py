@@ -21,7 +21,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Inches, Pt, RGBColor
-from preview_export import capture_screenshots, write_preview_html
+from preview_export import capture_screenshots, write_preview_html, write_preview_pdf
 
 BRAND_NAME = "Shelpakov Digital"
 BRAND_DARK = "101C2B"
@@ -1204,6 +1204,7 @@ def main() -> None:
     parser.add_argument("--sample-size", type=int, default=18, help="How many pages to analyze from the website")
     parser.add_argument("--no-json", action="store_true", help="Do not save raw audit JSON next to the DOCX")
     parser.add_argument("--no-preview", action="store_true", help="Do not save HTML preview next to the DOCX")
+    parser.add_argument("--no-pdf", action="store_true", help="Do not save PDF preview next to the DOCX")
     parser.add_argument("--no-screenshots", action="store_true", help="Do not capture page screenshots for the audit")
     args = parser.parse_args()
 
@@ -1226,9 +1227,15 @@ def main() -> None:
     if not args.no_json:
         json_path = output.with_suffix(".json")
         json_path.write_text(json.dumps(audit_payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    if not args.no_preview:
-        html_path = output.with_suffix(".html")
+    html_path = output.with_suffix(".html")
+    pdf_path = output.with_suffix(".pdf")
+    should_write_html = not args.no_preview or not args.no_pdf
+
+    if should_write_html:
         write_preview_html(audit_payload, html_path)
+
+    if not args.no_pdf:
+        write_preview_pdf(html_path, pdf_path)
     print(f"Audit ready: {output}")
 
 

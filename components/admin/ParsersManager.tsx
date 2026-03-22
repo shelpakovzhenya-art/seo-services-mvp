@@ -148,7 +148,7 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
       setAuditCompany('')
       setSampleSize(10)
       router.refresh()
-      alert('SEO-аудит запущен. Когда задача завершится, здесь появятся кнопки превью и DOCX.')
+      alert('SEO-аудит запущен. Когда задача завершится, здесь появятся кнопки превью, PDF и DOCX.')
     } catch (error) {
       console.error('Error running SEO audit:', error)
       alert('Не удалось запустить SEO-аудит')
@@ -197,9 +197,9 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
               <FileSearch className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-slate-950">SEO-аудит в DOCX</h2>
+              <h2 className="text-xl font-semibold text-slate-950">SEO-аудит в PDF</h2>
               <p className="mt-1 text-sm leading-6 text-slate-500">
-                Генерирует брендовый аудит Shelpakov Digital с автоанализом сайта, скриншотами страниц, HTML-превью и готовым DOCX.
+                Генерирует брендовый аудит Shelpakov Digital с автоанализом сайта, скриншотами страниц, HTML-превью, готовым PDF и DOCX-версией.
               </p>
             </div>
           </div>
@@ -243,7 +243,7 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
 
             <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3 text-sm leading-6 text-slate-600">
               После запуска задача появится в истории ниже. Как только статус станет <strong>completed</strong>, появятся кнопки
-              <strong> Превью</strong> и <strong>DOCX</strong>.
+              <strong> Превью</strong>, <strong>PDF</strong> и <strong>DOCX</strong>.
             </div>
 
             <Button onClick={handleRunSeoAudit} disabled={isRunning.audit} className="gap-2 rounded-full">
@@ -330,6 +330,12 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
                             </Button>
                             <Button asChild size="sm" className="rounded-full">
                               <a href={`/api/admin/parsers/seo-audit/${job.id}/download`}>
+                                <Download className="mr-2 h-4 w-4" />
+                                PDF
+                              </a>
+                            </Button>
+                            <Button asChild size="sm" variant="outline" className="rounded-full">
+                              <a href={`/api/admin/parsers/seo-audit/${job.id}/download?format=docx`}>
                                 <Download className="mr-2 h-4 w-4" />
                                 DOCX
                               </a>
