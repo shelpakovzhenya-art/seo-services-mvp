@@ -3,6 +3,7 @@ import { isAuthenticated } from '@/lib/auth'
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
+import { generateSitemapXml } from '@/lib/sitemap-content'
 
 const SITEMAP_PATH = join(process.cwd(), 'public', 'sitemap.xml')
 
@@ -12,24 +13,12 @@ export async function GET() {
   }
 
   try {
-    let content = ''
-    if (existsSync(SITEMAP_PATH)) {
-      content = await readFile(SITEMAP_PATH, 'utf-8')
-    } else {
-      // Default sitemap.xml
-      const siteUrl = process.env.SITE_URL || 'http://localhost:3000'
-      content = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${siteUrl}</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>`
-    }
+    const source = existsSync(SITEMAP_PATH) ? 'file' : 'generated'
+    const content = source === 'file'
+      ? await readFile(SITEMAP_PATH, 'utf-8')
+      : await generateSitemapXml()
 
-    return NextResponse.json({ content })
+    return NextResponse.json({ content, source })
   } catch (error) {
     console.error('Error reading sitemap.xml:', error)
     return NextResponse.json(
@@ -48,7 +37,6 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const { content } = body
 
-    // Ensure public directory exists
     const publicDir = join(process.cwd(), 'public')
     if (!existsSync(publicDir)) {
       await mkdir(publicDir, { recursive: true })
@@ -56,7 +44,7 @@ export async function PUT(request: NextRequest) {
 
     await writeFile(SITEMAP_PATH, content, 'utf-8')
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, source: 'file' })
   } catch (error) {
     console.error('Error writing sitemap.xml:', error)
     return NextResponse.json(
@@ -65,5 +53,3 @@ export async function PUT(request: NextRequest) {
     )
   }
 }
-
-
