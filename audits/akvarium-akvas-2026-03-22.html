@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SEO-аудит akvarium-akvas.ru — Shelpakov Digital</title>
+  <style>
+    :root {
+      --bg: #0f1c2d;
+      --bg-soft: #f6f9fc;
+      --panel: #ffffff;
+      --text: #102035;
+      --muted: #607088;
+      --line: #d8e7f6;
+      --cyan: #69d3ff;
+      --orange: #f28b34;
+      --orange-soft: #fff3e6;
+      --critical: #ffe3e3;
+      --high: #fff1e6;
+      --medium: #eef7ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(242, 139, 52, 0.15), transparent 28%),
+        radial-gradient(circle at 90% 15%, rgba(105, 211, 255, 0.16), transparent 24%),
+        linear-gradient(180deg, #0f1c2d 0%, #132238 18%, #f6f9fc 18%, #f6f9fc 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+      gap: 24px;
+      padding: 34px 0 28px;
+      align-items: stretch;
+    }
+    .hero-main {
+      background: linear-gradient(145deg, #101c2b 0%, #1a2b44 100%);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 34px;
+      padding: 34px;
+      box-shadow: 0 24px 80px rgba(5, 14, 25, 0.35);
+    }
+    .hero-kicker {
+      display: inline-flex;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.09);
+      color: var(--cyan);
+      letter-spacing: .22em;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      margin: 22px 0 14px;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1.03;
+    }
+    .hero p { color: rgba(255,255,255,0.82); font-size: 18px; }
+    .hero-side {
+      background: linear-gradient(180deg, #fff7ef 0%, #ffffff 100%);
+      border: 1px solid rgba(16, 32, 53, 0.08);
+      border-radius: 34px;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(12, 25, 40, 0.08);
+    }
+    .hero-side .score {
+      font-size: 72px;
+      line-height: 1;
+      font-weight: 800;
+      margin: 14px 0 6px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin: 0 0 22px;
+    }
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      text-align: center;
+      box-shadow: 0 16px 30px rgba(12, 25, 40, 0.06);
+    }
+    .metric-label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-weight: 700;
+    }
+    .metric-value {
+      margin-top: 12px;
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    section {
+      margin: 26px 0;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(216,231,246,0.9);
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(13, 26, 42, 0.06);
+      backdrop-filter: blur(18px);
+    }
+    .section-kicker {
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: .24em;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    h2 {
+      margin: 10px 0 12px;
+      font-size: clamp(28px, 3.5vw, 44px);
+      line-height: 1.08;
+    }
+    .lead { color: var(--muted); font-size: 18px; max-width: 920px; }
+    .issue-list { display: grid; gap: 14px; }
+    .issue-card {
+      border-radius: 26px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .issue-head {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 18px;
+      font-size: 15px;
+    }
+    .issue-head span {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-weight: 700;
+    }
+    .issue-head strong { font-size: 18px; }
+    .issue-critical .issue-head { background: var(--critical); color: #b42318; }
+    .issue-high .issue-head { background: var(--high); color: #b54708; }
+    .issue-medium .issue-head { background: var(--medium); color: #175cd3; }
+    .issue-low .issue-head { background: #f4f6fa; color: var(--muted); }
+    .issue-body { padding: 18px; }
+    .issue-body ul, .two-col ul, .roadmap-card ul { padding-left: 18px; margin: 12px 0 0; }
+    .recommendation {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: var(--bg-soft);
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .list-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      padding: 22px;
+    }
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .roadmap-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      background: linear-gradient(180deg, #fff7ef 0%, #fff 100%);
+    }
+    .roadmap-period {
+      color: var(--orange);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 12px;
+    }
+    .shots {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .shot-card {
+      margin: 0;
+      border-radius: 26px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .shot-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #edf3fa;
+    }
+    .shot-card figcaption {
+      display: grid;
+      gap: 5px;
+      padding: 14px 16px 18px;
+    }
+    .shot-card span { color: var(--muted); font-size: 13px; word-break: break-all; }
+    .footer-note {
+      margin: 28px auto 40px;
+      padding-bottom: 20px;
+      color: rgba(16,32,53,0.64);
+      font-size: 14px;
+    }
+    @media (max-width: 980px) {
+      .hero,
+      .grid-4,
+      .roadmap,
+      .two-col,
+      .shots { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="hero-main">
+        <div class="hero-kicker">Shelpakov Digital</div>
+        <h1>SEO-аудит akvarium-akvas.ru</h1>
+        <p>Коммерческий аудит с фокусом на индексацию, точки роста, шаблоны страниц, конверсию и реальный план внедрения.</p>
+      </div>
+      <aside class="hero-side">
+        <div class="section-kicker">Паспорт проекта</div>
+        <h2 style="font-size:32px;margin-bottom:8px;">Аквас</h2>
+        <p class="lead" style="font-size:16px;">Дата: 22.03.2026 14:58<br/>Домен: https://akvarium-akvas.ru</p>
+        <div class="score">45</div>
+        <div style="color:var(--muted);font-weight:700;">Индекс SEO-готовности из 100</div>
+      </aside>
+    </header>
+
+    <div class="grid-4">
+      <div class="metric"><div class="metric-label">Sitemap unique</div><div class="metric-value">1370</div></div>
+      <div class="metric"><div class="metric-label">Sitemap entries</div><div class="metric-value">6971</div></div>
+      <div class="metric"><div class="metric-label">Средний ответ</div><div class="metric-value">520.6 ms</div></div>
+      <div class="metric"><div class="metric-label">HTML выборки</div><div class="metric-value">175.0 KB</div></div>
+    </div>
+
+    <section>
+      <div class="section-kicker">Приоритеты</div>
+      <h2>Что сейчас сильнее всего мешает росту</h2>
+      <p class="lead">Ниже не формальные замечания, а те ограничения, которые реально влияют на индексацию, CTR, crawl budget и качество коммерческой выдачи.</p>
+      <div class="issue-list">
+    <article class="issue-card issue-critical">
+      <div class="issue-head"><span>Critical</span><strong>robots.txt конфликтует с собственной картой сайта</strong></div>
+      <div class="issue-body">
+        <p>Сейчас в robots.txt одновременно указан Sitemap и стоит Disallow на sitemap.xml. Для Яндекса и части сервисов это выглядит как конфликт сигналов и мешает чистой индексации.</p>
+        <ul><li>В robots.txt найдено правило `Disallow: *sitemap.xml`.</li><li>Одновременно файл содержит `Sitemap: https://akvarium-akvas.ru/sitemap.xml`.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Удалить запрет на sitemap.xml, оставить только директиву Sitemap и привести Host к чистому домену без протокола.</p>
+      </div>
+    </article>
+    
+    <article class="issue-card issue-high">
+      <div class="issue-head"><span>High</span><strong>Контактные и lead-страницы недооптимизированы</strong></div>
+      <div class="issue-body">
+        <p>Контактные страницы участвуют в доверии, конверсии и брендовой выдаче. Когда у них нет базовой SEO-разметки, сайт теряет и кликабельность, и качество индекса.</p>
+        <ul><li>Страница /contacts открывается без H1.</li><li>На /contacts отсутствует meta description.</li><li>На /contacts отсутствует canonical.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Сделать полноценную контактную страницу: H1, title до 70 символов, description 140-160 символов, canonical, контент про производство, доставку, гарантию, адрес, телефоны и CTA.</p>
+      </div>
+    </article>
+    
+    <article class="issue-card issue-high">
+      <div class="issue-head"><span>High</span><strong>Внутренний служебный URL с формой обратного звонка доступен без SEO-контроля</strong></div>
+      <div class="issue-body">
+        <p>Indexable-страницы без title, description и H1 создают шум в индексе, размывают релевантность и тянут crawl budget.</p>
+        <ul><li>URL `/index.php?route=information/contactform` доступен по 200.</li><li>На странице нет title, description и H1.</li><li>Ссылка на этот URL есть в шапке как `Обратный звонок`.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Либо закрыть route-страницу от индексации и убрать прямые ссылки, либо перевести ее на нормальный SEO-friendly URL с оформлением.</p>
+      </div>
+    </article>
+    
+    <article class="issue-card issue-high">
+      <div class="issue-head"><span>High</span><strong>Шаблоны title на товарах и категориях слишком длинные</strong></div>
+      <div class="issue-body">
+        <p>Длинные title режутся в выдаче, ухудшают CTR и снижают контроль над тем, какой оффер поисковик покажет пользователю.</p>
+        <ul><li>В выборке 12 из 26 страниц имеют title длиннее 70 символов.</li><li>/akvariumy — 83 симв.</li><li>/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov — 91 симв.</li><li>/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm — 92 симв.</li><li>/akvarium-panoramnyj-220-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-920x470x640-mm — 92 симв.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Пересобрать шаблоны title: сначала ключ + модель/категория, затем оффер и бренд. Для каталога держать диапазон 55-70 символов.</p>
+      </div>
+    </article>
+    
+    <article class="issue-card issue-medium">
+      <div class="issue-head"><span>Medium</span><strong>Meta description на части страниц обрезается или не дотягивает до нормального сниппета</strong></div>
+      <div class="issue-body">
+        <p>Сниппет — это коммерческий оффер в выдаче. Когда description слишком короткий или перегруженный, поисковик чаще берет случайный кусок текста со страницы.</p>
+        <ul><li>В выборке 17 из 26 страниц имеют description вне комфортного диапазона.</li><li>/about_us — 188 симв.</li><li>/akvariumy — 169 симв.</li><li>/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov — 255 симв.</li><li>/akvarium-panoramnyj-100-litrov-s-tumboj-i-oborudovaniem-v-stile-psevdomore-810x360x460-mm — 255 симв.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Собрать шаблоны description под типы страниц: ключ, ценность, доставка/гарантия, регион, призыв. Ориентир — 140-160 символов.</p>
+      </div>
+    </article>
+    
+    <article class="issue-card issue-medium">
+      <div class="issue-head"><span>Medium</span><strong>Изображения теряют поисковый трафик и контекст карточек</strong></div>
+      <div class="issue-body">
+        <p>Для товарного проекта alt влияет и на картинки, и на понимание ассортимента, и на доступность.</p>
+        <ul><li>На 25 из 26 проверенных страниц есть изображения без alt.</li><li>На главной найдено 7 изображений без alt.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Ввести шаблонную генерацию alt по типу карточки: товар + объем/размер + бренд/серия, а для категорий — общий интент страницы.</p>
+      </div>
+    </article>
+    
+    <article class="issue-card issue-medium">
+      <div class="issue-head"><span>Medium</span><strong>Есть лишняя redirect-цепочка у части доменных вариантов</strong></div>
+      <div class="issue-body">
+        <p>Дополнительный редирект добавляет задержку на входе и создает ненужную техническую сложность для ботов и пользователей.</p>
+        <ul><li>Путь `http://www.akvarium-akvas.ru/` отдает две последовательные 301-переадресации.</li><li>Финальный канонический домен — `https://akvarium-akvas.ru/`.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Свести все варианты домена к одному 301-редиректу напрямую на канонический HTTPS без промежуточного `https://www`.</p>
+      </div>
+    </article>
+    
+    <article class="issue-card issue-medium">
+      <div class="issue-head"><span>Medium</span><strong>Карта сайта раздута повторяющимися URL</strong></div>
+      <div class="issue-body">
+        <p>Когда один и тот же URL повторяется в sitemap много раз, поисковики получают лишний шум вместо чистого сигнала, а анализ индексации становится менее управляемым.</p>
+        <ul><li>В sitemap найдено 6971 записей, но только 1370 уникальных URL.</li><li>Повторов: 5601.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Пересобрать генерацию sitemap так, чтобы каждый индексируемый URL попадал туда один раз, а карта сайта отражала реальную структуру проекта без дублей.</p>
+      </div>
+    </article>
+    
+    <article class="issue-card issue-low">
+      <div class="issue-head"><span>Low</span><strong>На главной остался meta keywords, который уже не дает SEO-ценности</strong></div>
+      <div class="issue-body">
+        <p>Сам по себе тег не вредит, но это сигнал, что шаблон меты стоит почистить и поддерживать в актуальном виде.</p>
+        <ul><li>На главной найден тег meta keywords.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> Убрать meta keywords из шаблона и сосредоточиться на title, description, H1, schema и коммерческих блоках.</p>
+      </div>
+    </article>
+    </div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Скриншоты</div>
+      <h2>Как выглядит проект в момент аудита</h2>
+      <p class="lead">Автоскриншоты помогают не спорить о контексте: в документе сразу видно, какие страницы легли в разбор и как они выглядят на старте.</p>
+      <div class="shots">
+            <figure class="shot-card">
+              <img src="akvarium-akvas-2026-03-22-assets/01-home.png" alt="Главная" />
+              <figcaption>
+                <strong>Главная</strong>
+                <span>https://akvarium-akvas.ru</span>
+              </figcaption>
+            </figure>
+            
+            <figure class="shot-card">
+              <img src="akvarium-akvas-2026-03-22-assets/02-contacts.png" alt="Контакты" />
+              <figcaption>
+                <strong>Контакты</strong>
+                <span>https://akvarium-akvas.ru/contacts</span>
+              </figcaption>
+            </figure>
+            
+            <figure class="shot-card">
+              <img src="akvarium-akvas-2026-03-22-assets/03-aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov.png" alt="Товар" />
+              <figcaption>
+                <strong>Товар</strong>
+                <span>https://akvarium-akvas.ru/aquanic-aq-500-vneshnij-kanistrovyj-filtr-500l-ch-dlya-presnyh-i-morskih-akvariumov</span>
+              </figcaption>
+            </figure>
+            </div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Сильные стороны</div>
+      <h2>На что уже можно опираться</h2>
+      <div class="two-col">
+        <div class="list-card">
+          <ul><li>Сайт стабильно отвечает по HTTPS и главная страница отдает 200 код без JS-заглушки.</li><li>Сайт уже имеет индексируемую карту сайта с 1370 URL и image-тегами для карточек.</li><li>На ключевых коммерческих страницах проставлены canonical, что помогает удерживать основной URL.</li><li>На товарах и категориях уже используется schema-разметка (Product / BreadcrumbList / LocalBusiness).</li><li>У большинства проверенных коммерческих страниц есть H1, что хорошо для масштабного каталога.</li><li>URL-структура в каталоге понятная и хорошо дробит спрос по литражу, форме, назначению и комплектации.</li><li>У проекта уже есть llms.txt, а значит можно дополнительно усиливать AI-видимость и branded-ответы.</li></ul>
+        </div>
+        <div class="list-card">
+          <div class="section-kicker" style="margin-bottom:8px;">Что усиливать</div>
+          <ul><li>Усилить страницы категорий уникальными интро-блоками, FAQ, доставкой, гарантией, сроками производства и объяснением, как выбрать модель.</li><li>Сделать отдельные посадочные под высокий спрос: по литражу, форме, назначению, типу комплектации и готовым решениям под ключ.</li><li>Добавить в категории и карточки блоки доверия: производство в России, гарантия, доставка по РФ, кастомизация размеров, комплектация.</li><li>Развернуть image SEO: alt-шаблоны, подписи, structured data и подбор визуалов под поисковый спрос по аквариумам и террариумам.</li><li>Собрать шаблонный слой сниппетов: короткие title, коммерческие description, аккуратный canonical и понятные H1 на всех типах страниц.</li><li>Сегментировать sitemap и параллельно настроить контроль индексации категорий, товаров, фильтров и служебных route-страниц.</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Roadmap</div>
+      <h2>План внедрения на 60 дней</h2>
+      <p class="lead">Такой порядок даёт быстрый эффект: сначала чистим индексацию и шаблоны, потом усиливаем спросовые кластеры и коммерческие посадочные.</p>
+      <div class="roadmap">
+            <div class="roadmap-card">
+              <div class="roadmap-period">0-14 дней</div>
+              <ul><li>Исправить robots.txt: убрать конфликт с sitemap.xml и нормализовать Host.</li><li>Закрыть или переработать `/index.php?route=information/contactform`.</li><li>Доделать SEO-шаблон страницы контактов: H1, title, description, canonical, коммерческий контент.</li><li>Подготовить новое правило генерации title и description для товаров и категорий.</li></ul>
+            </div>
+            
+            <div class="roadmap-card">
+              <div class="roadmap-period">15-30 дней</div>
+              <ul><li>Внедрить alt-шаблоны для карточек и категорий.</li><li>Свести доменные редиректы к одному шагу на канонический HTTPS.</li><li>Разделить sitemap по типам страниц и подать их отдельно в Яндекс Вебмастер и GSC.</li><li>Обновить сниппеты и протестировать рост CTR по категориям и товарным кластерам.</li></ul>
+            </div>
+            
+            <div class="roadmap-card">
+              <div class="roadmap-period">31-60 дней</div>
+              <ul><li>Усилить спросовые категории контентом, FAQ, коммерческими блоками и перелинковкой.</li><li>Собрать посадочные под ключевые кластеры спроса: литраж, форма, сценарий использования, комплектация.</li><li>Добавить контент-слой под AI-ответы: краткие определения, таблицы сравнения, ответы на частые вопросы.</li></ul>
+            </div>
+            </div>
+    </section>
+
+    <div class="footer-note">Аудит подготовлен 22.03.2026 14:58 • akvarium-akvas.ru • Shelpakov Digital</div>
+  </div>
+</body>
+</html>

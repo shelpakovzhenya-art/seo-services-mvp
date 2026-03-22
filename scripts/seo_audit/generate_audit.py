@@ -21,6 +21,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Inches, Pt, RGBColor
+from preview_export import capture_screenshots, write_preview_html
 
 BRAND_NAME = "Shelpakov Digital"
 BRAND_DARK = "101C2B"
@@ -1098,6 +1099,35 @@ def build_executive_summary(audit: dict) -> list[str]:
     ]
 
 
+def add_screenshot_gallery(doc: Document, screenshots: list[dict]) -> None:
+    if not screenshots:
+        return
+    add_section_heading(
+        doc,
+        "Скриншоты",
+        "Автоскриншоты ключевых страниц",
+        "Эти изображения помогают быстро увидеть контекст: как выглядит главная, контакты, категория и карточка товара в момент аудита.",
+    )
+    for screenshot in screenshots:
+        image_path = Path(screenshot["path"])
+        if not image_path.exists():
+            continue
+        card = doc.add_table(rows=2, cols=1)
+        card.alignment = WD_TABLE_ALIGNMENT.CENTER
+        remove_table_borders(card)
+        head = card.rows[0].cells[0]
+        body = card.rows[1].cells[0]
+        set_cell_shading(head, BRAND_SOFT)
+        set_cell_shading(body, "FFFFFF")
+        set_cell_margins(head, 90, 110, 80, 110)
+        set_cell_margins(body, 110, 110, 110, 110)
+        title_run = head.paragraphs[0].add_run(f"{screenshot.get('label', 'Страница')}  |  {shorten_path(screenshot.get('url', ''), 72)}")
+        set_font(title_run, size=10.6, bold=True, color=BRAND_TEXT)
+        picture_run = body.paragraphs[0].add_run()
+        picture_run.add_picture(str(image_path), width=Inches(6.25))
+        doc.add_paragraph().paragraph_format.space_after = Pt(4)
+
+
 def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
     doc = Document()
     configure_document(doc)
@@ -1149,6 +1179,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
         "Это не полный crawl всего проекта, а репрезентативная выборка по главным, категорийным, товарным и служебным URL.",
     )
     add_snapshot_table(doc, audit["sample_pages"])
+    add_screenshot_gallery(doc, audit.get("screenshots", []))
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(output_path))
@@ -1159,6 +1190,7 @@ def serialize_audit(audit: dict) -> dict:
     payload["home_page"] = asdict(audit["home_page"])
     payload["sample_pages"] = [asdict(item) for item in audit["sample_pages"]]
     payload["issues"] = [asdict(item) for item in audit["issues"]]
+    payload["screenshots"] = audit.get("screenshots", [])
     return payload
 
 
@@ -1171,6 +1203,8 @@ def main() -> None:
     parser.add_argument("--output", help="Output DOCX path")
     parser.add_argument("--sample-size", type=int, default=18, help="How many pages to analyze from the website")
     parser.add_argument("--no-json", action="store_true", help="Do not save raw audit JSON next to the DOCX")
+    parser.add_argument("--no-preview", action="store_true", help="Do not save HTML preview next to the DOCX")
+    parser.add_argument("--no-screenshots", action="store_true", help="Do not capture page screenshots for the audit")
     args = parser.parse_args()
 
     BRAND_NAME = args.brand
@@ -1180,11 +1214,21 @@ def main() -> None:
     output = Path(args.output) if args.output else Path("audits") / f"{slugify_for_filename(target)}-{today}.docx"
 
     audit = build_audit(target, args.company, args.sample_size)
+    assets_dir = output.parent / f"{output.stem}-assets"
+    if not args.no_screenshots:
+        audit_payload = serialize_audit(audit)
+        audit["screenshots"] = capture_screenshots(audit_payload, assets_dir)
+    else:
+        audit["screenshots"] = []
     logo_path = Path("public") / "android-chrome-512x512.png"
     generate_docx(audit, output, logo_path)
+    audit_payload = serialize_audit(audit)
     if not args.no_json:
         json_path = output.with_suffix(".json")
-        json_path.write_text(json.dumps(serialize_audit(audit), ensure_ascii=False, indent=2), encoding="utf-8")
+        json_path.write_text(json.dumps(audit_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    if not args.no_preview:
+        html_path = output.with_suffix(".html")
+        write_preview_html(audit_payload, html_path)
     print(f"Audit ready: {output}")
 
 

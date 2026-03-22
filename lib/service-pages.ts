@@ -1,4 +1,5 @@
 import { websiteDevelopmentService } from './website-development-service-data'
+import { seoAuditService } from './seo-audit-service-data'
 
 export type ServiceImageSet = {
   hero: string
@@ -73,7 +74,7 @@ const imageSet = (slug: string, heroAlt: string, processAlt: string, resultsAlt:
   resultsAlt,
 })
 
-export const servicePages: ServicePageContent[] = [
+const baseServicePages: ServicePageContent[] = [
   {
     slug: 'seo',
     shortName: 'SEO-продвижение',
@@ -707,6 +708,12 @@ export const servicePages: ServicePageContent[] = [
     related: ['seo-audit', 'seo', 'b2b-seo', 'technical-seo'],
     images: imageSet('seo-consulting', 'Иллюстрация SEO-консалтинга и стратегической работы', 'Схема процесса SEO-консалтинга и контроля проекта', 'Визуал результата SEO-консалтинга для команды и стратегии'),
   },
+  websiteDevelopmentService,
+]
+
+export const servicePages: ServicePageContent[] = [
+  ...baseServicePages.filter((service) => service.slug !== 'seo-audit' && service.slug !== 'website-development'),
+  seoAuditService,
   websiteDevelopmentService,
 ]
 
