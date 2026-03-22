@@ -2,14 +2,12 @@ FROM node:22-bookworm-slim
 
 WORKDIR /app
 
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 \
-    PYTHONUNBUFFERED=1 \
+ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PATH="/opt/venv/bin:$PATH"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
-    chromium \
     openssl \
     python3 \
     python3-pip \

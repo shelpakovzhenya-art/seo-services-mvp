@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SEO-аудит www.inmako.ru — Shelpakov Digital</title>
+  <style>
+    :root {
+      --bg: #0f1c2d;
+      --bg-soft: #f6f9fc;
+      --panel: #ffffff;
+      --text: #102035;
+      --muted: #607088;
+      --line: #d8e7f6;
+      --cyan: #69d3ff;
+      --orange: #f28b34;
+      --orange-soft: #fff3e6;
+      --critical: #ffe3e3;
+      --high: #fff1e6;
+      --medium: #eef7ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(242, 139, 52, 0.15), transparent 28%),
+        radial-gradient(circle at 90% 15%, rgba(105, 211, 255, 0.16), transparent 24%),
+        linear-gradient(180deg, #0f1c2d 0%, #132238 18%, #f6f9fc 18%, #f6f9fc 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+      gap: 24px;
+      padding: 34px 0 28px;
+      align-items: stretch;
+    }
+    .hero-main {
+      background: linear-gradient(145deg, #101c2b 0%, #1a2b44 100%);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 34px;
+      padding: 34px;
+      box-shadow: 0 24px 80px rgba(5, 14, 25, 0.35);
+    }
+    .hero-kicker {
+      display: inline-flex;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.09);
+      color: var(--cyan);
+      letter-spacing: .22em;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      margin: 22px 0 14px;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1.03;
+    }
+    .hero p { color: rgba(255,255,255,0.82); font-size: 18px; }
+    .hero-side {
+      background: linear-gradient(180deg, #fff7ef 0%, #ffffff 100%);
+      border: 1px solid rgba(16, 32, 53, 0.08);
+      border-radius: 34px;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(12, 25, 40, 0.08);
+    }
+    .hero-side .score {
+      font-size: 72px;
+      line-height: 1;
+      font-weight: 800;
+      margin: 14px 0 6px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin: 0 0 22px;
+    }
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      text-align: center;
+      box-shadow: 0 16px 30px rgba(12, 25, 40, 0.06);
+    }
+    .metric-label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-weight: 700;
+    }
+    .metric-value {
+      margin-top: 12px;
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    section, .phase-section {
+      margin: 26px 0;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(216,231,246,0.9);
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(13, 26, 42, 0.06);
+      backdrop-filter: blur(18px);
+    }
+    .section-kicker {
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: .24em;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    h2 {
+      margin: 10px 0 12px;
+      font-size: clamp(28px, 3.5vw, 44px);
+      line-height: 1.08;
+    }
+    h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      line-height: 1.15;
+    }
+    .lead { color: var(--muted); font-size: 18px; max-width: 920px; }
+    .issue-list, .phase-checks { display: grid; gap: 14px; }
+    .issue-card, .phase-check {
+      border-radius: 26px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .issue-head {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 18px;
+      font-size: 15px;
+    }
+    .issue-head span {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-weight: 700;
+    }
+    .issue-head strong { font-size: 18px; }
+    .issue-critical .issue-head { background: var(--critical); color: #b42318; }
+    .issue-high .issue-head { background: var(--high); color: #b54708; }
+    .issue-medium .issue-head { background: var(--medium); color: #175cd3; }
+    .issue-low .issue-head { background: #f4f6fa; color: var(--muted); }
+    .issue-body, .phase-check {
+      padding: 18px;
+    }
+    .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .phase-box {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      background: var(--bg-soft);
+    }
+    .phase-box-title {
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .phase-meta {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .phase-meta span {
+      display: inline-block;
+      margin: 0 8px;
+    }
+    .issue-body ul, .two-col ul, .roadmap-card ul, .phase-box ul {
+      padding-left: 18px;
+      margin: 12px 0 0;
+    }
+    .recommendation {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: var(--bg-soft);
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .list-card, .action-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      padding: 22px;
+    }
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .action-meta {
+      margin: 6px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .roadmap-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      background: linear-gradient(180deg, #fff7ef 0%, #fff 100%);
+    }
+    .roadmap-period {
+      color: var(--orange);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 12px;
+    }
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: #fff;
+    }
+    .priority-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 920px;
+    }
+    .priority-table th, .priority-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+    .priority-table th {
+      background: #132238;
+      color: #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .priority-table td:nth-child(2),
+    .priority-table td:nth-child(3),
+    .priority-table td:nth-child(4),
+    .priority-table td:nth-child(5) {
+      text-align: center;
+      font-weight: 700;
+    }
+    .empty-note {
+      margin: 0;
+      color: var(--muted);
+    }
+    .footer-note {
+      margin: 28px auto 40px;
+      padding-bottom: 20px;
+      color: rgba(16,32,53,0.64);
+      font-size: 14px;
+    }
+    @media (max-width: 980px) {
+      .hero,
+      .grid-4,
+      .roadmap,
+      .two-col,
+      .phase-grid,
+      .action-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="hero-main">
+        <div class="hero-kicker">Shelpakov Digital</div>
+        <h1>SEO-аудит www.inmako.ru</h1>
+        <p>Коммерческий аудит с фокусом на индексацию, точки роста, шаблоны страниц, конверсию и реальный план внедрения.</p>
+      </div>
+      <aside class="hero-side">
+        <div class="section-kicker">Паспорт проекта</div>
+        <h2 style="font-size:32px;margin-bottom:8px;">Инмако</h2>
+        <p class="lead" style="font-size:16px;">Дата: 22.03.2026 22:16<br/>Домен: https://www.inmako.ru</p>
+        <div class="score">55</div>
+        <div style="color:var(--muted);font-weight:700;">Индекс SEO-готовности из 100</div>
+      </aside>
+    </header>
+
+    <div class="grid-4">
+      <div class="metric"><div class="metric-label">Sitemap unique</div><div class="metric-value">584</div></div>
+      <div class="metric"><div class="metric-label">Sitemap entries</div><div class="metric-value">584</div></div>
+      <div class="metric"><div class="metric-label">Средний ответ</div><div class="metric-value">3591.2 ms</div></div>
+      <div class="metric"><div class="metric-label">HTML выборки</div><div class="metric-value">64.1 KB</div></div>
+    </div>
+
+    <section>
+      <div class="section-kicker">Приоритеты</div>
+      <h2>Матрица проблем по влиянию на рост</h2>
+      <p class="lead">Здесь задачи не просто перечислены, а разложены по impact, risk и business-effect, чтобы было понятно, что делать первым.</p>
+      <div class='table-wrap'><table class='priority-table'><thead><tr><th>Проблема</th><th>Impact</th><th>Risk</th><th>Business</th><th>Итог</th><th>Приоритет</th><th>Ответственный</th></tr></thead><tbody><tr><td>РљРѕРЅС‚Р°РєС‚РЅС‹Рµ Рё lead-СЃС‚СЂР°РЅРёС†С‹ РЅРµРґРѕРѕС„РѕСЂРјР»РµРЅС‹ РєР°Рє SEO-РїРѕСЃР°РґРѕС‡РЅС‹Рµ</td><td>9</td><td>8</td><td>9</td><td>26</td><td>High</td><td>Backend / SEO</td></tr><tr><td>РќР° С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† title РІС‹С…РѕРґСЏС‚ Р·Р° СЂР°Р±РѕС‡СѓСЋ РґР»РёРЅСѓ</td><td>8</td><td>7</td><td>9</td><td>24</td><td>High</td><td>Frontend / SEO</td></tr><tr><td>Meta description РЅР° С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† РІРЅРµ СЂР°Р±РѕС‡РµРіРѕ РґРёР°РїР°Р·РѕРЅР°</td><td>6</td><td>5</td><td>7</td><td>18</td><td>Medium</td><td>Frontend / SEO</td></tr><tr><td>РР·РѕР±СЂР°Р¶РµРЅРёСЏ С‚РµСЂСЏСЋС‚ SEO-СЃРёРіРЅР°Р»С‹ РёР·-Р·Р° РїСѓСЃС‚С‹С… alt</td><td>6</td><td>5</td><td>6</td><td>17</td><td>Medium</td><td>Frontend / SEO</td></tr></tbody></table></div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Критические ошибки</div>
+      <h2>Что сейчас реально блокирует рост</h2>
+      <p class="lead">Это не весь backlog, а ограничения, которые первыми режут индекс, сниппеты, crawl budget и способность сайта забирать спрос.</p>
+      <div class="issue-list">
+    <article class="issue-card issue-high">
+      <div class="issue-head"><span>High</span><strong>РљРѕРЅС‚Р°РєС‚РЅС‹Рµ Рё lead-СЃС‚СЂР°РЅРёС†С‹ РЅРµРґРѕРѕС„РѕСЂРјР»РµРЅС‹ РєР°Рє SEO-РїРѕСЃР°РґРѕС‡РЅС‹Рµ</strong></div>
+      <div class="issue-body">
+        <p>РЎС‚СЂР°РЅРёС†С‹ РєРѕРЅС‚Р°РєС‚РѕРІ Рё Р·Р°СЏРІРѕРє СѓС‡Р°СЃС‚РІСѓСЋС‚ РЅРµ С‚РѕР»СЊРєРѕ РІ РєРѕРЅРІРµСЂСЃРёРё, РЅРѕ Рё РІ РґРѕРІРµСЂРёРё, Р±СЂРµРЅРґРѕРІРѕР№ РІС‹РґР°С‡Рµ Рё РїРѕРЅРёРјР°РЅРёРё Р±РёР·РЅРµСЃР° РїРѕРёСЃРєРѕРІРёРєР°РјРё.</p>
+        <ul><li>РќР° `/404` РЅРµ С…РІР°С‚Р°РµС‚: description.</li><li>РќР° `/check-list1` РЅРµ С…РІР°С‚Р°РµС‚: description.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> РЎРѕР±СЂР°С‚СЊ РїРѕР»РЅРѕС†РµРЅРЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РєРѕРЅС‚Р°РєС‚Р° Рё Р·Р°СЏРІРєРё: H1, title РґРѕ 70 СЃРёРјРІРѕР»РѕРІ, description 140вЂ“160 СЃРёРјРІРѕР»РѕРІ, canonical, Р±Р»РѕРєРё РґРѕРІРµСЂРёСЏ, Р°РґСЂРµСЃР°, С‚РµР»РµС„РѕРЅС‹ Рё РїРѕРЅСЏС‚РЅС‹Р№ CTA.</p>
+      </div>
+    </article>
+    
+    <article class="issue-card issue-high">
+      <div class="issue-head"><span>High</span><strong>РќР° С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† title РІС‹С…РѕРґСЏС‚ Р·Р° СЂР°Р±РѕС‡СѓСЋ РґР»РёРЅСѓ</strong></div>
+      <div class="issue-body">
+        <p>РЎР»РёС€РєРѕРј РґР»РёРЅРЅС‹Рµ title СЂРµР¶СѓС‚СЃСЏ РІ РІС‹РґР°С‡Рµ, СѓС…СѓРґС€Р°СЋС‚ CTR Рё СЃРЅРёР¶Р°СЋС‚ РєРѕРЅС‚СЂРѕР»СЊ РЅР°Рґ С‚РµРј, РєР°РєРѕР№ РѕС„С„РµСЂ РїРѕРёСЃРєРѕРІРёРє РїРѕРєР°Р¶РµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ.</p>
+        <ul><li>Р’ РІС‹Р±РѕСЂРєРµ 158 РёР· 464 СЃС‚СЂР°РЅРёС† РёРјРµСЋС‚ title РґР»РёРЅРЅРµРµ 70 СЃРёРјРІРѕР»РѕРІ.</li><li>/uslugi/internet-reklama-yandex-google вЂ” 86 СЃРёРјРІ.</li><li>/uslugi/podderzka-saita вЂ” 83 СЃРёРјРІ.</li><li>/uslugi/audit-saita-reklamy-prodvigeniya вЂ” 75 СЃРёРјРІ.</li><li>/portfolio/amerikanskaya-yuridicheskaya-firma-leone-zhgun вЂ” 89 СЃРёРјРІ.</li></ul>
+        <p class="recommendation"><strong>Что делать:</strong> РџРµСЂРµСЃРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ title: СЃРЅР°С‡Р°Р»Р° РєР»СЋС‡ Рё С‚РёРї СЃС‚СЂР°РЅРёС†С‹, Р·Р°С‚РµРј С†РµРЅРЅРѕСЃС‚РЅС‹Р№ РѕС„С„РµСЂ Рё Р±СЂРµРЅРґ. РћСЂРёРµРЅС‚РёСЂ вЂ” РґРёР°РїР°Р·РѕРЅ 55вЂ“70 СЃРёРјРІРѕР»РѕРІ.</p>
+      </div>
+    </article>
+    </div>
+    </section>
+
+    
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Р­С‚Р°Рї 1 вЂ” Crawl &amp; Indexability</h2>
+              <p class="lead">РџСЂРѕРІРµСЂСЏСЋ, РЅР°СЃРєРѕР»СЊРєРѕ С‡РёСЃС‚Рѕ СЃР°Р№С‚ РѕС‚РґР°РµС‚ РїРѕРёСЃРєРѕРІРёРєР°Рј СЃРёРіРЅР°Р»С‹ РґР»СЏ РѕР±С…РѕРґР° Рё РёРЅРґРµРєСЃР°С†РёРё.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>robots.txt Рё РєР°СЂС‚Р° СЃР°Р№С‚Р°</h3>
+                  <p><strong>Что проверялось:</strong> Р”РѕСЃС‚СѓРїРЅРѕСЃС‚СЊ robots.txt, РґРёСЂРµРєС‚РёРІС‹, sitemap, С‡РёСЃС‚РѕС‚Р° СЃРёРіРЅР°Р»РѕРІ РґР»СЏ СЂРѕР±РѕС‚Р°.</p>
+                  <p><strong>Как проверялось:</strong> HTTP-Р·Р°РїСЂРѕСЃ + СЂР°Р·Р±РѕСЂ robots.txt Рё XML sitemap.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>robots.txt:</strong> 200</li><li><strong>РЈРЅРёРєР°Р»СЊРЅС‹С… URL РІ sitemap:</strong> 584</li><li><strong>Р’СЃРµРіРѕ Р·Р°РїРёСЃРµР№ РІ sitemap:</strong> 584</li><li><strong>Р¤Р°Р№Р»РѕРІ sitemap РѕР±СЂР°Р±РѕС‚Р°РЅРѕ:</strong> 1</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>РљСЂРёС‚РёС‡РЅРѕРіРѕ РєРѕРЅС„Р»РёРєС‚Р° РјРµР¶РґСѓ robots.txt Рё sitemap.xml РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.</li><li>РЎРёР»СЊРЅРѕРіРѕ СЂР°Р·РґСѓРІР°РЅРёСЏ sitemap РґСѓР±Р»СЏРјРё РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.</li><li>РћС‚РґРµР»СЊРЅРѕРіРѕ llms.txt РЅРµ РЅР°Р№РґРµРЅРѕ.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> Backend / SEO</p>
+                  <p class="recommendation"><strong>Что делать:</strong> РЎРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°С‚СЊ robots.txt, sitemap Рё РєР°РЅРѕРЅРёС‡РµСЃРєРёР№ РґРѕРјРµРЅ С‚Р°Рє, С‡С‚РѕР±С‹ СЂРѕР±РѕС‚ РІРёРґРµР» РѕРґРёРЅ РЅРµРїСЂРѕС‚РёРІРѕСЂРµС‡РёРІС‹Р№ СЃС†РµРЅР°СЂРёР№ РѕР±С…РѕРґР°.</p>
+                </article>
+                
+                <article class="phase-check">
+                  <h3>РЎС‚Р°С‚СѓСЃ-РєРѕРґС‹, СЂРµРґРёСЂРµРєС‚С‹ Рё РєР°РЅРѕРЅРёРєР°Р»РёР·Р°С†РёСЏ</h3>
+                  <p><strong>Что проверялось:</strong> HTTP-РєРѕРґС‹ РєР»СЋС‡РµРІС‹С… URL, РґРѕРјРµРЅРЅС‹Рµ СЂРµРґРёСЂРµРєС‚С‹, РїРѕРєСЂС‹С‚РёРµ canonical.</p>
+                  <p><strong>Как проверялось:</strong> HTTP-РїСЂРѕРІРµСЂРєР° РґРѕРјРµРЅРЅС‹С… РІР°СЂРёР°РЅС‚РѕРІ + РїР°СЂСЃРёРЅРі rel=canonical РїРѕ РІС‹Р±РѕСЂРєРµ СЃС‚СЂР°РЅРёС†.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>РЎС‚СЂР°РЅРёС† 200 РІ РІС‹Р±РѕСЂРєРµ:</strong> 464</li><li><strong>Redirect-С†РµРїРѕС‡РµРє &gt; 1 С€Р°РіР°:</strong> 0</li><li><strong>Canonical coverage:</strong> 100%</li><li><strong>РРЅРґРµРєСЃРёСЂСѓРµРјС‹С… query-URL:</strong> 4</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>Р’ РІС‹Р±РѕСЂРєРµ 464 СЃС‚СЂР°РЅРёС† РѕС‚РІРµС‡Р°СЋС‚ РєРѕРґРѕРј 200.</li><li>Р›РёС€РЅРёС… РґРѕРјРµРЅРЅС‹С… redirect-С†РµРїРѕС‡РµРє РІ РєР»СЋС‡РµРІС‹С… РІР°СЂРёР°РЅС‚Р°С… РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅРѕ.</li><li>Р•СЃС‚СЊ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Рµ query- РёР»Рё route-URL, РєРѕС‚РѕСЂС‹Рµ Р»СѓС‡С€Рµ РїРѕС‡РёСЃС‚РёС‚СЊ.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> HIGH <span>•</span> <strong>Ответственный:</strong> Backend / SEO</p>
+                  <p class="recommendation"><strong>Что делать:</strong> РЎРІРµСЃС‚Рё РІСЃРµ РґРѕРјРµРЅРЅС‹Рµ РІР°СЂРёР°РЅС‚С‹ Рє РѕРґРЅРѕРјСѓ РєР°РЅРѕРЅСѓ Рё Р»РёР±Рѕ Р·Р°РєСЂС‹С‚СЊ СЃР»СѓР¶РµР±РЅС‹Рµ URL РѕС‚ РёРЅРґРµРєСЃР°С†РёРё, Р»РёР±Рѕ РїРµСЂРµРІРµСЃС‚Рё РёС… РЅР° С‡РёСЃС‚С‹Рµ SEO-friendly РјР°СЂС€СЂСѓС‚С‹.</p>
+                </article>
+                </div>
+            </section>
+            
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Р­С‚Р°Рї 2 вЂ” РђСЂС…РёС‚РµРєС‚СѓСЂР° Рё РІРЅСѓС‚СЂРµРЅРЅСЏСЏ СЃС‚СЂСѓРєС‚СѓСЂР°</h2>
+              <p class="lead">РЎРјРѕС‚СЂСЋ, РЅР°СЃРєРѕР»СЊРєРѕ РїРѕРЅСЏС‚РЅР° Р°СЂС…РёС‚РµРєС‚СѓСЂР° СЃР°Р№С‚Р° Рё РєР°Рє СЂР°СЃРїСЂРµРґРµР»СЏСЋС‚СЃСЏ СЃСЃС‹Р»РєРё РІРЅСѓС‚СЂРё РІС‹Р±РѕСЂРєРё.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>РўРёРїС‹ СЃС‚СЂР°РЅРёС† Рё РїРѕРєСЂС‹С‚РёРµ РІС‹Р±РѕСЂРєРё</h3>
+                  <p><strong>Что проверялось:</strong> РљР°РєРёРµ С‚РёРїС‹ URL СЂРµР°Р»СЊРЅРѕ РїРѕРїР°Р»Рё РІ СЂР°Р·Р±РѕСЂ Рё РєР°Рє СЃР°Р№С‚ РґСЂРѕР±РёС‚ СЃРїСЂРѕСЃ.</p>
+                  <p><strong>Как проверялось:</strong> РљР»Р°СЃСЃРёС„РёРєР°С†РёСЏ URL РїРѕ РіР»СѓР±РёРЅРµ, query-РїР°СЂР°РјРµС‚СЂР°Рј Рё С‚РёРїР°Рј schema.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Р“Р»Р°РІРЅР°СЏ:</strong> 1</li><li><strong>РљР°С‚РµРіРѕСЂРёРё / РїРѕРґРєР°С‚РµРіРѕСЂРёРё:</strong> 449</li><li><strong>Р’РЅСѓС‚СЂРµРЅРЅРёРµ СЃС‚СЂР°РЅРёС†С‹:</strong> 10</li><li><strong>РЎР»СѓР¶РµР±РЅС‹Рµ URL:</strong> 4</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>Р’С‹Р±РѕСЂРєР° СѓР¶Рµ РїРѕРєСЂС‹РІР°РµС‚ СЂР°Р·РЅС‹Рµ СѓСЂРѕРІРЅРё СЃС‚СЂСѓРєС‚СѓСЂС‹, РїРѕСЌС‚РѕРјСѓ РІРёРґРЅРѕ РЅРµ С‚РѕР»СЊРєРѕ РіР»Р°РІРЅСѓСЋ, РЅРѕ Рё С€Р°Р±Р»РѕРЅС‹ РІРЅСѓС‚СЂРµРЅРЅРёС… СЃС‚СЂР°РЅРёС†.</li><li>Р’ Р°СЂС…РёС‚РµРєС‚СѓСЂРµ РµСЃС‚СЊ СЃР»СѓР¶РµР±РЅС‹Рµ РёР»Рё route-СЃС‚СЂР°РЅРёС†С‹, РєРѕС‚РѕСЂС‹Рµ СЃРјРµС€РёРІР°СЋС‚СЃСЏ СЃ РєРѕРјРјРµСЂС‡РµСЃРєРёРјРё URL.</li><li>Р”Р»РёРЅРЅС‹С… РїСѓС‚РµР№ РІ РІС‹Р±РѕСЂРєРµ: 15.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> SEO / Backend</p>
+                  <p class="recommendation"><strong>Что делать:</strong> Р”РµСЂР¶Р°С‚СЊ Р°СЂС…РёС‚РµРєС‚СѓСЂСѓ СЃРїСЂРѕСЃР° РѕС‚РґРµР»СЊРЅРѕР№ РѕС‚ СЃР»СѓР¶РµР±РЅРѕР№ Р»РѕРіРёРєРё Рё РЅРµ СЃРјРµС€РёРІР°С‚СЊ route/query URL СЃ РїРѕСЃР°РґРѕС‡РЅС‹РјРё Рё РєРѕРјРјРµСЂС‡РµСЃРєРёРјРё СЃС‚СЂР°РЅРёС†Р°РјРё.</p>
+                </article>
+                
+                <article class="phase-check">
+                  <h3>Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РїРµСЂРµР»РёРЅРєРѕРІРєР° Рё РІРёРґРёРјРѕСЃС‚СЊ РєР»СЋС‡РµРІС‹С… СЃС‚СЂР°РЅРёС†</h3>
+                  <p><strong>Что проверялось:</strong> РЎРєРѕР»СЊРєРѕ РІРЅСѓС‚СЂРµРЅРЅРёС… СЃСЃС‹Р»РѕРє РїРѕР»СѓС‡Р°СЋС‚ СЃС‚СЂР°РЅРёС†С‹ Рё РіРґРµ РµСЃС‚СЊ РїСЂРѕСЃР°РґРєРё РїРѕ РІРЅРёРјР°РЅРёСЋ СЃР°Р№С‚Р°.</p>
+                  <p><strong>Как проверялось:</strong> РџРѕРґСЃС‡РµС‚ РІРЅСѓС‚СЂРµРЅРЅРёС… СЃСЃС‹Р»РѕРє РЅР° РєР°Р¶РґРѕР№ СЃС‚СЂР°РЅРёС†Рµ РІС‹Р±РѕСЂРєРё.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>РЎСЂРµРґРЅРµРµ С‡РёСЃР»Рѕ РІРЅСѓС‚СЂРµРЅРЅРёС… СЃСЃС‹Р»РѕРє:</strong> 86.4</li><li><strong>РњРёРЅРёРјСѓРј РІРЅСѓС‚СЂРµРЅРЅРёС… СЃСЃС‹Р»РѕРє:</strong> 77</li><li><strong>РњР°РєСЃРёРјСѓРј РІРЅСѓС‚СЂРµРЅРЅРёС… СЃСЃС‹Р»РѕРє:</strong> 661</li><li><strong>РљРѕРЅС‚Р°РєС‚РЅС‹С…/lead-СЃС‚СЂР°РЅРёС†:</strong> 464</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>РЎР»Р°Р±РµРµ РІСЃРµРіРѕ РїРѕ РІРЅСѓС‚СЂРµРЅРЅРёРј СЃСЃС‹Р»РєР°Рј РІС‹РіР»СЏРґСЏС‚: /seo-optimization, /mobile-version, /analitika.</li><li>РљРѕРЅС‚Р°РєС‚РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РµСЃС‚СЊ, РЅРѕ С‡Р°СЃС‚СЊ РёР· РЅРёС… РЅРµРґРѕРѕС„РѕСЂРјР»РµРЅР° РєР°Рє РїРѕР»РЅРѕС†РµРЅРЅС‹Рµ SEO-РїРѕСЃР°РґРєРё.</li><li>Р Р°Р·СѓРјРЅРѕ РґРѕР±Р°РІРёС‚СЊ Р±РѕР»СЊС€Рµ РєРѕРЅС‚РµРєСЃС‚РЅС‹С… СЃСЃС‹Р»РѕРє РјРµР¶РґСѓ Р±Р»РёР·РєРёРјРё СѓСЃР»СѓРіР°РјРё, РєРµР№СЃР°РјРё, Р±Р»РѕРіРѕРј Рё Р»РёРґ-СЃС‚СЂР°РЅРёС†Р°РјРё.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> SEO / Marketing</p>
+                  <p class="recommendation"><strong>Что делать:</strong> РЈСЃРёР»РёС‚СЊ РїРµСЂРµР»РёРЅРєРѕРІРєСѓ РІРѕРєСЂСѓРі РїСЂРёРѕСЂРёС‚РµС‚РЅС‹С… СѓСЃР»СѓРі Рё Р»РёРґ-СЃС‚СЂР°РЅРёС†: СЃРІСЏР·Р°С‚СЊ СЃРїСЂРѕСЃРѕРІС‹Рµ СЃС‚СЂР°РЅРёС†С‹, РєРµР№СЃС‹, FAQ Рё CTA, Р° РЅРµ РЅР°РґРµСЏС‚СЊСЃСЏ С‚РѕР»СЊРєРѕ РЅР° РјРµРЅСЋ Рё С„СѓС‚РµСЂ.</p>
+                </article>
+                </div>
+            </section>
+            
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Р­С‚Р°Рї 3 вЂ” On-Page SEO</h2>
+              <p class="lead">Р Р°Р·Р±РёСЂР°СЋ С€Р°Р±Р»РѕРЅС‹ title, description, H1 Рё С‚Рѕ, РЅР°СЃРєРѕР»СЊРєРѕ СЃС‚СЂР°РЅРёС†С‹ РіРѕС‚РѕРІС‹ Рє РЅРѕСЂРјР°Р»СЊРЅРѕРјСѓ СЃРЅРёРїРїРµС‚Сѓ.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>Title Рё meta description</h3>
+                  <p><strong>Что проверялось:</strong> РџРѕРєСЂС‹С‚РёРµ, РґР»РёРЅР° Рё РїСЂРёРіРѕРґРЅРѕСЃС‚СЊ СЃРЅРёРїРїРµС‚РѕРІ Рє СѓРїСЂР°РІР»СЏРµРјРѕР№ РІС‹РґР°С‡Рµ.</p>
+                  <p><strong>Как проверялось:</strong> РџР°СЂСЃРёРЅРі title Рё meta description РїРѕ СЂРµРїСЂРµР·РµРЅС‚Р°С‚РёРІРЅРѕР№ РІС‹Р±РѕСЂРєРµ СЃС‚СЂР°РЅРёС†.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Title &gt; 70 СЃРёРјРІРѕР»РѕРІ:</strong> 158</li><li><strong>Title РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚:</strong> 0</li><li><strong>Description РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚:</strong> 2</li><li><strong>Description РІРЅРµ РґРёР°РїР°Р·РѕРЅР°:</strong> 203</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>РЁР°Р±Р»РѕРЅС‹ title РЅР° С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† РїРµСЂРµРіСЂСѓР¶РµРЅС‹ РїРѕ РґР»РёРЅРµ.</li><li>Р•СЃС‚СЊ СЃС‚СЂР°РЅРёС†С‹ Р±РµР· description, РёР·-Р·Р° С‡РµРіРѕ СЃРЅРёРїРїРµС‚ Р±СѓРґРµС‚ СЃРѕР±РёСЂР°С‚СЊСЃСЏ СЃР»СѓС‡Р°Р№РЅРѕ.</li><li>РџСѓСЃС‚С‹С… title РІ РІС‹Р±РѕСЂРєРµ РїРѕС‡С‚Рё РЅРµС‚.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> HIGH <span>•</span> <strong>Ответственный:</strong> SEO / Frontend</p>
+                  <p class="recommendation"><strong>Что делать:</strong> РџРµСЂРµСЃРѕР±СЂР°С‚СЊ РїСЂР°РІРёР»Р° РіРµРЅРµСЂР°С†РёРё title Рё description РїРѕРґ РєР°Р¶РґС‹Р№ С‚РёРї СЃС‚СЂР°РЅРёС†С‹: РєРѕСЂРѕС‚РєРѕ, РєРѕРЅРєСЂРµС‚РЅРѕ, СЃ РєР»СЋС‡РѕРј, РѕС„С„РµСЂРѕРј Рё РєРѕРЅС‚СЂРѕР»РµРј РґР»РёРЅС‹.</p>
+                </article>
+                
+                <article class="phase-check">
+                  <h3>H1, РєРѕРЅС‚РµРЅС‚РЅС‹Р№ РєР°СЂРєР°СЃ Рё С‚РѕРЅРєРёРµ СЃС‚СЂР°РЅРёС†С‹</h3>
+                  <p><strong>Что проверялось:</strong> РќР°Р»РёС‡РёРµ H1, РїР»РѕС‚РЅРѕСЃС‚СЊ С‚РµРєСЃС‚РѕРІРѕРіРѕ СЃР»РѕСЏ Рё РєР°С‡РµСЃС‚РІРѕ Р±Р°Р·РѕРІРѕРіРѕ on-page РєР°СЂРєР°СЃР°.</p>
+                  <p><strong>Как проверялось:</strong> РџР°СЂСЃРёРЅРі H1 Рё РїРѕРґСЃС‡РµС‚ СЃР»РѕРІ РІ РІРёРґРёРјРѕРј РєРѕРЅС‚РµРЅС‚Рµ.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>H1 coverage:</strong> 100%</li><li><strong>РЎС‚СЂР°РЅРёС† Р±РµР· H1:</strong> 0</li><li><strong>РЎСЂРµРґРЅРµРµ С‡РёСЃР»Рѕ СЃР»РѕРІ:</strong> 561.4</li><li><strong>РўРѕРЅРєРёС… СЃС‚СЂР°РЅРёС† (&lt;250 СЃР»РѕРІ):</strong> 0</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>РџРѕ H1 РєР°СЂРєР°СЃ Сѓ РІС‹Р±РѕСЂРєРё РІ С†РµР»РѕРј СЃРѕР±СЂР°РЅ РЅРµРїР»РѕС…Рѕ.</li><li>РЎРёР»СЊРЅРѕ РїСѓСЃС‚С‹С… СЃС‚СЂР°РЅРёС† РІ РІС‹Р±РѕСЂРєРµ РЅРµРјРЅРѕРіРѕ.</li><li>Р”Р°Р¶Рµ РїСЂРё РЅРѕСЂРјР°Р»СЊРЅРѕРј РѕР±СЉРµРјРµ С‚РµРєСЃС‚Р° РЅСѓР¶РЅРѕ РѕС‚РґРµР»СЊРЅРѕ РїСЂРѕРІРµСЂРёС‚СЊ, РЅР°СЃРєРѕР»СЊРєРѕ С…РѕСЂРѕС€Рѕ РѕРЅ РїРѕРґРґРµСЂР¶РёРІР°РµС‚ РєРѕРјРјРµСЂС‡РµСЃРєРёР№ РёРЅС‚РµРЅС‚ Рё FAQ-СЃР»РѕР№.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> SEO / Content</p>
+                  <p class="recommendation"><strong>Что делать:</strong> РќР° РєР°Р¶РґРѕРј РєР»СЋС‡РµРІРѕРј URL Р·Р°РєСЂРµРїРёС‚СЊ РїРѕРЅСЏС‚РЅС‹Р№ H1, РёРЅС‚СЂРѕ, РѕС‚РІРµС‚С‹ РЅР° С‡Р°СЃС‚С‹Рµ РІРѕРїСЂРѕСЃС‹ Рё РєРѕСЂРѕС‚РєРёРµ РєРѕРјРјРµСЂС‡РµСЃРєРёРµ Р±Р»РѕРєРё, С‡С‚РѕР±С‹ СЃС‚СЂР°РЅРёС†Р° СЂР°Р±РѕС‚Р°Р»Р° РЅРµ С‚РѕР»СЊРєРѕ РЅР° РёРЅРґРµРєСЃ, РЅРѕ Рё РЅР° РєРѕРЅРІРµСЂСЃРёСЋ.</p>
+                </article>
+                </div>
+            </section>
+            
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Р­С‚Р°Рї 4 вЂ” Performance Рё CWV</h2>
+              <p class="lead">РЎРјРѕС‚СЂСЋ РЅР° СЃРєРѕСЂРѕСЃС‚СЊ РѕС‚РІРµС‚Р°, РІРµСЃ HTML Рё С‚Рѕ, РєР°Рє РјРµРґРёР°-СЃР»РѕР№ РјРѕР¶РµС‚ РјРµС€Р°С‚СЊ Р·Р°РіСЂСѓР·РєРµ.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>РћС‚РІРµС‚ СЃРµСЂРІРµСЂР° Рё РІРµСЃ СЃС‚СЂР°РЅРёС†</h3>
+                  <p><strong>Что проверялось:</strong> TTFB-РїРѕРґРѕР±РЅР°СЏ СЃРєРѕСЂРѕСЃС‚СЊ РѕС‚РІРµС‚Р° Рё РїСЂРёРјРµСЂРЅС‹Р№ РІРµСЃ HTML РїРѕ РІС‹Р±РѕСЂРєРµ.</p>
+                  <p><strong>Как проверялось:</strong> HTTP-РѕС‚РІРµС‚С‹ РїРѕ РєР»СЋС‡РµРІС‹Рј URL Р±РµР· РѕС‚РґРµР»СЊРЅРѕРіРѕ Lighthouse-РїСЂРѕРіРѕРЅР°.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>РЎСЂРµРґРЅРёР№ РѕС‚РІРµС‚:</strong> 3591.2 ms</li><li><strong>РЎСЂРµРґРЅРёР№ HTML:</strong> 64.1 KB</li><li><strong>РњР°РєСЃРёРјСѓРј РёР·РѕР±СЂР°Р¶РµРЅРёР№ РЅР° СЃС‚СЂР°РЅРёС†Рµ:</strong> 133</li><li><strong>РЎС‚СЂР°РЅРёС† РІ РІС‹Р±РѕСЂРєРµ:</strong> 464</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>РЎСЂРµРґРЅРёР№ РѕС‚РІРµС‚ СѓР¶Рµ СЃС‚РѕРёС‚ РґРµСЂР¶Р°С‚СЊ РІ Р·РѕРЅРµ РІРЅРёРјР°РЅРёСЏ.</li><li>Р РµР°Р»СЊРЅС‹Рµ СЂРёСЃРєРё Р·РґРµСЃСЊ С‡Р°С‰Рµ СЃРёРґСЏС‚ РІ РјРµРґРёР°-СЃР»РѕРµ, С€Р°Р±Р»РѕРЅР°С… Рё РєР»РёРµРЅС‚СЃРєРѕРј СЂРµРЅРґРµСЂРёРЅРіРµ, С‡РµРј РІ РіРѕР»РѕРј TTFB.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> Frontend / Backend</p>
+                  <p class="recommendation"><strong>Что делать:</strong> РџСЂРѕРІРµСЂРёС‚СЊ РїСЂРёРѕСЂРёС‚РµС‚РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РѕС‚РґРµР»СЊРЅС‹Рј CWV-РїСЂРѕРіРѕРЅРѕРј Рё Р·Р°С„РёРєСЃРёСЂРѕРІР°С‚СЊ LCP/CLS/INP РїРѕСЃР»Рµ С‡РёСЃС‚РєРё РјРµРґРёР° Рё С€Р°Р±Р»РѕРЅРѕРІ.</p>
+                </article>
+                
+                <article class="phase-check">
+                  <h3>РР·РѕР±СЂР°Р¶РµРЅРёСЏ, lazy loading Рё Р°С‚СЂРёР±СѓС‚С‹ СЂР°Р·РјРµСЂРѕРІ</h3>
+                  <p><strong>Что проверялось:</strong> РќР°СЃРєРѕР»СЊРєРѕ РјРµРґРёР°-СЃР»РѕР№ РїРѕРјРѕРіР°РµС‚ РёР»Рё РјРµС€Р°РµС‚ SEO Рё СЃС‚Р°Р±РёР»СЊРЅРѕСЃС‚Рё РІРµСЂСЃС‚РєРё.</p>
+                  <p><strong>Как проверялось:</strong> РџР°СЂСЃРёРЅРі img-С‚РµРіРѕРІ РїРѕ СЂРµРїСЂРµР·РµРЅС‚Р°С‚РёРІРЅРѕР№ РІС‹Р±РѕСЂРєРµ СЃС‚СЂР°РЅРёС†.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Р’СЃРµРіРѕ РїСЂРѕРїСѓСЃРєРѕРІ alt:</strong> 7536</li><li><strong>РџСЂРѕРїСѓСЃРєРѕРІ lazy loading:</strong> 11259</li><li><strong>РР·РѕР±СЂР°Р¶РµРЅРёР№ Р±РµР· width/height:</strong> 9419</li><li><strong>РР·РѕР±СЂР°Р¶РµРЅРёР№ РЅР° РіР»Р°РІРЅРѕР№:</strong> 133</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>РР·РѕР±СЂР°Р¶РµРЅРёСЏ СѓР¶Рµ С‚РµСЂСЏСЋС‚ SEO-СЃРёРіРЅР°Р»С‹ РёР·-Р·Р° РїСЂРѕРїСѓСЃРєРѕРІ alt.</li><li>РћС‚СЃСѓС‚СЃС‚РІРёРµ width/height РїРѕРІС‹С€Р°РµС‚ СЂРёСЃРє CLS Рё РІРёР·СѓР°Р»СЊРЅРѕР№ РЅРµСЃС‚Р°Р±РёР»СЊРЅРѕСЃС‚Рё.</li><li>Lazy loading СЃС‚РѕРёС‚ РІС‹СЂРѕРІРЅСЏС‚СЊ С€Р°Р±Р»РѕРЅРЅРѕ, Р° РЅРµ РїСЂР°РІРёС‚СЊ РІСЂСѓС‡РЅСѓСЋ РїРѕ РѕРґРЅРѕР№ СЃС‚СЂР°РЅРёС†Рµ.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> Frontend / SEO</p>
+                  <p class="recommendation"><strong>Что делать:</strong> РЎРґРµР»Р°С‚СЊ РµРґРёРЅС‹Р№ image-С€Р°Р±Р»РѕРЅ: alt, width/height, lazy loading Рё, РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё, РѕС‚РґРµР»СЊРЅСѓСЋ image-СЃС…РµРјСѓ/РєР°СЂС‚Сѓ СЃР°Р№С‚Р°.</p>
+                </article>
+                </div>
+            </section>
+            
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Р­С‚Р°Рї 5 вЂ” Structured Data</h2>
+              <p class="lead">РџСЂРѕРІРµСЂСЏСЋ, РЅР°СЃРєРѕР»СЊРєРѕ С…РѕСЂРѕС€Рѕ СЃР°Р№С‚ РѕР±СЉСЏСЃРЅСЏРµС‚ РїРѕРёСЃРєРѕРІРёРєСѓ СЃСѓС‰РЅРѕСЃС‚Рё Р±РёР·РЅРµСЃР°, СЃС‚СЂР°РЅРёС† Рё РїСЂРµРґР»РѕР¶РµРЅРёР№.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>РџРѕРєСЂС‹С‚РёРµ schema-СЂР°Р·РјРµС‚РєРѕР№</h3>
+                  <p><strong>Что проверялось:</strong> РљР°РєРёРµ С‚РёРїС‹ schema СЂРµР°Р»СЊРЅРѕ РІСЃС‚СЂРµС‡Р°СЋС‚СЃСЏ Рё РЅР°СЃРєРѕР»СЊРєРѕ С€РёСЂРѕРєРѕ РѕРЅРё РїРѕРєСЂС‹РІР°СЋС‚ РІС‹Р±РѕСЂРєСѓ.</p>
+                  <p><strong>Как проверялось:</strong> РџР°СЂСЃРёРЅРі application/ld+json Рё СЃР±РѕСЂ @type РїРѕ РєР»СЋС‡РµРІС‹Рј URL.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>Schema coverage:</strong> 0%</li><li><strong>РЎС‚СЂР°РЅРёС† СЃ Р±РёС‚РѕР№ JSON-LD:</strong> 0</li><li><strong>РЎС‚СЂР°РЅРёС† Р±РµР· schema:</strong> 464</li><li><strong>РўРѕРї schema types:</strong> РЅРµС‚</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>РЇРІРЅС‹С… РїРѕР»РѕРјРѕРє JSON-LD РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.</li><li>Р§Р°СЃС‚СЊ РєРѕРјРјРµСЂС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС† РїРѕРєР° Р±РµР· schema-СЂР°Р·РјРµС‚РєРё.</li><li>Р”Р°Р¶Рµ РїСЂРё РЅР°Р»РёС‡РёРё schema РІР°Р¶РЅРѕ, С‡С‚РѕР±С‹ РѕРЅР° СЃРѕРѕС‚РІРµС‚СЃС‚РІРѕРІР°Р»Р° С‚РёРїСѓ СЃС‚СЂР°РЅРёС†С‹ Рё Р±С‹Р»Р° РІР°Р»РёРґРЅРѕР№ РїРѕ СЃРёРЅС‚Р°РєСЃРёСЃСѓ.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> Frontend / SEO</p>
+                  <p class="recommendation"><strong>Что делать:</strong> РџРѕРєСЂС‹С‚СЊ РєР»СЋС‡РµРІС‹Рµ С€Р°Р±Р»РѕРЅС‹ РІР°Р»РёРґРЅРѕР№ schema-СЂР°Р·РјРµС‚РєРѕР№ Рё РґРµСЂР¶Р°С‚СЊ РµРµ СЃРёРЅС…СЂРѕРЅРЅРѕР№ СЃ СЂРµР°Р»СЊРЅС‹Рј С‚РёРїРѕРј СЃС‚СЂР°РЅРёС†С‹: Organization, Service, Product, BreadcrumbList, FAQ, Article.</p>
+                </article>
+                </div>
+            </section>
+            
+            <section class="phase-section">
+              <div class="section-kicker">Глубокий разбор</div>
+              <h2>Р­С‚Р°Рї 6 вЂ” РљРѕРјРјРµСЂС‡РµСЃРєРёРµ СЃС‚СЂР°РЅРёС†С‹ Рё РєРѕРЅС‚РµРЅС‚</h2>
+              <p class="lead">РЎРјРѕС‚СЂСЋ, РЅР°СЃРєРѕР»СЊРєРѕ СЃР°Р№С‚ РіРѕС‚РѕРІ РЅРµ С‚РѕР»СЊРєРѕ СЃРѕР±РёСЂР°С‚СЊ РёРЅРґРµРєСЃ, РЅРѕ Рё РїСЂРµРІСЂР°С‰Р°С‚СЊ СЃРїСЂРѕСЃ РІ Р·Р°СЏРІРєСѓ.</p>
+              <div class="phase-checks">
+                <article class="phase-check">
+                  <h3>РљРѕРЅС‚Р°РєС‚РЅС‹Рµ Рё Р»РёРґ-СЃС‚СЂР°РЅРёС†С‹</h3>
+                  <p><strong>Что проверялось:</strong> Р•СЃС‚СЊ Р»Рё РЅР° СЃР°Р№С‚Рµ СЃС‚СЂР°РЅРёС†С‹, РєРѕС‚РѕСЂС‹Рµ РјРѕР¶РЅРѕ РїСЂРѕРґРІРёРіР°С‚СЊ РєР°Рє С‚РѕС‡РєРё РІС…РѕРґР° РІ Р·Р°СЏРІРєСѓ.</p>
+                  <p><strong>Как проверялось:</strong> РџРѕРёСЃРє С„РѕСЂРј, РєРѕРЅС‚Р°РєС‚РЅС‹С… URL Рё Р±Р°Р·РѕРІРѕР№ SEO-РѕР±РІСЏР·РєРё СЌС‚РёС… СЃС‚СЂР°РЅРёС†.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>РљРѕРЅС‚Р°РєС‚РЅС‹С…/lead-СЃС‚СЂР°РЅРёС†:</strong> 464</li><li><strong>Р¤РѕСЂРј РІ РІС‹Р±РѕСЂРєРµ:</strong> 464</li><li><strong>РЎР»Р°Р±С‹С… contact-СЃС‚СЂР°РЅРёС†:</strong> 2</li><li><strong>РРЅРґРµРєСЃРёСЂСѓРµРјС‹С… route/query-СЃС‚СЂР°РЅРёС†:</strong> 4</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>РљРѕРЅС‚Р°РєС‚РЅР°СЏ Р·РѕРЅР° СѓР¶Рµ РµСЃС‚СЊ, РЅРѕ С‡Р°СЃС‚СЊ СЃС‚СЂР°РЅРёС† РЅРµ РѕС„РѕСЂРјР»РµРЅР° РєР°Рє РїРѕР»РЅРѕС†РµРЅРЅС‹Рµ SEO-РїРѕСЃР°РґРєРё.</li><li>Р•СЃС‚СЊ С„РѕСЂРјС‹, РЅРѕ РЅСѓР¶РЅРѕ РїСЂРѕРІРµСЂСЏС‚СЊ, РЅР°СЃРєРѕР»СЊРєРѕ РІРѕРєСЂСѓРі РЅРёС… СЃРѕР±СЂР°РЅ РґРѕРІРµСЂРёС‚РµР»СЊРЅС‹Р№ Рё РєРѕРјРјРµСЂС‡РµСЃРєРёР№ СЃР»РѕР№.</li><li>РЎР»СѓР¶РµР±РЅС‹Рµ query/route URL РЅРµ РґРѕР»Р¶РЅС‹ РєРѕРЅРєСѓСЂРёСЂРѕРІР°С‚СЊ СЃ РЅРѕСЂРјР°Р»СЊРЅС‹РјРё РїРѕСЃР°РґРѕС‡РЅС‹РјРё СЃС‚СЂР°РЅРёС†Р°РјРё.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> HIGH <span>•</span> <strong>Ответственный:</strong> SEO / Marketing</p>
+                  <p class="recommendation"><strong>Что делать:</strong> РЎРґРµР»Р°С‚СЊ РёР· РєРѕРЅС‚Р°РєС‚РѕРІ Рё Р·Р°СЏРІРєРё СЃРёР»СЊРЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ: СЃ РѕС„С„РµСЂРѕРј, РѕС‚РІРµС‚Р°РјРё РЅР° РІРѕР·СЂР°Р¶РµРЅРёСЏ, Р±Р»РѕРєР°РјРё РґРѕРІРµСЂРёСЏ, FAQ Рё Р°РєРєСѓСЂР°С‚РЅРѕР№ SEO-РѕР±РІСЏР·РєРѕР№.</p>
+                </article>
+                
+                <article class="phase-check">
+                  <h3>РљРѕРЅС‚РµРЅС‚РЅР°СЏ РіР»СѓР±РёРЅР° РїСЂРёРѕСЂРёС‚РµС‚РЅС‹С… СЃС‚СЂР°РЅРёС†</h3>
+                  <p><strong>Что проверялось:</strong> РҐРІР°С‚Р°РµС‚ Р»Рё СЃС‚СЂР°РЅРёС†Р°Рј С„Р°РєС‚СѓСЂС‹, С‡С‚РѕР±С‹ Р·Р°РєСЂС‹РІР°С‚СЊ РёРЅС‚РµРЅС‚, Р° РЅРµ РїСЂРѕСЃС‚Рѕ СЃСѓС‰РµСЃС‚РІРѕРІР°С‚СЊ РІ РёРЅРґРµРєСЃРµ.</p>
+                  <p><strong>Как проверялось:</strong> РџРѕРґСЃС‡РµС‚ СЃР»РѕРІ Рё РїСЂРѕСЃРјРѕС‚СЂ РєРѕРјРјРµСЂС‡РµСЃРєРёС… С€Р°Р±Р»РѕРЅРѕРІ РІРЅСѓС‚СЂРё СЂРµРїСЂРµР·РµРЅС‚Р°С‚РёРІРЅРѕР№ РІС‹Р±РѕСЂРєРё.</p>
+                  <div class="phase-grid">
+                    <div class="phase-box">
+                      <div class="phase-box-title">Ключевые метрики</div>
+                      <ul><li><strong>РљРѕРјРјРµСЂС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС† РІ РІС‹Р±РѕСЂРєРµ:</strong> 464</li><li><strong>РЎСЂРµРґРЅРµРµ С‡РёСЃР»Рѕ СЃР»РѕРІ:</strong> 561.4</li><li><strong>РўРѕРЅРєРёС… СЃС‚СЂР°РЅРёС†:</strong> 0</li><li><strong>РЎС‚СЂР°РЅРёС† Р±РµР· schema СЃСЂРµРґРё РєРѕРјРјРµСЂС‡РµСЃРєРёС…:</strong> 464</li></ul>
+                    </div>
+                    <div class="phase-box">
+                      <div class="phase-box-title">Что нашли</div>
+                      <ul><li>РћРґРЅРѕРіРѕ РѕР±СЉРµРјР° С‚РµРєСЃС‚Р° РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ: СЃС‚СЂР°РЅРёС†С‹ РґРѕР»Р¶РЅС‹ РѕР±СЉСЏСЃРЅСЏС‚СЊ РІС‹Р±РѕСЂ, С†РµРЅСѓ, РїСЂРѕС†РµСЃСЃ, СЃСЂРѕРєРё Рё СЃР»РµРґСѓСЋС‰РёР№ С€Р°Рі.</li><li>РЎРёР»СЊРЅРѕ РїСѓСЃС‚С‹С… РєРѕРјРјРµСЂС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС† РІ РІС‹Р±РѕСЂРєРµ РЅРµРјРЅРѕРіРѕ.</li><li>РџРѕС‚РµРЅС†РёР°Р» СЂРѕСЃС‚Р° Р»РµР¶РёС‚ РЅРµ С‚РѕР»СЊРєРѕ РІ SEO-С‚РµРєСЃС‚Р°С…, РЅРѕ Рё РІ Р±Р»РѕРєР°С… РґРѕРІРµСЂРёСЏ, FAQ, С‚Р°Р±Р»РёС†Р°С… СЃСЂР°РІРЅРµРЅРёСЏ Рё РѕС‚РІРµС‚Р°С… РЅР° СЃРїСЂРѕСЃ.</li></ul>
+                    </div>
+                  </div>
+                  <p class="phase-meta"><strong>Приоритет:</strong> MEDIUM <span>•</span> <strong>Ответственный:</strong> SEO / Content / Marketing</p>
+                  <p class="recommendation"><strong>Что делать:</strong> РџРµСЂРµСЃРѕР±СЂР°С‚СЊ РїСЂРёРѕСЂРёС‚РµС‚РЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ РїРѕРґ РєРѕРјРјРµСЂС‡РµСЃРєРёР№ РёРЅС‚РµРЅС‚: РґРѕР±Р°РІРёС‚СЊ РґРѕРєР°Р·Р°С‚РµР»СЊСЃС‚РІР°, FAQ, answer-first Р±Р»РѕРєРё, С†РµРЅС‹/СЃС†РµРЅР°СЂРёРё Рё РїРµСЂРµР»РёРЅРєРѕРІРєСѓ РЅР° СЃРѕСЃРµРґРЅРёРµ С‚РѕС‡РєРё СЃРїСЂРѕСЃР°.</p>
+                </article>
+                </div>
+            </section>
+            
+
+    <section>
+      <div class="section-kicker">Quick wins</div>
+      <h2>Быстрые победы на ближайший спринт</h2>
+      <p class="lead">Эти правки можно внедрить быстро и получить заметный эффект без большой перестройки проекта.</p>
+      <div class="action-grid">
+            <article class="action-card">
+              <h3>РќРѕСЂРјР°Р»СЊРЅРѕ РѕС„РѕСЂРјРёС‚СЊ РєРѕРЅС‚Р°РєС‚С‹ Рё Р»РёРґ-СЃС‚СЂР°РЅРёС†С‹</h3>
+              <p class="action-meta"><strong>Effort:</strong> 30-60 РјРёРЅСѓС‚</p>
+              <p class="action-meta"><strong>Impact:</strong> РџРѕРґРЅРёРјРµС‚ РґРѕРІРµСЂРёРµ, Р±СЂРµРЅРґРѕРІС‹Р№ Р·Р°РїСЂРѕСЃ Рё РєРѕРЅРІРµСЂСЃРёСЋ</p>
+              <p>Р”РѕР±Р°РІРёС‚СЊ H1, title, description, canonical Рё Р±Р»РѕРєРё РґРѕРІРµСЂРёСЏ РЅР° СЃС‚СЂР°РЅРёС†Сѓ РєРѕРЅС‚Р°РєС‚РѕРІ/С„РѕСЂРјС‹.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>Р—Р°РєСЂС‹С‚СЊ РґС‹СЂС‹ РІ title Рё description</h3>
+              <p class="action-meta"><strong>Effort:</strong> 1-2 С‡Р°СЃР°</p>
+              <p class="action-meta"><strong>Impact:</strong> Р”Р°СЃС‚ Р±С‹СЃС‚СЂС‹Р№ РїСЂРёСЂРѕСЃС‚ СѓРїСЂР°РІР»СЏРµРјРѕСЃС‚Рё СЃРЅРёРїРїРµС‚РѕРІ</p>
+              <p>Р”РѕРїРёСЃР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ РіРµРЅРµСЂР°С†РёРё title/description РґР»СЏ СЃС‚СЂР°РЅРёС† Р±РµР· SEO-РѕР±РІСЏР·РєРё.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>Р Р°Р·СЂСѓР»РёС‚СЊ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Рµ query Рё route URL</h3>
+              <p class="action-meta"><strong>Effort:</strong> 30-90 РјРёРЅСѓС‚</p>
+              <p class="action-meta"><strong>Impact:</strong> РЎРѕРєСЂР°С‚РёС‚ С€СѓРј РІ РёРЅРґРµРєСЃРµ Рё РѕСЃРІРѕР±РѕРґРёС‚ crawl budget</p>
+              <p>Р—Р°РєСЂС‹С‚СЊ СЃР»СѓР¶РµР±РЅС‹Рµ query-СЃС‚СЂР°РЅРёС†С‹ РѕС‚ РёРЅРґРµРєСЃР°С†РёРё РёР»Рё РїРµСЂРµРІРµСЃС‚Рё РёС… РЅР° С‡РёСЃС‚С‹Рµ SEO-friendly URL.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>Р—Р°РїСѓСЃС‚РёС‚СЊ С€Р°Р±Р»РѕРЅ alt РґР»СЏ РёР·РѕР±СЂР°Р¶РµРЅРёР№</h3>
+              <p class="action-meta"><strong>Effort:</strong> 1-2 С‡Р°СЃР°</p>
+              <p class="action-meta"><strong>Impact:</strong> РЈСЃРёР»РёС‚ image SEO Рё РїРѕРЅСЏС‚РЅРѕСЃС‚СЊ РєР°СЂС‚РѕС‡РµРє</p>
+              <p>РЎРѕР±СЂР°С‚СЊ РїСЂР°РІРёР»Р° alt РїРѕ С‚РёРїСѓ СЃС‚СЂР°РЅРёС†С‹, С‚РѕРІР°СЂСѓ, РєР°С‚РµРіРѕСЂРёРё Рё РєР»СЋС‡РµРІРѕР№ СЃСѓС‰РЅРѕСЃС‚Рё РёР·РѕР±СЂР°Р¶РµРЅРёСЏ.</p>
+            </article>
+            </div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Стратегические улучшения</div>
+      <h2>Что усилит проект поверх базовых фиксов</h2>
+      <p class="lead">Это уже не тушение пожара, а слой изменений, который превращает сайт в более сильный источник заявок и роста видимости.</p>
+      <div class="action-grid">
+            <article class="action-card">
+              <h3>РџРµСЂРµСЃРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ РєРѕРјРјРµСЂС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС† РєР°Рє growth-layer</h3>
+              <p class="action-meta"><strong>Impact:</strong> Р’С‹СЃРѕРєРѕРµ</p>
+              <p class="action-meta"><strong>Effort:</strong> 5-10 РґРЅРµР№</p>
+              <p>РЎРѕР±СЂР°С‚СЊ РµРґРёРЅС‹Рµ С‚СЂРµР±РѕРІР°РЅРёСЏ Рє H1, title, description, canonical, FAQ, CTA, trust-Р±Р»РѕРєР°Рј Рё РїРµСЂРµР»РёРЅРєРѕРІРєРµ РїРѕ РІСЃРµРј РєР»СЋС‡РµРІС‹Рј С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>РЎРґРµР»Р°С‚СЊ СѓРїСЂР°РІР»СЏРµРјСѓСЋ Р°СЂС…РёС‚РµРєС‚СѓСЂСѓ РёРЅРґРµРєСЃР°С†РёРё</h3>
+              <p class="action-meta"><strong>Impact:</strong> Р’С‹СЃРѕРєРѕРµ</p>
+              <p class="action-meta"><strong>Effort:</strong> 3-7 РґРЅРµР№</p>
+              <p>Р Р°Р·РґРµР»РёС‚СЊ sitemap РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†, Р·Р°С‡РёСЃС‚РёС‚СЊ СЃР»СѓР¶РµР±РЅС‹Рµ route/query URL Рё РЅР°СЃС‚СЂРѕРёС‚СЊ РµРґРёРЅС‹Р№ РєРѕРЅС‚СЂРѕР»СЊ РЅР°Рґ РєР°РЅРѕРЅРёС‡РµСЃРєРёРјРё РґРѕРјРµРЅР°РјРё Рё СЂРµРґРёСЂРµРєС‚Р°РјРё.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>РЈСЃРёР»РёС‚СЊ structured data Рё entity-СЃРёРіРЅР°Р»С‹</h3>
+              <p class="action-meta"><strong>Impact:</strong> РЎСЂРµРґРЅРµРµ / РІС‹СЃРѕРєРѕРµ</p>
+              <p class="action-meta"><strong>Effort:</strong> 2-5 РґРЅРµР№</p>
+              <p>РџРѕРєСЂС‹С‚СЊ РєР»СЋС‡РµРІС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РІР°Р»РёРґРЅРѕР№ schema-СЂР°Р·РјРµС‚РєРѕР№ Рё СЃРѕР±СЂР°С‚СЊ РґР°РЅРЅС‹Рµ С‚Р°Рє, С‡С‚РѕР±С‹ СЃР°Р№С‚ Р±С‹Р» РїРѕРЅСЏС‚РЅРµРµ РѕР±С‹С‡РЅРѕР№ Рё РР-РІС‹РґР°С‡Рµ.</p>
+            </article>
+            
+            <article class="action-card">
+              <h3>Р Р°Р·РІРёС‚СЊ СЃРїСЂРѕСЃРѕРІС‹Рµ РєР»Р°СЃС‚РµСЂС‹ С‡РµСЂРµР· РєР°С‚РµРіРѕСЂРёРё Рё РєР°СЂС‚РѕС‡РєРё</h3>
+              <p class="action-meta"><strong>Impact:</strong> Р’С‹СЃРѕРєРѕРµ</p>
+              <p class="action-meta"><strong>Effort:</strong> 2-4 РЅРµРґРµР»Рё</p>
+              <p>РЎРѕР±СЂР°С‚СЊ РѕС‚РґРµР»СЊРЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ РїРѕРґ РіР»Р°РІРЅС‹Рµ РєР»Р°СЃС‚РµСЂС‹ СЃРїСЂРѕСЃР°, СѓСЃРёР»РёС‚СЊ РєР°С‚РµРіРѕСЂРёРё FAQ Рё РѕС‚РІРµС‚Р°РјРё РЅР° РІС‹Р±РѕСЂ, Р° РєР°СЂС‚РѕС‡РєРё СЃРґРµР»Р°С‚СЊ Р±РѕР»РµРµ РєРѕРЅРІРµСЂСЃРёРѕРЅРЅС‹РјРё.</p>
+            </article>
+            </div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Сильные стороны</div>
+      <h2>На что уже можно опираться</h2>
+      <div class="two-col">
+        <div class="list-card">
+          <ul><li>Р“Р»Р°РІРЅР°СЏ СЃС‚СЂР°РЅРёС†Р° СЃС‚Р°Р±РёР»СЊРЅРѕ РѕС‚РєСЂС‹РІР°РµС‚СЃСЏ РїРѕ HTTPS Рё РѕС‚РґР°РµС‚ 200 РєРѕРґ Р±РµР· JS-Р·Р°РіР»СѓС€РєРё.</li><li>РЈ СЃР°Р№С‚Р° СѓР¶Рµ РµСЃС‚СЊ РєР°СЂС‚Р° СЃР°Р№С‚Р° СЃ 584 СѓРЅРёРєР°Р»СЊРЅС‹РјРё URL, Р° Р·РЅР°С‡РёС‚ Р±Р°Р·Р° РґР»СЏ СѓРїСЂР°РІР»СЏРµРјРѕР№ РёРЅРґРµРєСЃР°С†РёРё СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚.</li><li>РЈ 100% СЃС‚СЂР°РЅРёС† РІ РІС‹Р±РѕСЂРєРµ СѓР¶Рµ РїСЂРѕСЃС‚Р°РІР»РµРЅ canonical, СЌС‚Рѕ С…РѕСЂРѕС€РёР№ С„СѓРЅРґР°РјРµРЅС‚ РґР»СЏ С‡РёСЃС‚РѕР№ РёРЅРґРµРєСЃР°С†РёРё.</li><li>РЈ 100% РїСЂРѕРІРµСЂРµРЅРЅС‹С… СЃС‚СЂР°РЅРёС† РµСЃС‚СЊ H1 вЂ” СЃС‚СЂСѓРєС‚СѓСЂР° РґРѕРєСѓРјРµРЅС‚РѕРІ СѓР¶Рµ РЅРµ РІС‹РіР»СЏРґРёС‚ С…Р°РѕС‚РёС‡РЅРѕР№.</li><li>РЈ РїСЂРѕРµРєС‚Р° СѓР¶Рµ РµСЃС‚СЊ РєР°С‚Р°Р»РѕРі РёР»Рё РєР»Р°СЃС‚РµСЂРЅР°СЏ URL-СЃС‚СЂСѓРєС‚СѓСЂР°, РєРѕС‚РѕСЂСѓСЋ РјРѕР¶РЅРѕ СѓСЃРёР»РёРІР°С‚СЊ Р±РµР· РїРѕР»РЅРѕР№ СЃРјРµРЅС‹ Р°СЂС…РёС‚РµРєС‚СѓСЂС‹.</li></ul>
+        </div>
+        <div class="list-card">
+          <div class="section-kicker" style="margin-bottom:8px;">Точки роста</div>
+          <ul><li>РЈСЃРёР»РёС‚СЊ РєР°С‚РµРіРѕСЂРёРё Рё РїРѕРґРєР°С‚РµРіРѕСЂРёРё: РёРЅС‚СЂРѕ-Р±Р»РѕРєРё, FAQ, СѓСЃР»РѕРІРёСЏ РїРѕРєСѓРїРєРё, Р±Р»РѕРєРё РґРѕРІРµСЂРёСЏ Рё РїРµСЂРµР»РёРЅРєРѕРІРєСѓ РЅР° РєР°СЂС‚РѕС‡РєРё.</li><li>РџРµСЂРµСЃРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ РєР°СЂС‚РѕС‡РµРє Рё Р»РёСЃС‚РёРЅРіРѕРІ: РєРѕСЂРѕС‚РєРёРµ title, СЂР°Р±РѕС‡РёРµ description, canonical, alt, schema Рё РєРѕРјРјРµСЂС‡РµСЃРєРёРµ CTA.</li><li>РЎРѕР±СЂР°С‚СЊ РµРґРёРЅС‹Р№ СЃР»РѕР№ С€Р°Р±Р»РѕРЅРѕРІ РґР»СЏ title, description, H1 Рё canonical РїРѕ РІСЃРµРј С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†.</li><li>Р Р°Р·РІРµСЂРЅСѓС‚СЊ image SEO: alt-С€Р°Р±Р»РѕРЅС‹, РїРѕРґРїРёСЃРё, РєРѕРЅС‚СЂРѕР»СЊ lazy-load Рё РїРѕРЅСЏС‚РЅСѓСЋ СЃРІСЏР·СЊ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ СЃ РёРЅС‚РµРЅС‚РѕРј СЃС‚СЂР°РЅРёС†С‹.</li><li>Р”РѕРґРµР»Р°С‚СЊ РєРѕРЅС‚Р°РєС‚РЅС‹Рµ Рё Р·Р°СЏРІРѕС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РєР°Рє РїРѕР»РЅРѕС†РµРЅРЅС‹Рµ SEO-РґРѕРєСѓРјРµРЅС‚С‹, Р° РЅРµ РєР°Рє С‚РµС…РЅРёС‡РµСЃРєРёРµ С„РѕСЂРјС‹.</li><li>Р”РѕР±Р°РІРёС‚СЊ answer-first Р±Р»РѕРєРё, FAQ Рё РІРЅСѓС‚СЂРµРЅРЅСЋСЋ РїРµСЂРµР»РёРЅРєРѕРІРєСѓ РјРµР¶РґСѓ РІР°Р¶РЅС‹РјРё СЂР°Р·РґРµР»Р°РјРё РґР»СЏ РѕР±С‹С‡РЅРѕР№ Рё РР-РІС‹РґР°С‡Рё.</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Roadmap</div>
+      <h2>План внедрения на 60 дней</h2>
+      <p class="lead">Порядок выстроен так, чтобы сначала снять технические стоп-факторы, потом усилить шаблоны и только после этого наращивать слой роста.</p>
+      <div class="roadmap">
+            <div class="roadmap-card">
+              <div class="roadmap-period">0-14 РґРЅРµР№</div>
+              <ul><li>Р—Р°РєСЂС‹С‚СЊ РёР»Рё РЅРѕСЂРјР°Р»РёР·РѕРІР°С‚СЊ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Рµ query- Рё route-СЃС‚СЂР°РЅРёС†С‹ СЃ С‚РµС…РЅРёС‡РµСЃРєРёРјРё С„РѕСЂРјР°РјРё.</li><li>РџРѕРґРіРѕС‚РѕРІРёС‚СЊ РµРґРёРЅРѕРµ РўР— РЅР° title, description, H1 Рё canonical РґР»СЏ РѕСЃРЅРѕРІРЅС‹С… С‚РёРїРѕРІ СЃС‚СЂР°РЅРёС†.</li></ul>
+            </div>
+            
+            <div class="roadmap-card">
+              <div class="roadmap-period">15-30 РґРЅРµР№</div>
+              <ul><li>Р’РЅРµРґСЂРёС‚СЊ alt-С€Р°Р±Р»РѕРЅС‹, РїСЂРѕРІРµСЂРёС‚СЊ lazy-load Рё РїРѕРґС‡РёСЃС‚РёС‚СЊ image SEO РЅР° РєР»СЋС‡РµРІС‹С… СЃС‚СЂР°РЅРёС†Р°С….</li><li>Р Р°Р·РґРµР»РёС‚СЊ sitemap РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС† Рё РїРѕРґР°С‚СЊ РѕС‚РґРµР»СЊРЅС‹Рµ РєР°СЂС‚С‹ РІ РЇРЅРґРµРєСЃ.Р’РµР±РјР°СЃС‚РµСЂ Рё GSC.</li><li>РћР±РЅРѕРІРёС‚СЊ С€Р°Р±Р»РѕРЅС‹ СЃРЅРёРїРїРµС‚РѕРІ Рё РїСЂРѕРІРµСЂРёС‚СЊ СЂРѕСЃС‚ CTR РїРѕ РїСЂРёРѕСЂРёС‚РµС‚РЅС‹Рј СЃС‚СЂР°РЅРёС†Р°Рј.</li></ul>
+            </div>
+            
+            <div class="roadmap-card">
+              <div class="roadmap-period">31-60 РґРЅРµР№</div>
+              <ul><li>РЈСЃРёР»РёС‚СЊ РєР°С‚РµРіРѕСЂРёРё Рё РїРѕРґРєР°С‚РµРіРѕСЂРёРё РєРѕРЅС‚РµРЅС‚РѕРј, FAQ, Р±Р»РѕРєР°РјРё РґРѕРІРµСЂРёСЏ Рё РїРµСЂРµР»РёРЅРєРѕРІРєРѕР№.</li><li>РџРµСЂРµСЃРѕР±СЂР°С‚СЊ РєР°СЂС‚РѕС‡РєРё Рё Р»РёСЃС‚РёРЅРіРё С‚Р°Рє, С‡С‚РѕР±С‹ РѕРЅРё Р»СѓС‡С€Рµ РєРѕРЅРІРµСЂС‚РёСЂРѕРІР°Р»Рё SEO-С‚СЂР°С„РёРє РІ Р·Р°СЏРІРєРё Рё РїСЂРѕРґР°Р¶Рё.</li><li>Р”РѕР±Р°РІРёС‚СЊ answer-first С„СЂР°РіРјРµРЅС‚С‹ Рё РєРѕРЅС‚РµРЅС‚ РїРѕРґ РР-РІС‹РґР°С‡Сѓ РЅР° РіР»Р°РІРЅС‹Рµ СЃРїСЂРѕСЃРѕРІС‹Рµ РєР»Р°СЃС‚РµСЂС‹.</li></ul>
+            </div>
+            </div>
+    </section>
+
+    <div class="footer-note">Аудит подготовлен 22.03.2026 22:16 • www.inmako.ru • Shelpakov Digital</div>
+  </div>
+</body>
+</html>

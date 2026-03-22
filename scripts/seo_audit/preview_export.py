@@ -2,53 +2,665 @@ from __future__ import annotations
 
 from html import escape
 from pathlib import Path
-import shutil
+
+try:
+    from reportlab.lib import colors
+    from reportlab.lib.enums import TA_CENTER
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+    from reportlab.lib.units import mm
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.platypus import KeepTogether, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+except Exception:  # pragma: no cover - optional runtime dependency
+    colors = None
+    TA_CENTER = None
+    A4 = None
+    ParagraphStyle = None
+    getSampleStyleSheet = None
+    mm = None
+    pdfmetrics = None
+    TTFont = None
+    KeepTogether = None
+    PageBreak = None
+    Paragraph = None
+    SimpleDocTemplate = None
+    Spacer = None
+    Table = None
+    TableStyle = None
 
 
-def _playwright_launch_kwargs() -> dict:
-    try:
-        executable_path = (
-            shutil.which("chromium")
-            or shutil.which("chromium-browser")
-            or shutil.which("google-chrome")
-            or shutil.which("google-chrome-stable")
-        )
-    except Exception:
-        executable_path = None
+BRAND_DARK = "#101C2B"
+BRAND_TEXT = "#102035"
+BRAND_MUTED = "#5D6B82"
+BRAND_LINE = "#D8E7F6"
+BRAND_CYAN = "#69D3FF"
+BRAND_ORANGE = "#F28B34"
+BRAND_SOFT = "#F6F9FC"
+BRAND_ACCENT_SOFT = "#FFF3E6"
+SEVERITY_COLORS = {
+    "Critical": "#FFE3E3",
+    "High": "#FFF1E6",
+    "Medium": "#EEF7FF",
+    "Low": "#F4F6FA",
+}
 
-    launch_kwargs = {"headless": True}
-    if executable_path:
-        launch_kwargs["executable_path"] = executable_path
-    return launch_kwargs
+_REGISTERED_PDF_FONTS: tuple[str, str] | None = None
 
 
-def write_preview_pdf(html_path: Path, pdf_path: Path) -> bool:
-    try:
-        from playwright.sync_api import sync_playwright
-    except Exception:
-        return False
+def _find_font_paths() -> tuple[Path | None, Path | None]:
+    regular_candidates = [
+        Path(r"C:\Windows\Fonts\arial.ttf"),
+        Path(r"C:\Windows\Fonts\Arial.ttf"),
+        Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+        Path("/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf"),
+    ]
+    bold_candidates = [
+        Path(r"C:\Windows\Fonts\arialbd.ttf"),
+        Path(r"C:\Windows\Fonts\Arialbd.ttf"),
+        Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
+        Path("/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf"),
+    ]
 
-    if not html_path.exists():
-        return False
+    regular = next((path for path in regular_candidates if path.exists()), None)
+    bold = next((path for path in bold_candidates if path.exists()), None)
+    return regular, bold
 
-    pdf_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(**_playwright_launch_kwargs())
-        page = browser.new_page(viewport={"width": 1440, "height": 960}, locale="ru-RU")
+def _ensure_pdf_fonts() -> tuple[str, str]:
+    global _REGISTERED_PDF_FONTS
+
+    if _REGISTERED_PDF_FONTS is not None:
+        return _REGISTERED_PDF_FONTS
+
+    regular_path, bold_path = _find_font_paths()
+    if pdfmetrics and TTFont and regular_path and bold_path:
         try:
-            page.goto(html_path.resolve().as_uri(), wait_until="networkidle", timeout=45000)
-            page.emulate_media(media="screen")
-            page.pdf(
-                path=str(pdf_path),
-                format="A4",
-                print_background=True,
-                margin={"top": "14mm", "right": "12mm", "bottom": "16mm", "left": "12mm"},
+            pdfmetrics.registerFont(TTFont("AuditSans", str(regular_path)))
+            pdfmetrics.registerFont(TTFont("AuditSans-Bold", str(bold_path)))
+            _REGISTERED_PDF_FONTS = ("AuditSans", "AuditSans-Bold")
+            return _REGISTERED_PDF_FONTS
+        except Exception:
+            pass
+
+    _REGISTERED_PDF_FONTS = ("Helvetica", "Helvetica-Bold")
+    return _REGISTERED_PDF_FONTS
+
+
+def _escape_pdf_text(value: object) -> str:
+    text = str(value or "")
+    return (
+        text.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("\n", "<br/>")
+    )
+
+
+def _build_pdf_styles():
+    regular_font, bold_font = _ensure_pdf_fonts()
+    styles = getSampleStyleSheet()
+
+    base = ParagraphStyle(
+        "AuditBase",
+        parent=styles["Normal"],
+        fontName=regular_font,
+        fontSize=10.4,
+        leading=14,
+        textColor=colors.HexColor(BRAND_TEXT),
+        spaceAfter=6,
+    )
+
+    return {
+        "base": base,
+        "muted": ParagraphStyle("AuditMuted", parent=base, textColor=colors.HexColor(BRAND_MUTED)),
+        "small": ParagraphStyle("AuditSmall", parent=base, fontSize=8.8, leading=11.5, textColor=colors.HexColor(BRAND_MUTED)),
+        "kicker": ParagraphStyle(
+            "AuditKicker",
+            parent=base,
+            fontName=bold_font,
+            fontSize=8.8,
+            leading=11,
+            textColor=colors.HexColor(BRAND_ORANGE),
+            spaceAfter=6,
+        ),
+        "coverTag": ParagraphStyle(
+            "AuditCoverTag",
+            parent=base,
+            fontName=bold_font,
+            fontSize=9.2,
+            leading=12,
+            textColor=colors.HexColor(BRAND_CYAN),
+            spaceAfter=12,
+        ),
+        "coverTitle": ParagraphStyle(
+            "AuditCoverTitle",
+            parent=base,
+            fontName=bold_font,
+            fontSize=28,
+            leading=31,
+            textColor=colors.white,
+            spaceAfter=12,
+        ),
+        "coverBody": ParagraphStyle(
+            "AuditCoverBody",
+            parent=base,
+            fontSize=11.2,
+            leading=15.5,
+            textColor=colors.white,
+            spaceAfter=8,
+        ),
+        "passportKicker": ParagraphStyle(
+            "AuditPassportKicker",
+            parent=base,
+            fontName=bold_font,
+            fontSize=8.8,
+            leading=11,
+            textColor=colors.HexColor(BRAND_ORANGE),
+            spaceAfter=6,
+        ),
+        "passportTitle": ParagraphStyle(
+            "AuditPassportTitle",
+            parent=base,
+            fontName=bold_font,
+            fontSize=23,
+            leading=27,
+            textColor=colors.HexColor(BRAND_TEXT),
+            spaceAfter=8,
+        ),
+        "passportScore": ParagraphStyle(
+            "AuditPassportScore",
+            parent=base,
+            fontName=bold_font,
+            fontSize=42,
+            leading=46,
+            textColor=colors.HexColor(BRAND_TEXT),
+            spaceAfter=0,
+        ),
+        "sectionTitle": ParagraphStyle(
+            "AuditSectionTitle",
+            parent=base,
+            fontName=bold_font,
+            fontSize=20,
+            leading=24,
+            textColor=colors.HexColor(BRAND_TEXT),
+            spaceAfter=8,
+        ),
+        "cardTitle": ParagraphStyle(
+            "AuditCardTitle",
+            parent=base,
+            fontName=bold_font,
+            fontSize=12.6,
+            leading=16,
+            textColor=colors.HexColor(BRAND_TEXT),
+            spaceAfter=6,
+        ),
+        "metricLabel": ParagraphStyle(
+            "AuditMetricLabel",
+            parent=base,
+            alignment=TA_CENTER,
+            fontName=bold_font,
+            fontSize=8.4,
+            leading=10.2,
+            textColor=colors.HexColor(BRAND_MUTED),
+            spaceAfter=4,
+        ),
+        "metricValue": ParagraphStyle(
+            "AuditMetricValue",
+            parent=base,
+            alignment=TA_CENTER,
+            fontName=bold_font,
+            fontSize=20,
+            leading=23,
+            textColor=colors.HexColor(BRAND_TEXT),
+            spaceAfter=0,
+        ),
+    }
+
+
+def _issue_style(severity: str) -> str:
+    return SEVERITY_COLORS.get(severity or "", SEVERITY_COLORS["Low"])
+
+
+def _metric_card(label: str, value: object, styles: dict) -> Table:
+    table = Table(
+        [
+            [Paragraph(_escape_pdf_text(label), styles["metricLabel"])],
+            [Paragraph(_escape_pdf_text(value), styles["metricValue"])],
+        ],
+        colWidths=[42 * mm],
+    )
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+                ("BOX", (0, 0), (-1, -1), 1, colors.HexColor(BRAND_LINE)),
+                ("ROUNDEDCORNERS", [14, 14, 14, 14]),
+                ("LEFTPADDING", (0, 0), (-1, -1), 10),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+                ("TOPPADDING", (0, 0), (-1, -1), 10),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+            ]
+        )
+    )
+    return table
+
+
+def _paragraph_list(items: list[str], styles: dict) -> list:
+    flowables = []
+    for item in items:
+        flowables.append(Paragraph(f"• {_escape_pdf_text(item)}", styles["base"]))
+    return flowables
+
+
+def _section_header(story: list, kicker: str, title: str, lead: str, styles: dict) -> None:
+    story.append(Paragraph(_escape_pdf_text(kicker.upper()), styles["kicker"]))
+    story.append(Paragraph(_escape_pdf_text(title), styles["sectionTitle"]))
+    story.append(Paragraph(_escape_pdf_text(lead), styles["muted"]))
+    story.append(Spacer(1, 4))
+
+
+def _append_issue_cards(story: list, issues: list[dict], styles: dict) -> None:
+    for issue in issues:
+        evidence_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in issue.get("evidence", []))
+        content = [
+            [Paragraph(_escape_pdf_text(f"{issue.get('severity', '').upper()}  {issue.get('title', '')}"), styles["cardTitle"])],
+            [Paragraph(_escape_pdf_text(issue.get("why_it_matters", "")), styles["base"])],
+            [Paragraph(f"<b>Что нашли:</b>{evidence_html or '<br/>• Без дополнительных примеров.'}", styles["base"])],
+            [Paragraph(f"<b>Что делать:</b> {_escape_pdf_text(issue.get('recommendation', ''))}", styles["base"])],
+        ]
+        card = Table(content, colWidths=[180 * mm])
+        card.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor(_issue_style(str(issue.get("severity", ""))))),
+                    ("BACKGROUND", (0, 1), (-1, -1), colors.white),
+                    ("BOX", (0, 0), (-1, -1), 1, colors.HexColor(BRAND_LINE)),
+                    ("ROUNDEDCORNERS", [14, 14, 14, 14]),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 12),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+                    ("TOPPADDING", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+                ]
             )
-            return True
-        finally:
-            page.close()
-            browser.close()
+        )
+        story.append(card)
+        story.append(Spacer(1, 10))
+
+
+def _append_action_cards(story: list, items: list[dict], kicker: str, title: str, lead: str, styles: dict) -> None:
+    _section_header(story, kicker, title, lead, styles)
+    for item in items:
+        card = Table(
+            [
+                [Paragraph(_escape_pdf_text(item.get("title", "")), styles["cardTitle"])],
+                [Paragraph(f"<b>Влияние:</b> {_escape_pdf_text(item.get('impact', ''))} &nbsp;&nbsp; <b>Усилие:</b> {_escape_pdf_text(item.get('effort', ''))}", styles["small"])],
+                [Paragraph(_escape_pdf_text(item.get("action") or item.get("details") or ""), styles["base"])],
+            ],
+            colWidths=[180 * mm],
+        )
+        card.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+                    ("BOX", (0, 0), (-1, -1), 1, colors.HexColor(BRAND_LINE)),
+                    ("ROUNDEDCORNERS", [14, 14, 14, 14]),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 12),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+                    ("TOPPADDING", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+                ]
+            )
+        )
+        story.append(card)
+        story.append(Spacer(1, 10))
+
+
+def _append_phase_sections(story: list, phase_sections: list[dict], styles: dict) -> None:
+    for section in phase_sections:
+        _section_header(story, "Глубокий разбор", str(section.get("title", "")), str(section.get("intro", "")), styles)
+        for check in section.get("checks", []):
+            metrics = "<br/>".join(
+                f"<b>{_escape_pdf_text(label)}:</b> {_escape_pdf_text(value)}"
+                for label, value in check.get("metrics", [])
+            )
+            findings = "<br/>".join(f"• {_escape_pdf_text(item)}" for item in check.get("findings", []))
+            card = Table(
+                [
+                    [Paragraph(_escape_pdf_text(check.get("name", "")), styles["cardTitle"])],
+                    [Paragraph(f"<b>Что проверялось:</b> {_escape_pdf_text(check.get('checked', ''))}", styles["base"])],
+                    [Paragraph(f"<b>Как проверялось:</b> {_escape_pdf_text(check.get('method', ''))}", styles["small"])],
+                    [
+                        Table(
+                            [
+                                [
+                                    Table(
+                                        [
+                                            [Paragraph("Ключевые метрики", styles["small"])],
+                                            [Paragraph(metrics or "—", styles["base"])],
+                                        ],
+                                        colWidths=[84 * mm],
+                                    ),
+                                    Table(
+                                        [
+                                            [Paragraph("Что нашли", styles["small"])],
+                                            [Paragraph(findings or "—", styles["base"])],
+                                        ],
+                                        colWidths=[84 * mm],
+                                    ),
+                                ]
+                            ]
+                        )
+                    ],
+                    [Paragraph(f"<b>Приоритет:</b> {_escape_pdf_text(check.get('priority', ''))} &nbsp;&nbsp; <b>Ответственный:</b> {_escape_pdf_text(check.get('owner', ''))}", styles["small"])],
+                    [Paragraph(f"<b>Что делать:</b> {_escape_pdf_text(check.get('recommendation', ''))}", styles["base"])],
+                ],
+                colWidths=[180 * mm],
+            )
+            card.setStyle(
+                TableStyle(
+                    [
+                        ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+                        ("BOX", (0, 0), (-1, -1), 1, colors.HexColor(BRAND_LINE)),
+                        ("ROUNDEDCORNERS", [14, 14, 14, 14]),
+                        ("LEFTPADDING", (0, 0), (-1, -1), 12),
+                        ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+                        ("TOPPADDING", (0, 0), (-1, -1), 10),
+                        ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+                    ]
+                )
+            )
+            story.append(KeepTogether([card, Spacer(1, 10)]))
+
+
+def _append_roadmap(story: list, roadmap: list[list], styles: dict) -> None:
+    _section_header(
+        story,
+        "Roadmap",
+        "План внедрения на 60 дней",
+        "Порядок выстроен так, чтобы сначала убрать технические стоп-факторы, потом усилить шаблоны, а после этого наращивать точки роста.",
+        styles,
+    )
+    cards = []
+    for period, tasks in roadmap:
+        task_html = "".join(f"<br/>• {_escape_pdf_text(task)}" for task in tasks)
+        card = Table(
+            [
+                [Paragraph(_escape_pdf_text(period), styles["kicker"])],
+                [Paragraph(task_html.lstrip("<br/>") or "—", styles["base"])],
+            ],
+            colWidths=[58 * mm],
+        )
+        card.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+                    ("BOX", (0, 0), (-1, -1), 1, colors.HexColor(BRAND_LINE)),
+                    ("ROUNDEDCORNERS", [14, 14, 14, 14]),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 12),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+                    ("TOPPADDING", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+                ]
+            )
+        )
+        cards.append(card)
+    story.append(Table([cards], colWidths=[60 * mm, 60 * mm, 60 * mm], hAlign="LEFT"))
+
+
+def _append_appendix(story: list, appendix_pages: list[dict], styles: dict) -> None:
+    _section_header(
+        story,
+        "Приложение",
+        "Ключевые URL, которые вошли в итоговый документ",
+        "В документ вынесены основные страницы, по которым проще всего понять качество шаблонов, SEO-обвязки и коммерческого слоя сайта.",
+        styles,
+    )
+    rows = [["Путь", "Тип", "Код", "Title", "Desc", "H1", "Schema"]]
+    for snapshot in appendix_pages[:18]:
+        schema_value = ", ".join(snapshot.get("schema_types", [])[:2]) or "—"
+        rows.append(
+            [
+                _escape_pdf_text(snapshot.get("url", "")),
+                _escape_pdf_text(snapshot.get("page_type", "")),
+                str(snapshot.get("status_code", "")),
+                str(len(str(snapshot.get("title", "")))),
+                str(len(str(snapshot.get("description", "")))),
+                str(len(snapshot.get("h1s", []))),
+                _escape_pdf_text(schema_value),
+            ]
+        )
+    table = Table(rows, repeatRows=1, colWidths=[58 * mm, 25 * mm, 14 * mm, 18 * mm, 18 * mm, 14 * mm, 33 * mm])
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor(BRAND_DARK)),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ("FONTNAME", (0, 0), (-1, 0), _ensure_pdf_fonts()[1]),
+                ("FONTSIZE", (0, 0), (-1, 0), 8),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.white),
+                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.HexColor(BRAND_SOFT), colors.white]),
+                ("GRID", (0, 0), (-1, -1), 0.6, colors.HexColor(BRAND_LINE)),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("FONTSIZE", (0, 1), (-1, -1), 7.8),
+                ("LEADING", (0, 1), (-1, -1), 9.2),
+                ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                ("TOPPADDING", (0, 0), (-1, -1), 6),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+            ]
+        )
+    )
+    story.append(table)
+
+
+def _draw_pdf_chrome(domain: str, brand_name: str, regular_font: str, bold_font: str):
+    def _callback(canvas, doc):
+        canvas.saveState()
+        page_width, page_height = A4
+        canvas.setFillColor(colors.HexColor(BRAND_ORANGE))
+        canvas.rect(0, 0, 5 * mm, page_height, fill=1, stroke=0)
+        canvas.setStrokeColor(colors.HexColor(BRAND_LINE))
+        canvas.setLineWidth(0.8)
+        canvas.line(doc.leftMargin, page_height - 14 * mm, page_width - doc.rightMargin, page_height - 14 * mm)
+        canvas.setFont(bold_font, 9)
+        canvas.setFillColor(colors.HexColor(BRAND_DARK))
+        canvas.drawString(doc.leftMargin, page_height - 10.5 * mm, brand_name)
+        canvas.setFont(regular_font, 8.6)
+        canvas.setFillColor(colors.HexColor(BRAND_MUTED))
+        canvas.drawString(doc.leftMargin, 9 * mm, f"{domain} | Audit by {brand_name}")
+        canvas.drawRightString(page_width - doc.rightMargin, 9 * mm, f"Стр. {canvas.getPageNumber()}")
+        canvas.restoreState()
+
+    return _callback
+
+
+def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
+    if not all(
+        [
+            colors,
+            A4,
+            ParagraphStyle,
+            getSampleStyleSheet,
+            mm,
+            Paragraph,
+            SimpleDocTemplate,
+            Spacer,
+            Table,
+            TableStyle,
+        ]
+    ):
+        return False
+
+    try:
+        regular_font, bold_font = _ensure_pdf_fonts()
+        styles = _build_pdf_styles()
+        pdf_path.parent.mkdir(parents=True, exist_ok=True)
+
+        doc = SimpleDocTemplate(
+            str(pdf_path),
+            pagesize=A4,
+            leftMargin=14 * mm,
+            rightMargin=14 * mm,
+            topMargin=18 * mm,
+            bottomMargin=16 * mm,
+        )
+        story: list = []
+
+        cover_left = [
+            Paragraph("SHELPAKOV DIGITAL", styles["coverTag"]),
+            Paragraph(f"SEO-аудит<br/>{_escape_pdf_text(audit_payload.get('domain', ''))}", styles["coverTitle"]),
+            Paragraph(
+                _escape_pdf_text(
+                    "Коммерческий аудит с фокусом на индексацию, точки роста, шаблоны страниц, конверсию и реальный план внедрения."
+                ),
+                styles["coverBody"],
+            ),
+        ]
+        cover_right = [
+            Paragraph("Паспорт проекта", styles["passportKicker"]),
+            Paragraph(
+                _escape_pdf_text(
+                    audit_payload.get("company_name")
+                    or audit_payload.get("company")
+                    or audit_payload.get("domain", "")
+                ),
+                styles["passportTitle"],
+            ),
+            Paragraph(
+                f"Дата: {_escape_pdf_text(audit_payload.get('generated_at', ''))}<br/>"
+                f"Домен: https://{_escape_pdf_text(audit_payload.get('domain', ''))}",
+                styles["small"],
+            ),
+            Paragraph(_escape_pdf_text(audit_payload.get("score", 0)), styles["passportScore"]),
+            Paragraph("Индекс SEO-готовности из 100", styles["muted"]),
+        ]
+        cover = Table([[cover_left, cover_right]], colWidths=[118 * mm, 62 * mm])
+        cover.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (0, 0), colors.HexColor(BRAND_DARK)),
+                    ("BACKGROUND", (1, 0), (1, 0), colors.HexColor(BRAND_ACCENT_SOFT)),
+                    ("BOX", (0, 0), (-1, -1), 0.8, colors.HexColor(BRAND_LINE)),
+                    ("ROUNDEDCORNERS", [18, 18, 18, 18]),
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 16),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 16),
+                    ("TOPPADDING", (0, 0), (-1, -1), 18),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 18),
+                ]
+            )
+        )
+        story.append(cover)
+        story.append(Spacer(1, 14))
+
+        metrics = [
+            ("Sitemap unique", audit_payload.get("sitemap_url_count", 0)),
+            ("Sitemap entries", audit_payload.get("sitemap_total_entries", 0)),
+            ("Средний ответ", f"{audit_payload.get('average_response_ms', 0)} ms"),
+            ("HTML обхода", f"{audit_payload.get('average_html_kb', 0)} KB"),
+        ]
+        metric_cards = [_metric_card(label, value, styles) for label, value in metrics]
+        story.append(Table([metric_cards[:2], metric_cards[2:]], colWidths=[86 * mm, 86 * mm], rowHeights=[28 * mm, 28 * mm]))
+        story.append(PageBreak())
+
+        _section_header(
+            story,
+            "Executive summary",
+            "Главные выводы по проекту",
+            "Ниже не просто список ошибок, а короткая выжимка того, где сайт уже держится уверенно и что сейчас сильнее всего мешает росту.",
+            styles,
+        )
+        story.extend(_paragraph_list(audit_payload.get("executive_summary", []), styles))
+        story.append(Spacer(1, 10))
+
+        _section_header(
+            story,
+            "Сильные стороны",
+            "На что уже можно опираться",
+            "Это база, которую не нужно ломать. На ней проще строить рост, чем пересобирать проект с нуля.",
+            styles,
+        )
+        story.extend(_paragraph_list(audit_payload.get("strengths", []), styles))
+        story.append(Spacer(1, 6))
+        story.append(Paragraph("Точки роста", styles["cardTitle"]))
+        story.extend(_paragraph_list(audit_payload.get("growth_points", []), styles))
+        story.append(Spacer(1, 14))
+
+        _section_header(
+            story,
+            "Приоритеты",
+            "Матрица проблем по влиянию на рост",
+            "Здесь задачи разложены по impact, risk и business-effect, чтобы было понятно, что делать первым.",
+            styles,
+        )
+        for row in audit_payload.get("priority_matrix", [])[:12]:
+            story.append(
+                Table(
+                    [
+                        [Paragraph(_escape_pdf_text(row.get("problem", "")), styles["cardTitle"])],
+                        [
+                            Paragraph(
+                                _escape_pdf_text(
+                                    f"Impact: {row.get('impact', '')} | Risk: {row.get('risk', '')} | Business: {row.get('business', '')} | Итог: {row.get('total', '')}"
+                                ),
+                                styles["small"],
+                            )
+                        ],
+                        [Paragraph(f"<b>Приоритет:</b> {_escape_pdf_text(row.get('severity', ''))} &nbsp;&nbsp; <b>Ответственный:</b> {_escape_pdf_text(row.get('owner', ''))}", styles["base"])],
+                    ],
+                    colWidths=[180 * mm],
+                    style=TableStyle(
+                        [
+                            ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+                            ("BOX", (0, 0), (-1, -1), 1, colors.HexColor(BRAND_LINE)),
+                            ("ROUNDEDCORNERS", [14, 14, 14, 14]),
+                            ("LEFTPADDING", (0, 0), (-1, -1), 12),
+                            ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+                            ("TOPPADDING", (0, 0), (-1, -1), 10),
+                            ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+                        ]
+                    ),
+                )
+            )
+            story.append(Spacer(1, 10))
+
+        _section_header(
+            story,
+            "Критические ошибки",
+            "Что сейчас реально блокирует рост",
+            "Это не весь backlog, а ограничения, которые первыми режут индекс, сниппеты, crawl budget и способность сайта забирать спрос.",
+            styles,
+        )
+        _append_issue_cards(story, audit_payload.get("critical_errors") or audit_payload.get("issues", []), styles)
+        _append_phase_sections(story, audit_payload.get("phase_sections", []), styles)
+        _append_action_cards(
+            story,
+            audit_payload.get("quick_wins", []),
+            "Quick wins",
+            "Быстрые победы на ближайший спринт",
+            "Эти правки можно внедрить быстро и получить заметный эффект без большой перестройки проекта.",
+            styles,
+        )
+        _append_action_cards(
+            story,
+            audit_payload.get("strategic_moves", []),
+            "Стратегические улучшения",
+            "Что усилит проект поверх базовых фиксов",
+            "Это уже не тушение пожара, а слой изменений, который превращает сайт в более сильный источник заявок и роста видимости.",
+            styles,
+        )
+        _append_roadmap(story, audit_payload.get("roadmap", []), styles)
+        _append_appendix(story, audit_payload.get("appendix_pages") or audit_payload.get("sample_pages", []), styles)
+
+        doc.build(
+            story,
+            onFirstPage=_draw_pdf_chrome(str(audit_payload.get("domain", "")), "Shelpakov Digital", regular_font, bold_font),
+            onLaterPages=_draw_pdf_chrome(str(audit_payload.get("domain", "")), "Shelpakov Digital", regular_font, bold_font),
+        )
+        return True
+    except Exception:
+        return False
 
 
 def _issue_card(issue: dict) -> str:

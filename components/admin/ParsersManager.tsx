@@ -68,7 +68,7 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
   const [sitemapUrl, setSitemapUrl] = useState('')
   const [auditUrl, setAuditUrl] = useState('')
   const [auditCompany, setAuditCompany] = useState('')
-  const [sampleSize, setSampleSize] = useState(10)
+  const [sampleSize, setSampleSize] = useState(0)
   const [isRunning, setIsRunning] = useState({ sitemap: false, audit: false })
 
   useEffect(() => {
@@ -146,7 +146,7 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
 
       setAuditUrl('')
       setAuditCompany('')
-      setSampleSize(10)
+      setSampleSize(0)
       router.refresh()
       alert('SEO-аудит запущен. Когда задача завершится, здесь появятся кнопки превью, PDF и DOCX.')
     } catch (error) {
@@ -199,7 +199,7 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
             <div>
               <h2 className="text-xl font-semibold text-slate-950">SEO-аудит в PDF</h2>
               <p className="mt-1 text-sm leading-6 text-slate-500">
-                Генерирует брендовый аудит Shelpakov Digital с автоанализом сайта, скриншотами страниц, HTML-превью, готовым PDF и DOCX-версией.
+                Генерирует брендовый аудит Shelpakov Digital с полным обходом сайта, HTML-превью, готовым PDF и DOCX-версией.
               </p>
             </div>
           </div>
@@ -229,19 +229,20 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Страниц в выборке</label>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Лимит страниц</label>
                 <input
                   type="number"
-                  min={4}
-                  max={24}
+                  min={0}
+                  max={5000}
                   value={sampleSize}
-                  onChange={(event) => setSampleSize(Number(event.target.value) || 10)}
+                  onChange={(event) => setSampleSize(Math.max(0, Number(event.target.value) || 0))}
                   className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-100"
                 />
               </div>
             </div>
 
             <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3 text-sm leading-6 text-slate-600">
+              <div>0 = полный обход сайта по sitemap и внутренним ссылкам.</div>
               После запуска задача появится в истории ниже. Как только статус станет <strong>completed</strong>, появятся кнопки
               <strong> Превью</strong>, <strong>PDF</strong> и <strong>DOCX</strong>.
             </div>
@@ -299,7 +300,9 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
                         '—'
                       )}
                       {typeof config.sampleSize === 'number' ? (
-                        <div className="mt-1 text-xs text-slate-500">Выборка: {config.sampleSize} страниц</div>
+                        <div className="mt-1 text-xs text-slate-500">
+                          {config.sampleSize > 0 ? `Лимит: ${config.sampleSize} страниц` : 'Режим: полный обход сайта'}
+                        </div>
                       ) : null}
                     </td>
                     <td className="px-4 py-4">

@@ -75,7 +75,7 @@ python scripts/seo_audit/generate_audit.py --url https://site.ru --company "На
 - `--url` — обязательный URL сайта
 - `--company` — название клиента/проекта на обложке
 - `--output` — куда сохранить `.docx`-версию, рядом автоматически появится `.pdf`
-- `--sample-size` — сколько URL проверять в рамках выборки
+- `--sample-size` — сколько URL проверять; `0` означает полный обход сайта
 - `--no-json` — не сохранять сырые данные рядом с `.docx`
 - `--no-preview` — не создавать HTML-preview
 - `--no-pdf` — не создавать PDF-версию

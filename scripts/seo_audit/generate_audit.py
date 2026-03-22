@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 from __future__ import annotations
 
 import argparse
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import math
 import re
@@ -192,7 +193,7 @@ def add_bullet_list(container, items: Iterable[str], *, size=11.2, color=BRAND_T
         paragraph.paragraph_format.left_indent = Cm(0.4)
         paragraph.paragraph_format.first_line_indent = Cm(-0.4)
         paragraph.paragraph_format.space_after = Pt(4)
-        run = paragraph.add_run(f"• {item}")
+        run = paragraph.add_run(f"вЂў {item}")
         set_font(run, size=size, color=color)
 
 
@@ -323,17 +324,17 @@ def parse_jsonld_types(soup: BeautifulSoup) -> list[str]:
 def detect_page_type(url: str, schema_types: list[str]) -> str:
     parsed = urlparse(url)
     if not parsed.path or parsed.path == "/":
-        return "Главная"
+        return "Р“Р»Р°РІРЅР°СЏ"
     if "Product" in schema_types:
-        return "Товар"
+        return "РўРѕРІР°СЂ"
     if parsed.query:
-        return "Служебная"
+        return "РЎР»СѓР¶РµР±РЅР°СЏ"
     segments = [segment for segment in parsed.path.split("/") if segment]
     if len(segments) == 1:
-        return "Категория"
+        return "РљР°С‚РµРіРѕСЂРёСЏ"
     if len(segments) == 2:
-        return "Подкатегория"
-    return "Внутренняя"
+        return "РџРѕРґРєР°С‚РµРіРѕСЂРёСЏ"
+    return "Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ"
 
 
 def analyse_page(session: requests.Session, url: str, base_domain: str) -> PageSnapshot:
@@ -341,7 +342,7 @@ def analyse_page(session: requests.Session, url: str, base_domain: str) -> PageS
     if error or response is None:
         return PageSnapshot(
             url=url,
-            page_type="Ошибка загрузки",
+            page_type="РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё",
             status_code=0,
             response_time_ms=0,
             content_type="",
@@ -526,8 +527,8 @@ def get_indexable_query_pages(sample_pages: list[PageSnapshot]) -> list[PageSnap
 
 def infer_project_profile(audit: dict) -> dict:
     sample_pages: list[PageSnapshot] = audit["sample_pages"]
-    product_pages = [snapshot for snapshot in sample_pages if snapshot.page_type == "Товар" or "Product" in snapshot.schema_types]
-    category_pages = [snapshot for snapshot in sample_pages if snapshot.page_type in ("Категория", "Подкатегория")]
+    product_pages = [snapshot for snapshot in sample_pages if snapshot.page_type == "РўРѕРІР°СЂ" or "Product" in snapshot.schema_types]
+    category_pages = [snapshot for snapshot in sample_pages if snapshot.page_type in ("РљР°С‚РµРіРѕСЂРёСЏ", "РџРѕРґРєР°С‚РµРіРѕСЂРёСЏ")]
     form_pages = [snapshot for snapshot in sample_pages if snapshot.has_forms]
     return {
         "product_pages": product_pages,
@@ -554,21 +555,21 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
     sitemap_directive = next((line for line in robots_lines if line.lower().startswith("sitemap:")), "")
 
     if disallow_sitemap_lines:
-        evidence = [f"В robots.txt найдено правило `{disallow_sitemap_lines[0]}`."]
+        evidence = [f"Р’ robots.txt РЅР°Р№РґРµРЅРѕ РїСЂР°РІРёР»Рѕ `{disallow_sitemap_lines[0]}`."]
         if sitemap_directive:
-            evidence.append(f"Одновременно файл содержит `{sitemap_directive}`.")
+            evidence.append(f"РћРґРЅРѕРІСЂРµРјРµРЅРЅРѕ С„Р°Р№Р» СЃРѕРґРµСЂР¶РёС‚ `{sitemap_directive}`.")
         issues.append(
             AuditIssue(
                 severity="Critical",
-                title="robots.txt конфликтует с картой сайта",
+                title="robots.txt РєРѕРЅС„Р»РёРєС‚СѓРµС‚ СЃ РєР°СЂС‚РѕР№ СЃР°Р№С‚Р°",
                 why_it_matters=(
-                    "Когда robots.txt одновременно запрещает sitemap.xml и сам же ссылается на карту сайта, "
-                    "поисковики получают конфликтующий сигнал. Это мешает чистой и предсказуемой индексации."
+                    "РљРѕРіРґР° robots.txt РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ Р·Р°РїСЂРµС‰Р°РµС‚ sitemap.xml Рё СЃР°Рј Р¶Рµ СЃСЃС‹Р»Р°РµС‚СЃСЏ РЅР° РєР°СЂС‚Сѓ СЃР°Р№С‚Р°, "
+                    "РїРѕРёСЃРєРѕРІРёРєРё РїРѕР»СѓС‡Р°СЋС‚ РєРѕРЅС„Р»РёРєС‚СѓСЋС‰РёР№ СЃРёРіРЅР°Р». Р­С‚Рѕ РјРµС€Р°РµС‚ С‡РёСЃС‚РѕР№ Рё РїСЂРµРґСЃРєР°Р·СѓРµРјРѕР№ РёРЅРґРµРєСЃР°С†РёРё."
                 ),
                 evidence=evidence,
                 recommendation=(
-                    "Убрать запрет на sitemap.xml, оставить рабочую директиву Sitemap и синхронизировать robots.txt "
-                    "с каноническим доменом проекта."
+                    "РЈР±СЂР°С‚СЊ Р·Р°РїСЂРµС‚ РЅР° sitemap.xml, РѕСЃС‚Р°РІРёС‚СЊ СЂР°Р±РѕС‡СѓСЋ РґРёСЂРµРєС‚РёРІСѓ Sitemap Рё СЃРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°С‚СЊ robots.txt "
+                    "СЃ РєР°РЅРѕРЅРёС‡РµСЃРєРёРј РґРѕРјРµРЅРѕРј РїСЂРѕРµРєС‚Р°."
                 ),
             )
         )
@@ -588,19 +589,19 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
             weak_contact_pages.append((snapshot, missing))
 
     if weak_contact_pages:
-        evidence = [f"На `{human_path(snapshot.url)}` не хватает: {', '.join(missing)}." for snapshot, missing in weak_contact_pages[:3]]
+        evidence = [f"РќР° `{human_path(snapshot.url)}` РЅРµ С…РІР°С‚Р°РµС‚: {', '.join(missing)}." for snapshot, missing in weak_contact_pages[:3]]
         issues.append(
             AuditIssue(
                 severity="High",
-                title="Контактные и lead-страницы недооформлены как SEO-посадочные",
+                title="РљРѕРЅС‚Р°РєС‚РЅС‹Рµ Рё lead-СЃС‚СЂР°РЅРёС†С‹ РЅРµРґРѕРѕС„РѕСЂРјР»РµРЅС‹ РєР°Рє SEO-РїРѕСЃР°РґРѕС‡РЅС‹Рµ",
                 why_it_matters=(
-                    "Страницы контактов и заявок участвуют не только в конверсии, но и в доверии, брендовой выдаче "
-                    "и понимании бизнеса поисковиками."
+                    "РЎС‚СЂР°РЅРёС†С‹ РєРѕРЅС‚Р°РєС‚РѕРІ Рё Р·Р°СЏРІРѕРє СѓС‡Р°СЃС‚РІСѓСЋС‚ РЅРµ С‚РѕР»СЊРєРѕ РІ РєРѕРЅРІРµСЂСЃРёРё, РЅРѕ Рё РІ РґРѕРІРµСЂРёРё, Р±СЂРµРЅРґРѕРІРѕР№ РІС‹РґР°С‡Рµ "
+                    "Рё РїРѕРЅРёРјР°РЅРёРё Р±РёР·РЅРµСЃР° РїРѕРёСЃРєРѕРІРёРєР°РјРё."
                 ),
                 evidence=evidence,
                 recommendation=(
-                    "Собрать полноценные страницы контакта и заявки: H1, title до 70 символов, description 140–160 символов, "
-                    "canonical, блоки доверия, адреса, телефоны и понятный CTA."
+                    "РЎРѕР±СЂР°С‚СЊ РїРѕР»РЅРѕС†РµРЅРЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РєРѕРЅС‚Р°РєС‚Р° Рё Р·Р°СЏРІРєРё: H1, title РґРѕ 70 СЃРёРјРІРѕР»РѕРІ, description 140вЂ“160 СЃРёРјРІРѕР»РѕРІ, "
+                    "canonical, Р±Р»РѕРєРё РґРѕРІРµСЂРёСЏ, Р°РґСЂРµСЃР°, С‚РµР»РµС„РѕРЅС‹ Рё РїРѕРЅСЏС‚РЅС‹Р№ CTA."
                 ),
             )
         )
@@ -618,61 +619,61 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
                 missing.append("description")
             if not snapshot.h1s:
                 missing.append("H1")
-            evidence.append(f"URL `{human_path(snapshot.url)}` доступен для обхода, но не хватает: {', '.join(missing)}.")
+            evidence.append(f"URL `{human_path(snapshot.url)}` РґРѕСЃС‚СѓРїРµРЅ РґР»СЏ РѕР±С…РѕРґР°, РЅРѕ РЅРµ С…РІР°С‚Р°РµС‚: {', '.join(missing)}.")
         issues.append(
             AuditIssue(
                 severity="High",
-                title="В выборке есть индексируемые служебные или query-URL без нормальной SEO-обвязки",
+                title="Р’ РІС‹Р±РѕСЂРєРµ РµСЃС‚СЊ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Рµ СЃР»СѓР¶РµР±РЅС‹Рµ РёР»Рё query-URL Р±РµР· РЅРѕСЂРјР°Р»СЊРЅРѕР№ SEO-РѕР±РІСЏР·РєРё",
                 why_it_matters=(
-                    "Служебные route-страницы и query-URL без title, description и H1 создают шум в индексе, "
-                    "размывают релевантность и тратят crawl budget."
+                    "РЎР»СѓР¶РµР±РЅС‹Рµ route-СЃС‚СЂР°РЅРёС†С‹ Рё query-URL Р±РµР· title, description Рё H1 СЃРѕР·РґР°СЋС‚ С€СѓРј РІ РёРЅРґРµРєСЃРµ, "
+                    "СЂР°Р·РјС‹РІР°СЋС‚ СЂРµР»РµРІР°РЅС‚РЅРѕСЃС‚СЊ Рё С‚СЂР°С‚СЏС‚ crawl budget."
                 ),
                 evidence=evidence,
                 recommendation=(
-                    "Либо закрыть такие URL от индексации и убрать прямые ссылки на них, либо перевести их на нормальные SEO-friendly страницы "
-                    "с полноценным мета-оформлением."
+                    "Р›РёР±Рѕ Р·Р°РєСЂС‹С‚СЊ С‚Р°РєРёРµ URL РѕС‚ РёРЅРґРµРєСЃР°С†РёРё Рё СѓР±СЂР°С‚СЊ РїСЂСЏРјС‹Рµ СЃСЃС‹Р»РєРё РЅР° РЅРёС…, Р»РёР±Рѕ РїРµСЂРµРІРµСЃС‚Рё РёС… РЅР° РЅРѕСЂРјР°Р»СЊРЅС‹Рµ SEO-friendly СЃС‚СЂР°РЅРёС†С‹ "
+                    "СЃ РїРѕР»РЅРѕС†РµРЅРЅС‹Рј РјРµС‚Р°-РѕС„РѕСЂРјР»РµРЅРёРµРј."
                 ),
             )
         )
 
     if problematic_titles:
-        examples = [f"{human_path(snapshot.url)} — {len(snapshot.title)} симв." for snapshot in problematic_titles[:4]]
+        examples = [f"{human_path(snapshot.url)} вЂ” {len(snapshot.title)} СЃРёРјРІ." for snapshot in problematic_titles[:4]]
         issues.append(
             AuditIssue(
                 severity="High",
-                title="На части страниц title выходят за рабочую длину",
+                title="РќР° С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† title РІС‹С…РѕРґСЏС‚ Р·Р° СЂР°Р±РѕС‡СѓСЋ РґР»РёРЅСѓ",
                 why_it_matters=(
-                    "Слишком длинные title режутся в выдаче, ухудшают CTR и снижают контроль над тем, "
-                    "какой оффер поисковик покажет пользователю."
+                    "РЎР»РёС€РєРѕРј РґР»РёРЅРЅС‹Рµ title СЂРµР¶СѓС‚СЃСЏ РІ РІС‹РґР°С‡Рµ, СѓС…СѓРґС€Р°СЋС‚ CTR Рё СЃРЅРёР¶Р°СЋС‚ РєРѕРЅС‚СЂРѕР»СЊ РЅР°Рґ С‚РµРј, "
+                    "РєР°РєРѕР№ РѕС„С„РµСЂ РїРѕРёСЃРєРѕРІРёРє РїРѕРєР°Р¶РµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ."
                 ),
                 evidence=[
-                    f"В выборке {len(problematic_titles)} из {len(sample_pages)} страниц имеют title длиннее 70 символов.",
+                    f"Р’ РІС‹Р±РѕСЂРєРµ {len(problematic_titles)} РёР· {len(sample_pages)} СЃС‚СЂР°РЅРёС† РёРјРµСЋС‚ title РґР»РёРЅРЅРµРµ 70 СЃРёРјРІРѕР»РѕРІ.",
                     *examples,
                 ],
                 recommendation=(
-                    "Пересобрать шаблоны title: сначала ключ и тип страницы, затем ценностный оффер и бренд. "
-                    "Ориентир — диапазон 55–70 символов."
+                    "РџРµСЂРµСЃРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ title: СЃРЅР°С‡Р°Р»Р° РєР»СЋС‡ Рё С‚РёРї СЃС‚СЂР°РЅРёС†С‹, Р·Р°С‚РµРј С†РµРЅРЅРѕСЃС‚РЅС‹Р№ РѕС„С„РµСЂ Рё Р±СЂРµРЅРґ. "
+                    "РћСЂРёРµРЅС‚РёСЂ вЂ” РґРёР°РїР°Р·РѕРЅ 55вЂ“70 СЃРёРјРІРѕР»РѕРІ."
                 ),
             )
         )
 
     if problematic_descriptions:
-        examples = [f"{human_path(snapshot.url)} — {len(snapshot.description)} симв." for snapshot in problematic_descriptions[:4]]
+        examples = [f"{human_path(snapshot.url)} вЂ” {len(snapshot.description)} СЃРёРјРІ." for snapshot in problematic_descriptions[:4]]
         issues.append(
             AuditIssue(
                 severity="Medium",
-                title="Meta description на части страниц вне рабочего диапазона",
+                title="Meta description РЅР° С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† РІРЅРµ СЂР°Р±РѕС‡РµРіРѕ РґРёР°РїР°Р·РѕРЅР°",
                 why_it_matters=(
-                    "Description — это управляемый оффер в сниппете. Когда он слишком короткий или перегруженный, "
-                    "поисковик чаще берет случайный кусок текста со страницы."
+                    "Description вЂ” СЌС‚Рѕ СѓРїСЂР°РІР»СЏРµРјС‹Р№ РѕС„С„РµСЂ РІ СЃРЅРёРїРїРµС‚Рµ. РљРѕРіРґР° РѕРЅ СЃР»РёС€РєРѕРј РєРѕСЂРѕС‚РєРёР№ РёР»Рё РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№, "
+                    "РїРѕРёСЃРєРѕРІРёРє С‡Р°С‰Рµ Р±РµСЂРµС‚ СЃР»СѓС‡Р°Р№РЅС‹Р№ РєСѓСЃРѕРє С‚РµРєСЃС‚Р° СЃРѕ СЃС‚СЂР°РЅРёС†С‹."
                 ),
                 evidence=[
-                    f"В выборке {len(problematic_descriptions)} из {len(sample_pages)} страниц имеют description вне комфортного диапазона.",
+                    f"Р’ РІС‹Р±РѕСЂРєРµ {len(problematic_descriptions)} РёР· {len(sample_pages)} СЃС‚СЂР°РЅРёС† РёРјРµСЋС‚ description РІРЅРµ РєРѕРјС„РѕСЂС‚РЅРѕРіРѕ РґРёР°РїР°Р·РѕРЅР°.",
                     *examples,
                 ],
                 recommendation=(
-                    "Собрать шаблоны description по типам страниц: ключ, ценность, доверие, регион и призыв. "
-                    "Ориентир — 140–160 символов."
+                    "РЎРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ description РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†: РєР»СЋС‡, С†РµРЅРЅРѕСЃС‚СЊ, РґРѕРІРµСЂРёРµ, СЂРµРіРёРѕРЅ Рё РїСЂРёР·С‹РІ. "
+                    "РћСЂРёРµРЅС‚РёСЂ вЂ” 140вЂ“160 СЃРёРјРІРѕР»РѕРІ."
                 ),
             )
         )
@@ -681,16 +682,16 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="Medium",
-                title="Изображения теряют SEO-сигналы из-за пустых alt",
+                title="РР·РѕР±СЂР°Р¶РµРЅРёСЏ С‚РµСЂСЏСЋС‚ SEO-СЃРёРіРЅР°Р»С‹ РёР·-Р·Р° РїСѓСЃС‚С‹С… alt",
                 why_it_matters=(
-                    "Alt важен и для поиска по картинкам, и для понимания контекста страницы, и для доступности. "
-                    "Когда у изображений нет описаний, сайт теряет дополнительный слой релевантности."
+                    "Alt РІР°Р¶РµРЅ Рё РґР»СЏ РїРѕРёСЃРєР° РїРѕ РєР°СЂС‚РёРЅРєР°Рј, Рё РґР»СЏ РїРѕРЅРёРјР°РЅРёСЏ РєРѕРЅС‚РµРєСЃС‚Р° СЃС‚СЂР°РЅРёС†С‹, Рё РґР»СЏ РґРѕСЃС‚СѓРїРЅРѕСЃС‚Рё. "
+                    "РљРѕРіРґР° Сѓ РёР·РѕР±СЂР°Р¶РµРЅРёР№ РЅРµС‚ РѕРїРёСЃР°РЅРёР№, СЃР°Р№С‚ С‚РµСЂСЏРµС‚ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ СЃР»РѕР№ СЂРµР»РµРІР°РЅС‚РЅРѕСЃС‚Рё."
                 ),
                 evidence=[
-                    f"На {len(alt_gaps)} из {len(sample_pages)} проверенных страниц есть изображения без alt.",
-                    f"Всего в выборке найдено {audit['total_missing_alt']} изображений без описаний.",
+                    f"РќР° {len(alt_gaps)} РёР· {len(sample_pages)} РїСЂРѕРІРµСЂРµРЅРЅС‹С… СЃС‚СЂР°РЅРёС† РµСЃС‚СЊ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ Р±РµР· alt.",
+                    f"Р’СЃРµРіРѕ РІ РІС‹Р±РѕСЂРєРµ РЅР°Р№РґРµРЅРѕ {audit['total_missing_alt']} РёР·РѕР±СЂР°Р¶РµРЅРёР№ Р±РµР· РѕРїРёСЃР°РЅРёР№.",
                 ],
-                recommendation="Ввести шаблонную генерацию alt по типу страницы и типу изображения: объект, интент, модель и бренд.",
+                recommendation="Р’РІРµСЃС‚Рё С€Р°Р±Р»РѕРЅРЅСѓСЋ РіРµРЅРµСЂР°С†РёСЋ alt РїРѕ С‚РёРїСѓ СЃС‚СЂР°РЅРёС†С‹ Рё С‚РёРїСѓ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ: РѕР±СЉРµРєС‚, РёРЅС‚РµРЅС‚, РјРѕРґРµР»СЊ Рё Р±СЂРµРЅРґ.",
             )
         )
 
@@ -699,15 +700,15 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="Medium",
-                title="Есть лишние redirect-цепочки у доменных вариантов",
+                title="Р•СЃС‚СЊ Р»РёС€РЅРёРµ redirect-С†РµРїРѕС‡РєРё Сѓ РґРѕРјРµРЅРЅС‹С… РІР°СЂРёР°РЅС‚РѕРІ",
                 why_it_matters=(
-                    "Дополнительные редиректы увеличивают задержку на входе и создают лишнюю техническую сложность для ботов и пользователей."
+                    "Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЂРµРґРёСЂРµРєС‚С‹ СѓРІРµР»РёС‡РёРІР°СЋС‚ Р·Р°РґРµСЂР¶РєСѓ РЅР° РІС…РѕРґРµ Рё СЃРѕР·РґР°СЋС‚ Р»РёС€РЅСЋСЋ С‚РµС…РЅРёС‡РµСЃРєСѓСЋ СЃР»РѕР¶РЅРѕСЃС‚СЊ РґР»СЏ Р±РѕС‚РѕРІ Рё РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№."
                 ),
                 evidence=[
-                    f"Путь `{longest_chain['url']}` отдает {len(longest_chain['chain'])} последовательных redirect.",
-                    f"Финальный URL — `{longest_chain['final_url']}`.",
+                    f"РџСѓС‚СЊ `{longest_chain['url']}` РѕС‚РґР°РµС‚ {len(longest_chain['chain'])} РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅС‹С… redirect.",
+                    f"Р¤РёРЅР°Р»СЊРЅС‹Р№ URL вЂ” `{longest_chain['final_url']}`.",
                 ],
-                recommendation="Свести все доменные варианты к одному прямому 301-редиректу на канонический HTTPS-домен.",
+                recommendation="РЎРІРµСЃС‚Рё РІСЃРµ РґРѕРјРµРЅРЅС‹Рµ РІР°СЂРёР°РЅС‚С‹ Рє РѕРґРЅРѕРјСѓ РїСЂСЏРјРѕРјСѓ 301-СЂРµРґРёСЂРµРєС‚Сѓ РЅР° РєР°РЅРѕРЅРёС‡РµСЃРєРёР№ HTTPS-РґРѕРјРµРЅ.",
             )
         )
 
@@ -715,13 +716,13 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="Low",
-                title="На части шаблона остался meta keywords",
+                title="РќР° С‡Р°СЃС‚Рё С€Р°Р±Р»РѕРЅР° РѕСЃС‚Р°Р»СЃСЏ meta keywords",
                 why_it_matters=(
-                    "Сам по себе тег уже не дает SEO-ценности, но показывает, что шаблон метаданных не дочищен "
-                    "и стоит привести его к современному виду."
+                    "РЎР°Рј РїРѕ СЃРµР±Рµ С‚РµРі СѓР¶Рµ РЅРµ РґР°РµС‚ SEO-С†РµРЅРЅРѕСЃС‚Рё, РЅРѕ РїРѕРєР°Р·С‹РІР°РµС‚, С‡С‚Рѕ С€Р°Р±Р»РѕРЅ РјРµС‚Р°РґР°РЅРЅС‹С… РЅРµ РґРѕС‡РёС‰РµРЅ "
+                    "Рё СЃС‚РѕРёС‚ РїСЂРёРІРµСЃС‚Рё РµРіРѕ Рє СЃРѕРІСЂРµРјРµРЅРЅРѕРјСѓ РІРёРґСѓ."
                 ),
-                evidence=["На главной найден тег meta keywords."],
-                recommendation="Убрать meta keywords из шаблона и сосредоточиться на title, description, H1, canonical и schema.",
+                evidence=["РќР° РіР»Р°РІРЅРѕР№ РЅР°Р№РґРµРЅ С‚РµРі meta keywords."],
+                recommendation="РЈР±СЂР°С‚СЊ meta keywords РёР· С€Р°Р±Р»РѕРЅР° Рё СЃРѕСЃСЂРµРґРѕС‚РѕС‡РёС‚СЊСЃСЏ РЅР° title, description, H1, canonical Рё schema.",
             )
         )
 
@@ -729,16 +730,16 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="Medium",
-                title="Карта сайта уже большая и требует сегментации",
+                title="РљР°СЂС‚Р° СЃР°Р№С‚Р° СѓР¶Рµ Р±РѕР»СЊС€Р°СЏ Рё С‚СЂРµР±СѓРµС‚ СЃРµРіРјРµРЅС‚Р°С†РёРё",
                 why_it_matters=(
-                    "Когда в sitemap несколько тысяч URL в одном потоке, сложнее контролировать индексацию категорий, карточек, "
-                    "служебных страниц и отдельных типов контента."
+                    "РљРѕРіРґР° РІ sitemap РЅРµСЃРєРѕР»СЊРєРѕ С‚С‹СЃСЏС‡ URL РІ РѕРґРЅРѕРј РїРѕС‚РѕРєРµ, СЃР»РѕР¶РЅРµРµ РєРѕРЅС‚СЂРѕР»РёСЂРѕРІР°С‚СЊ РёРЅРґРµРєСЃР°С†РёСЋ РєР°С‚РµРіРѕСЂРёР№, РєР°СЂС‚РѕС‡РµРє, "
+                    "СЃР»СѓР¶РµР±РЅС‹С… СЃС‚СЂР°РЅРёС† Рё РѕС‚РґРµР»СЊРЅС‹С… С‚РёРїРѕРІ РєРѕРЅС‚РµРЅС‚Р°."
                 ),
                 evidence=[
-                    f"В sitemap обнаружено {audit['sitemap_url_count']} уникальных URL.",
-                    "При таком объеме удобнее управлять индексом через отдельные sitemap по типам страниц.",
+                    f"Р’ sitemap РѕР±РЅР°СЂСѓР¶РµРЅРѕ {audit['sitemap_url_count']} СѓРЅРёРєР°Р»СЊРЅС‹С… URL.",
+                    "РџСЂРё С‚Р°РєРѕРј РѕР±СЉРµРјРµ СѓРґРѕР±РЅРµРµ СѓРїСЂР°РІР»СЏС‚СЊ РёРЅРґРµРєСЃРѕРј С‡РµСЂРµР· РѕС‚РґРµР»СЊРЅС‹Рµ sitemap РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†.",
                 ],
-                recommendation="Разделить sitemap минимум по основным типам страниц и отдельно контролировать покрытие каждого набора.",
+                recommendation="Р Р°Р·РґРµР»РёС‚СЊ sitemap РјРёРЅРёРјСѓРј РїРѕ РѕСЃРЅРѕРІРЅС‹Рј С‚РёРїР°Рј СЃС‚СЂР°РЅРёС† Рё РѕС‚РґРµР»СЊРЅРѕ РєРѕРЅС‚СЂРѕР»РёСЂРѕРІР°С‚СЊ РїРѕРєСЂС‹С‚РёРµ РєР°Р¶РґРѕРіРѕ РЅР°Р±РѕСЂР°.",
             )
         )
 
@@ -747,15 +748,15 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="Medium",
-                title="В sitemap много повторяющихся URL",
+                title="Р’ sitemap РјРЅРѕРіРѕ РїРѕРІС‚РѕСЂСЏСЋС‰РёС…СЃСЏ URL",
                 why_it_matters=(
-                    "Когда один и тот же URL повторяется в карте сайта много раз, поисковики получают лишний шум вместо чистого сигнала."
+                    "РљРѕРіРґР° РѕРґРёРЅ Рё С‚РѕС‚ Р¶Рµ URL РїРѕРІС‚РѕСЂСЏРµС‚СЃСЏ РІ РєР°СЂС‚Рµ СЃР°Р№С‚Р° РјРЅРѕРіРѕ СЂР°Р·, РїРѕРёСЃРєРѕРІРёРєРё РїРѕР»СѓС‡Р°СЋС‚ Р»РёС€РЅРёР№ С€СѓРј РІРјРµСЃС‚Рѕ С‡РёСЃС‚РѕРіРѕ СЃРёРіРЅР°Р»Р°."
                 ),
                 evidence=[
-                    f"В sitemap найдено {audit['sitemap_total_entries']} записей, но только {audit['sitemap_url_count']} уникальных URL.",
-                    f"Повторов: {duplicate_entries}.",
+                    f"Р’ sitemap РЅР°Р№РґРµРЅРѕ {audit['sitemap_total_entries']} Р·Р°РїРёСЃРµР№, РЅРѕ С‚РѕР»СЊРєРѕ {audit['sitemap_url_count']} СѓРЅРёРєР°Р»СЊРЅС‹С… URL.",
+                    f"РџРѕРІС‚РѕСЂРѕРІ: {duplicate_entries}.",
                 ],
-                recommendation="Пересобрать генерацию sitemap так, чтобы каждый индексируемый URL попадал туда один раз и без дублей.",
+                recommendation="РџРµСЂРµСЃРѕР±СЂР°С‚СЊ РіРµРЅРµСЂР°С†РёСЋ sitemap С‚Р°Рє, С‡С‚РѕР±С‹ РєР°Р¶РґС‹Р№ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Р№ URL РїРѕРїР°РґР°Р» С‚СѓРґР° РѕРґРёРЅ СЂР°Р· Рё Р±РµР· РґСѓР±Р»РµР№.",
             )
         )
 
@@ -768,25 +769,25 @@ def dynamic_build_strengths(audit: dict) -> list[str]:
     strengths: list[str] = []
     profile = infer_project_profile(audit)
     if audit["home_page"].status_code == 200:
-        strengths.append("Главная страница стабильно открывается по HTTPS и отдает 200 код без JS-заглушки.")
+        strengths.append("Р“Р»Р°РІРЅР°СЏ СЃС‚СЂР°РЅРёС†Р° СЃС‚Р°Р±РёР»СЊРЅРѕ РѕС‚РєСЂС‹РІР°РµС‚СЃСЏ РїРѕ HTTPS Рё РѕС‚РґР°РµС‚ 200 РєРѕРґ Р±РµР· JS-Р·Р°РіР»СѓС€РєРё.")
     if audit["average_response_ms"] and audit["average_response_ms"] < 1200:
-        strengths.append(f"Средний ответ по выборке — {audit['average_response_ms']} ms: техническая база не выглядит перегруженной.")
+        strengths.append(f"РЎСЂРµРґРЅРёР№ РѕС‚РІРµС‚ РїРѕ РІС‹Р±РѕСЂРєРµ вЂ” {audit['average_response_ms']} ms: С‚РµС…РЅРёС‡РµСЃРєР°СЏ Р±Р°Р·Р° РЅРµ РІС‹РіР»СЏРґРёС‚ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕР№.")
     if audit["sitemap_url_count"]:
-        strengths.append(f"У сайта уже есть карта сайта с {audit['sitemap_url_count']} уникальными URL, а значит база для управляемой индексации уже существует.")
+        strengths.append(f"РЈ СЃР°Р№С‚Р° СѓР¶Рµ РµСЃС‚СЊ РєР°СЂС‚Р° СЃР°Р№С‚Р° СЃ {audit['sitemap_url_count']} СѓРЅРёРєР°Р»СЊРЅС‹РјРё URL, Р° Р·РЅР°С‡РёС‚ Р±Р°Р·Р° РґР»СЏ СѓРїСЂР°РІР»СЏРµРјРѕР№ РёРЅРґРµРєСЃР°С†РёРё СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚.")
     if audit.get("canonical_coverage_ratio", 0) >= 0.6:
         strengths.append(
-            f"У {math.floor(audit['canonical_coverage_ratio'] * 100)}% страниц в выборке уже проставлен canonical, это хороший фундамент для чистой индексации."
+            f"РЈ {math.floor(audit['canonical_coverage_ratio'] * 100)}% СЃС‚СЂР°РЅРёС† РІ РІС‹Р±РѕСЂРєРµ СѓР¶Рµ РїСЂРѕСЃС‚Р°РІР»РµРЅ canonical, СЌС‚Рѕ С…РѕСЂРѕС€РёР№ С„СѓРЅРґР°РјРµРЅС‚ РґР»СЏ С‡РёСЃС‚РѕР№ РёРЅРґРµРєСЃР°С†РёРё."
         )
     if audit["schema_coverage_ratio"] >= 0.4:
-        strengths.append(f"Schema-разметка уже используется на {math.floor(audit['schema_coverage_ratio'] * 100)}% страниц выборки.")
+        strengths.append(f"Schema-СЂР°Р·РјРµС‚РєР° СѓР¶Рµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РЅР° {math.floor(audit['schema_coverage_ratio'] * 100)}% СЃС‚СЂР°РЅРёС† РІС‹Р±РѕСЂРєРё.")
     if audit["h1_coverage_ratio"] >= 0.8:
-        strengths.append(f"У {math.floor(audit['h1_coverage_ratio'] * 100)}% проверенных страниц есть H1 — структура документов уже не выглядит хаотичной.")
+        strengths.append(f"РЈ {math.floor(audit['h1_coverage_ratio'] * 100)}% РїСЂРѕРІРµСЂРµРЅРЅС‹С… СЃС‚СЂР°РЅРёС† РµСЃС‚СЊ H1 вЂ” СЃС‚СЂСѓРєС‚СѓСЂР° РґРѕРєСѓРјРµРЅС‚РѕРІ СѓР¶Рµ РЅРµ РІС‹РіР»СЏРґРёС‚ С…Р°РѕС‚РёС‡РЅРѕР№.")
     if profile["is_catalog"]:
-        strengths.append("У проекта уже есть каталог или кластерная URL-структура, которую можно усиливать без полной смены архитектуры.")
+        strengths.append("РЈ РїСЂРѕРµРєС‚Р° СѓР¶Рµ РµСЃС‚СЊ РєР°С‚Р°Р»РѕРі РёР»Рё РєР»Р°СЃС‚РµСЂРЅР°СЏ URL-СЃС‚СЂСѓРєС‚СѓСЂР°, РєРѕС‚РѕСЂСѓСЋ РјРѕР¶РЅРѕ СѓСЃРёР»РёРІР°С‚СЊ Р±РµР· РїРѕР»РЅРѕР№ СЃРјРµРЅС‹ Р°СЂС…РёС‚РµРєС‚СѓСЂС‹.")
     else:
-        strengths.append("У проекта уже есть базовый набор посадочных страниц, который можно докручивать точечно, а не пересобирать с нуля.")
+        strengths.append("РЈ РїСЂРѕРµРєС‚Р° СѓР¶Рµ РµСЃС‚СЊ Р±Р°Р·РѕРІС‹Р№ РЅР°Р±РѕСЂ РїРѕСЃР°РґРѕС‡РЅС‹С… СЃС‚СЂР°РЅРёС†, РєРѕС‚РѕСЂС‹Р№ РјРѕР¶РЅРѕ РґРѕРєСЂСѓС‡РёРІР°С‚СЊ С‚РѕС‡РµС‡РЅРѕ, Р° РЅРµ РїРµСЂРµСЃРѕР±РёСЂР°С‚СЊ СЃ РЅСѓР»СЏ.")
     if audit["llms_exists"]:
-        strengths.append("У проекта уже есть llms.txt, а значит можно отдельно усиливать видимость в ИИ-ответах и branded-покрытие.")
+        strengths.append("РЈ РїСЂРѕРµРєС‚Р° СѓР¶Рµ РµСЃС‚СЊ llms.txt, Р° Р·РЅР°С‡РёС‚ РјРѕР¶РЅРѕ РѕС‚РґРµР»СЊРЅРѕ СѓСЃРёР»РёРІР°С‚СЊ РІРёРґРёРјРѕСЃС‚СЊ РІ РР-РѕС‚РІРµС‚Р°С… Рё branded-РїРѕРєСЂС‹С‚РёРµ.")
     return strengths[:6]
 
 
@@ -795,24 +796,24 @@ def dynamic_build_growth_points(audit: dict) -> list[str]:
     points: list[str] = []
 
     if profile["is_catalog"]:
-        points.append("Усилить категории и подкатегории: интро-блоки, FAQ, условия покупки, блоки доверия и перелинковку на карточки.")
-        points.append("Пересобрать шаблоны карточек и листингов: короткие title, рабочие description, canonical, alt, schema и коммерческие CTA.")
+        points.append("РЈСЃРёР»РёС‚СЊ РєР°С‚РµРіРѕСЂРёРё Рё РїРѕРґРєР°С‚РµРіРѕСЂРёРё: РёРЅС‚СЂРѕ-Р±Р»РѕРєРё, FAQ, СѓСЃР»РѕРІРёСЏ РїРѕРєСѓРїРєРё, Р±Р»РѕРєРё РґРѕРІРµСЂРёСЏ Рё РїРµСЂРµР»РёРЅРєРѕРІРєСѓ РЅР° РєР°СЂС‚РѕС‡РєРё.")
+        points.append("РџРµСЂРµСЃРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ РєР°СЂС‚РѕС‡РµРє Рё Р»РёСЃС‚РёРЅРіРѕРІ: РєРѕСЂРѕС‚РєРёРµ title, СЂР°Р±РѕС‡РёРµ description, canonical, alt, schema Рё РєРѕРјРјРµСЂС‡РµСЃРєРёРµ CTA.")
     else:
-        points.append("Развести ключевые интенты по отдельным посадочным страницам, а не держать несколько тем внутри одного документа.")
-        points.append("Усилить страницы услуг и лид-страницы блоками доверия, кейсами, FAQ, CTA и answer-first фрагментами.")
+        points.append("Р Р°Р·РІРµСЃС‚Рё РєР»СЋС‡РµРІС‹Рµ РёРЅС‚РµРЅС‚С‹ РїРѕ РѕС‚РґРµР»СЊРЅС‹Рј РїРѕСЃР°РґРѕС‡РЅС‹Рј СЃС‚СЂР°РЅРёС†Р°Рј, Р° РЅРµ РґРµСЂР¶Р°С‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ С‚РµРј РІРЅСѓС‚СЂРё РѕРґРЅРѕРіРѕ РґРѕРєСѓРјРµРЅС‚Р°.")
+        points.append("РЈСЃРёР»РёС‚СЊ СЃС‚СЂР°РЅРёС†С‹ СѓСЃР»СѓРі Рё Р»РёРґ-СЃС‚СЂР°РЅРёС†С‹ Р±Р»РѕРєР°РјРё РґРѕРІРµСЂРёСЏ, РєРµР№СЃР°РјРё, FAQ, CTA Рё answer-first С„СЂР°РіРјРµРЅС‚Р°РјРё.")
 
-    points.append("Собрать единый слой шаблонов для title, description, H1 и canonical по всем типам страниц.")
+    points.append("РЎРѕР±СЂР°С‚СЊ РµРґРёРЅС‹Р№ СЃР»РѕР№ С€Р°Р±Р»РѕРЅРѕРІ РґР»СЏ title, description, H1 Рё canonical РїРѕ РІСЃРµРј С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†.")
 
     if audit["total_missing_alt"] > 0:
-        points.append("Развернуть image SEO: alt-шаблоны, подписи, контроль lazy-load и понятную связь изображения с интентом страницы.")
+        points.append("Р Р°Р·РІРµСЂРЅСѓС‚СЊ image SEO: alt-С€Р°Р±Р»РѕРЅС‹, РїРѕРґРїРёСЃРё, РєРѕРЅС‚СЂРѕР»СЊ lazy-load Рё РїРѕРЅСЏС‚РЅСѓСЋ СЃРІСЏР·СЊ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ СЃ РёРЅС‚РµРЅС‚РѕРј СЃС‚СЂР°РЅРёС†С‹.")
 
     if get_contact_related_pages(audit["sample_pages"]):
-        points.append("Доделать контактные и заявочные страницы как полноценные SEO-документы, а не как технические формы.")
+        points.append("Р”РѕРґРµР»Р°С‚СЊ РєРѕРЅС‚Р°РєС‚РЅС‹Рµ Рё Р·Р°СЏРІРѕС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РєР°Рє РїРѕР»РЅРѕС†РµРЅРЅС‹Рµ SEO-РґРѕРєСѓРјРµРЅС‚С‹, Р° РЅРµ РєР°Рє С‚РµС…РЅРёС‡РµСЃРєРёРµ С„РѕСЂРјС‹.")
 
-    points.append("Добавить answer-first блоки, FAQ и внутреннюю перелинковку между важными разделами для обычной и ИИ-выдачи.")
+    points.append("Р”РѕР±Р°РІРёС‚СЊ answer-first Р±Р»РѕРєРё, FAQ Рё РІРЅСѓС‚СЂРµРЅРЅСЋСЋ РїРµСЂРµР»РёРЅРєРѕРІРєСѓ РјРµР¶РґСѓ РІР°Р¶РЅС‹РјРё СЂР°Р·РґРµР»Р°РјРё РґР»СЏ РѕР±С‹С‡РЅРѕР№ Рё РР-РІС‹РґР°С‡Рё.")
 
     if audit["sitemap_url_count"] > 2000 or audit.get("sitemap_total_entries", 0) > audit["sitemap_url_count"] * 1.2:
-        points.append("Сегментировать sitemap и отдельно контролировать индексацию по типам страниц, чтобы быстрее находить сбои и дубли.")
+        points.append("РЎРµРіРјРµРЅС‚РёСЂРѕРІР°С‚СЊ sitemap Рё РѕС‚РґРµР»СЊРЅРѕ РєРѕРЅС‚СЂРѕР»РёСЂРѕРІР°С‚СЊ РёРЅРґРµРєСЃР°С†РёСЋ РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†, С‡С‚РѕР±С‹ Р±С‹СЃС‚СЂРµРµ РЅР°С…РѕРґРёС‚СЊ СЃР±РѕРё Рё РґСѓР±Р»Рё.")
 
     unique_points: list[str] = []
     for point in points:
@@ -829,72 +830,76 @@ def dynamic_build_roadmap(audit: dict) -> list[tuple[str, list[str]]]:
 
     sprint_1 = []
     if robots_conflict:
-        sprint_1.append("Убрать конфликт в robots.txt и синхронизировать Sitemap, Host и канонический домен.")
+        sprint_1.append("РЈР±СЂР°С‚СЊ РєРѕРЅС„Р»РёРєС‚ РІ robots.txt Рё СЃРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°С‚СЊ Sitemap, Host Рё РєР°РЅРѕРЅРёС‡РµСЃРєРёР№ РґРѕРјРµРЅ.")
     if redirect_chains:
-        sprint_1.append("Свести все доменные варианты к одному прямому 301-редиректу.")
+        sprint_1.append("РЎРІРµСЃС‚Рё РІСЃРµ РґРѕРјРµРЅРЅС‹Рµ РІР°СЂРёР°РЅС‚С‹ Рє РѕРґРЅРѕРјСѓ РїСЂСЏРјРѕРјСѓ 301-СЂРµРґРёСЂРµРєС‚Сѓ.")
     if query_pages:
-        sprint_1.append("Закрыть или нормализовать индексируемые query- и route-страницы с техническими формами.")
-    sprint_1.append("Подготовить единое ТЗ на title, description, H1 и canonical для основных типов страниц.")
+        sprint_1.append("Р—Р°РєСЂС‹С‚СЊ РёР»Рё РЅРѕСЂРјР°Р»РёР·РѕРІР°С‚СЊ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Рµ query- Рё route-СЃС‚СЂР°РЅРёС†С‹ СЃ С‚РµС…РЅРёС‡РµСЃРєРёРјРё С„РѕСЂРјР°РјРё.")
+    sprint_1.append("РџРѕРґРіРѕС‚РѕРІРёС‚СЊ РµРґРёРЅРѕРµ РўР— РЅР° title, description, H1 Рё canonical РґР»СЏ РѕСЃРЅРѕРІРЅС‹С… С‚РёРїРѕРІ СЃС‚СЂР°РЅРёС†.")
 
     sprint_2 = [
-        "Внедрить alt-шаблоны, проверить lazy-load и подчистить image SEO на ключевых страницах.",
-        "Разделить sitemap по типам страниц и подать отдельные карты в Яндекс.Вебмастер и GSC.",
-        "Обновить шаблоны сниппетов и проверить рост CTR по приоритетным страницам.",
+        "Р’РЅРµРґСЂРёС‚СЊ alt-С€Р°Р±Р»РѕРЅС‹, РїСЂРѕРІРµСЂРёС‚СЊ lazy-load Рё РїРѕРґС‡РёСЃС‚РёС‚СЊ image SEO РЅР° РєР»СЋС‡РµРІС‹С… СЃС‚СЂР°РЅРёС†Р°С….",
+        "Р Р°Р·РґРµР»РёС‚СЊ sitemap РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС† Рё РїРѕРґР°С‚СЊ РѕС‚РґРµР»СЊРЅС‹Рµ РєР°СЂС‚С‹ РІ РЇРЅРґРµРєСЃ.Р’РµР±РјР°СЃС‚РµСЂ Рё GSC.",
+        "РћР±РЅРѕРІРёС‚СЊ С€Р°Р±Р»РѕРЅС‹ СЃРЅРёРїРїРµС‚РѕРІ Рё РїСЂРѕРІРµСЂРёС‚СЊ СЂРѕСЃС‚ CTR РїРѕ РїСЂРёРѕСЂРёС‚РµС‚РЅС‹Рј СЃС‚СЂР°РЅРёС†Р°Рј.",
     ]
 
     if profile["is_catalog"]:
         sprint_3 = [
-            "Усилить категории и подкатегории контентом, FAQ, блоками доверия и перелинковкой.",
-            "Пересобрать карточки и листинги так, чтобы они лучше конвертировали SEO-трафик в заявки и продажи.",
-            "Добавить answer-first фрагменты и контент под ИИ-выдачу на главные спросовые кластеры.",
+            "РЈСЃРёР»РёС‚СЊ РєР°С‚РµРіРѕСЂРёРё Рё РїРѕРґРєР°С‚РµРіРѕСЂРёРё РєРѕРЅС‚РµРЅС‚РѕРј, FAQ, Р±Р»РѕРєР°РјРё РґРѕРІРµСЂРёСЏ Рё РїРµСЂРµР»РёРЅРєРѕРІРєРѕР№.",
+            "РџРµСЂРµСЃРѕР±СЂР°С‚СЊ РєР°СЂС‚РѕС‡РєРё Рё Р»РёСЃС‚РёРЅРіРё С‚Р°Рє, С‡С‚РѕР±С‹ РѕРЅРё Р»СѓС‡С€Рµ РєРѕРЅРІРµСЂС‚РёСЂРѕРІР°Р»Рё SEO-С‚СЂР°С„РёРє РІ Р·Р°СЏРІРєРё Рё РїСЂРѕРґР°Р¶Рё.",
+            "Р”РѕР±Р°РІРёС‚СЊ answer-first С„СЂР°РіРјРµРЅС‚С‹ Рё РєРѕРЅС‚РµРЅС‚ РїРѕРґ РР-РІС‹РґР°С‡Сѓ РЅР° РіР»Р°РІРЅС‹Рµ СЃРїСЂРѕСЃРѕРІС‹Рµ РєР»Р°СЃС‚РµСЂС‹.",
         ]
     else:
         sprint_3 = [
-            "Усилить посадочные страницы услуг, кейсов и контактов блоками доверия, CTA и answer-first контентом.",
-            "Развести ключевые кластеры спроса по отдельным страницам и выстроить между ними перелинковку.",
-            "Добавить FAQ и короткие экспертные блоки под обычную и ИИ-выдачу.",
+            "РЈСЃРёР»РёС‚СЊ РїРѕСЃР°РґРѕС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ СѓСЃР»СѓРі, РєРµР№СЃРѕРІ Рё РєРѕРЅС‚Р°РєС‚РѕРІ Р±Р»РѕРєР°РјРё РґРѕРІРµСЂРёСЏ, CTA Рё answer-first РєРѕРЅС‚РµРЅС‚РѕРј.",
+            "Р Р°Р·РІРµСЃС‚Рё РєР»СЋС‡РµРІС‹Рµ РєР»Р°СЃС‚РµСЂС‹ СЃРїСЂРѕСЃР° РїРѕ РѕС‚РґРµР»СЊРЅС‹Рј СЃС‚СЂР°РЅРёС†Р°Рј Рё РІС‹СЃС‚СЂРѕРёС‚СЊ РјРµР¶РґСѓ РЅРёРјРё РїРµСЂРµР»РёРЅРєРѕРІРєСѓ.",
+            "Р”РѕР±Р°РІРёС‚СЊ FAQ Рё РєРѕСЂРѕС‚РєРёРµ СЌРєСЃРїРµСЂС‚РЅС‹Рµ Р±Р»РѕРєРё РїРѕРґ РѕР±С‹С‡РЅСѓСЋ Рё РР-РІС‹РґР°С‡Сѓ.",
         ]
 
-    return [("0-14 дней", sprint_1[:4]), ("15-30 дней", sprint_2), ("31-60 дней", sprint_3)]
+    return [("0-14 РґРЅРµР№", sprint_1[:4]), ("15-30 РґРЅРµР№", sprint_2), ("31-60 РґРЅРµР№", sprint_3)]
 
 
 def build_executive_summary_dynamic(audit: dict) -> list[str]:
     profile = infer_project_profile(audit)
     top_issues = audit.get("issues", [])[:3]
-    top_issue_titles = "; ".join(issue.title for issue in top_issues) if top_issues else "технические и шаблонные ограничения"
-    project_shape = "каталог и кластерную структуру URL" if profile["is_catalog"] else "набор посадочных и лид-страниц"
+    top_issue_titles = "; ".join(issue.title for issue in top_issues) if top_issues else "С‚РµС…РЅРёС‡РµСЃРєРёРµ Рё С€Р°Р±Р»РѕРЅРЅС‹Рµ РѕРіСЂР°РЅРёС‡РµРЅРёСЏ"
+    project_shape = "РєР°С‚Р°Р»РѕРі Рё РєР»Р°СЃС‚РµСЂРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ URL" if profile["is_catalog"] else "РЅР°Р±РѕСЂ РїРѕСЃР°РґРѕС‡РЅС‹С… Рё Р»РёРґ-СЃС‚СЂР°РЅРёС†"
     growth_target = (
-        "лучше раскрыть спрос через категории, карточки и связанные кластеры"
+        "Р»СѓС‡С€Рµ СЂР°СЃРєСЂС‹С‚СЊ СЃРїСЂРѕСЃ С‡РµСЂРµР· РєР°С‚РµРіРѕСЂРёРё, РєР°СЂС‚РѕС‡РєРё Рё СЃРІСЏР·Р°РЅРЅС‹Рµ РєР»Р°СЃС‚РµСЂС‹"
         if profile["is_catalog"]
-        else "сильнее забирать спрос через отдельные посадочные страницы и экспертные блоки"
+        else "СЃРёР»СЊРЅРµРµ Р·Р°Р±РёСЂР°С‚СЊ СЃРїСЂРѕСЃ С‡РµСЂРµР· РѕС‚РґРµР»СЊРЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ Рё СЌРєСЃРїРµСЂС‚РЅС‹Рµ Р±Р»РѕРєРё"
     )
 
     return [
         (
-            f"У {audit['company_name']} уже есть рабочий фундамент: сайт отвечает по HTTPS, в выборке видны sitemap, "
-            f"H1-покрытие {math.floor(audit['h1_coverage_ratio'] * 100)}%, schema-покрытие {math.floor(audit['schema_coverage_ratio'] * 100)}% "
-            f"и {project_shape}, которую можно усиливать без полной пересборки проекта."
+            f"РЈ {audit['company_name']} СѓР¶Рµ РµСЃС‚СЊ СЂР°Р±РѕС‡РёР№ С„СѓРЅРґР°РјРµРЅС‚: СЃР°Р№С‚ РѕС‚РІРµС‡Р°РµС‚ РїРѕ HTTPS, РІ РІС‹Р±РѕСЂРєРµ РІРёРґРЅС‹ sitemap, "
+            f"H1-РїРѕРєСЂС‹С‚РёРµ {math.floor(audit['h1_coverage_ratio'] * 100)}%, schema-РїРѕРєСЂС‹С‚РёРµ {math.floor(audit['schema_coverage_ratio'] * 100)}% "
+            f"Рё {project_shape}, РєРѕС‚РѕСЂСѓСЋ РјРѕР¶РЅРѕ СѓСЃРёР»РёРІР°С‚СЊ Р±РµР· РїРѕР»РЅРѕР№ РїРµСЂРµСЃР±РѕСЂРєРё РїСЂРѕРµРєС‚Р°."
         ),
         (
-            f"Основные потери сейчас идут не из-за отсутствия спроса, а из-за слоя индексации и шаблонов: {top_issue_titles}. "
-            "Именно эти ограничения сильнее всего влияют на crawl budget, CTR и чистоту коммерческой выдачи."
+            f"РћСЃРЅРѕРІРЅС‹Рµ РїРѕС‚РµСЂРё СЃРµР№С‡Р°СЃ РёРґСѓС‚ РЅРµ РёР·-Р·Р° РѕС‚СЃСѓС‚СЃС‚РІРёСЏ СЃРїСЂРѕСЃР°, Р° РёР·-Р·Р° СЃР»РѕСЏ РёРЅРґРµРєСЃР°С†РёРё Рё С€Р°Р±Р»РѕРЅРѕРІ: {top_issue_titles}. "
+            "РРјРµРЅРЅРѕ СЌС‚Рё РѕРіСЂР°РЅРёС‡РµРЅРёСЏ СЃРёР»СЊРЅРµРµ РІСЃРµРіРѕ РІР»РёСЏСЋС‚ РЅР° crawl budget, CTR Рё С‡РёСЃС‚РѕС‚Сѓ РєРѕРјРјРµСЂС‡РµСЃРєРѕР№ РІС‹РґР°С‡Рё."
         ),
         (
-            f"Если сначала убрать технический шум, а затем пересобрать шаблоны и приоритетные страницы, проект сможет {growth_target} "
-            "и превратить текущую структуру сайта в более сильный источник SEO-трафика и заявок."
+            f"Р•СЃР»Рё СЃРЅР°С‡Р°Р»Р° СѓР±СЂР°С‚СЊ С‚РµС…РЅРёС‡РµСЃРєРёР№ С€СѓРј, Р° Р·Р°С‚РµРј РїРµСЂРµСЃРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ Рё РїСЂРёРѕСЂРёС‚РµС‚РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹, РїСЂРѕРµРєС‚ СЃРјРѕР¶РµС‚ {growth_target} "
+            "Рё РїСЂРµРІСЂР°С‚РёС‚СЊ С‚РµРєСѓС‰СѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ СЃР°Р№С‚Р° РІ Р±РѕР»РµРµ СЃРёР»СЊРЅС‹Р№ РёСЃС‚РѕС‡РЅРёРє SEO-С‚СЂР°С„РёРєР° Рё Р·Р°СЏРІРѕРє."
         ),
     ]
+
+
+def normalize_page_url(url: str) -> str:
+    parsed = urlparse(url.strip())
+    normalized_path = parsed.path.rstrip("/") or "/"
+    cleaned = parsed._replace(path=normalized_path, params="", fragment="")
+    return cleaned.geturl()
 
 
 def select_representative_urls(base_url: str, home_links: list[str], sitemap_urls: list[str], sample_size: int) -> list[str]:
     selected: list[str] = []
     seen: set[str] = set()
 
-    def normalize(url: str) -> str:
-        return url.rstrip("/") or url
-
     def add(url: str) -> None:
-        normalized = normalize(url)
+        normalized = normalize_page_url(url)
         if not normalized or normalized in seen:
             return
         seen.add(normalized)
@@ -954,13 +959,143 @@ def select_representative_urls(base_url: str, home_links: list[str], sitemap_url
     return selected[: sample_size + 10]
 
 
+def discover_page_links(session: requests.Session, url: str, base_domain: str) -> list[str]:
+    response, error = safe_get(session, url, timeout=30)
+    if error or response is None or response.status_code >= 400:
+        return []
+
+    content_type = response.headers.get("content-type", "")
+    if "html" not in content_type:
+        return []
+
+    soup = BeautifulSoup(response.text, "lxml")
+    discovered: list[str] = []
+    seen: set[str] = set()
+
+    for anchor in soup.find_all("a", href=True):
+        href = anchor.get("href", "").strip()
+        if not href or href.startswith(("#", "mailto:", "tel:", "javascript:")):
+            continue
+
+        absolute = normalize_page_url(urljoin(url, href))
+        parsed = urlparse(absolute)
+        if parsed.netloc != base_domain:
+            continue
+        if re.search(r"\.(pdf|jpg|jpeg|png|webp|svg|zip|doc|docx|xls|xlsx|ppt|pptx)$", parsed.path.lower()):
+            continue
+        if absolute in seen:
+            continue
+
+        seen.add(absolute)
+        discovered.append(absolute)
+
+    return discovered
+
+
+def crawl_internal_urls(
+    base_url: str,
+    seed_urls: list[str],
+    base_domain: str,
+    page_limit: int,
+) -> list[str]:
+    session = make_session()
+    queue = [base_url, *seed_urls]
+    discovered: list[str] = []
+    queued: set[str] = set()
+    visited: set[str] = set()
+    effective_limit = page_limit if page_limit > 0 else 400
+
+    for url in queue:
+        normalized = normalize_page_url(url)
+        queued.add(normalized)
+
+    while queue and len(discovered) < effective_limit:
+        current = normalize_page_url(queue.pop(0))
+        if current in visited:
+            continue
+
+        visited.add(current)
+        discovered.append(current)
+
+        for linked_url in discover_page_links(session, current, base_domain):
+            if linked_url in visited or linked_url in queued:
+                continue
+            queued.add(linked_url)
+            queue.append(linked_url)
+            if len(queued) >= effective_limit:
+                break
+
+    return discovered
+
+
+def build_audit_url_inventory(
+    base_url: str,
+    preferred_urls: list[str],
+    sitemap_urls: list[str],
+    base_domain: str,
+    requested_limit: int,
+) -> list[str]:
+    selected: list[str] = []
+    seen: set[str] = set()
+
+    def add(url: str) -> None:
+        normalized = normalize_page_url(url)
+        if not normalized or normalized in seen:
+            return
+        seen.add(normalized)
+        selected.append(normalized)
+
+    add(base_url)
+    for url in preferred_urls:
+        add(url)
+
+    if sitemap_urls:
+        for url in sitemap_urls:
+            add(url)
+        if requested_limit == 0:
+            supplemental_urls = crawl_internal_urls(base_url, preferred_urls[:12], base_domain, min(max(len(preferred_urls) * 12, 180), 480))
+            for url in supplemental_urls:
+                add(url)
+        if requested_limit > 0:
+            return selected[:requested_limit]
+        return selected
+
+    crawled_urls = crawl_internal_urls(base_url, preferred_urls, base_domain, requested_limit)
+    for url in crawled_urls:
+        add(url)
+
+    if requested_limit > 0:
+        return selected[:requested_limit]
+    return selected
+
+
+def analyse_pages_parallel(urls: list[str], base_domain: str, max_workers: int = 10) -> list[PageSnapshot]:
+    if not urls:
+        return []
+
+    results: list[PageSnapshot | None] = [None] * len(urls)
+
+    def worker(index: int, page_url: str) -> tuple[int, PageSnapshot]:
+        session = make_session()
+        return index, analyse_page(session, page_url, base_domain)
+
+    worker_count = max(1, min(max_workers, len(urls)))
+    with ThreadPoolExecutor(max_workers=worker_count) as executor:
+        futures = [executor.submit(worker, index, page_url) for index, page_url in enumerate(urls)]
+        for future in as_completed(futures):
+            index, snapshot = future.result()
+            results[index] = snapshot
+
+    return [snapshot for snapshot in results if snapshot is not None]
+
+
 def infer_issue_owner(issue: AuditIssue) -> str:
     haystack = f"{issue.title} {issue.recommendation}".lower()
     if any(token in haystack for token in ("robots", "sitemap", "redirect", "canonical", "query-url", "route", "host")):
         return "Backend / SEO"
     if any(token in haystack for token in ("schema", "json", "title", "description", "h1", "alt", "image", "snippet")):
         return "Frontend / SEO"
-    if any(token in haystack for token in ("контакт", "lead", "cta", "content", "faq", "перелинков")):
+    if any(token in haystack for token in ("РєРѕРЅС‚Р°РєС‚", "lead", "cta", "content", "faq", "РїРµСЂРµР»РёРЅРєРѕРІ")):
         return "SEO / Marketing"
     return "SEO"
 
@@ -976,11 +1111,11 @@ def build_priority_matrix(audit: dict) -> list[dict]:
     for issue in audit.get("issues", [])[:8]:
         impact, risk, business = severity_base.get(issue.severity, (4, 4, 4))
         haystack = f"{issue.title} {issue.recommendation}".lower()
-        if any(token in haystack for token in ("robots", "sitemap", "индекса", "canonical", "redirect")):
+        if any(token in haystack for token in ("robots", "sitemap", "РёРЅРґРµРєСЃР°", "canonical", "redirect")):
             impact = min(10, impact + 1)
         if any(token in haystack for token in ("title", "description", "ctr", "snippet", "schema")):
             business = min(10, business + 1)
-        if any(token in haystack for token in ("контакт", "lead", "route", "query-url")):
+        if any(token in haystack for token in ("РєРѕРЅС‚Р°РєС‚", "lead", "route", "query-url")):
             risk = min(10, risk + 1)
         rows.append(
             {
@@ -1007,20 +1142,20 @@ def build_quick_wins(audit: dict) -> list[dict]:
     if any("robots.txt" in title for title in issue_titles):
         quick_wins.append(
             {
-                "title": "Починить конфликт robots.txt и sitemap.xml",
-                "effort": "10-20 минут",
-                "impact": "Снимет конфликт сигналов для Яндекса и Google",
-                "action": "Убрать запрет на sitemap.xml и оставить одну корректную директиву Sitemap.",
+                "title": "РџРѕС‡РёРЅРёС‚СЊ РєРѕРЅС„Р»РёРєС‚ robots.txt Рё sitemap.xml",
+                "effort": "10-20 РјРёРЅСѓС‚",
+                "impact": "РЎРЅРёРјРµС‚ РєРѕРЅС„Р»РёРєС‚ СЃРёРіРЅР°Р»РѕРІ РґР»СЏ РЇРЅРґРµРєСЃР° Рё Google",
+                "action": "РЈР±СЂР°С‚СЊ Р·Р°РїСЂРµС‚ РЅР° sitemap.xml Рё РѕСЃС‚Р°РІРёС‚СЊ РѕРґРЅСѓ РєРѕСЂСЂРµРєС‚РЅСѓСЋ РґРёСЂРµРєС‚РёРІСѓ Sitemap.",
             }
         )
 
     if any("redirect" in title.lower() for title in issue_titles):
         quick_wins.append(
             {
-                "title": "Свести доменные редиректы к одному шагу",
-                "effort": "15-30 минут",
-                "impact": "Уберет лишнюю задержку и технический шум на входе",
-                "action": "Оставить единый 301 сразу на канонический HTTPS-домен без промежуточных хопов.",
+                "title": "РЎРІРµСЃС‚Рё РґРѕРјРµРЅРЅС‹Рµ СЂРµРґРёСЂРµРєС‚С‹ Рє РѕРґРЅРѕРјСѓ С€Р°РіСѓ",
+                "effort": "15-30 РјРёРЅСѓС‚",
+                "impact": "РЈР±РµСЂРµС‚ Р»РёС€РЅСЋСЋ Р·Р°РґРµСЂР¶РєСѓ Рё С‚РµС…РЅРёС‡РµСЃРєРёР№ С€СѓРј РЅР° РІС…РѕРґРµ",
+                "action": "РћСЃС‚Р°РІРёС‚СЊ РµРґРёРЅС‹Р№ 301 СЃСЂР°Р·Сѓ РЅР° РєР°РЅРѕРЅРёС‡РµСЃРєРёР№ HTTPS-РґРѕРјРµРЅ Р±РµР· РїСЂРѕРјРµР¶СѓС‚РѕС‡РЅС‹С… С…РѕРїРѕРІ.",
             }
         )
 
@@ -1028,50 +1163,50 @@ def build_quick_wins(audit: dict) -> list[dict]:
     if weak_contacts:
         quick_wins.append(
             {
-                "title": "Нормально оформить контакты и лид-страницы",
-                "effort": "30-60 минут",
-                "impact": "Поднимет доверие, брендовый запрос и конверсию",
-                "action": "Добавить H1, title, description, canonical и блоки доверия на страницу контактов/формы.",
+                "title": "РќРѕСЂРјР°Р»СЊРЅРѕ РѕС„РѕСЂРјРёС‚СЊ РєРѕРЅС‚Р°РєС‚С‹ Рё Р»РёРґ-СЃС‚СЂР°РЅРёС†С‹",
+                "effort": "30-60 РјРёРЅСѓС‚",
+                "impact": "РџРѕРґРЅРёРјРµС‚ РґРѕРІРµСЂРёРµ, Р±СЂРµРЅРґРѕРІС‹Р№ Р·Р°РїСЂРѕСЃ Рё РєРѕРЅРІРµСЂСЃРёСЋ",
+                "action": "Р”РѕР±Р°РІРёС‚СЊ H1, title, description, canonical Рё Р±Р»РѕРєРё РґРѕРІРµСЂРёСЏ РЅР° СЃС‚СЂР°РЅРёС†Сѓ РєРѕРЅС‚Р°РєС‚РѕРІ/С„РѕСЂРјС‹.",
             }
         )
 
     if audit.get("invalid_schema_count", 0):
         quick_wins.append(
             {
-                "title": "Исправить битую JSON-LD разметку",
-                "effort": "15-40 минут",
-                "impact": "Вернет валидную structured data в индекс",
-                "action": "Проверить синтаксис JSON-LD и пересобрать проблемные блоки schema на ключевых страницах.",
+                "title": "РСЃРїСЂР°РІРёС‚СЊ Р±РёС‚СѓСЋ JSON-LD СЂР°Р·РјРµС‚РєСѓ",
+                "effort": "15-40 РјРёРЅСѓС‚",
+                "impact": "Р’РµСЂРЅРµС‚ РІР°Р»РёРґРЅСѓСЋ structured data РІ РёРЅРґРµРєСЃ",
+                "action": "РџСЂРѕРІРµСЂРёС‚СЊ СЃРёРЅС‚Р°РєСЃРёСЃ JSON-LD Рё РїРµСЂРµСЃРѕР±СЂР°С‚СЊ РїСЂРѕР±Р»РµРјРЅС‹Рµ Р±Р»РѕРєРё schema РЅР° РєР»СЋС‡РµРІС‹С… СЃС‚СЂР°РЅРёС†Р°С….",
             }
         )
 
     if audit.get("title_missing_count", 0) or audit.get("description_missing_count", 0):
         quick_wins.append(
             {
-                "title": "Закрыть дыры в title и description",
-                "effort": "1-2 часа",
-                "impact": "Даст быстрый прирост управляемости сниппетов",
-                "action": "Дописать шаблоны генерации title/description для страниц без SEO-обвязки.",
+                "title": "Р—Р°РєСЂС‹С‚СЊ РґС‹СЂС‹ РІ title Рё description",
+                "effort": "1-2 С‡Р°СЃР°",
+                "impact": "Р”Р°СЃС‚ Р±С‹СЃС‚СЂС‹Р№ РїСЂРёСЂРѕСЃС‚ СѓРїСЂР°РІР»СЏРµРјРѕСЃС‚Рё СЃРЅРёРїРїРµС‚РѕРІ",
+                "action": "Р”РѕРїРёСЃР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ РіРµРЅРµСЂР°С†РёРё title/description РґР»СЏ СЃС‚СЂР°РЅРёС† Р±РµР· SEO-РѕР±РІСЏР·РєРё.",
             }
         )
 
     if audit.get("indexable_query_count", 0):
         quick_wins.append(
             {
-                "title": "Разрулить индексируемые query и route URL",
-                "effort": "30-90 минут",
-                "impact": "Сократит шум в индексе и освободит crawl budget",
-                "action": "Закрыть служебные query-страницы от индексации или перевести их на чистые SEO-friendly URL.",
+                "title": "Р Р°Р·СЂСѓР»РёС‚СЊ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Рµ query Рё route URL",
+                "effort": "30-90 РјРёРЅСѓС‚",
+                "impact": "РЎРѕРєСЂР°С‚РёС‚ С€СѓРј РІ РёРЅРґРµРєСЃРµ Рё РѕСЃРІРѕР±РѕРґРёС‚ crawl budget",
+                "action": "Р—Р°РєСЂС‹С‚СЊ СЃР»СѓР¶РµР±РЅС‹Рµ query-СЃС‚СЂР°РЅРёС†С‹ РѕС‚ РёРЅРґРµРєСЃР°С†РёРё РёР»Рё РїРµСЂРµРІРµСЃС‚Рё РёС… РЅР° С‡РёСЃС‚С‹Рµ SEO-friendly URL.",
             }
         )
 
     if audit.get("total_missing_alt", 0):
         quick_wins.append(
             {
-                "title": "Запустить шаблон alt для изображений",
-                "effort": "1-2 часа",
-                "impact": "Усилит image SEO и понятность карточек",
-                "action": "Собрать правила alt по типу страницы, товару, категории и ключевой сущности изображения.",
+                "title": "Р—Р°РїСѓСЃС‚РёС‚СЊ С€Р°Р±Р»РѕРЅ alt РґР»СЏ РёР·РѕР±СЂР°Р¶РµРЅРёР№",
+                "effort": "1-2 С‡Р°СЃР°",
+                "impact": "РЈСЃРёР»РёС‚ image SEO Рё РїРѕРЅСЏС‚РЅРѕСЃС‚СЊ РєР°СЂС‚РѕС‡РµРє",
+                "action": "РЎРѕР±СЂР°С‚СЊ РїСЂР°РІРёР»Р° alt РїРѕ С‚РёРїСѓ СЃС‚СЂР°РЅРёС†С‹, С‚РѕРІР°СЂСѓ, РєР°С‚РµРіРѕСЂРёРё Рё РєР»СЋС‡РµРІРѕР№ СЃСѓС‰РЅРѕСЃС‚Рё РёР·РѕР±СЂР°Р¶РµРЅРёСЏ.",
             }
         )
 
@@ -1082,40 +1217,40 @@ def build_strategic_moves(audit: dict) -> list[dict]:
     profile = infer_project_profile(audit)
     moves = [
         {
-            "title": "Пересобрать шаблоны коммерческих страниц как growth-layer",
-            "impact": "Высокое",
-            "effort": "5-10 дней",
-            "details": "Собрать единые требования к H1, title, description, canonical, FAQ, CTA, trust-блокам и перелинковке по всем ключевым типам страниц.",
+            "title": "РџРµСЂРµСЃРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ РєРѕРјРјРµСЂС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС† РєР°Рє growth-layer",
+            "impact": "Р’С‹СЃРѕРєРѕРµ",
+            "effort": "5-10 РґРЅРµР№",
+            "details": "РЎРѕР±СЂР°С‚СЊ РµРґРёРЅС‹Рµ С‚СЂРµР±РѕРІР°РЅРёСЏ Рє H1, title, description, canonical, FAQ, CTA, trust-Р±Р»РѕРєР°Рј Рё РїРµСЂРµР»РёРЅРєРѕРІРєРµ РїРѕ РІСЃРµРј РєР»СЋС‡РµРІС‹Рј С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†.",
         },
         {
-            "title": "Сделать управляемую архитектуру индексации",
-            "impact": "Высокое",
-            "effort": "3-7 дней",
-            "details": "Разделить sitemap по типам страниц, зачистить служебные route/query URL и настроить единый контроль над каноническими доменами и редиректами.",
+            "title": "РЎРґРµР»Р°С‚СЊ СѓРїСЂР°РІР»СЏРµРјСѓСЋ Р°СЂС…РёС‚РµРєС‚СѓСЂСѓ РёРЅРґРµРєСЃР°С†РёРё",
+            "impact": "Р’С‹СЃРѕРєРѕРµ",
+            "effort": "3-7 РґРЅРµР№",
+            "details": "Р Р°Р·РґРµР»РёС‚СЊ sitemap РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†, Р·Р°С‡РёСЃС‚РёС‚СЊ СЃР»СѓР¶РµР±РЅС‹Рµ route/query URL Рё РЅР°СЃС‚СЂРѕРёС‚СЊ РµРґРёРЅС‹Р№ РєРѕРЅС‚СЂРѕР»СЊ РЅР°Рґ РєР°РЅРѕРЅРёС‡РµСЃРєРёРјРё РґРѕРјРµРЅР°РјРё Рё СЂРµРґРёСЂРµРєС‚Р°РјРё.",
         },
         {
-            "title": "Усилить structured data и entity-сигналы",
-            "impact": "Среднее / высокое",
-            "effort": "2-5 дней",
-            "details": "Покрыть ключевые страницы валидной schema-разметкой и собрать данные так, чтобы сайт был понятнее обычной и ИИ-выдаче.",
+            "title": "РЈСЃРёР»РёС‚СЊ structured data Рё entity-СЃРёРіРЅР°Р»С‹",
+            "impact": "РЎСЂРµРґРЅРµРµ / РІС‹СЃРѕРєРѕРµ",
+            "effort": "2-5 РґРЅРµР№",
+            "details": "РџРѕРєСЂС‹С‚СЊ РєР»СЋС‡РµРІС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РІР°Р»РёРґРЅРѕР№ schema-СЂР°Р·РјРµС‚РєРѕР№ Рё СЃРѕР±СЂР°С‚СЊ РґР°РЅРЅС‹Рµ С‚Р°Рє, С‡С‚РѕР±С‹ СЃР°Р№С‚ Р±С‹Р» РїРѕРЅСЏС‚РЅРµРµ РѕР±С‹С‡РЅРѕР№ Рё РР-РІС‹РґР°С‡Рµ.",
         },
     ]
     if profile["is_catalog"]:
         moves.append(
             {
-                "title": "Развить спросовые кластеры через категории и карточки",
-                "impact": "Высокое",
-                "effort": "2-4 недели",
-                "details": "Собрать отдельные посадочные под главные кластеры спроса, усилить категории FAQ и ответами на выбор, а карточки сделать более конверсионными.",
+                "title": "Р Р°Р·РІРёС‚СЊ СЃРїСЂРѕСЃРѕРІС‹Рµ РєР»Р°СЃС‚РµСЂС‹ С‡РµСЂРµР· РєР°С‚РµРіРѕСЂРёРё Рё РєР°СЂС‚РѕС‡РєРё",
+                "impact": "Р’С‹СЃРѕРєРѕРµ",
+                "effort": "2-4 РЅРµРґРµР»Рё",
+                "details": "РЎРѕР±СЂР°С‚СЊ РѕС‚РґРµР»СЊРЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ РїРѕРґ РіР»Р°РІРЅС‹Рµ РєР»Р°СЃС‚РµСЂС‹ СЃРїСЂРѕСЃР°, СѓСЃРёР»РёС‚СЊ РєР°С‚РµРіРѕСЂРёРё FAQ Рё РѕС‚РІРµС‚Р°РјРё РЅР° РІС‹Р±РѕСЂ, Р° РєР°СЂС‚РѕС‡РєРё СЃРґРµР»Р°С‚СЊ Р±РѕР»РµРµ РєРѕРЅРІРµСЂСЃРёРѕРЅРЅС‹РјРё.",
             }
         )
     else:
         moves.append(
             {
-                "title": "Развести услуги по отдельным SEO-посадочным",
-                "impact": "Высокое",
-                "effort": "1-3 недели",
-                "details": "Вынести ключевые интенты в самостоятельные посадочные страницы и связать их перелинковкой, кейсами, FAQ и экспертными блоками.",
+                "title": "Р Р°Р·РІРµСЃС‚Рё СѓСЃР»СѓРіРё РїРѕ РѕС‚РґРµР»СЊРЅС‹Рј SEO-РїРѕСЃР°РґРѕС‡РЅС‹Рј",
+                "impact": "Р’С‹СЃРѕРєРѕРµ",
+                "effort": "1-3 РЅРµРґРµР»Рё",
+                "details": "Р’С‹РЅРµСЃС‚Рё РєР»СЋС‡РµРІС‹Рµ РёРЅС‚РµРЅС‚С‹ РІ СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ Рё СЃРІСЏР·Р°С‚СЊ РёС… РїРµСЂРµР»РёРЅРєРѕРІРєРѕР№, РєРµР№СЃР°РјРё, FAQ Рё СЌРєСЃРїРµСЂС‚РЅС‹РјРё Р±Р»РѕРєР°РјРё.",
             }
         )
     return moves
@@ -1165,7 +1300,7 @@ def build_phase_sections(audit: dict) -> list[dict]:
     commercial_pages = [
         page
         for page in sample_pages
-        if page.page_type in ("Главная", "Категория", "Подкатегория", "Товар", "Внутренняя") or page.has_forms
+        if page.page_type in ("Р“Р»Р°РІРЅР°СЏ", "РљР°С‚РµРіРѕСЂРёСЏ", "РџРѕРґРєР°С‚РµРіРѕСЂРёСЏ", "РўРѕРІР°СЂ", "Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ") or page.has_forms
     ]
     missing_schema_commercial = [page for page in commercial_pages if not page.schema_types]
     average_commercial_words = (
@@ -1176,246 +1311,246 @@ def build_phase_sections(audit: dict) -> list[dict]:
 
     return [
         {
-            "title": "Этап 1 — Crawl & Indexability",
-            "intro": "Проверяю, насколько чисто сайт отдает поисковикам сигналы для обхода и индексации.",
+            "title": "Р­С‚Р°Рї 1 вЂ” Crawl & Indexability",
+            "intro": "РџСЂРѕРІРµСЂСЏСЋ, РЅР°СЃРєРѕР»СЊРєРѕ С‡РёСЃС‚Рѕ СЃР°Р№С‚ РѕС‚РґР°РµС‚ РїРѕРёСЃРєРѕРІРёРєР°Рј СЃРёРіРЅР°Р»С‹ РґР»СЏ РѕР±С…РѕРґР° Рё РёРЅРґРµРєСЃР°С†РёРё.",
             "checks": [
                 {
-                    "name": "robots.txt и карта сайта",
-                    "checked": "Доступность robots.txt, директивы, sitemap, чистота сигналов для робота.",
-                    "method": "HTTP-запрос + разбор robots.txt и XML sitemap.",
+                    "name": "robots.txt Рё РєР°СЂС‚Р° СЃР°Р№С‚Р°",
+                    "checked": "Р”РѕСЃС‚СѓРїРЅРѕСЃС‚СЊ robots.txt, РґРёСЂРµРєС‚РёРІС‹, sitemap, С‡РёСЃС‚РѕС‚Р° СЃРёРіРЅР°Р»РѕРІ РґР»СЏ СЂРѕР±РѕС‚Р°.",
+                    "method": "HTTP-Р·Р°РїСЂРѕСЃ + СЂР°Р·Р±РѕСЂ robots.txt Рё XML sitemap.",
                     "metrics": [
                         ("robots.txt", f"{audit['robots_status']}"),
-                        ("Уникальных URL в sitemap", str(audit["sitemap_url_count"])),
-                        ("Всего записей в sitemap", str(audit.get("sitemap_total_entries", audit["sitemap_url_count"]))),
-                        ("Файлов sitemap обработано", str(len(audit.get("processed_sitemaps", [])))),
+                        ("РЈРЅРёРєР°Р»СЊРЅС‹С… URL РІ sitemap", str(audit["sitemap_url_count"])),
+                        ("Р’СЃРµРіРѕ Р·Р°РїРёСЃРµР№ РІ sitemap", str(audit.get("sitemap_total_entries", audit["sitemap_url_count"]))),
+                        ("Р¤Р°Р№Р»РѕРІ sitemap РѕР±СЂР°Р±РѕС‚Р°РЅРѕ", str(len(audit.get("processed_sitemaps", [])))),
                     ],
                     "findings": [
-                        "Есть конфликт между robots.txt и sitemap.xml." if any("robots.txt" in issue.title for issue in audit["issues"]) else "Критичного конфликта между robots.txt и sitemap.xml в выборке не видно.",
-                        "Карта сайта раздута дублями." if audit.get("sitemap_total_entries", 0) > audit["sitemap_url_count"] * 1.3 else "Сильного раздувания sitemap дублями в выборке не видно.",
-                        "Есть llms.txt, значит сайт уже можно дожимать и под ИИ-видимость." if audit.get("llms_exists") else "Отдельного llms.txt не найдено.",
+                        "Р•СЃС‚СЊ РєРѕРЅС„Р»РёРєС‚ РјРµР¶РґСѓ robots.txt Рё sitemap.xml." if any("robots.txt" in issue.title for issue in audit["issues"]) else "РљСЂРёС‚РёС‡РЅРѕРіРѕ РєРѕРЅС„Р»РёРєС‚Р° РјРµР¶РґСѓ robots.txt Рё sitemap.xml РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.",
+                        "РљР°СЂС‚Р° СЃР°Р№С‚Р° СЂР°Р·РґСѓС‚Р° РґСѓР±Р»СЏРјРё." if audit.get("sitemap_total_entries", 0) > audit["sitemap_url_count"] * 1.3 else "РЎРёР»СЊРЅРѕРіРѕ СЂР°Р·РґСѓРІР°РЅРёСЏ sitemap РґСѓР±Р»СЏРјРё РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.",
+                        "Р•СЃС‚СЊ llms.txt, Р·РЅР°С‡РёС‚ СЃР°Р№С‚ СѓР¶Рµ РјРѕР¶РЅРѕ РґРѕР¶РёРјР°С‚СЊ Рё РїРѕРґ РР-РІРёРґРёРјРѕСЃС‚СЊ." if audit.get("llms_exists") else "РћС‚РґРµР»СЊРЅРѕРіРѕ llms.txt РЅРµ РЅР°Р№РґРµРЅРѕ.",
                     ],
                     "priority": "HIGH" if any(issue.severity == "Critical" for issue in audit["issues"]) else "MEDIUM",
                     "owner": "Backend / SEO",
-                    "recommendation": "Синхронизировать robots.txt, sitemap и канонический домен так, чтобы робот видел один непротиворечивый сценарий обхода.",
+                    "recommendation": "РЎРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°С‚СЊ robots.txt, sitemap Рё РєР°РЅРѕРЅРёС‡РµСЃРєРёР№ РґРѕРјРµРЅ С‚Р°Рє, С‡С‚РѕР±С‹ СЂРѕР±РѕС‚ РІРёРґРµР» РѕРґРёРЅ РЅРµРїСЂРѕС‚РёРІРѕСЂРµС‡РёРІС‹Р№ СЃС†РµРЅР°СЂРёР№ РѕР±С…РѕРґР°.",
                 },
                 {
-                    "name": "Статус-коды, редиректы и каноникализация",
-                    "checked": "HTTP-коды ключевых URL, доменные редиректы, покрытие canonical.",
-                    "method": "HTTP-проверка доменных вариантов + парсинг rel=canonical по выборке страниц.",
+                    "name": "РЎС‚Р°С‚СѓСЃ-РєРѕРґС‹, СЂРµРґРёСЂРµРєС‚С‹ Рё РєР°РЅРѕРЅРёРєР°Р»РёР·Р°С†РёСЏ",
+                    "checked": "HTTP-РєРѕРґС‹ РєР»СЋС‡РµРІС‹С… URL, РґРѕРјРµРЅРЅС‹Рµ СЂРµРґРёСЂРµРєС‚С‹, РїРѕРєСЂС‹С‚РёРµ canonical.",
+                    "method": "HTTP-РїСЂРѕРІРµСЂРєР° РґРѕРјРµРЅРЅС‹С… РІР°СЂРёР°РЅС‚РѕРІ + РїР°СЂСЃРёРЅРі rel=canonical РїРѕ РІС‹Р±РѕСЂРєРµ СЃС‚СЂР°РЅРёС†.",
                     "metrics": [
-                        ("Страниц 200 в выборке", str(status_counter.get(200, 0))),
-                        ("Redirect-цепочек > 1 шага", str(len([item for item in audit["redirect_checks"] if len(item["chain"]) > 1]))),
+                        ("РЎС‚СЂР°РЅРёС† 200 РІ РІС‹Р±РѕСЂРєРµ", str(status_counter.get(200, 0))),
+                        ("Redirect-С†РµРїРѕС‡РµРє > 1 С€Р°РіР°", str(len([item for item in audit["redirect_checks"] if len(item["chain"]) > 1]))),
                         ("Canonical coverage", f"{math.floor(audit['canonical_coverage_ratio'] * 100)}%"),
-                        ("Индексируемых query-URL", str(len(query_pages))),
+                        ("РРЅРґРµРєСЃРёСЂСѓРµРјС‹С… query-URL", str(len(query_pages))),
                     ],
                     "findings": [
-                        f"В выборке {status_counter.get(200, 0)} страниц отвечают кодом 200." if status_counter else "Статус-коды в выборке проверить не удалось.",
-                        "Есть лишняя redirect-цепочка на доменных вариантах." if any("redirect" in issue.title.lower() for issue in audit["issues"]) else "Лишних доменных redirect-цепочек в ключевых вариантах не обнаружено.",
-                        "Есть индексируемые query- или route-URL, которые лучше почистить." if query_pages else "Шума от индексируемых query-страниц в выборке почти нет.",
+                        f"Р’ РІС‹Р±РѕСЂРєРµ {status_counter.get(200, 0)} СЃС‚СЂР°РЅРёС† РѕС‚РІРµС‡Р°СЋС‚ РєРѕРґРѕРј 200." if status_counter else "РЎС‚Р°С‚СѓСЃ-РєРѕРґС‹ РІ РІС‹Р±РѕСЂРєРµ РїСЂРѕРІРµСЂРёС‚СЊ РЅРµ СѓРґР°Р»РѕСЃСЊ.",
+                        "Р•СЃС‚СЊ Р»РёС€РЅСЏСЏ redirect-С†РµРїРѕС‡РєР° РЅР° РґРѕРјРµРЅРЅС‹С… РІР°СЂРёР°РЅС‚Р°С…." if any("redirect" in issue.title.lower() for issue in audit["issues"]) else "Р›РёС€РЅРёС… РґРѕРјРµРЅРЅС‹С… redirect-С†РµРїРѕС‡РµРє РІ РєР»СЋС‡РµРІС‹С… РІР°СЂРёР°РЅС‚Р°С… РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅРѕ.",
+                        "Р•СЃС‚СЊ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Рµ query- РёР»Рё route-URL, РєРѕС‚РѕСЂС‹Рµ Р»СѓС‡С€Рµ РїРѕС‡РёСЃС‚РёС‚СЊ." if query_pages else "РЁСѓРјР° РѕС‚ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹С… query-СЃС‚СЂР°РЅРёС† РІ РІС‹Р±РѕСЂРєРµ РїРѕС‡С‚Рё РЅРµС‚.",
                     ],
                     "priority": "HIGH" if query_pages else "MEDIUM",
                     "owner": "Backend / SEO",
-                    "recommendation": "Свести все доменные варианты к одному канону и либо закрыть служебные URL от индексации, либо перевести их на чистые SEO-friendly маршруты.",
+                    "recommendation": "РЎРІРµСЃС‚Рё РІСЃРµ РґРѕРјРµРЅРЅС‹Рµ РІР°СЂРёР°РЅС‚С‹ Рє РѕРґРЅРѕРјСѓ РєР°РЅРѕРЅСѓ Рё Р»РёР±Рѕ Р·Р°РєСЂС‹С‚СЊ СЃР»СѓР¶РµР±РЅС‹Рµ URL РѕС‚ РёРЅРґРµРєСЃР°С†РёРё, Р»РёР±Рѕ РїРµСЂРµРІРµСЃС‚Рё РёС… РЅР° С‡РёСЃС‚С‹Рµ SEO-friendly РјР°СЂС€СЂСѓС‚С‹.",
                 },
             ],
         },
         {
-            "title": "Этап 2 — Архитектура и внутренняя структура",
-            "intro": "Смотрю, насколько понятна архитектура сайта и как распределяются ссылки внутри выборки.",
+            "title": "Р­С‚Р°Рї 2 вЂ” РђСЂС…РёС‚РµРєС‚СѓСЂР° Рё РІРЅСѓС‚СЂРµРЅРЅСЏСЏ СЃС‚СЂСѓРєС‚СѓСЂР°",
+            "intro": "РЎРјРѕС‚СЂСЋ, РЅР°СЃРєРѕР»СЊРєРѕ РїРѕРЅСЏС‚РЅР° Р°СЂС…РёС‚РµРєС‚СѓСЂР° СЃР°Р№С‚Р° Рё РєР°Рє СЂР°СЃРїСЂРµРґРµР»СЏСЋС‚СЃСЏ СЃСЃС‹Р»РєРё РІРЅСѓС‚СЂРё РІС‹Р±РѕСЂРєРё.",
             "checks": [
                 {
-                    "name": "Типы страниц и покрытие выборки",
-                    "checked": "Какие типы URL реально попали в разбор и как сайт дробит спрос.",
-                    "method": "Классификация URL по глубине, query-параметрам и типам schema.",
+                    "name": "РўРёРїС‹ СЃС‚СЂР°РЅРёС† Рё РїРѕРєСЂС‹С‚РёРµ РІС‹Р±РѕСЂРєРё",
+                    "checked": "РљР°РєРёРµ С‚РёРїС‹ URL СЂРµР°Р»СЊРЅРѕ РїРѕРїР°Р»Рё РІ СЂР°Р·Р±РѕСЂ Рё РєР°Рє СЃР°Р№С‚ РґСЂРѕР±РёС‚ СЃРїСЂРѕСЃ.",
+                    "method": "РљР»Р°СЃСЃРёС„РёРєР°С†РёСЏ URL РїРѕ РіР»СѓР±РёРЅРµ, query-РїР°СЂР°РјРµС‚СЂР°Рј Рё С‚РёРїР°Рј schema.",
                     "metrics": [
-                        ("Главная", str(page_type_counter.get("Главная", 0))),
-                        ("Категории / подкатегории", str(page_type_counter.get("Категория", 0) + page_type_counter.get("Подкатегория", 0))),
-                        ("Внутренние страницы", str(page_type_counter.get("Внутренняя", 0))),
-                        ("Служебные URL", str(page_type_counter.get("Служебная", 0))),
+                        ("Р“Р»Р°РІРЅР°СЏ", str(page_type_counter.get("Р“Р»Р°РІРЅР°СЏ", 0))),
+                        ("РљР°С‚РµРіРѕСЂРёРё / РїРѕРґРєР°С‚РµРіРѕСЂРёРё", str(page_type_counter.get("РљР°С‚РµРіРѕСЂРёСЏ", 0) + page_type_counter.get("РџРѕРґРєР°С‚РµРіРѕСЂРёСЏ", 0))),
+                        ("Р’РЅСѓС‚СЂРµРЅРЅРёРµ СЃС‚СЂР°РЅРёС†С‹", str(page_type_counter.get("Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ", 0))),
+                        ("РЎР»СѓР¶РµР±РЅС‹Рµ URL", str(page_type_counter.get("РЎР»СѓР¶РµР±РЅР°СЏ", 0))),
                     ],
                     "findings": [
-                        "Выборка уже покрывает разные уровни структуры, поэтому видно не только главную, но и шаблоны внутренних страниц.",
-                        "В архитектуре есть служебные или route-страницы, которые смешиваются с коммерческими URL." if page_type_counter.get("Служебная", 0) else "Явного давления служебных URL на выборку почти нет.",
-                        f"Длинных путей в выборке: {len(long_path_pages)}." if long_path_pages else "Сильного перекоса в сторону слишком длинных URL в выборке не видно.",
+                        "Р’С‹Р±РѕСЂРєР° СѓР¶Рµ РїРѕРєСЂС‹РІР°РµС‚ СЂР°Р·РЅС‹Рµ СѓСЂРѕРІРЅРё СЃС‚СЂСѓРєС‚СѓСЂС‹, РїРѕСЌС‚РѕРјСѓ РІРёРґРЅРѕ РЅРµ С‚РѕР»СЊРєРѕ РіР»Р°РІРЅСѓСЋ, РЅРѕ Рё С€Р°Р±Р»РѕРЅС‹ РІРЅСѓС‚СЂРµРЅРЅРёС… СЃС‚СЂР°РЅРёС†.",
+                        "Р’ Р°СЂС…РёС‚РµРєС‚СѓСЂРµ РµСЃС‚СЊ СЃР»СѓР¶РµР±РЅС‹Рµ РёР»Рё route-СЃС‚СЂР°РЅРёС†С‹, РєРѕС‚РѕСЂС‹Рµ СЃРјРµС€РёРІР°СЋС‚СЃСЏ СЃ РєРѕРјРјРµСЂС‡РµСЃРєРёРјРё URL." if page_type_counter.get("РЎР»СѓР¶РµР±РЅР°СЏ", 0) else "РЇРІРЅРѕРіРѕ РґР°РІР»РµРЅРёСЏ СЃР»СѓР¶РµР±РЅС‹С… URL РЅР° РІС‹Р±РѕСЂРєСѓ РїРѕС‡С‚Рё РЅРµС‚.",
+                        f"Р”Р»РёРЅРЅС‹С… РїСѓС‚РµР№ РІ РІС‹Р±РѕСЂРєРµ: {len(long_path_pages)}." if long_path_pages else "РЎРёР»СЊРЅРѕРіРѕ РїРµСЂРµРєРѕСЃР° РІ СЃС‚РѕСЂРѕРЅСѓ СЃР»РёС€РєРѕРј РґР»РёРЅРЅС‹С… URL РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.",
                     ],
                     "priority": "MEDIUM",
                     "owner": "SEO / Backend",
-                    "recommendation": "Держать архитектуру спроса отдельной от служебной логики и не смешивать route/query URL с посадочными и коммерческими страницами.",
+                    "recommendation": "Р”РµСЂР¶Р°С‚СЊ Р°СЂС…РёС‚РµРєС‚СѓСЂСѓ СЃРїСЂРѕСЃР° РѕС‚РґРµР»СЊРЅРѕР№ РѕС‚ СЃР»СѓР¶РµР±РЅРѕР№ Р»РѕРіРёРєРё Рё РЅРµ СЃРјРµС€РёРІР°С‚СЊ route/query URL СЃ РїРѕСЃР°РґРѕС‡РЅС‹РјРё Рё РєРѕРјРјРµСЂС‡РµСЃРєРёРјРё СЃС‚СЂР°РЅРёС†Р°РјРё.",
                 },
                 {
-                    "name": "Внутренняя перелинковка и видимость ключевых страниц",
-                    "checked": "Сколько внутренних ссылок получают страницы и где есть просадки по вниманию сайта.",
-                    "method": "Подсчет внутренних ссылок на каждой странице выборки.",
+                    "name": "Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РїРµСЂРµР»РёРЅРєРѕРІРєР° Рё РІРёРґРёРјРѕСЃС‚СЊ РєР»СЋС‡РµРІС‹С… СЃС‚СЂР°РЅРёС†",
+                    "checked": "РЎРєРѕР»СЊРєРѕ РІРЅСѓС‚СЂРµРЅРЅРёС… СЃСЃС‹Р»РѕРє РїРѕР»СѓС‡Р°СЋС‚ СЃС‚СЂР°РЅРёС†С‹ Рё РіРґРµ РµСЃС‚СЊ РїСЂРѕСЃР°РґРєРё РїРѕ РІРЅРёРјР°РЅРёСЋ СЃР°Р№С‚Р°.",
+                    "method": "РџРѕРґСЃС‡РµС‚ РІРЅСѓС‚СЂРµРЅРЅРёС… СЃСЃС‹Р»РѕРє РЅР° РєР°Р¶РґРѕР№ СЃС‚СЂР°РЅРёС†Рµ РІС‹Р±РѕСЂРєРё.",
                     "metrics": [
-                        ("Среднее число внутренних ссылок", str(average_internal_links)),
-                        ("Минимум внутренних ссылок", str(low_link_pages[0].internal_links if low_link_pages else 0)),
-                        ("Максимум внутренних ссылок", str(max([page.internal_links for page in sample_pages], default=0))),
-                        ("Контактных/lead-страниц", str(len(contact_pages))),
+                        ("РЎСЂРµРґРЅРµРµ С‡РёСЃР»Рѕ РІРЅСѓС‚СЂРµРЅРЅРёС… СЃСЃС‹Р»РѕРє", str(average_internal_links)),
+                        ("РњРёРЅРёРјСѓРј РІРЅСѓС‚СЂРµРЅРЅРёС… СЃСЃС‹Р»РѕРє", str(low_link_pages[0].internal_links if low_link_pages else 0)),
+                        ("РњР°РєСЃРёРјСѓРј РІРЅСѓС‚СЂРµРЅРЅРёС… СЃСЃС‹Р»РѕРє", str(max([page.internal_links for page in sample_pages], default=0))),
+                        ("РљРѕРЅС‚Р°РєС‚РЅС‹С…/lead-СЃС‚СЂР°РЅРёС†", str(len(contact_pages))),
                     ],
                     "findings": [
-                        f"Слабее всего по внутренним ссылкам выглядят: {', '.join(human_path(page.url) for page in low_link_pages if page.url)}." if low_link_pages else "Слабые страницы по перелинковке не выделяются.",
-                        "Контактные страницы есть, но часть из них недооформлена как полноценные SEO-посадки." if weak_contact_pages else "Контактная зона в выборке выглядит цельно.",
-                        "Разумно добавить больше контекстных ссылок между близкими услугами, кейсами, блогом и лид-страницами.",
+                        f"РЎР»Р°Р±РµРµ РІСЃРµРіРѕ РїРѕ РІРЅСѓС‚СЂРµРЅРЅРёРј СЃСЃС‹Р»РєР°Рј РІС‹РіР»СЏРґСЏС‚: {', '.join(human_path(page.url) for page in low_link_pages if page.url)}." if low_link_pages else "РЎР»Р°Р±С‹Рµ СЃС‚СЂР°РЅРёС†С‹ РїРѕ РїРµСЂРµР»РёРЅРєРѕРІРєРµ РЅРµ РІС‹РґРµР»СЏСЋС‚СЃСЏ.",
+                        "РљРѕРЅС‚Р°РєС‚РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РµСЃС‚СЊ, РЅРѕ С‡Р°СЃС‚СЊ РёР· РЅРёС… РЅРµРґРѕРѕС„РѕСЂРјР»РµРЅР° РєР°Рє РїРѕР»РЅРѕС†РµРЅРЅС‹Рµ SEO-РїРѕСЃР°РґРєРё." if weak_contact_pages else "РљРѕРЅС‚Р°РєС‚РЅР°СЏ Р·РѕРЅР° РІ РІС‹Р±РѕСЂРєРµ РІС‹РіР»СЏРґРёС‚ С†РµР»СЊРЅРѕ.",
+                        "Р Р°Р·СѓРјРЅРѕ РґРѕР±Р°РІРёС‚СЊ Р±РѕР»СЊС€Рµ РєРѕРЅС‚РµРєСЃС‚РЅС‹С… СЃСЃС‹Р»РѕРє РјРµР¶РґСѓ Р±Р»РёР·РєРёРјРё СѓСЃР»СѓРіР°РјРё, РєРµР№СЃР°РјРё, Р±Р»РѕРіРѕРј Рё Р»РёРґ-СЃС‚СЂР°РЅРёС†Р°РјРё.",
                     ],
                     "priority": "MEDIUM",
                     "owner": "SEO / Marketing",
-                    "recommendation": "Усилить перелинковку вокруг приоритетных услуг и лид-страниц: связать спросовые страницы, кейсы, FAQ и CTA, а не надеяться только на меню и футер.",
+                    "recommendation": "РЈСЃРёР»РёС‚СЊ РїРµСЂРµР»РёРЅРєРѕРІРєСѓ РІРѕРєСЂСѓРі РїСЂРёРѕСЂРёС‚РµС‚РЅС‹С… СѓСЃР»СѓРі Рё Р»РёРґ-СЃС‚СЂР°РЅРёС†: СЃРІСЏР·Р°С‚СЊ СЃРїСЂРѕСЃРѕРІС‹Рµ СЃС‚СЂР°РЅРёС†С‹, РєРµР№СЃС‹, FAQ Рё CTA, Р° РЅРµ РЅР°РґРµСЏС‚СЊСЃСЏ С‚РѕР»СЊРєРѕ РЅР° РјРµРЅСЋ Рё С„СѓС‚РµСЂ.",
                 },
             ],
         },
         {
-            "title": "Этап 3 — On-Page SEO",
-            "intro": "Разбираю шаблоны title, description, H1 и то, насколько страницы готовы к нормальному сниппету.",
+            "title": "Р­С‚Р°Рї 3 вЂ” On-Page SEO",
+            "intro": "Р Р°Р·Р±РёСЂР°СЋ С€Р°Р±Р»РѕРЅС‹ title, description, H1 Рё С‚Рѕ, РЅР°СЃРєРѕР»СЊРєРѕ СЃС‚СЂР°РЅРёС†С‹ РіРѕС‚РѕРІС‹ Рє РЅРѕСЂРјР°Р»СЊРЅРѕРјСѓ СЃРЅРёРїРїРµС‚Сѓ.",
             "checks": [
                 {
-                    "name": "Title и meta description",
-                    "checked": "Покрытие, длина и пригодность сниппетов к управляемой выдаче.",
-                    "method": "Парсинг title и meta description по репрезентативной выборке страниц.",
+                    "name": "Title Рё meta description",
+                    "checked": "РџРѕРєСЂС‹С‚РёРµ, РґР»РёРЅР° Рё РїСЂРёРіРѕРґРЅРѕСЃС‚СЊ СЃРЅРёРїРїРµС‚РѕРІ Рє СѓРїСЂР°РІР»СЏРµРјРѕР№ РІС‹РґР°С‡Рµ.",
+                    "method": "РџР°СЂСЃРёРЅРі title Рё meta description РїРѕ СЂРµРїСЂРµР·РµРЅС‚Р°С‚РёРІРЅРѕР№ РІС‹Р±РѕСЂРєРµ СЃС‚СЂР°РЅРёС†.",
                     "metrics": [
-                        ("Title > 70 символов", str(len([page for page in sample_pages if len(page.title) > 70]))),
-                        ("Title отсутствует", str(len(missing_title_pages))),
-                        ("Description отсутствует", str(len(missing_description_pages))),
-                        ("Description вне диапазона", str(len([page for page in sample_pages if len(page.description) > 160 or (0 < len(page.description) < 120)]))),
+                        ("Title > 70 СЃРёРјРІРѕР»РѕРІ", str(len([page for page in sample_pages if len(page.title) > 70]))),
+                        ("Title РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚", str(len(missing_title_pages))),
+                        ("Description РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚", str(len(missing_description_pages))),
+                        ("Description РІРЅРµ РґРёР°РїР°Р·РѕРЅР°", str(len([page for page in sample_pages if len(page.description) > 160 or (0 < len(page.description) < 120)]))),
                     ],
                     "findings": [
-                        "Шаблоны title на части страниц перегружены по длине." if any("title" in issue.title.lower() for issue in audit["issues"]) else "Критической ямы по title в выборке не видно.",
-                        "Есть страницы без description, из-за чего сниппет будет собираться случайно." if missing_description_pages else "Description покрыты достаточно ровно.",
-                        f"Пустой title найден на: {', '.join(human_path(page.url) for page in missing_title_pages[:3])}." if missing_title_pages else "Пустых title в выборке почти нет.",
+                        "РЁР°Р±Р»РѕРЅС‹ title РЅР° С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† РїРµСЂРµРіСЂСѓР¶РµРЅС‹ РїРѕ РґР»РёРЅРµ." if any("title" in issue.title.lower() for issue in audit["issues"]) else "РљСЂРёС‚РёС‡РµСЃРєРѕР№ СЏРјС‹ РїРѕ title РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.",
+                        "Р•СЃС‚СЊ СЃС‚СЂР°РЅРёС†С‹ Р±РµР· description, РёР·-Р·Р° С‡РµРіРѕ СЃРЅРёРїРїРµС‚ Р±СѓРґРµС‚ СЃРѕР±РёСЂР°С‚СЊСЃСЏ СЃР»СѓС‡Р°Р№РЅРѕ." if missing_description_pages else "Description РїРѕРєСЂС‹С‚С‹ РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ СЂРѕРІРЅРѕ.",
+                        f"РџСѓСЃС‚РѕР№ title РЅР°Р№РґРµРЅ РЅР°: {', '.join(human_path(page.url) for page in missing_title_pages[:3])}." if missing_title_pages else "РџСѓСЃС‚С‹С… title РІ РІС‹Р±РѕСЂРєРµ РїРѕС‡С‚Рё РЅРµС‚.",
                     ],
                     "priority": "HIGH",
                     "owner": "SEO / Frontend",
-                    "recommendation": "Пересобрать правила генерации title и description под каждый тип страницы: коротко, конкретно, с ключом, оффером и контролем длины.",
+                    "recommendation": "РџРµСЂРµСЃРѕР±СЂР°С‚СЊ РїСЂР°РІРёР»Р° РіРµРЅРµСЂР°С†РёРё title Рё description РїРѕРґ РєР°Р¶РґС‹Р№ С‚РёРї СЃС‚СЂР°РЅРёС†С‹: РєРѕСЂРѕС‚РєРѕ, РєРѕРЅРєСЂРµС‚РЅРѕ, СЃ РєР»СЋС‡РѕРј, РѕС„С„РµСЂРѕРј Рё РєРѕРЅС‚СЂРѕР»РµРј РґР»РёРЅС‹.",
                 },
                 {
-                    "name": "H1, контентный каркас и тонкие страницы",
-                    "checked": "Наличие H1, плотность текстового слоя и качество базового on-page каркаса.",
-                    "method": "Парсинг H1 и подсчет слов в видимом контенте.",
+                    "name": "H1, РєРѕРЅС‚РµРЅС‚РЅС‹Р№ РєР°СЂРєР°СЃ Рё С‚РѕРЅРєРёРµ СЃС‚СЂР°РЅРёС†С‹",
+                    "checked": "РќР°Р»РёС‡РёРµ H1, РїР»РѕС‚РЅРѕСЃС‚СЊ С‚РµРєСЃС‚РѕРІРѕРіРѕ СЃР»РѕСЏ Рё РєР°С‡РµСЃС‚РІРѕ Р±Р°Р·РѕРІРѕРіРѕ on-page РєР°СЂРєР°СЃР°.",
+                    "method": "РџР°СЂСЃРёРЅРі H1 Рё РїРѕРґСЃС‡РµС‚ СЃР»РѕРІ РІ РІРёРґРёРјРѕРј РєРѕРЅС‚РµРЅС‚Рµ.",
                     "metrics": [
                         ("H1 coverage", f"{math.floor(audit['h1_coverage_ratio'] * 100)}%"),
-                        ("Страниц без H1", str(len(missing_h1_pages))),
-                        ("Среднее число слов", str(audit.get("average_words", 0))),
-                        ("Тонких страниц (<250 слов)", str(len(thin_pages))),
+                        ("РЎС‚СЂР°РЅРёС† Р±РµР· H1", str(len(missing_h1_pages))),
+                        ("РЎСЂРµРґРЅРµРµ С‡РёСЃР»Рѕ СЃР»РѕРІ", str(audit.get("average_words", 0))),
+                        ("РўРѕРЅРєРёС… СЃС‚СЂР°РЅРёС† (<250 СЃР»РѕРІ)", str(len(thin_pages))),
                     ],
                     "findings": [
-                        "У части страниц нет H1, поэтому поисковику сложнее понять главный интент URL." if missing_h1_pages else "По H1 каркас у выборки в целом собран неплохо.",
-                        "Есть тонкие страницы с минимальным текстовым слоем." if thin_pages else "Сильно пустых страниц в выборке немного.",
-                        "Даже при нормальном объеме текста нужно отдельно проверить, насколько хорошо он поддерживает коммерческий интент и FAQ-слой.",
+                        "РЈ С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† РЅРµС‚ H1, РїРѕСЌС‚РѕРјСѓ РїРѕРёСЃРєРѕРІРёРєСѓ СЃР»РѕР¶РЅРµРµ РїРѕРЅСЏС‚СЊ РіР»Р°РІРЅС‹Р№ РёРЅС‚РµРЅС‚ URL." if missing_h1_pages else "РџРѕ H1 РєР°СЂРєР°СЃ Сѓ РІС‹Р±РѕСЂРєРё РІ С†РµР»РѕРј СЃРѕР±СЂР°РЅ РЅРµРїР»РѕС…Рѕ.",
+                        "Р•СЃС‚СЊ С‚РѕРЅРєРёРµ СЃС‚СЂР°РЅРёС†С‹ СЃ РјРёРЅРёРјР°Р»СЊРЅС‹Рј С‚РµРєСЃС‚РѕРІС‹Рј СЃР»РѕРµРј." if thin_pages else "РЎРёР»СЊРЅРѕ РїСѓСЃС‚С‹С… СЃС‚СЂР°РЅРёС† РІ РІС‹Р±РѕСЂРєРµ РЅРµРјРЅРѕРіРѕ.",
+                        "Р”Р°Р¶Рµ РїСЂРё РЅРѕСЂРјР°Р»СЊРЅРѕРј РѕР±СЉРµРјРµ С‚РµРєСЃС‚Р° РЅСѓР¶РЅРѕ РѕС‚РґРµР»СЊРЅРѕ РїСЂРѕРІРµСЂРёС‚СЊ, РЅР°СЃРєРѕР»СЊРєРѕ С…РѕСЂРѕС€Рѕ РѕРЅ РїРѕРґРґРµСЂР¶РёРІР°РµС‚ РєРѕРјРјРµСЂС‡РµСЃРєРёР№ РёРЅС‚РµРЅС‚ Рё FAQ-СЃР»РѕР№.",
                     ],
                     "priority": "MEDIUM",
                     "owner": "SEO / Content",
-                    "recommendation": "На каждом ключевом URL закрепить понятный H1, интро, ответы на частые вопросы и короткие коммерческие блоки, чтобы страница работала не только на индекс, но и на конверсию.",
+                    "recommendation": "РќР° РєР°Р¶РґРѕРј РєР»СЋС‡РµРІРѕРј URL Р·Р°РєСЂРµРїРёС‚СЊ РїРѕРЅСЏС‚РЅС‹Р№ H1, РёРЅС‚СЂРѕ, РѕС‚РІРµС‚С‹ РЅР° С‡Р°СЃС‚С‹Рµ РІРѕРїСЂРѕСЃС‹ Рё РєРѕСЂРѕС‚РєРёРµ РєРѕРјРјРµСЂС‡РµСЃРєРёРµ Р±Р»РѕРєРё, С‡С‚РѕР±С‹ СЃС‚СЂР°РЅРёС†Р° СЂР°Р±РѕС‚Р°Р»Р° РЅРµ С‚РѕР»СЊРєРѕ РЅР° РёРЅРґРµРєСЃ, РЅРѕ Рё РЅР° РєРѕРЅРІРµСЂСЃРёСЋ.",
                 },
             ],
         },
         {
-            "title": "Этап 4 — Performance и CWV",
-            "intro": "Смотрю на скорость ответа, вес HTML и то, как медиа-слой может мешать загрузке.",
+            "title": "Р­С‚Р°Рї 4 вЂ” Performance Рё CWV",
+            "intro": "РЎРјРѕС‚СЂСЋ РЅР° СЃРєРѕСЂРѕСЃС‚СЊ РѕС‚РІРµС‚Р°, РІРµСЃ HTML Рё С‚Рѕ, РєР°Рє РјРµРґРёР°-СЃР»РѕР№ РјРѕР¶РµС‚ РјРµС€Р°С‚СЊ Р·Р°РіСЂСѓР·РєРµ.",
             "checks": [
                 {
-                    "name": "Ответ сервера и вес страниц",
-                    "checked": "TTFB-подобная скорость ответа и примерный вес HTML по выборке.",
-                    "method": "HTTP-ответы по ключевым URL без отдельного Lighthouse-прогона.",
+                    "name": "РћС‚РІРµС‚ СЃРµСЂРІРµСЂР° Рё РІРµСЃ СЃС‚СЂР°РЅРёС†",
+                    "checked": "TTFB-РїРѕРґРѕР±РЅР°СЏ СЃРєРѕСЂРѕСЃС‚СЊ РѕС‚РІРµС‚Р° Рё РїСЂРёРјРµСЂРЅС‹Р№ РІРµСЃ HTML РїРѕ РІС‹Р±РѕСЂРєРµ.",
+                    "method": "HTTP-РѕС‚РІРµС‚С‹ РїРѕ РєР»СЋС‡РµРІС‹Рј URL Р±РµР· РѕС‚РґРµР»СЊРЅРѕРіРѕ Lighthouse-РїСЂРѕРіРѕРЅР°.",
                     "metrics": [
-                        ("Средний ответ", f"{audit.get('average_response_ms', 0)} ms"),
-                        ("Средний HTML", f"{audit.get('average_html_kb', 0)} KB"),
-                        ("Максимум изображений на странице", str(max([page.image_count for page in sample_pages], default=0))),
-                        ("Страниц в выборке", str(len(sample_pages))),
+                        ("РЎСЂРµРґРЅРёР№ РѕС‚РІРµС‚", f"{audit.get('average_response_ms', 0)} ms"),
+                        ("РЎСЂРµРґРЅРёР№ HTML", f"{audit.get('average_html_kb', 0)} KB"),
+                        ("РњР°РєСЃРёРјСѓРј РёР·РѕР±СЂР°Р¶РµРЅРёР№ РЅР° СЃС‚СЂР°РЅРёС†Рµ", str(max([page.image_count for page in sample_pages], default=0))),
+                        ("РЎС‚СЂР°РЅРёС† РІ РІС‹Р±РѕСЂРєРµ", str(len(sample_pages))),
                     ],
                     "findings": [
-                        "Скорость ответа сервера сама по себе не выглядит главным стоп-фактором." if audit.get("average_response_ms", 0) < 600 else "Средний ответ уже стоит держать в зоне внимания.",
-                        "Реальные риски здесь чаще сидят в медиа-слое, шаблонах и клиентском рендеринге, чем в голом TTFB.",
+                        "РЎРєРѕСЂРѕСЃС‚СЊ РѕС‚РІРµС‚Р° СЃРµСЂРІРµСЂР° СЃР°РјР° РїРѕ СЃРµР±Рµ РЅРµ РІС‹РіР»СЏРґРёС‚ РіР»Р°РІРЅС‹Рј СЃС‚РѕРї-С„Р°РєС‚РѕСЂРѕРј." if audit.get("average_response_ms", 0) < 600 else "РЎСЂРµРґРЅРёР№ РѕС‚РІРµС‚ СѓР¶Рµ СЃС‚РѕРёС‚ РґРµСЂР¶Р°С‚СЊ РІ Р·РѕРЅРµ РІРЅРёРјР°РЅРёСЏ.",
+                        "Р РµР°Р»СЊРЅС‹Рµ СЂРёСЃРєРё Р·РґРµСЃСЊ С‡Р°С‰Рµ СЃРёРґСЏС‚ РІ РјРµРґРёР°-СЃР»РѕРµ, С€Р°Р±Р»РѕРЅР°С… Рё РєР»РёРµРЅС‚СЃРєРѕРј СЂРµРЅРґРµСЂРёРЅРіРµ, С‡РµРј РІ РіРѕР»РѕРј TTFB.",
                     ],
                     "priority": "MEDIUM",
                     "owner": "Frontend / Backend",
-                    "recommendation": "Проверить приоритетные страницы отдельным CWV-прогоном и зафиксировать LCP/CLS/INP после чистки медиа и шаблонов.",
+                    "recommendation": "РџСЂРѕРІРµСЂРёС‚СЊ РїСЂРёРѕСЂРёС‚РµС‚РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РѕС‚РґРµР»СЊРЅС‹Рј CWV-РїСЂРѕРіРѕРЅРѕРј Рё Р·Р°С„РёРєСЃРёСЂРѕРІР°С‚СЊ LCP/CLS/INP РїРѕСЃР»Рµ С‡РёСЃС‚РєРё РјРµРґРёР° Рё С€Р°Р±Р»РѕРЅРѕРІ.",
                 },
                 {
-                    "name": "Изображения, lazy loading и атрибуты размеров",
-                    "checked": "Насколько медиа-слой помогает или мешает SEO и стабильности верстки.",
-                    "method": "Парсинг img-тегов по репрезентативной выборке страниц.",
+                    "name": "РР·РѕР±СЂР°Р¶РµРЅРёСЏ, lazy loading Рё Р°С‚СЂРёР±СѓС‚С‹ СЂР°Р·РјРµСЂРѕРІ",
+                    "checked": "РќР°СЃРєРѕР»СЊРєРѕ РјРµРґРёР°-СЃР»РѕР№ РїРѕРјРѕРіР°РµС‚ РёР»Рё РјРµС€Р°РµС‚ SEO Рё СЃС‚Р°Р±РёР»СЊРЅРѕСЃС‚Рё РІРµСЂСЃС‚РєРё.",
+                    "method": "РџР°СЂСЃРёРЅРі img-С‚РµРіРѕРІ РїРѕ СЂРµРїСЂРµР·РµРЅС‚Р°С‚РёРІРЅРѕР№ РІС‹Р±РѕСЂРєРµ СЃС‚СЂР°РЅРёС†.",
                     "metrics": [
-                        ("Всего пропусков alt", str(audit.get("total_missing_alt", 0))),
-                        ("Пропусков lazy loading", str(total_lazy_gaps)),
-                        ("Изображений без width/height", str(total_dimension_gaps)),
-                        ("Изображений на главной", str(audit["home_page"].image_count)),
+                        ("Р’СЃРµРіРѕ РїСЂРѕРїСѓСЃРєРѕРІ alt", str(audit.get("total_missing_alt", 0))),
+                        ("РџСЂРѕРїСѓСЃРєРѕРІ lazy loading", str(total_lazy_gaps)),
+                        ("РР·РѕР±СЂР°Р¶РµРЅРёР№ Р±РµР· width/height", str(total_dimension_gaps)),
+                        ("РР·РѕР±СЂР°Р¶РµРЅРёР№ РЅР° РіР»Р°РІРЅРѕР№", str(audit["home_page"].image_count)),
                     ],
                     "findings": [
-                        "Изображения уже теряют SEO-сигналы из-за пропусков alt." if audit.get("total_missing_alt", 0) else "Массового провала по alt в выборке не видно.",
-                        "Отсутствие width/height повышает риск CLS и визуальной нестабильности." if total_dimension_gaps else "Атрибуты размеров на картинках в целом присутствуют.",
-                        "Lazy loading стоит выровнять шаблонно, а не править вручную по одной странице." if total_lazy_gaps else "Явной массовой проблемы по lazy loading в выборке не видно.",
+                        "РР·РѕР±СЂР°Р¶РµРЅРёСЏ СѓР¶Рµ С‚РµСЂСЏСЋС‚ SEO-СЃРёРіРЅР°Р»С‹ РёР·-Р·Р° РїСЂРѕРїСѓСЃРєРѕРІ alt." if audit.get("total_missing_alt", 0) else "РњР°СЃСЃРѕРІРѕРіРѕ РїСЂРѕРІР°Р»Р° РїРѕ alt РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.",
+                        "РћС‚СЃСѓС‚СЃС‚РІРёРµ width/height РїРѕРІС‹С€Р°РµС‚ СЂРёСЃРє CLS Рё РІРёР·СѓР°Р»СЊРЅРѕР№ РЅРµСЃС‚Р°Р±РёР»СЊРЅРѕСЃС‚Рё." if total_dimension_gaps else "РђС‚СЂРёР±СѓС‚С‹ СЂР°Р·РјРµСЂРѕРІ РЅР° РєР°СЂС‚РёРЅРєР°С… РІ С†РµР»РѕРј РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‚.",
+                        "Lazy loading СЃС‚РѕРёС‚ РІС‹СЂРѕРІРЅСЏС‚СЊ С€Р°Р±Р»РѕРЅРЅРѕ, Р° РЅРµ РїСЂР°РІРёС‚СЊ РІСЂСѓС‡РЅСѓСЋ РїРѕ РѕРґРЅРѕР№ СЃС‚СЂР°РЅРёС†Рµ." if total_lazy_gaps else "РЇРІРЅРѕР№ РјР°СЃСЃРѕРІРѕР№ РїСЂРѕР±Р»РµРјС‹ РїРѕ lazy loading РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.",
                     ],
                     "priority": "MEDIUM",
                     "owner": "Frontend / SEO",
-                    "recommendation": "Сделать единый image-шаблон: alt, width/height, lazy loading и, при необходимости, отдельную image-схему/карту сайта.",
+                    "recommendation": "РЎРґРµР»Р°С‚СЊ РµРґРёРЅС‹Р№ image-С€Р°Р±Р»РѕРЅ: alt, width/height, lazy loading Рё, РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё, РѕС‚РґРµР»СЊРЅСѓСЋ image-СЃС…РµРјСѓ/РєР°СЂС‚Сѓ СЃР°Р№С‚Р°.",
                 },
             ],
         },
         {
-            "title": "Этап 5 — Structured Data",
-            "intro": "Проверяю, насколько хорошо сайт объясняет поисковику сущности бизнеса, страниц и предложений.",
+            "title": "Р­С‚Р°Рї 5 вЂ” Structured Data",
+            "intro": "РџСЂРѕРІРµСЂСЏСЋ, РЅР°СЃРєРѕР»СЊРєРѕ С…РѕСЂРѕС€Рѕ СЃР°Р№С‚ РѕР±СЉСЏСЃРЅСЏРµС‚ РїРѕРёСЃРєРѕРІРёРєСѓ СЃСѓС‰РЅРѕСЃС‚Рё Р±РёР·РЅРµСЃР°, СЃС‚СЂР°РЅРёС† Рё РїСЂРµРґР»РѕР¶РµРЅРёР№.",
             "checks": [
                 {
-                    "name": "Покрытие schema-разметкой",
-                    "checked": "Какие типы schema реально встречаются и насколько широко они покрывают выборку.",
-                    "method": "Парсинг application/ld+json и сбор @type по ключевым URL.",
+                    "name": "РџРѕРєСЂС‹С‚РёРµ schema-СЂР°Р·РјРµС‚РєРѕР№",
+                    "checked": "РљР°РєРёРµ С‚РёРїС‹ schema СЂРµР°Р»СЊРЅРѕ РІСЃС‚СЂРµС‡Р°СЋС‚СЃСЏ Рё РЅР°СЃРєРѕР»СЊРєРѕ С€РёСЂРѕРєРѕ РѕРЅРё РїРѕРєСЂС‹РІР°СЋС‚ РІС‹Р±РѕСЂРєСѓ.",
+                    "method": "РџР°СЂСЃРёРЅРі application/ld+json Рё СЃР±РѕСЂ @type РїРѕ РєР»СЋС‡РµРІС‹Рј URL.",
                     "metrics": [
                         ("Schema coverage", f"{math.floor(audit['schema_coverage_ratio'] * 100)}%"),
-                        ("Страниц с битой JSON-LD", str(len(invalid_schema_pages))),
-                        ("Страниц без schema", str(len([page for page in sample_pages if not page.schema_types]))),
-                        ("Топ schema types", ", ".join(f"{name} ({count})" for name, count in schema_counter.most_common(3)) or "нет"),
+                        ("РЎС‚СЂР°РЅРёС† СЃ Р±РёС‚РѕР№ JSON-LD", str(len(invalid_schema_pages))),
+                        ("РЎС‚СЂР°РЅРёС† Р±РµР· schema", str(len([page for page in sample_pages if not page.schema_types]))),
+                        ("РўРѕРї schema types", ", ".join(f"{name} ({count})" for name, count in schema_counter.most_common(3)) or "РЅРµС‚"),
                     ],
                     "findings": [
-                        "Есть страницы с невалидной JSON-LD." if invalid_schema_pages else "Явных поломок JSON-LD в выборке не видно.",
-                        "Часть коммерческих страниц пока без schema-разметки." if missing_schema_commercial else "Коммерческие страницы в выборке уже неплохо покрыты schema.",
-                        "Даже при наличии schema важно, чтобы она соответствовала типу страницы и была валидной по синтаксису.",
+                        "Р•СЃС‚СЊ СЃС‚СЂР°РЅРёС†С‹ СЃ РЅРµРІР°Р»РёРґРЅРѕР№ JSON-LD." if invalid_schema_pages else "РЇРІРЅС‹С… РїРѕР»РѕРјРѕРє JSON-LD РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.",
+                        "Р§Р°СЃС‚СЊ РєРѕРјРјРµСЂС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС† РїРѕРєР° Р±РµР· schema-СЂР°Р·РјРµС‚РєРё." if missing_schema_commercial else "РљРѕРјРјРµСЂС‡РµСЃРєРёРµ СЃС‚СЂР°РЅРёС†С‹ РІ РІС‹Р±РѕСЂРєРµ СѓР¶Рµ РЅРµРїР»РѕС…Рѕ РїРѕРєСЂС‹С‚С‹ schema.",
+                        "Р”Р°Р¶Рµ РїСЂРё РЅР°Р»РёС‡РёРё schema РІР°Р¶РЅРѕ, С‡С‚РѕР±С‹ РѕРЅР° СЃРѕРѕС‚РІРµС‚СЃС‚РІРѕРІР°Р»Р° С‚РёРїСѓ СЃС‚СЂР°РЅРёС†С‹ Рё Р±С‹Р»Р° РІР°Р»РёРґРЅРѕР№ РїРѕ СЃРёРЅС‚Р°РєСЃРёСЃСѓ.",
                     ],
                     "priority": "HIGH" if invalid_schema_pages else "MEDIUM",
                     "owner": "Frontend / SEO",
-                    "recommendation": "Покрыть ключевые шаблоны валидной schema-разметкой и держать ее синхронной с реальным типом страницы: Organization, Service, Product, BreadcrumbList, FAQ, Article.",
+                    "recommendation": "РџРѕРєСЂС‹С‚СЊ РєР»СЋС‡РµРІС‹Рµ С€Р°Р±Р»РѕРЅС‹ РІР°Р»РёРґРЅРѕР№ schema-СЂР°Р·РјРµС‚РєРѕР№ Рё РґРµСЂР¶Р°С‚СЊ РµРµ СЃРёРЅС…СЂРѕРЅРЅРѕР№ СЃ СЂРµР°Р»СЊРЅС‹Рј С‚РёРїРѕРј СЃС‚СЂР°РЅРёС†С‹: Organization, Service, Product, BreadcrumbList, FAQ, Article.",
                 },
             ],
         },
         {
-            "title": "Этап 6 — Коммерческие страницы и контент",
-            "intro": "Смотрю, насколько сайт готов не только собирать индекс, но и превращать спрос в заявку.",
+            "title": "Р­С‚Р°Рї 6 вЂ” РљРѕРјРјРµСЂС‡РµСЃРєРёРµ СЃС‚СЂР°РЅРёС†С‹ Рё РєРѕРЅС‚РµРЅС‚",
+            "intro": "РЎРјРѕС‚СЂСЋ, РЅР°СЃРєРѕР»СЊРєРѕ СЃР°Р№С‚ РіРѕС‚РѕРІ РЅРµ С‚РѕР»СЊРєРѕ СЃРѕР±РёСЂР°С‚СЊ РёРЅРґРµРєСЃ, РЅРѕ Рё РїСЂРµРІСЂР°С‰Р°С‚СЊ СЃРїСЂРѕСЃ РІ Р·Р°СЏРІРєСѓ.",
             "checks": [
                 {
-                    "name": "Контактные и лид-страницы",
-                    "checked": "Есть ли на сайте страницы, которые можно продвигать как точки входа в заявку.",
-                    "method": "Поиск форм, контактных URL и базовой SEO-обвязки этих страниц.",
+                    "name": "РљРѕРЅС‚Р°РєС‚РЅС‹Рµ Рё Р»РёРґ-СЃС‚СЂР°РЅРёС†С‹",
+                    "checked": "Р•СЃС‚СЊ Р»Рё РЅР° СЃР°Р№С‚Рµ СЃС‚СЂР°РЅРёС†С‹, РєРѕС‚РѕСЂС‹Рµ РјРѕР¶РЅРѕ РїСЂРѕРґРІРёРіР°С‚СЊ РєР°Рє С‚РѕС‡РєРё РІС…РѕРґР° РІ Р·Р°СЏРІРєСѓ.",
+                    "method": "РџРѕРёСЃРє С„РѕСЂРј, РєРѕРЅС‚Р°РєС‚РЅС‹С… URL Рё Р±Р°Р·РѕРІРѕР№ SEO-РѕР±РІСЏР·РєРё СЌС‚РёС… СЃС‚СЂР°РЅРёС†.",
                     "metrics": [
-                        ("Контактных/lead-страниц", str(len(contact_pages))),
-                        ("Форм в выборке", str(len([page for page in sample_pages if page.has_forms]))),
-                        ("Слабых contact-страниц", str(len(weak_contact_pages))),
-                        ("Индексируемых route/query-страниц", str(len(query_pages))),
+                        ("РљРѕРЅС‚Р°РєС‚РЅС‹С…/lead-СЃС‚СЂР°РЅРёС†", str(len(contact_pages))),
+                        ("Р¤РѕСЂРј РІ РІС‹Р±РѕСЂРєРµ", str(len([page for page in sample_pages if page.has_forms]))),
+                        ("РЎР»Р°Р±С‹С… contact-СЃС‚СЂР°РЅРёС†", str(len(weak_contact_pages))),
+                        ("РРЅРґРµРєСЃРёСЂСѓРµРјС‹С… route/query-СЃС‚СЂР°РЅРёС†", str(len(query_pages))),
                     ],
                     "findings": [
-                        "Контактная зона уже есть, но часть страниц не оформлена как полноценные SEO-посадки." if weak_contact_pages else "Контактные страницы в выборке выглядят собранно.",
-                        "Есть формы, но нужно проверять, насколько вокруг них собран доверительный и коммерческий слой.",
-                        "Служебные query/route URL не должны конкурировать с нормальными посадочными страницами." if query_pages else "Шума от служебных лид-URL в выборке немного.",
+                        "РљРѕРЅС‚Р°РєС‚РЅР°СЏ Р·РѕРЅР° СѓР¶Рµ РµСЃС‚СЊ, РЅРѕ С‡Р°СЃС‚СЊ СЃС‚СЂР°РЅРёС† РЅРµ РѕС„РѕСЂРјР»РµРЅР° РєР°Рє РїРѕР»РЅРѕС†РµРЅРЅС‹Рµ SEO-РїРѕСЃР°РґРєРё." if weak_contact_pages else "РљРѕРЅС‚Р°РєС‚РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РІ РІС‹Р±РѕСЂРєРµ РІС‹РіР»СЏРґСЏС‚ СЃРѕР±СЂР°РЅРЅРѕ.",
+                        "Р•СЃС‚СЊ С„РѕСЂРјС‹, РЅРѕ РЅСѓР¶РЅРѕ РїСЂРѕРІРµСЂСЏС‚СЊ, РЅР°СЃРєРѕР»СЊРєРѕ РІРѕРєСЂСѓРі РЅРёС… СЃРѕР±СЂР°РЅ РґРѕРІРµСЂРёС‚РµР»СЊРЅС‹Р№ Рё РєРѕРјРјРµСЂС‡РµСЃРєРёР№ СЃР»РѕР№.",
+                        "РЎР»СѓР¶РµР±РЅС‹Рµ query/route URL РЅРµ РґРѕР»Р¶РЅС‹ РєРѕРЅРєСѓСЂРёСЂРѕРІР°С‚СЊ СЃ РЅРѕСЂРјР°Р»СЊРЅС‹РјРё РїРѕСЃР°РґРѕС‡РЅС‹РјРё СЃС‚СЂР°РЅРёС†Р°РјРё." if query_pages else "РЁСѓРјР° РѕС‚ СЃР»СѓР¶РµР±РЅС‹С… Р»РёРґ-URL РІ РІС‹Р±РѕСЂРєРµ РЅРµРјРЅРѕРіРѕ.",
                     ],
                     "priority": "HIGH",
                     "owner": "SEO / Marketing",
-                    "recommendation": "Сделать из контактов и заявки сильные посадочные: с оффером, ответами на возражения, блоками доверия, FAQ и аккуратной SEO-обвязкой.",
+                    "recommendation": "РЎРґРµР»Р°С‚СЊ РёР· РєРѕРЅС‚Р°РєС‚РѕРІ Рё Р·Р°СЏРІРєРё СЃРёР»СЊРЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ: СЃ РѕС„С„РµСЂРѕРј, РѕС‚РІРµС‚Р°РјРё РЅР° РІРѕР·СЂР°Р¶РµРЅРёСЏ, Р±Р»РѕРєР°РјРё РґРѕРІРµСЂРёСЏ, FAQ Рё Р°РєРєСѓСЂР°С‚РЅРѕР№ SEO-РѕР±РІСЏР·РєРѕР№.",
                 },
                 {
-                    "name": "Контентная глубина приоритетных страниц",
-                    "checked": "Хватает ли страницам фактуры, чтобы закрывать интент, а не просто существовать в индексе.",
-                    "method": "Подсчет слов и просмотр коммерческих шаблонов внутри репрезентативной выборки.",
+                    "name": "РљРѕРЅС‚РµРЅС‚РЅР°СЏ РіР»СѓР±РёРЅР° РїСЂРёРѕСЂРёС‚РµС‚РЅС‹С… СЃС‚СЂР°РЅРёС†",
+                    "checked": "РҐРІР°С‚Р°РµС‚ Р»Рё СЃС‚СЂР°РЅРёС†Р°Рј С„Р°РєС‚СѓСЂС‹, С‡С‚РѕР±С‹ Р·Р°РєСЂС‹РІР°С‚СЊ РёРЅС‚РµРЅС‚, Р° РЅРµ РїСЂРѕСЃС‚Рѕ СЃСѓС‰РµСЃС‚РІРѕРІР°С‚СЊ РІ РёРЅРґРµРєСЃРµ.",
+                    "method": "РџРѕРґСЃС‡РµС‚ СЃР»РѕРІ Рё РїСЂРѕСЃРјРѕС‚СЂ РєРѕРјРјРµСЂС‡РµСЃРєРёС… С€Р°Р±Р»РѕРЅРѕРІ РІРЅСѓС‚СЂРё СЂРµРїСЂРµР·РµРЅС‚Р°С‚РёРІРЅРѕР№ РІС‹Р±РѕСЂРєРё.",
                     "metrics": [
-                        ("Коммерческих страниц в выборке", str(len(commercial_pages))),
-                        ("Среднее число слов", str(average_commercial_words)),
-                        ("Тонких страниц", str(len(thin_pages))),
-                        ("Страниц без schema среди коммерческих", str(len(missing_schema_commercial))),
+                        ("РљРѕРјРјРµСЂС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС† РІ РІС‹Р±РѕСЂРєРµ", str(len(commercial_pages))),
+                        ("РЎСЂРµРґРЅРµРµ С‡РёСЃР»Рѕ СЃР»РѕРІ", str(average_commercial_words)),
+                        ("РўРѕРЅРєРёС… СЃС‚СЂР°РЅРёС†", str(len(thin_pages))),
+                        ("РЎС‚СЂР°РЅРёС† Р±РµР· schema СЃСЂРµРґРё РєРѕРјРјРµСЂС‡РµСЃРєРёС…", str(len(missing_schema_commercial))),
                     ],
                     "findings": [
-                        "Одного объема текста недостаточно: страницы должны объяснять выбор, цену, процесс, сроки и следующий шаг.",
-                        "Часть страниц остается тонкой по фактуре." if thin_pages else "Сильно пустых коммерческих страниц в выборке немного.",
-                        "Потенциал роста лежит не только в SEO-текстах, но и в блоках доверия, FAQ, таблицах сравнения и ответах на спрос.",
+                        "РћРґРЅРѕРіРѕ РѕР±СЉРµРјР° С‚РµРєСЃС‚Р° РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ: СЃС‚СЂР°РЅРёС†С‹ РґРѕР»Р¶РЅС‹ РѕР±СЉСЏСЃРЅСЏС‚СЊ РІС‹Р±РѕСЂ, С†РµРЅСѓ, РїСЂРѕС†РµСЃСЃ, СЃСЂРѕРєРё Рё СЃР»РµРґСѓСЋС‰РёР№ С€Р°Рі.",
+                        "Р§Р°СЃС‚СЊ СЃС‚СЂР°РЅРёС† РѕСЃС‚Р°РµС‚СЃСЏ С‚РѕРЅРєРѕР№ РїРѕ С„Р°РєС‚СѓСЂРµ." if thin_pages else "РЎРёР»СЊРЅРѕ РїСѓСЃС‚С‹С… РєРѕРјРјРµСЂС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС† РІ РІС‹Р±РѕСЂРєРµ РЅРµРјРЅРѕРіРѕ.",
+                        "РџРѕС‚РµРЅС†РёР°Р» СЂРѕСЃС‚Р° Р»РµР¶РёС‚ РЅРµ С‚РѕР»СЊРєРѕ РІ SEO-С‚РµРєСЃС‚Р°С…, РЅРѕ Рё РІ Р±Р»РѕРєР°С… РґРѕРІРµСЂРёСЏ, FAQ, С‚Р°Р±Р»РёС†Р°С… СЃСЂР°РІРЅРµРЅРёСЏ Рё РѕС‚РІРµС‚Р°С… РЅР° СЃРїСЂРѕСЃ.",
                     ],
                     "priority": "MEDIUM",
                     "owner": "SEO / Content / Marketing",
-                    "recommendation": "Пересобрать приоритетные посадочные под коммерческий интент: добавить доказательства, FAQ, answer-first блоки, цены/сценарии и перелинковку на соседние точки спроса.",
+                    "recommendation": "РџРµСЂРµСЃРѕР±СЂР°С‚СЊ РїСЂРёРѕСЂРёС‚РµС‚РЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ РїРѕРґ РєРѕРјРјРµСЂС‡РµСЃРєРёР№ РёРЅС‚РµРЅС‚: РґРѕР±Р°РІРёС‚СЊ РґРѕРєР°Р·Р°С‚РµР»СЊСЃС‚РІР°, FAQ, answer-first Р±Р»РѕРєРё, С†РµРЅС‹/СЃС†РµРЅР°СЂРёРё Рё РїРµСЂРµР»РёРЅРєРѕРІРєСѓ РЅР° СЃРѕСЃРµРґРЅРёРµ С‚РѕС‡РєРё СЃРїСЂРѕСЃР°.",
                 },
             ],
         },
@@ -1438,17 +1573,17 @@ def build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="Critical",
-                title="robots.txt конфликтует с собственной картой сайта",
+                title="robots.txt РєРѕРЅС„Р»РёРєС‚СѓРµС‚ СЃ СЃРѕР±СЃС‚РІРµРЅРЅРѕР№ РєР°СЂС‚РѕР№ СЃР°Р№С‚Р°",
                 why_it_matters=(
-                    "Сейчас в robots.txt одновременно указан Sitemap и стоит Disallow на sitemap.xml. "
-                    "Для Яндекса и части сервисов это выглядит как конфликт сигналов и мешает чистой индексации."
+                    "РЎРµР№С‡Р°СЃ РІ robots.txt РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ СѓРєР°Р·Р°РЅ Sitemap Рё СЃС‚РѕРёС‚ Disallow РЅР° sitemap.xml. "
+                    "Р”Р»СЏ РЇРЅРґРµРєСЃР° Рё С‡Р°СЃС‚Рё СЃРµСЂРІРёСЃРѕРІ СЌС‚Рѕ РІС‹РіР»СЏРґРёС‚ РєР°Рє РєРѕРЅС„Р»РёРєС‚ СЃРёРіРЅР°Р»РѕРІ Рё РјРµС€Р°РµС‚ С‡РёСЃС‚РѕР№ РёРЅРґРµРєСЃР°С†РёРё."
                 ),
                 evidence=[
-                    "В robots.txt найдено правило `Disallow: *sitemap.xml`.",
-                    "Одновременно файл содержит `Sitemap: https://akvarium-akvas.ru/sitemap.xml`.",
+                    "Р’ robots.txt РЅР°Р№РґРµРЅРѕ РїСЂР°РІРёР»Рѕ `Disallow: *sitemap.xml`.",
+                    "РћРґРЅРѕРІСЂРµРјРµРЅРЅРѕ С„Р°Р№Р» СЃРѕРґРµСЂР¶РёС‚ `Sitemap: https://akvarium-akvas.ru/sitemap.xml`.",
                 ],
                 recommendation=(
-                    "Удалить запрет на sitemap.xml, оставить только директиву Sitemap и привести Host к чистому домену без протокола."
+                    "РЈРґР°Р»РёС‚СЊ Р·Р°РїСЂРµС‚ РЅР° sitemap.xml, РѕСЃС‚Р°РІРёС‚СЊ С‚РѕР»СЊРєРѕ РґРёСЂРµРєС‚РёРІСѓ Sitemap Рё РїСЂРёРІРµСЃС‚Рё Host Рє С‡РёСЃС‚РѕРјСѓ РґРѕРјРµРЅСѓ Р±РµР· РїСЂРѕС‚РѕРєРѕР»Р°."
                 ),
             )
         )
@@ -1458,23 +1593,23 @@ def build_issue_list(audit: dict) -> list[AuditIssue]:
     if contact_page and (not contact_page.h1s or not contact_page.description or not contact_page.canonical):
         evidence = []
         if not contact_page.h1s:
-            evidence.append("Страница /contacts открывается без H1.")
+            evidence.append("РЎС‚СЂР°РЅРёС†Р° /contacts РѕС‚РєСЂС‹РІР°РµС‚СЃСЏ Р±РµР· H1.")
         if not contact_page.description:
-            evidence.append("На /contacts отсутствует meta description.")
+            evidence.append("РќР° /contacts РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ meta description.")
         if not contact_page.canonical:
-            evidence.append("На /contacts отсутствует canonical.")
+            evidence.append("РќР° /contacts РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ canonical.")
         issues.append(
             AuditIssue(
                 severity="High",
-                title="Контактные и lead-страницы недооптимизированы",
+                title="РљРѕРЅС‚Р°РєС‚РЅС‹Рµ Рё lead-СЃС‚СЂР°РЅРёС†С‹ РЅРµРґРѕРѕРїС‚РёРјРёР·РёСЂРѕРІР°РЅС‹",
                 why_it_matters=(
-                    "Контактные страницы участвуют в доверии, конверсии и брендовой выдаче. "
-                    "Когда у них нет базовой SEO-разметки, сайт теряет и кликабельность, и качество индекса."
+                    "РљРѕРЅС‚Р°РєС‚РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ СѓС‡Р°СЃС‚РІСѓСЋС‚ РІ РґРѕРІРµСЂРёРё, РєРѕРЅРІРµСЂСЃРёРё Рё Р±СЂРµРЅРґРѕРІРѕР№ РІС‹РґР°С‡Рµ. "
+                    "РљРѕРіРґР° Сѓ РЅРёС… РЅРµС‚ Р±Р°Р·РѕРІРѕР№ SEO-СЂР°Р·РјРµС‚РєРё, СЃР°Р№С‚ С‚РµСЂСЏРµС‚ Рё РєР»РёРєР°Р±РµР»СЊРЅРѕСЃС‚СЊ, Рё РєР°С‡РµСЃС‚РІРѕ РёРЅРґРµРєСЃР°."
                 ),
-                evidence=evidence or ["Контактная зона сайта не оформлена как полноценная посадочная страница."],
+                evidence=evidence or ["РљРѕРЅС‚Р°РєС‚РЅР°СЏ Р·РѕРЅР° СЃР°Р№С‚Р° РЅРµ РѕС„РѕСЂРјР»РµРЅР° РєР°Рє РїРѕР»РЅРѕС†РµРЅРЅР°СЏ РїРѕСЃР°РґРѕС‡РЅР°СЏ СЃС‚СЂР°РЅРёС†Р°."],
                 recommendation=(
-                    "Сделать полноценную контактную страницу: H1, title до 70 символов, description 140-160 символов, canonical, "
-                    "контент про производство, доставку, гарантию, адрес, телефоны и CTA."
+                    "РЎРґРµР»Р°С‚СЊ РїРѕР»РЅРѕС†РµРЅРЅСѓСЋ РєРѕРЅС‚Р°РєС‚РЅСѓСЋ СЃС‚СЂР°РЅРёС†Сѓ: H1, title РґРѕ 70 СЃРёРјРІРѕР»РѕРІ, description 140-160 СЃРёРјРІРѕР»РѕРІ, canonical, "
+                    "РєРѕРЅС‚РµРЅС‚ РїСЂРѕ РїСЂРѕРёР·РІРѕРґСЃС‚РІРѕ, РґРѕСЃС‚Р°РІРєСѓ, РіР°СЂР°РЅС‚РёСЋ, Р°РґСЂРµСЃ, С‚РµР»РµС„РѕРЅС‹ Рё CTA."
                 ),
             )
         )
@@ -1482,61 +1617,61 @@ def build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="High",
-                title="Внутренний служебный URL с формой обратного звонка доступен без SEO-контроля",
+                title="Р’РЅСѓС‚СЂРµРЅРЅРёР№ СЃР»СѓР¶РµР±РЅС‹Р№ URL СЃ С„РѕСЂРјРѕР№ РѕР±СЂР°С‚РЅРѕРіРѕ Р·РІРѕРЅРєР° РґРѕСЃС‚СѓРїРµРЅ Р±РµР· SEO-РєРѕРЅС‚СЂРѕР»СЏ",
                 why_it_matters=(
-                    "Indexable-страницы без title, description и H1 создают шум в индексе, размывают релевантность и тянут crawl budget."
+                    "Indexable-СЃС‚СЂР°РЅРёС†С‹ Р±РµР· title, description Рё H1 СЃРѕР·РґР°СЋС‚ С€СѓРј РІ РёРЅРґРµРєСЃРµ, СЂР°Р·РјС‹РІР°СЋС‚ СЂРµР»РµРІР°РЅС‚РЅРѕСЃС‚СЊ Рё С‚СЏРЅСѓС‚ crawl budget."
                 ),
                 evidence=[
-                    "URL `/index.php?route=information/contactform` доступен по 200.",
-                    "На странице нет title, description и H1.",
-                    "Ссылка на этот URL есть в шапке как `Обратный звонок`.",
+                    "URL `/index.php?route=information/contactform` РґРѕСЃС‚СѓРїРµРЅ РїРѕ 200.",
+                    "РќР° СЃС‚СЂР°РЅРёС†Рµ РЅРµС‚ title, description Рё H1.",
+                    "РЎСЃС‹Р»РєР° РЅР° СЌС‚РѕС‚ URL РµСЃС‚СЊ РІ С€Р°РїРєРµ РєР°Рє `РћР±СЂР°С‚РЅС‹Р№ Р·РІРѕРЅРѕРє`.",
                 ],
                 recommendation=(
-                    "Либо закрыть route-страницу от индексации и убрать прямые ссылки, либо перевести ее на нормальный SEO-friendly URL с оформлением."
+                    "Р›РёР±Рѕ Р·Р°РєСЂС‹С‚СЊ route-СЃС‚СЂР°РЅРёС†Сѓ РѕС‚ РёРЅРґРµРєСЃР°С†РёРё Рё СѓР±СЂР°С‚СЊ РїСЂСЏРјС‹Рµ СЃСЃС‹Р»РєРё, Р»РёР±Рѕ РїРµСЂРµРІРµСЃС‚Рё РµРµ РЅР° РЅРѕСЂРјР°Р»СЊРЅС‹Р№ SEO-friendly URL СЃ РѕС„РѕСЂРјР»РµРЅРёРµРј."
                 ),
             )
         )
 
     if problematic_titles:
-        examples = [f"{urlparse(snapshot.url).path or '/'} — {len(snapshot.title)} симв." for snapshot in problematic_titles[:4]]
+        examples = [f"{urlparse(snapshot.url).path or '/'} вЂ” {len(snapshot.title)} СЃРёРјРІ." for snapshot in problematic_titles[:4]]
         issues.append(
             AuditIssue(
                 severity="High",
-                title="Шаблоны title на товарах и категориях слишком длинные",
+                title="РЁР°Р±Р»РѕРЅС‹ title РЅР° С‚РѕРІР°СЂР°С… Рё РєР°С‚РµРіРѕСЂРёСЏС… СЃР»РёС€РєРѕРј РґР»РёРЅРЅС‹Рµ",
                 why_it_matters=(
-                    "Длинные title режутся в выдаче, ухудшают CTR и снижают контроль над тем, какой оффер поисковик покажет пользователю."
+                    "Р”Р»РёРЅРЅС‹Рµ title СЂРµР¶СѓС‚СЃСЏ РІ РІС‹РґР°С‡Рµ, СѓС…СѓРґС€Р°СЋС‚ CTR Рё СЃРЅРёР¶Р°СЋС‚ РєРѕРЅС‚СЂРѕР»СЊ РЅР°Рґ С‚РµРј, РєР°РєРѕР№ РѕС„С„РµСЂ РїРѕРёСЃРєРѕРІРёРє РїРѕРєР°Р¶РµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ."
                 ),
                 evidence=[
-                    f"В выборке {len(problematic_titles)} из {len(sample_pages)} страниц имеют title длиннее 70 символов.",
+                    f"Р’ РІС‹Р±РѕСЂРєРµ {len(problematic_titles)} РёР· {len(sample_pages)} СЃС‚СЂР°РЅРёС† РёРјРµСЋС‚ title РґР»РёРЅРЅРµРµ 70 СЃРёРјРІРѕР»РѕРІ.",
                     *examples,
                 ],
                 recommendation=(
-                    "Пересобрать шаблоны title: сначала ключ + модель/категория, затем оффер и бренд. "
-                    "Для каталога держать диапазон 55-70 символов."
+                    "РџРµСЂРµСЃРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ title: СЃРЅР°С‡Р°Р»Р° РєР»СЋС‡ + РјРѕРґРµР»СЊ/РєР°С‚РµРіРѕСЂРёСЏ, Р·Р°С‚РµРј РѕС„С„РµСЂ Рё Р±СЂРµРЅРґ. "
+                    "Р”Р»СЏ РєР°С‚Р°Р»РѕРіР° РґРµСЂР¶Р°С‚СЊ РґРёР°РїР°Р·РѕРЅ 55-70 СЃРёРјРІРѕР»РѕРІ."
                 ),
             )
         )
 
     if problematic_descriptions:
         examples = [
-            f"{urlparse(snapshot.url).path or '/'} — {len(snapshot.description)} симв."
+            f"{urlparse(snapshot.url).path or '/'} вЂ” {len(snapshot.description)} СЃРёРјРІ."
             for snapshot in problematic_descriptions[:4]
         ]
         issues.append(
             AuditIssue(
                 severity="Medium",
-                title="Meta description на части страниц обрезается или не дотягивает до нормального сниппета",
+                title="Meta description РЅР° С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† РѕР±СЂРµР·Р°РµС‚СЃСЏ РёР»Рё РЅРµ РґРѕС‚СЏРіРёРІР°РµС‚ РґРѕ РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ СЃРЅРёРїРїРµС‚Р°",
                 why_it_matters=(
-                    "Сниппет — это коммерческий оффер в выдаче. "
-                    "Когда description слишком короткий или перегруженный, поисковик чаще берет случайный кусок текста со страницы."
+                    "РЎРЅРёРїРїРµС‚ вЂ” СЌС‚Рѕ РєРѕРјРјРµСЂС‡РµСЃРєРёР№ РѕС„С„РµСЂ РІ РІС‹РґР°С‡Рµ. "
+                    "РљРѕРіРґР° description СЃР»РёС€РєРѕРј РєРѕСЂРѕС‚РєРёР№ РёР»Рё РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№, РїРѕРёСЃРєРѕРІРёРє С‡Р°С‰Рµ Р±РµСЂРµС‚ СЃР»СѓС‡Р°Р№РЅС‹Р№ РєСѓСЃРѕРє С‚РµРєСЃС‚Р° СЃРѕ СЃС‚СЂР°РЅРёС†С‹."
                 ),
                 evidence=[
-                    f"В выборке {len(problematic_descriptions)} из {len(sample_pages)} страниц имеют description вне комфортного диапазона.",
+                    f"Р’ РІС‹Р±РѕСЂРєРµ {len(problematic_descriptions)} РёР· {len(sample_pages)} СЃС‚СЂР°РЅРёС† РёРјРµСЋС‚ description РІРЅРµ РєРѕРјС„РѕСЂС‚РЅРѕРіРѕ РґРёР°РїР°Р·РѕРЅР°.",
                     *examples,
                 ],
                 recommendation=(
-                    "Собрать шаблоны description под типы страниц: ключ, ценность, доставка/гарантия, регион, призыв. "
-                    "Ориентир — 140-160 символов."
+                    "РЎРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ description РїРѕРґ С‚РёРїС‹ СЃС‚СЂР°РЅРёС†: РєР»СЋС‡, С†РµРЅРЅРѕСЃС‚СЊ, РґРѕСЃС‚Р°РІРєР°/РіР°СЂР°РЅС‚РёСЏ, СЂРµРіРёРѕРЅ, РїСЂРёР·С‹РІ. "
+                    "РћСЂРёРµРЅС‚РёСЂ вЂ” 140-160 СЃРёРјРІРѕР»РѕРІ."
                 ),
             )
         )
@@ -1545,15 +1680,15 @@ def build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="Medium",
-                title="Изображения теряют поисковый трафик и контекст карточек",
-                why_it_matters="Для товарного проекта alt влияет и на картинки, и на понимание ассортимента, и на доступность.",
+                title="РР·РѕР±СЂР°Р¶РµРЅРёСЏ С‚РµСЂСЏСЋС‚ РїРѕРёСЃРєРѕРІС‹Р№ С‚СЂР°С„РёРє Рё РєРѕРЅС‚РµРєСЃС‚ РєР°СЂС‚РѕС‡РµРє",
+                why_it_matters="Р”Р»СЏ С‚РѕРІР°СЂРЅРѕРіРѕ РїСЂРѕРµРєС‚Р° alt РІР»РёСЏРµС‚ Рё РЅР° РєР°СЂС‚РёРЅРєРё, Рё РЅР° РїРѕРЅРёРјР°РЅРёРµ Р°СЃСЃРѕСЂС‚РёРјРµРЅС‚Р°, Рё РЅР° РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ.",
                 evidence=[
-                    f"На {len(alt_gaps)} из {len(sample_pages)} проверенных страниц есть изображения без alt.",
-                    f"На главной найдено {audit['home_page'].missing_alt_count} изображений без alt.",
+                    f"РќР° {len(alt_gaps)} РёР· {len(sample_pages)} РїСЂРѕРІРµСЂРµРЅРЅС‹С… СЃС‚СЂР°РЅРёС† РµСЃС‚СЊ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ Р±РµР· alt.",
+                    f"РќР° РіР»Р°РІРЅРѕР№ РЅР°Р№РґРµРЅРѕ {audit['home_page'].missing_alt_count} РёР·РѕР±СЂР°Р¶РµРЅРёР№ Р±РµР· alt.",
                 ],
                 recommendation=(
-                    "Ввести шаблонную генерацию alt по типу карточки: товар + объем/размер + бренд/серия, "
-                    "а для категорий — общий интент страницы."
+                    "Р’РІРµСЃС‚Рё С€Р°Р±Р»РѕРЅРЅСѓСЋ РіРµРЅРµСЂР°С†РёСЋ alt РїРѕ С‚РёРїСѓ РєР°СЂС‚РѕС‡РєРё: С‚РѕРІР°СЂ + РѕР±СЉРµРј/СЂР°Р·РјРµСЂ + Р±СЂРµРЅРґ/СЃРµСЂРёСЏ, "
+                    "Р° РґР»СЏ РєР°С‚РµРіРѕСЂРёР№ вЂ” РѕР±С‰РёР№ РёРЅС‚РµРЅС‚ СЃС‚СЂР°РЅРёС†С‹."
                 ),
             )
         )
@@ -1562,16 +1697,16 @@ def build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="Medium",
-                title="Есть лишняя redirect-цепочка у части доменных вариантов",
+                title="Р•СЃС‚СЊ Р»РёС€РЅСЏСЏ redirect-С†РµРїРѕС‡РєР° Сѓ С‡Р°СЃС‚Рё РґРѕРјРµРЅРЅС‹С… РІР°СЂРёР°РЅС‚РѕРІ",
                 why_it_matters=(
-                    "Дополнительный редирект добавляет задержку на входе и создает ненужную техническую сложность для ботов и пользователей."
+                    "Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ СЂРµРґРёСЂРµРєС‚ РґРѕР±Р°РІР»СЏРµС‚ Р·Р°РґРµСЂР¶РєСѓ РЅР° РІС…РѕРґРµ Рё СЃРѕР·РґР°РµС‚ РЅРµРЅСѓР¶РЅСѓСЋ С‚РµС…РЅРёС‡РµСЃРєСѓСЋ СЃР»РѕР¶РЅРѕСЃС‚СЊ РґР»СЏ Р±РѕС‚РѕРІ Рё РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№."
                 ),
                 evidence=[
-                    "Путь `http://www.akvarium-akvas.ru/` отдает две последовательные 301-переадресации.",
-                    "Финальный канонический домен — `https://akvarium-akvas.ru/`.",
+                    "РџСѓС‚СЊ `http://www.akvarium-akvas.ru/` РѕС‚РґР°РµС‚ РґРІРµ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅС‹Рµ 301-РїРµСЂРµР°РґСЂРµСЃР°С†РёРё.",
+                    "Р¤РёРЅР°Р»СЊРЅС‹Р№ РєР°РЅРѕРЅРёС‡РµСЃРєРёР№ РґРѕРјРµРЅ вЂ” `https://akvarium-akvas.ru/`.",
                 ],
                 recommendation=(
-                    "Свести все варианты домена к одному 301-редиректу напрямую на канонический HTTPS без промежуточного `https://www`."
+                    "РЎРІРµСЃС‚Рё РІСЃРµ РІР°СЂРёР°РЅС‚С‹ РґРѕРјРµРЅР° Рє РѕРґРЅРѕРјСѓ 301-СЂРµРґРёСЂРµРєС‚Сѓ РЅР°РїСЂСЏРјСѓСЋ РЅР° РєР°РЅРѕРЅРёС‡РµСЃРєРёР№ HTTPS Р±РµР· РїСЂРѕРјРµР¶СѓС‚РѕС‡РЅРѕРіРѕ `https://www`."
                 ),
             )
         )
@@ -1580,10 +1715,10 @@ def build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="Low",
-                title="На главной остался meta keywords, который уже не дает SEO-ценности",
-                why_it_matters="Сам по себе тег не вредит, но это сигнал, что шаблон меты стоит почистить и поддерживать в актуальном виде.",
-                evidence=["На главной найден тег meta keywords."],
-                recommendation="Убрать meta keywords из шаблона и сосредоточиться на title, description, H1, schema и коммерческих блоках.",
+                title="РќР° РіР»Р°РІРЅРѕР№ РѕСЃС‚Р°Р»СЃСЏ meta keywords, РєРѕС‚РѕСЂС‹Р№ СѓР¶Рµ РЅРµ РґР°РµС‚ SEO-С†РµРЅРЅРѕСЃС‚Рё",
+                why_it_matters="РЎР°Рј РїРѕ СЃРµР±Рµ С‚РµРі РЅРµ РІСЂРµРґРёС‚, РЅРѕ СЌС‚Рѕ СЃРёРіРЅР°Р», С‡С‚Рѕ С€Р°Р±Р»РѕРЅ РјРµС‚С‹ СЃС‚РѕРёС‚ РїРѕС‡РёСЃС‚РёС‚СЊ Рё РїРѕРґРґРµСЂР¶РёРІР°С‚СЊ РІ Р°РєС‚СѓР°Р»СЊРЅРѕРј РІРёРґРµ.",
+                evidence=["РќР° РіР»Р°РІРЅРѕР№ РЅР°Р№РґРµРЅ С‚РµРі meta keywords."],
+                recommendation="РЈР±СЂР°С‚СЊ meta keywords РёР· С€Р°Р±Р»РѕРЅР° Рё СЃРѕСЃСЂРµРґРѕС‚РѕС‡РёС‚СЊСЃСЏ РЅР° title, description, H1, schema Рё РєРѕРјРјРµСЂС‡РµСЃРєРёС… Р±Р»РѕРєР°С….",
             )
         )
 
@@ -1591,17 +1726,17 @@ def build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="Medium",
-                title="Карта сайта уже большая и требует более управляемой структуры",
+                title="РљР°СЂС‚Р° СЃР°Р№С‚Р° СѓР¶Рµ Р±РѕР»СЊС€Р°СЏ Рё С‚СЂРµР±СѓРµС‚ Р±РѕР»РµРµ СѓРїСЂР°РІР»СЏРµРјРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹",
                 why_it_matters=(
-                    "Когда URL почти 7000 и все лежит в одном потоке, сложнее отслеживать индексацию категорий, товаров и служебных страниц отдельно."
+                    "РљРѕРіРґР° URL РїРѕС‡С‚Рё 7000 Рё РІСЃРµ Р»РµР¶РёС‚ РІ РѕРґРЅРѕРј РїРѕС‚РѕРєРµ, СЃР»РѕР¶РЅРµРµ РѕС‚СЃР»РµР¶РёРІР°С‚СЊ РёРЅРґРµРєСЃР°С†РёСЋ РєР°С‚РµРіРѕСЂРёР№, С‚РѕРІР°СЂРѕРІ Рё СЃР»СѓР¶РµР±РЅС‹С… СЃС‚СЂР°РЅРёС† РѕС‚РґРµР»СЊРЅРѕ."
                 ),
                 evidence=[
-                    f"В sitemap обнаружено {audit['sitemap_url_count']} URL.",
-                    "Сейчас удобнее управлять индексом через раздельные sitemap по типам страниц.",
+                    f"Р’ sitemap РѕР±РЅР°СЂСѓР¶РµРЅРѕ {audit['sitemap_url_count']} URL.",
+                    "РЎРµР№С‡Р°СЃ СѓРґРѕР±РЅРµРµ СѓРїСЂР°РІР»СЏС‚СЊ РёРЅРґРµРєСЃРѕРј С‡РµСЂРµР· СЂР°Р·РґРµР»СЊРЅС‹Рµ sitemap РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†.",
                 ],
                 recommendation=(
-                    "Разделить sitemap минимум на товары, категории, служебные страницы и медиа/статьи, "
-                    "чтобы проще контролировать покрытие и переобход."
+                    "Р Р°Р·РґРµР»РёС‚СЊ sitemap РјРёРЅРёРјСѓРј РЅР° С‚РѕРІР°СЂС‹, РєР°С‚РµРіРѕСЂРёРё, СЃР»СѓР¶РµР±РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ Рё РјРµРґРёР°/СЃС‚Р°С‚СЊРё, "
+                    "С‡С‚РѕР±С‹ РїСЂРѕС‰Рµ РєРѕРЅС‚СЂРѕР»РёСЂРѕРІР°С‚СЊ РїРѕРєСЂС‹С‚РёРµ Рё РїРµСЂРµРѕР±С…РѕРґ."
                 ),
             )
         )
@@ -1611,18 +1746,18 @@ def build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="Medium",
-                title="Карта сайта раздута повторяющимися URL",
+                title="РљР°СЂС‚Р° СЃР°Р№С‚Р° СЂР°Р·РґСѓС‚Р° РїРѕРІС‚РѕСЂСЏСЋС‰РёРјРёСЃСЏ URL",
                 why_it_matters=(
-                    "Когда один и тот же URL повторяется в sitemap много раз, поисковики получают лишний шум вместо чистого сигнала, "
-                    "а анализ индексации становится менее управляемым."
+                    "РљРѕРіРґР° РѕРґРёРЅ Рё С‚РѕС‚ Р¶Рµ URL РїРѕРІС‚РѕСЂСЏРµС‚СЃСЏ РІ sitemap РјРЅРѕРіРѕ СЂР°Р·, РїРѕРёСЃРєРѕРІРёРєРё РїРѕР»СѓС‡Р°СЋС‚ Р»РёС€РЅРёР№ С€СѓРј РІРјРµСЃС‚Рѕ С‡РёСЃС‚РѕРіРѕ СЃРёРіРЅР°Р»Р°, "
+                    "Р° Р°РЅР°Р»РёР· РёРЅРґРµРєСЃР°С†РёРё СЃС‚Р°РЅРѕРІРёС‚СЃСЏ РјРµРЅРµРµ СѓРїСЂР°РІР»СЏРµРјС‹Рј."
                 ),
                 evidence=[
-                    f"В sitemap найдено {audit['sitemap_total_entries']} записей, но только {audit['sitemap_url_count']} уникальных URL.",
-                    f"Повторов: {duplicate_entries}.",
+                    f"Р’ sitemap РЅР°Р№РґРµРЅРѕ {audit['sitemap_total_entries']} Р·Р°РїРёСЃРµР№, РЅРѕ С‚РѕР»СЊРєРѕ {audit['sitemap_url_count']} СѓРЅРёРєР°Р»СЊРЅС‹С… URL.",
+                    f"РџРѕРІС‚РѕСЂРѕРІ: {duplicate_entries}.",
                 ],
                 recommendation=(
-                    "Пересобрать генерацию sitemap так, чтобы каждый индексируемый URL попадал туда один раз, "
-                    "а карта сайта отражала реальную структуру проекта без дублей."
+                    "РџРµСЂРµСЃРѕР±СЂР°С‚СЊ РіРµРЅРµСЂР°С†РёСЋ sitemap С‚Р°Рє, С‡С‚РѕР±С‹ РєР°Р¶РґС‹Р№ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Р№ URL РїРѕРїР°РґР°Р» С‚СѓРґР° РѕРґРёРЅ СЂР°Р·, "
+                    "Р° РєР°СЂС‚Р° СЃР°Р№С‚Р° РѕС‚СЂР°Р¶Р°Р»Р° СЂРµР°Р»СЊРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ РїСЂРѕРµРєС‚Р° Р±РµР· РґСѓР±Р»РµР№."
                 ),
             )
         )
@@ -1635,60 +1770,60 @@ def build_issue_list(audit: dict) -> list[AuditIssue]:
 def build_strengths(audit: dict) -> list[str]:
     strengths = []
     if audit["home_page"].status_code == 200:
-        strengths.append("Сайт стабильно отвечает по HTTPS и главная страница отдает 200 код без JS-заглушки.")
+        strengths.append("РЎР°Р№С‚ СЃС‚Р°Р±РёР»СЊРЅРѕ РѕС‚РІРµС‡Р°РµС‚ РїРѕ HTTPS Рё РіР»Р°РІРЅР°СЏ СЃС‚СЂР°РЅРёС†Р° РѕС‚РґР°РµС‚ 200 РєРѕРґ Р±РµР· JS-Р·Р°РіР»СѓС€РєРё.")
     if audit["sitemap_url_count"]:
         strengths.append(
-            f"Сайт уже имеет индексируемую карту сайта с {audit['sitemap_url_count']} URL и image-тегами для карточек."
+            f"РЎР°Р№С‚ СѓР¶Рµ РёРјРµРµС‚ РёРЅРґРµРєСЃРёСЂСѓРµРјСѓСЋ РєР°СЂС‚Сѓ СЃР°Р№С‚Р° СЃ {audit['sitemap_url_count']} URL Рё image-С‚РµРіР°РјРё РґР»СЏ РєР°СЂС‚РѕС‡РµРє."
         )
     if audit["home_page"].canonical:
-        strengths.append("На ключевых коммерческих страницах проставлены canonical, что помогает удерживать основной URL.")
+        strengths.append("РќР° РєР»СЋС‡РµРІС‹С… РєРѕРјРјРµСЂС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС†Р°С… РїСЂРѕСЃС‚Р°РІР»РµРЅС‹ canonical, С‡С‚Рѕ РїРѕРјРѕРіР°РµС‚ СѓРґРµСЂР¶РёРІР°С‚СЊ РѕСЃРЅРѕРІРЅРѕР№ URL.")
     if audit["schema_coverage_ratio"] >= 0.7:
-        strengths.append("На товарах и категориях уже используется schema-разметка (Product / BreadcrumbList / LocalBusiness).")
+        strengths.append("РќР° С‚РѕРІР°СЂР°С… Рё РєР°С‚РµРіРѕСЂРёСЏС… СѓР¶Рµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ schema-СЂР°Р·РјРµС‚РєР° (Product / BreadcrumbList / LocalBusiness).")
     if audit["h1_coverage_ratio"] >= 0.8:
-        strengths.append("У большинства проверенных коммерческих страниц есть H1, что хорошо для масштабного каталога.")
-    strengths.append("URL-структура в каталоге понятная и хорошо дробит спрос по литражу, форме, назначению и комплектации.")
+        strengths.append("РЈ Р±РѕР»СЊС€РёРЅСЃС‚РІР° РїСЂРѕРІРµСЂРµРЅРЅС‹С… РєРѕРјРјРµСЂС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС† РµСЃС‚СЊ H1, С‡С‚Рѕ С…РѕСЂРѕС€Рѕ РґР»СЏ РјР°СЃС€С‚Р°Р±РЅРѕРіРѕ РєР°С‚Р°Р»РѕРіР°.")
+    strengths.append("URL-СЃС‚СЂСѓРєС‚СѓСЂР° РІ РєР°С‚Р°Р»РѕРіРµ РїРѕРЅСЏС‚РЅР°СЏ Рё С…РѕСЂРѕС€Рѕ РґСЂРѕР±РёС‚ СЃРїСЂРѕСЃ РїРѕ Р»РёС‚СЂР°Р¶Сѓ, С„РѕСЂРјРµ, РЅР°Р·РЅР°С‡РµРЅРёСЋ Рё РєРѕРјРїР»РµРєС‚Р°С†РёРё.")
     if audit["llms_exists"]:
-        strengths.append("У проекта уже есть llms.txt, а значит можно дополнительно усиливать AI-видимость и branded-ответы.")
+        strengths.append("РЈ РїСЂРѕРµРєС‚Р° СѓР¶Рµ РµСЃС‚СЊ llms.txt, Р° Р·РЅР°С‡РёС‚ РјРѕР¶РЅРѕ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ СѓСЃРёР»РёРІР°С‚СЊ AI-РІРёРґРёРјРѕСЃС‚СЊ Рё branded-РѕС‚РІРµС‚С‹.")
     return strengths
 
 
 def build_growth_points() -> list[str]:
     return [
-        "Усилить страницы категорий уникальными интро-блоками, FAQ, доставкой, гарантией, сроками производства и объяснением, как выбрать модель.",
-        "Сделать отдельные посадочные под высокий спрос: по литражу, форме, назначению, типу комплектации и готовым решениям под ключ.",
-        "Добавить в категории и карточки блоки доверия: производство в России, гарантия, доставка по РФ, кастомизация размеров, комплектация.",
-        "Развернуть image SEO: alt-шаблоны, подписи, structured data и подбор визуалов под поисковый спрос по аквариумам и террариумам.",
-        "Собрать шаблонный слой сниппетов: короткие title, коммерческие description, аккуратный canonical и понятные H1 на всех типах страниц.",
-        "Сегментировать sitemap и параллельно настроить контроль индексации категорий, товаров, фильтров и служебных route-страниц.",
+        "РЈСЃРёР»РёС‚СЊ СЃС‚СЂР°РЅРёС†С‹ РєР°С‚РµРіРѕСЂРёР№ СѓРЅРёРєР°Р»СЊРЅС‹РјРё РёРЅС‚СЂРѕ-Р±Р»РѕРєР°РјРё, FAQ, РґРѕСЃС‚Р°РІРєРѕР№, РіР°СЂР°РЅС‚РёРµР№, СЃСЂРѕРєР°РјРё РїСЂРѕРёР·РІРѕРґСЃС‚РІР° Рё РѕР±СЉСЏСЃРЅРµРЅРёРµРј, РєР°Рє РІС‹Р±СЂР°С‚СЊ РјРѕРґРµР»СЊ.",
+        "РЎРґРµР»Р°С‚СЊ РѕС‚РґРµР»СЊРЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ РїРѕРґ РІС‹СЃРѕРєРёР№ СЃРїСЂРѕСЃ: РїРѕ Р»РёС‚СЂР°Р¶Сѓ, С„РѕСЂРјРµ, РЅР°Р·РЅР°С‡РµРЅРёСЋ, С‚РёРїСѓ РєРѕРјРїР»РµРєС‚Р°С†РёРё Рё РіРѕС‚РѕРІС‹Рј СЂРµС€РµРЅРёСЏРј РїРѕРґ РєР»СЋС‡.",
+        "Р”РѕР±Р°РІРёС‚СЊ РІ РєР°С‚РµРіРѕСЂРёРё Рё РєР°СЂС‚РѕС‡РєРё Р±Р»РѕРєРё РґРѕРІРµСЂРёСЏ: РїСЂРѕРёР·РІРѕРґСЃС‚РІРѕ РІ Р РѕСЃСЃРёРё, РіР°СЂР°РЅС‚РёСЏ, РґРѕСЃС‚Р°РІРєР° РїРѕ Р Р¤, РєР°СЃС‚РѕРјРёР·Р°С†РёСЏ СЂР°Р·РјРµСЂРѕРІ, РєРѕРјРїР»РµРєС‚Р°С†РёСЏ.",
+        "Р Р°Р·РІРµСЂРЅСѓС‚СЊ image SEO: alt-С€Р°Р±Р»РѕРЅС‹, РїРѕРґРїРёСЃРё, structured data Рё РїРѕРґР±РѕСЂ РІРёР·СѓР°Р»РѕРІ РїРѕРґ РїРѕРёСЃРєРѕРІС‹Р№ СЃРїСЂРѕСЃ РїРѕ Р°РєРІР°СЂРёСѓРјР°Рј Рё С‚РµСЂСЂР°СЂРёСѓРјР°Рј.",
+        "РЎРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅРЅС‹Р№ СЃР»РѕР№ СЃРЅРёРїРїРµС‚РѕРІ: РєРѕСЂРѕС‚РєРёРµ title, РєРѕРјРјРµСЂС‡РµСЃРєРёРµ description, Р°РєРєСѓСЂР°С‚РЅС‹Р№ canonical Рё РїРѕРЅСЏС‚РЅС‹Рµ H1 РЅР° РІСЃРµС… С‚РёРїР°С… СЃС‚СЂР°РЅРёС†.",
+        "РЎРµРіРјРµРЅС‚РёСЂРѕРІР°С‚СЊ sitemap Рё РїР°СЂР°Р»Р»РµР»СЊРЅРѕ РЅР°СЃС‚СЂРѕРёС‚СЊ РєРѕРЅС‚СЂРѕР»СЊ РёРЅРґРµРєСЃР°С†РёРё РєР°С‚РµРіРѕСЂРёР№, С‚РѕРІР°СЂРѕРІ, С„РёР»СЊС‚СЂРѕРІ Рё СЃР»СѓР¶РµР±РЅС‹С… route-СЃС‚СЂР°РЅРёС†.",
     ]
 
 
 def build_roadmap() -> list[tuple[str, list[str]]]:
     return [
         (
-            "0-14 дней",
+            "0-14 РґРЅРµР№",
             [
-                "Исправить robots.txt: убрать конфликт с sitemap.xml и нормализовать Host.",
-                "Закрыть или переработать `/index.php?route=information/contactform`.",
-                "Доделать SEO-шаблон страницы контактов: H1, title, description, canonical, коммерческий контент.",
-                "Подготовить новое правило генерации title и description для товаров и категорий.",
+                "РСЃРїСЂР°РІРёС‚СЊ robots.txt: СѓР±СЂР°С‚СЊ РєРѕРЅС„Р»РёРєС‚ СЃ sitemap.xml Рё РЅРѕСЂРјР°Р»РёР·РѕРІР°С‚СЊ Host.",
+                "Р—Р°РєСЂС‹С‚СЊ РёР»Рё РїРµСЂРµСЂР°Р±РѕС‚Р°С‚СЊ `/index.php?route=information/contactform`.",
+                "Р”РѕРґРµР»Р°С‚СЊ SEO-С€Р°Р±Р»РѕРЅ СЃС‚СЂР°РЅРёС†С‹ РєРѕРЅС‚Р°РєС‚РѕРІ: H1, title, description, canonical, РєРѕРјРјРµСЂС‡РµСЃРєРёР№ РєРѕРЅС‚РµРЅС‚.",
+                "РџРѕРґРіРѕС‚РѕРІРёС‚СЊ РЅРѕРІРѕРµ РїСЂР°РІРёР»Рѕ РіРµРЅРµСЂР°С†РёРё title Рё description РґР»СЏ С‚РѕРІР°СЂРѕРІ Рё РєР°С‚РµРіРѕСЂРёР№.",
             ],
         ),
         (
-            "15-30 дней",
+            "15-30 РґРЅРµР№",
             [
-                "Внедрить alt-шаблоны для карточек и категорий.",
-                "Свести доменные редиректы к одному шагу на канонический HTTPS.",
-                "Разделить sitemap по типам страниц и подать их отдельно в Яндекс Вебмастер и GSC.",
-                "Обновить сниппеты и протестировать рост CTR по категориям и товарным кластерам.",
+                "Р’РЅРµРґСЂРёС‚СЊ alt-С€Р°Р±Р»РѕРЅС‹ РґР»СЏ РєР°СЂС‚РѕС‡РµРє Рё РєР°С‚РµРіРѕСЂРёР№.",
+                "РЎРІРµСЃС‚Рё РґРѕРјРµРЅРЅС‹Рµ СЂРµРґРёСЂРµРєС‚С‹ Рє РѕРґРЅРѕРјСѓ С€Р°РіСѓ РЅР° РєР°РЅРѕРЅРёС‡РµСЃРєРёР№ HTTPS.",
+                "Р Р°Р·РґРµР»РёС‚СЊ sitemap РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС† Рё РїРѕРґР°С‚СЊ РёС… РѕС‚РґРµР»СЊРЅРѕ РІ РЇРЅРґРµРєСЃ Р’РµР±РјР°СЃС‚РµСЂ Рё GSC.",
+                "РћР±РЅРѕРІРёС‚СЊ СЃРЅРёРїРїРµС‚С‹ Рё РїСЂРѕС‚РµСЃС‚РёСЂРѕРІР°С‚СЊ СЂРѕСЃС‚ CTR РїРѕ РєР°С‚РµРіРѕСЂРёСЏРј Рё С‚РѕРІР°СЂРЅС‹Рј РєР»Р°СЃС‚РµСЂР°Рј.",
             ],
         ),
         (
-            "31-60 дней",
+            "31-60 РґРЅРµР№",
             [
-                "Усилить спросовые категории контентом, FAQ, коммерческими блоками и перелинковкой.",
-                "Собрать посадочные под ключевые кластеры спроса: литраж, форма, сценарий использования, комплектация.",
-                "Добавить контент-слой под AI-ответы: краткие определения, таблицы сравнения, ответы на частые вопросы.",
+                "РЈСЃРёР»РёС‚СЊ СЃРїСЂРѕСЃРѕРІС‹Рµ РєР°С‚РµРіРѕСЂРёРё РєРѕРЅС‚РµРЅС‚РѕРј, FAQ, РєРѕРјРјРµСЂС‡РµСЃРєРёРјРё Р±Р»РѕРєР°РјРё Рё РїРµСЂРµР»РёРЅРєРѕРІРєРѕР№.",
+                "РЎРѕР±СЂР°С‚СЊ РїРѕСЃР°РґРѕС‡РЅС‹Рµ РїРѕРґ РєР»СЋС‡РµРІС‹Рµ РєР»Р°СЃС‚РµСЂС‹ СЃРїСЂРѕСЃР°: Р»РёС‚СЂР°Р¶, С„РѕСЂРјР°, СЃС†РµРЅР°СЂРёР№ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ, РєРѕРјРїР»РµРєС‚Р°С†РёСЏ.",
+                "Р”РѕР±Р°РІРёС‚СЊ РєРѕРЅС‚РµРЅС‚-СЃР»РѕР№ РїРѕРґ AI-РѕС‚РІРµС‚С‹: РєСЂР°С‚РєРёРµ РѕРїСЂРµРґРµР»РµРЅРёСЏ, С‚Р°Р±Р»РёС†С‹ СЃСЂР°РІРЅРµРЅРёСЏ, РѕС‚РІРµС‚С‹ РЅР° С‡Р°СЃС‚С‹Рµ РІРѕРїСЂРѕСЃС‹.",
             ],
         ),
     ]
@@ -1712,7 +1847,7 @@ def shorten_path(url: str, max_length=48) -> str:
         path = f"{path}?{parsed.query}"
     if len(path) <= max_length:
         return path
-    return f"{path[: max_length - 1]}…"
+    return f"{path[: max_length - 1]}вЂ¦"
 
 
 def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
@@ -1720,6 +1855,7 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
     parsed = urlparse(base_url)
     base_domain = parsed.netloc
     session = make_session()
+    requested_limit = max(sample_size, 0)
 
     homepage = analyse_page(session, base_url, base_domain)
     robots_response, _ = safe_get(session, urljoin(f"{base_url}/", "robots.txt"))
@@ -1734,14 +1870,18 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
         urljoin(f"{base_url}/", "index.php?route=information/contactform"),
         *home_links[:10],
     ]
-    unique_urls = select_representative_urls(
+    unique_urls = build_audit_url_inventory(
         base_url,
         preferred_urls,
         sitemap_urls,
-        max(sample_size, 18),
+        base_domain,
+        requested_limit,
     )
-    snapshots = [analyse_page(session, item, base_domain) for item in unique_urls]
+    snapshots = analyse_pages_parallel(unique_urls, base_domain, max_workers=12)
     html_pages = [snapshot for snapshot in snapshots if snapshot.status_code == 200 and "html" in snapshot.content_type]
+    appendix_urls = select_representative_urls(base_url, preferred_urls, [snapshot.url for snapshot in html_pages], 18)
+    pages_by_url = {normalize_page_url(snapshot.url): snapshot for snapshot in html_pages}
+    appendix_pages = [pages_by_url[url] for url in appendix_urls if url in pages_by_url][:18]
 
     title_long = [snapshot for snapshot in html_pages if len(snapshot.title) > 70]
     description_problem = [
@@ -1769,7 +1909,11 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
         "processed_sitemaps": processed_sitemaps,
         "home_links_count": len(home_links),
         "sample_pages": html_pages,
+        "appendix_pages": appendix_pages,
         "raw_sampled_urls": unique_urls,
+        "requested_page_limit": requested_limit,
+        "crawl_scope": "full" if requested_limit == 0 else "limited",
+        "analyzed_pages_count": len(html_pages),
         "title_long_ratio": (len(title_long) / len(html_pages)) if html_pages else 0,
         "description_problem_ratio": (len(description_problem) / len(html_pages)) if html_pages else 0,
         "schema_coverage_ratio": (len(schema_pages) / len(html_pages)) if html_pages else 0,
@@ -1885,18 +2029,18 @@ def add_cover(doc: Document, audit: dict, logo_path: Path) -> None:
 
     p_tag = left.add_paragraph()
     p_tag.paragraph_format.space_before = Pt(30)
-    tag_run = p_tag.add_run("SEO AUDIT / ТОЧКИ РОСТА")
+    tag_run = p_tag.add_run("SEO AUDIT / РўРћР§РљР Р РћРЎРўРђ")
     set_font(tag_run, size=10.5, bold=True, color=BRAND_CYAN)
 
     p_title = left.add_paragraph()
     p_title.paragraph_format.space_before = Pt(10)
-    title_run = p_title.add_run(f"SEO-аудит сайта\n{audit['domain']}")
+    title_run = p_title.add_run(f"SEO-Р°СѓРґРёС‚ СЃР°Р№С‚Р°\n{audit['domain']}")
     set_font(title_run, size=26, bold=True, color="FFFFFF")
 
     p_subtitle = left.add_paragraph()
     subtitle_run = p_subtitle.add_run(
-        "Документ для продажи услуги и внедрения реальных SEO-точек роста. "
-        "Не просто список замечаний, а план того, как быстрее усилить видимость, индекс и коммерческий трафик."
+        "Р”РѕРєСѓРјРµРЅС‚ РґР»СЏ РїСЂРѕРґР°Р¶Рё СѓСЃР»СѓРіРё Рё РІРЅРµРґСЂРµРЅРёСЏ СЂРµР°Р»СЊРЅС‹С… SEO-С‚РѕС‡РµРє СЂРѕСЃС‚Р°. "
+        "РќРµ РїСЂРѕСЃС‚Рѕ СЃРїРёСЃРѕРє Р·Р°РјРµС‡Р°РЅРёР№, Р° РїР»Р°РЅ С‚РѕРіРѕ, РєР°Рє Р±С‹СЃС‚СЂРµРµ СѓСЃРёР»РёС‚СЊ РІРёРґРёРјРѕСЃС‚СЊ, РёРЅРґРµРєСЃ Рё РєРѕРјРјРµСЂС‡РµСЃРєРёР№ С‚СЂР°С„РёРє."
     )
     set_font(subtitle_run, size=11.4, color="E8EEF6")
     p_subtitle.paragraph_format.space_after = Pt(18)
@@ -1907,22 +2051,22 @@ def add_cover(doc: Document, audit: dict, logo_path: Path) -> None:
     set_cell_shading(callout_cell, BRAND_DARK_ALT)
     set_cell_margins(callout_cell, 110, 130, 110, 130)
     callout_run = callout_cell.paragraphs[0].add_run(
-        "Внутри: индексация, robots/sitemap, шаблоны title/description, категории, "
-        "товарные карточки, изображения, коммерческие блоки и 60-дневный roadmap."
+        "Р’РЅСѓС‚СЂРё: РёРЅРґРµРєСЃР°С†РёСЏ, robots/sitemap, С€Р°Р±Р»РѕРЅС‹ title/description, РєР°С‚РµРіРѕСЂРёРё, "
+        "С‚РѕРІР°СЂРЅС‹Рµ РєР°СЂС‚РѕС‡РєРё, РёР·РѕР±СЂР°Р¶РµРЅРёСЏ, РєРѕРјРјРµСЂС‡РµСЃРєРёРµ Р±Р»РѕРєРё Рё 60-РґРЅРµРІРЅС‹Р№ roadmap."
     )
     set_font(callout_run, size=10.8, color="FFFFFF")
 
-    run = right.paragraphs[0].add_run("Паспорт проекта")
+    run = right.paragraphs[0].add_run("РџР°СЃРїРѕСЂС‚ РїСЂРѕРµРєС‚Р°")
     set_font(run, size=14, bold=True, color=BRAND_TEXT)
-    add_text_paragraph(right, f"Бренд: {audit['company_name']}", size=11.4)
-    add_text_paragraph(right, f"Домен: {audit['base_url']}", size=11.2)
-    add_text_paragraph(right, f"Дата: {audit['generated_at']}", size=11.2)
-    add_text_paragraph(right, "Формат: SEO-аудит / growth map", size=11.2)
-    add_text_paragraph(right, f"Исполнитель: {BRAND_NAME}", size=11.2, bold=True)
+    add_text_paragraph(right, f"Р‘СЂРµРЅРґ: {audit['company_name']}", size=11.4)
+    add_text_paragraph(right, f"Р”РѕРјРµРЅ: {audit['base_url']}", size=11.2)
+    add_text_paragraph(right, f"Р”Р°С‚Р°: {audit['generated_at']}", size=11.2)
+    add_text_paragraph(right, "Р¤РѕСЂРјР°С‚: SEO-Р°СѓРґРёС‚ / growth map", size=11.2)
+    add_text_paragraph(right, f"РСЃРїРѕР»РЅРёС‚РµР»СЊ: {BRAND_NAME}", size=11.2, bold=True)
     add_text_paragraph(
         right,
-        "Фокус аудита: индексация, структура каталога, шаблоны метаданных, изображения, "
-        "контактные страницы и потенциал роста кластеров спроса.",
+        "Р¤РѕРєСѓСЃ Р°СѓРґРёС‚Р°: РёРЅРґРµРєСЃР°С†РёСЏ, СЃС‚СЂСѓРєС‚СѓСЂР° РєР°С‚Р°Р»РѕРіР°, С€Р°Р±Р»РѕРЅС‹ РјРµС‚Р°РґР°РЅРЅС‹С…, РёР·РѕР±СЂР°Р¶РµРЅРёСЏ, "
+        "РєРѕРЅС‚Р°РєС‚РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ Рё РїРѕС‚РµРЅС†РёР°Р» СЂРѕСЃС‚Р° РєР»Р°СЃС‚РµСЂРѕРІ СЃРїСЂРѕСЃР°.",
         size=11,
         color=BRAND_MUTED,
         space_after=12,
@@ -1935,7 +2079,7 @@ def add_cover(doc: Document, audit: dict, logo_path: Path) -> None:
     set_cell_margins(score_cell, 120, 120, 120, 120)
     score_label = score_cell.paragraphs[0]
     score_label.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    label_run = score_label.add_run("Индекс SEO-готовности")
+    label_run = score_label.add_run("РРЅРґРµРєСЃ SEO-РіРѕС‚РѕРІРЅРѕСЃС‚Рё")
     set_font(label_run, size=10.2, bold=True, color=BRAND_MUTED)
     score_value = score_cell.add_paragraph()
     score_value.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -1943,7 +2087,7 @@ def add_cover(doc: Document, audit: dict, logo_path: Path) -> None:
     set_font(score_run, size=28, bold=True, color=BRAND_TEXT)
     score_hint = score_cell.add_paragraph()
     score_hint.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    hint_run = score_hint.add_run("из 100")
+    hint_run = score_hint.add_run("РёР· 100")
     set_font(hint_run, size=10.2, color=BRAND_MUTED)
 
     doc.add_paragraph().paragraph_format.space_after = Pt(4)
@@ -1953,10 +2097,10 @@ def add_metric_grid(doc: Document, audit: dict) -> None:
     metrics = [
         ("Sitemap unique", str(audit["sitemap_url_count"])),
         ("Sitemap entries", str(audit.get("sitemap_total_entries", audit["sitemap_url_count"]))),
-        ("Средний ответ", f"{audit['average_response_ms']} ms"),
-        ("Средний HTML", f"{audit['average_html_kb']} KB"),
+        ("РЎСЂРµРґРЅРёР№ РѕС‚РІРµС‚", f"{audit['average_response_ms']} ms"),
+        ("РЎСЂРµРґРЅРёР№ HTML", f"{audit['average_html_kb']} KB"),
         ("Title > 70", f"{math.floor(audit['title_long_ratio'] * 100)}%"),
-        ("Desc вне диапазона", f"{math.floor(audit['description_problem_ratio'] * 100)}%"),
+        ("Desc РІРЅРµ РґРёР°РїР°Р·РѕРЅР°", f"{math.floor(audit['description_problem_ratio'] * 100)}%"),
         ("Schema coverage", f"{math.floor(audit['schema_coverage_ratio'] * 100)}%"),
         ("Alt gaps", str(audit["total_missing_alt"])),
     ]
@@ -2002,7 +2146,7 @@ def add_issue_cards(doc: Document, issues: list[AuditIssue]) -> None:
         body.paragraphs[0].paragraph_format.space_after = Pt(6)
         add_bullet_list(body, issue.evidence, size=10.8)
         recommendation = body.add_paragraph()
-        recommendation_run = recommendation.add_run(f"Что делать: {issue.recommendation}")
+        recommendation_run = recommendation.add_run(f"Р§С‚Рѕ РґРµР»Р°С‚СЊ: {issue.recommendation}")
         set_font(recommendation_run, size=10.9, bold=True, color=BRAND_TEXT)
         doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
@@ -2025,7 +2169,7 @@ def add_roadmap_table(doc: Document, roadmap: list[tuple[str, list[str]]]) -> No
 def add_snapshot_table(doc: Document, snapshots: list[PageSnapshot]) -> None:
     table = doc.add_table(rows=1, cols=7)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    headers = ["Путь", "Тип", "Код", "Title", "Desc", "H1", "Schema"]
+    headers = ["РџСѓС‚СЊ", "РўРёРї", "РљРѕРґ", "Title", "Desc", "H1", "Schema"]
     for idx, header in enumerate(headers):
         cell = table.rows[0].cells[idx]
         set_cell_shading(cell, BRAND_DARK)
@@ -2043,7 +2187,7 @@ def add_snapshot_table(doc: Document, snapshots: list[PageSnapshot]) -> None:
             str(len(snapshot.title)),
             str(len(snapshot.description)),
             str(len(snapshot.h1s)),
-            ", ".join(snapshot.schema_types[:2]) or "—",
+            ", ".join(snapshot.schema_types[:2]) or "вЂ”",
         ]
         for idx, value in enumerate(values):
             cell = row[idx]
@@ -2062,7 +2206,7 @@ def add_priority_matrix_table(doc: Document, rows: list[dict]) -> None:
     table = doc.add_table(rows=1, cols=7)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     remove_table_borders(table)
-    headers = ["Проблема", "Impact", "Risk", "Business", "Итог", "Приоритет", "Ответственный"]
+    headers = ["РџСЂРѕР±Р»РµРјР°", "Impact", "Risk", "Business", "РС‚РѕРі", "РџСЂРёРѕСЂРёС‚РµС‚", "РћС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Р№"]
     for idx, header in enumerate(headers):
         cell = table.rows[0].cells[idx]
         set_cell_shading(cell, BRAND_DARK)
@@ -2105,7 +2249,7 @@ def add_metrics_list(container, metrics: list[tuple[str, str]]) -> None:
 
 def add_phase_sections_doc(doc: Document, phase_sections: list[dict]) -> None:
     for section in phase_sections:
-        add_section_heading(doc, "Глубокий разбор", section.get("title", ""), section.get("intro"))
+        add_section_heading(doc, "Р“Р»СѓР±РѕРєРёР№ СЂР°Р·Р±РѕСЂ", section.get("title", ""), section.get("intro"))
         for idx, check in enumerate(section.get("checks", []), start=1):
             card = doc.add_table(rows=2, cols=1)
             card.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -2119,20 +2263,20 @@ def add_phase_sections_doc(doc: Document, phase_sections: list[dict]) -> None:
             title_run = head.paragraphs[0].add_run(f"{idx}. {check.get('name', '')}")
             set_font(title_run, size=11.4, bold=True, color=BRAND_TEXT)
 
-            add_text_paragraph(body, f"Что проверялось: {check.get('checked', '')}", size=10.7, color=BRAND_TEXT, space_after=3)
-            add_text_paragraph(body, f"Как проверялось: {check.get('method', '')}", size=10.5, color=BRAND_MUTED, space_after=4)
+            add_text_paragraph(body, f"Р§С‚Рѕ РїСЂРѕРІРµСЂСЏР»РѕСЃСЊ: {check.get('checked', '')}", size=10.7, color=BRAND_TEXT, space_after=3)
+            add_text_paragraph(body, f"РљР°Рє РїСЂРѕРІРµСЂСЏР»РѕСЃСЊ: {check.get('method', '')}", size=10.5, color=BRAND_MUTED, space_after=4)
             add_metrics_list(body, check.get("metrics", []))
-            add_text_paragraph(body, "Что нашли:", size=10.5, bold=True, color=BRAND_TEXT, space_after=3)
+            add_text_paragraph(body, "Р§С‚Рѕ РЅР°С€Р»Рё:", size=10.5, bold=True, color=BRAND_TEXT, space_after=3)
             add_bullet_list(body, check.get("findings", []), size=10.4)
             add_text_paragraph(
                 body,
-                f"Приоритет: {check.get('priority', '')}  |  Ответственный: {check.get('owner', '')}",
+                f"РџСЂРёРѕСЂРёС‚РµС‚: {check.get('priority', '')}  |  РћС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Р№: {check.get('owner', '')}",
                 size=10.2,
                 bold=True,
                 color=BRAND_ORANGE,
                 space_after=3,
             )
-            add_text_paragraph(body, f"Что делать: {check.get('recommendation', '')}", size=10.4, color=BRAND_TEXT, bold=True, space_after=4)
+            add_text_paragraph(body, f"Р§С‚Рѕ РґРµР»Р°С‚СЊ: {check.get('recommendation', '')}", size=10.4, color=BRAND_TEXT, bold=True, space_after=4)
             doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
 
@@ -2161,17 +2305,17 @@ def add_action_cards_doc(doc: Document, items: list[dict], value_key: str, extra
 def build_executive_summary(audit: dict) -> list[str]:
     return [
         (
-            f"{audit['company_name']} уже имеет сильный фундамент для роста: чистый HTTPS-домен, "
-            f"большой каталог спроса, рабочий sitemap, schema на товарах и категориях и широкую URL-структуру под кластеры."
+            f"{audit['company_name']} СѓР¶Рµ РёРјРµРµС‚ СЃРёР»СЊРЅС‹Р№ С„СѓРЅРґР°РјРµРЅС‚ РґР»СЏ СЂРѕСЃС‚Р°: С‡РёСЃС‚С‹Р№ HTTPS-РґРѕРјРµРЅ, "
+            f"Р±РѕР»СЊС€РѕР№ РєР°С‚Р°Р»РѕРі СЃРїСЂРѕСЃР°, СЂР°Р±РѕС‡РёР№ sitemap, schema РЅР° С‚РѕРІР°СЂР°С… Рё РєР°С‚РµРіРѕСЂРёСЏС… Рё С€РёСЂРѕРєСѓСЋ URL-СЃС‚СЂСѓРєС‚СѓСЂСѓ РїРѕРґ РєР»Р°СЃС‚РµСЂС‹."
         ),
         (
-            "Но сейчас проект теряет часть видимости не из-за отсутствия ассортимента, а из-за технических и шаблонных ограничений: "
-            "robots.txt конфликтует с картой сайта, метаданные у товарных и категорийных шаблонов часто слишком длинные, "
-            "контактные страницы недооформлены, а изображения не добирают SEO-сигналы через alt."
+            "РќРѕ СЃРµР№С‡Р°СЃ РїСЂРѕРµРєС‚ С‚РµСЂСЏРµС‚ С‡Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РЅРµ РёР·-Р·Р° РѕС‚СЃСѓС‚СЃС‚РІРёСЏ Р°СЃСЃРѕСЂС‚РёРјРµРЅС‚Р°, Р° РёР·-Р·Р° С‚РµС…РЅРёС‡РµСЃРєРёС… Рё С€Р°Р±Р»РѕРЅРЅС‹С… РѕРіСЂР°РЅРёС‡РµРЅРёР№: "
+            "robots.txt РєРѕРЅС„Р»РёРєС‚СѓРµС‚ СЃ РєР°СЂС‚РѕР№ СЃР°Р№С‚Р°, РјРµС‚Р°РґР°РЅРЅС‹Рµ Сѓ С‚РѕРІР°СЂРЅС‹С… Рё РєР°С‚РµРіРѕСЂРёР№РЅС‹С… С€Р°Р±Р»РѕРЅРѕРІ С‡Р°СЃС‚Рѕ СЃР»РёС€РєРѕРј РґР»РёРЅРЅС‹Рµ, "
+            "РєРѕРЅС‚Р°РєС‚РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РЅРµРґРѕРѕС„РѕСЂРјР»РµРЅС‹, Р° РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РЅРµ РґРѕР±РёСЂР°СЋС‚ SEO-СЃРёРіРЅР°Р»С‹ С‡РµСЂРµР· alt."
         ),
         (
-            "Если убрать этот технический шум и пересобрать коммерческие шаблоны, сайт сможет заметно сильнее раскрыть спрос "
-            "по аквариумам, террариумам, тумбам и аксессуарам без полной переделки платформы."
+            "Р•СЃР»Рё СѓР±СЂР°С‚СЊ СЌС‚РѕС‚ С‚РµС…РЅРёС‡РµСЃРєРёР№ С€СѓРј Рё РїРµСЂРµСЃРѕР±СЂР°С‚СЊ РєРѕРјРјРµСЂС‡РµСЃРєРёРµ С€Р°Р±Р»РѕРЅС‹, СЃР°Р№С‚ СЃРјРѕР¶РµС‚ Р·Р°РјРµС‚РЅРѕ СЃРёР»СЊРЅРµРµ СЂР°СЃРєСЂС‹С‚СЊ СЃРїСЂРѕСЃ "
+            "РїРѕ Р°РєРІР°СЂРёСѓРјР°Рј, С‚РµСЂСЂР°СЂРёСѓРјР°Рј, С‚СѓРјР±Р°Рј Рё Р°РєСЃРµСЃСЃСѓР°СЂР°Рј Р±РµР· РїРѕР»РЅРѕР№ РїРµСЂРµРґРµР»РєРё РїР»Р°С‚С„РѕСЂРјС‹."
         ),
     ]
 
@@ -2181,9 +2325,9 @@ def add_screenshot_gallery(doc: Document, screenshots: list[dict]) -> None:
         return
     add_section_heading(
         doc,
-        "Скриншоты",
-        "Автоскриншоты ключевых страниц",
-        "Эти изображения помогают быстро увидеть контекст: как выглядит главная, контакты, категория и карточка товара в момент аудита.",
+        "РЎРєСЂРёРЅС€РѕС‚С‹",
+        "РђРІС‚РѕСЃРєСЂРёРЅС€РѕС‚С‹ РєР»СЋС‡РµРІС‹С… СЃС‚СЂР°РЅРёС†",
+        "Р­С‚Рё РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РїРѕРјРѕРіР°СЋС‚ Р±С‹СЃС‚СЂРѕ СѓРІРёРґРµС‚СЊ РєРѕРЅС‚РµРєСЃС‚: РєР°Рє РІС‹РіР»СЏРґРёС‚ РіР»Р°РІРЅР°СЏ, РєРѕРЅС‚Р°РєС‚С‹, РєР°С‚РµРіРѕСЂРёСЏ Рё РєР°СЂС‚РѕС‡РєР° С‚РѕРІР°СЂР° РІ РјРѕРјРµРЅС‚ Р°СѓРґРёС‚Р°.",
     )
     for screenshot in screenshots:
         image_path = Path(screenshot["path"])
@@ -2198,7 +2342,7 @@ def add_screenshot_gallery(doc: Document, screenshots: list[dict]) -> None:
         set_cell_shading(body, "FFFFFF")
         set_cell_margins(head, 90, 110, 80, 110)
         set_cell_margins(body, 110, 110, 110, 110)
-        title_run = head.paragraphs[0].add_run(f"{screenshot.get('label', 'Страница')}  |  {shorten_path(screenshot.get('url', ''), 72)}")
+        title_run = head.paragraphs[0].add_run(f"{screenshot.get('label', 'РЎС‚СЂР°РЅРёС†Р°')}  |  {shorten_path(screenshot.get('url', ''), 72)}")
         set_font(title_run, size=10.6, bold=True, color=BRAND_TEXT)
         picture_run = body.paragraphs[0].add_run()
         picture_run.add_picture(str(image_path), width=Inches(6.25))
@@ -2215,75 +2359,75 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
     add_section_heading(
         doc,
         "Executive summary",
-        "Где проект уже силён и где он теряет рост",
-        "Ниже не просто список замечаний, а концентрат тех зон, которые сильнее всего влияют на индекс, сниппеты, спрос и конверсию.",
+        "Р“РґРµ РїСЂРѕРµРєС‚ СѓР¶Рµ СЃРёР»С‘РЅ Рё РіРґРµ РѕРЅ С‚РµСЂСЏРµС‚ СЂРѕСЃС‚",
+        "РќРёР¶Рµ РЅРµ РїСЂРѕСЃС‚Рѕ СЃРїРёСЃРѕРє Р·Р°РјРµС‡Р°РЅРёР№, Р° РєРѕРЅС†РµРЅС‚СЂР°С‚ С‚РµС… Р·РѕРЅ, РєРѕС‚РѕСЂС‹Рµ СЃРёР»СЊРЅРµРµ РІСЃРµРіРѕ РІР»РёСЏСЋС‚ РЅР° РёРЅРґРµРєСЃ, СЃРЅРёРїРїРµС‚С‹, СЃРїСЂРѕСЃ Рё РєРѕРЅРІРµСЂСЃРёСЋ.",
     )
     for paragraph in build_executive_summary_dynamic(audit):
         add_text_paragraph(doc, paragraph, size=11.4, color=BRAND_TEXT, space_after=6)
     add_metric_grid(doc, audit)
 
-    add_section_heading(doc, "Сильные стороны", "Что уже работает в плюс проекту")
+    add_section_heading(doc, "РЎРёР»СЊРЅС‹Рµ СЃС‚РѕСЂРѕРЅС‹", "Р§С‚Рѕ СѓР¶Рµ СЂР°Р±РѕС‚Р°РµС‚ РІ РїР»СЋСЃ РїСЂРѕРµРєС‚Сѓ")
     add_bullet_list(doc, audit["strengths"], size=11.1)
 
     add_section_heading(
         doc,
-        "Таблица приоритетов",
-        "Матрица проблем по влиянию на рост",
-        "Здесь задачи не просто перечислены, а разложены по impact, risk и business-effect, чтобы было понятно, что делать первым.",
+        "РўР°Р±Р»РёС†Р° РїСЂРёРѕСЂРёС‚РµС‚РѕРІ",
+        "РњР°С‚СЂРёС†Р° РїСЂРѕР±Р»РµРј РїРѕ РІР»РёСЏРЅРёСЋ РЅР° СЂРѕСЃС‚",
+        "Р—РґРµСЃСЊ Р·Р°РґР°С‡Рё РЅРµ РїСЂРѕСЃС‚Рѕ РїРµСЂРµС‡РёСЃР»РµРЅС‹, Р° СЂР°Р·Р»РѕР¶РµРЅС‹ РїРѕ impact, risk Рё business-effect, С‡С‚РѕР±С‹ Р±С‹Р»Рѕ РїРѕРЅСЏС‚РЅРѕ, С‡С‚Рѕ РґРµР»Р°С‚СЊ РїРµСЂРІС‹Рј.",
     )
     add_priority_matrix_table(doc, audit.get("priority_matrix", []))
 
     add_section_heading(
         doc,
-        "Критические ошибки",
-        "Что сейчас реально блокирует рост",
-        "Это не весь backlog, а ограничения, которые первыми режут индекс, сниппеты, crawl budget и способность сайта забирать спрос.",
+        "РљСЂРёС‚РёС‡РµСЃРєРёРµ РѕС€РёР±РєРё",
+        "Р§С‚Рѕ СЃРµР№С‡Р°СЃ СЂРµР°Р»СЊРЅРѕ Р±Р»РѕРєРёСЂСѓРµС‚ СЂРѕСЃС‚",
+        "Р­С‚Рѕ РЅРµ РІРµСЃСЊ backlog, Р° РѕРіСЂР°РЅРёС‡РµРЅРёСЏ, РєРѕС‚РѕСЂС‹Рµ РїРµСЂРІС‹РјРё СЂРµР¶СѓС‚ РёРЅРґРµРєСЃ, СЃРЅРёРїРїРµС‚С‹, crawl budget Рё СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ СЃР°Р№С‚Р° Р·Р°Р±РёСЂР°С‚СЊ СЃРїСЂРѕСЃ.",
     )
     critical_issue_cards = [AuditIssue(**item) for item in audit.get("critical_errors", [])] or audit["issues"][:4]
     add_issue_cards(doc, critical_issue_cards)
 
     add_section_heading(
         doc,
-        "Фазы аудита",
-        "Глубокий разбор по ключевым слоям сайта",
-        "Ниже аудит разобран по этапам, чтобы было видно не только список ошибок, но и реальную логику проверки проекта.",
+        "Р¤Р°Р·С‹ Р°СѓРґРёС‚Р°",
+        "Р“Р»СѓР±РѕРєРёР№ СЂР°Р·Р±РѕСЂ РїРѕ РєР»СЋС‡РµРІС‹Рј СЃР»РѕСЏРј СЃР°Р№С‚Р°",
+        "РќРёР¶Рµ Р°СѓРґРёС‚ СЂР°Р·РѕР±СЂР°РЅ РїРѕ СЌС‚Р°РїР°Рј, С‡С‚РѕР±С‹ Р±С‹Р»Рѕ РІРёРґРЅРѕ РЅРµ С‚РѕР»СЊРєРѕ СЃРїРёСЃРѕРє РѕС€РёР±РѕРє, РЅРѕ Рё СЂРµР°Р»СЊРЅСѓСЋ Р»РѕРіРёРєСѓ РїСЂРѕРІРµСЂРєРё РїСЂРѕРµРєС‚Р°.",
     )
     add_phase_sections_doc(doc, audit.get("phase_sections", []))
 
     add_section_heading(
         doc,
         "Quick wins",
-        "Быстрые победы на ближайший спринт",
-        "Эти правки можно внедрить быстро и получить заметный эффект без большой перестройки проекта.",
+        "Р‘С‹СЃС‚СЂС‹Рµ РїРѕР±РµРґС‹ РЅР° Р±Р»РёР¶Р°Р№С€РёР№ СЃРїСЂРёРЅС‚",
+        "Р­С‚Рё РїСЂР°РІРєРё РјРѕР¶РЅРѕ РІРЅРµРґСЂРёС‚СЊ Р±С‹СЃС‚СЂРѕ Рё РїРѕР»СѓС‡РёС‚СЊ Р·Р°РјРµС‚РЅС‹Р№ СЌС„С„РµРєС‚ Р±РµР· Р±РѕР»СЊС€РѕР№ РїРµСЂРµСЃС‚СЂРѕР№РєРё РїСЂРѕРµРєС‚Р°.",
     )
     add_action_cards_doc(doc, audit.get("quick_wins", []), "effort", "impact")
 
     add_section_heading(
         doc,
-        "Стратегические улучшения",
-        "Что усилит проект поверх базовых фиксов",
-        "Это уже не тушение пожара, а слой изменений, который превращает сайт в более сильный источник заявок и роста видимости.",
+        "РЎС‚СЂР°С‚РµРіРёС‡РµСЃРєРёРµ СѓР»СѓС‡С€РµРЅРёСЏ",
+        "Р§С‚Рѕ СѓСЃРёР»РёС‚ РїСЂРѕРµРєС‚ РїРѕРІРµСЂС… Р±Р°Р·РѕРІС‹С… С„РёРєСЃРѕРІ",
+        "Р­С‚Рѕ СѓР¶Рµ РЅРµ С‚СѓС€РµРЅРёРµ РїРѕР¶Р°СЂР°, Р° СЃР»РѕР№ РёР·РјРµРЅРµРЅРёР№, РєРѕС‚РѕСЂС‹Р№ РїСЂРµРІСЂР°С‰Р°РµС‚ СЃР°Р№С‚ РІ Р±РѕР»РµРµ СЃРёР»СЊРЅС‹Р№ РёСЃС‚РѕС‡РЅРёРє Р·Р°СЏРІРѕРє Рё СЂРѕСЃС‚Р° РІРёРґРёРјРѕСЃС‚Рё.",
     )
     add_action_cards_doc(doc, audit.get("strategic_moves", []), "impact", "effort")
 
-    add_section_heading(doc, "Точки роста", "Куда масштабировать проект после фиксов")
+    add_section_heading(doc, "РўРѕС‡РєРё СЂРѕСЃС‚Р°", "РљСѓРґР° РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°С‚СЊ РїСЂРѕРµРєС‚ РїРѕСЃР»Рµ С„РёРєСЃРѕРІ")
     add_bullet_list(doc, audit["growth_points"], size=11.1)
 
     add_section_heading(
         doc,
         "Roadmap",
-        "План внедрения на 60 дней",
-        "Порядок выстроен так, чтобы сначала снять технические стоп-факторы, потом усилить шаблоны и только после этого наращивать слой роста.",
+        "РџР»Р°РЅ РІРЅРµРґСЂРµРЅРёСЏ РЅР° 60 РґРЅРµР№",
+        "РџРѕСЂСЏРґРѕРє РІС‹СЃС‚СЂРѕРµРЅ С‚Р°Рє, С‡С‚РѕР±С‹ СЃРЅР°С‡Р°Р»Р° СЃРЅСЏС‚СЊ С‚РµС…РЅРёС‡РµСЃРєРёРµ СЃС‚РѕРї-С„Р°РєС‚РѕСЂС‹, РїРѕС‚РѕРј СѓСЃРёР»РёС‚СЊ С€Р°Р±Р»РѕРЅС‹ Рё С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ СЌС‚РѕРіРѕ РЅР°СЂР°С‰РёРІР°С‚СЊ СЃР»РѕР№ СЂРѕСЃС‚Р°.",
     )
     add_roadmap_table(doc, audit["roadmap"])
 
     add_section_heading(
         doc,
-        "Приложение",
-        "Какие страницы реально легли в основу разбора",
-        "Это не случайная выборка: сюда собраны главная, коммерческие, контактные, служебные и глубинные URL, по которым видно качество шаблонов проекта.",
+        "РџСЂРёР»РѕР¶РµРЅРёРµ",
+        "РљР°РєРёРµ СЃС‚СЂР°РЅРёС†С‹ СЂРµР°Р»СЊРЅРѕ Р»РµРіР»Рё РІ РѕСЃРЅРѕРІСѓ СЂР°Р·Р±РѕСЂР°",
+        "Р­С‚Рѕ РЅРµ СЃР»СѓС‡Р°Р№РЅР°СЏ РІС‹Р±РѕСЂРєР°: СЃСЋРґР° СЃРѕР±СЂР°РЅС‹ РіР»Р°РІРЅР°СЏ, РєРѕРјРјРµСЂС‡РµСЃРєРёРµ, РєРѕРЅС‚Р°РєС‚РЅС‹Рµ, СЃР»СѓР¶РµР±РЅС‹Рµ Рё РіР»СѓР±РёРЅРЅС‹Рµ URL, РїРѕ РєРѕС‚РѕСЂС‹Рј РІРёРґРЅРѕ РєР°С‡РµСЃС‚РІРѕ С€Р°Р±Р»РѕРЅРѕРІ РїСЂРѕРµРєС‚Р°.",
     )
-    add_snapshot_table(doc, audit["sample_pages"])
+    add_snapshot_table(doc, audit.get("appendix_pages") or audit["sample_pages"])
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(output_path))
@@ -2293,6 +2437,7 @@ def serialize_audit(audit: dict) -> dict:
     payload = dict(audit)
     payload["home_page"] = asdict(audit["home_page"])
     payload["sample_pages"] = [asdict(item) for item in audit["sample_pages"]]
+    payload["appendix_pages"] = [asdict(item) for item in audit.get("appendix_pages", [])]
     payload["issues"] = [asdict(item) for item in audit["issues"]]
     payload["screenshots"] = audit.get("screenshots", [])
     return payload
@@ -2305,7 +2450,7 @@ def main() -> None:
     parser.add_argument("--company", help="Client / brand name for the cover")
     parser.add_argument("--brand", default=BRAND_NAME, help="Brand label on the audit")
     parser.add_argument("--output", help="Output DOCX path")
-    parser.add_argument("--sample-size", type=int, default=18, help="How many pages to analyze from the website")
+    parser.add_argument("--sample-size", type=int, default=0, help="How many pages to analyze from the website; 0 = full crawl")
     parser.add_argument("--no-json", action="store_true", help="Do not save raw audit JSON next to the DOCX")
     parser.add_argument("--no-preview", action="store_true", help="Do not save HTML preview next to the DOCX")
     parser.add_argument("--no-pdf", action="store_true", help="Do not save PDF preview next to the DOCX")
@@ -2334,9 +2479,10 @@ def main() -> None:
         write_preview_html(audit_payload, html_path)
 
     if not args.no_pdf:
-        write_preview_pdf(html_path, pdf_path)
+        write_preview_pdf(audit_payload, pdf_path)
     print(f"Audit ready: {output}")
 
 
 if __name__ == "__main__":
     main()
+

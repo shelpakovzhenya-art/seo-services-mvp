@@ -9,7 +9,7 @@ export const runtime = 'nodejs'
 const requestSchema = z.object({
   url: z.string().trim().url(),
   company: z.string().trim().optional(),
-  sampleSize: z.coerce.number().int().min(4).max(24).optional(),
+  sampleSize: z.coerce.number().int().min(0).max(5000).optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = requestSchema.parse(await request.json())
     const company = body.company || deriveAuditCompanyName(body.url)
-    const sampleSize = body.sampleSize ?? 10
+    const sampleSize = body.sampleSize ?? 0
 
     const job = await prisma.parserJob.create({
       data: {
