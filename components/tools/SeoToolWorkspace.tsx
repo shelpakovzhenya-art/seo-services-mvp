@@ -9,7 +9,7 @@ type SeoToolWorkspaceProps = {
 }
 
 const fieldClassName =
-  'w-full rounded-[22px] border border-white/12 bg-[#091425]/82 px-4 py-3 text-sm text-slate-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] outline-none transition placeholder:text-slate-500 focus:border-cyan-300/50 focus:bg-[#0b182b]/92'
+  'tool-input w-full rounded-[22px] border border-cyan-100 bg-white px-4 py-3 text-sm text-slate-900 shadow-[0_10px_24px_rgba(8,17,31,0.08)] outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:bg-white'
 
 const labelClassName = 'text-xs font-semibold uppercase tracking-[0.24em] text-slate-400'
 

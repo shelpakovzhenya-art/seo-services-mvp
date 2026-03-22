@@ -911,6 +911,26 @@
     box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.12);
   }
 
+  .tool-input {
+    color: #0f172a;
+    caret-color: #0f172a;
+  }
+
+  .tool-input::placeholder {
+    color: #94a3b8;
+    opacity: 1;
+  }
+
+  .tool-input:-webkit-autofill,
+  .tool-input:-webkit-autofill:hover,
+  .tool-input:-webkit-autofill:focus,
+  .tool-input:-webkit-autofill:active {
+    -webkit-text-fill-color: #0f172a;
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+    box-shadow: 0 0 0 1000px #ffffff inset;
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
   .admin-theme .glass-panel,
   .admin-theme .hero-panel {
     background: initial;
