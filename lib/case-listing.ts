@@ -1,4 +1,4 @@
-import { botiqCase } from '@/lib/botiq-case'
+import { botiqCase, hydrateBotiqCaseRecord } from '@/lib/botiq-case'
 import { podocenterCase } from '@/lib/podocenter-case'
 
 const PLACEHOLDER_CASE_TITLE = '\u043f\u0440\u0438\u043c\u0435\u0440 \u043a\u0435\u0439\u0441\u0430'
@@ -39,7 +39,8 @@ export function isBotiqCase(caseItem: CaseListItem) {
 }
 
 export function buildCaseListing<T extends CaseListItem>(cases: T[]) {
-  const visibleCases = cases.filter((caseItem) => !isPlaceholderCase(caseItem))
+  const normalizedCases = cases.map((caseItem) => (isBotiqCase(caseItem) ? hydrateBotiqCaseRecord(caseItem) : caseItem))
+  const visibleCases = normalizedCases.filter((caseItem) => !isPlaceholderCase(caseItem))
   const hasPodocenterCard = visibleCases.some((caseItem) => isPodocenterCase(caseItem))
   const hasBotiqCard = visibleCases.some((caseItem) => isBotiqCase(caseItem))
   const builtInCases: T[] = []

@@ -1,10 +1,11 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
+import CaseGallery from '@/components/cases/CaseGallery'
 import JsonLd from '@/components/JsonLd'
 import LazyContactForm from '@/components/LazyContactForm'
 import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
-import { botiqCase, getBuiltInCaseBySlug } from '@/lib/botiq-case'
+import { botiqCase, getBuiltInCaseBySlug, hydrateBotiqCaseRecord } from '@/lib/botiq-case'
 import { parseCaseGallery } from '@/lib/case-gallery'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { prisma } from '@/lib/prisma'
@@ -29,7 +30,7 @@ async function getCaseBySlug(slug: string): Promise<{ caseItem: CaseRecord | nul
     })
 
     if (dbCase) {
-      return { caseItem: dbCase, isBuiltIn: false }
+      return { caseItem: hydrateBotiqCaseRecord(dbCase), isBuiltIn: false }
     }
   } catch (error) {
     console.error('Error loading case:', error)
@@ -37,7 +38,7 @@ async function getCaseBySlug(slug: string): Promise<{ caseItem: CaseRecord | nul
 
   const builtInCase = getBuiltInCaseBySlug(slug)
   return {
-    caseItem: builtInCase,
+    caseItem: builtInCase ? hydrateBotiqCaseRecord(builtInCase) : null,
     isBuiltIn: Boolean(builtInCase),
   }
 }
@@ -103,36 +104,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
         className="reading-shell editorial-prose mt-8 max-w-none"
       />
 
-      {galleryImages.length > 0 ? (
-        <section className="page-card mt-8">
-          <h2 className="text-3xl font-semibold text-slate-950">Скрины и материалы из аудита</h2>
-          <div className="uniform-grid-3 mt-8 gap-4">
-            {galleryImages.map((image, index) => (
-              <article
-                key={`${image.src}-${index}`}
-                className="overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_18px_45px_rgba(148,107,61,0.08)]"
-              >
-                <div className="relative aspect-[16/10] w-full bg-[linear-gradient(180deg,#fffdf8,#f7fbff)] p-3">
-                  <div className="relative h-full w-full overflow-hidden rounded-[20px] border border-white/80 bg-white">
-                    <Image
-                      src={image.src}
-                      alt={image.caption || `${caseItem.title} ${index + 1}`}
-                      fill
-                      unoptimized
-                      className="object-contain p-2"
-                    />
-                  </div>
-                </div>
-                {image.caption ? (
-                  <div className="border-t border-orange-100 px-4 py-3 text-sm leading-6 text-slate-600">
-                    {image.caption}
-                  </div>
-                ) : null}
-              </article>
-            ))}
-          </div>
-        </section>
-      ) : null}
+      {galleryImages.length > 0 ? <CaseGallery images={galleryImages} title={caseItem.title} /> : null}
 
       <section id="case-contact" className="mt-8 soft-section overflow-hidden">
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
