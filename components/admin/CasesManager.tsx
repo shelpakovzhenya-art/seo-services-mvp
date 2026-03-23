@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
+import { parseCaseGallery } from '@/lib/case-gallery'
 import { Plus, Edit, Trash2, Upload } from 'lucide-react'
 
 const RichTextEditor = dynamic(() => import('./RichTextEditor'), {
@@ -25,10 +26,13 @@ interface Case {
   order: number
 }
 
+const BOTIQ_CASE_SLUG = 'botiq-seo-audit'
+
 export default function CasesManager({ initialCases }: { initialCases: Case[] }) {
   const [cases, setCases] = useState(initialCases)
   const [editing, setEditing] = useState<Case | null>(null)
   const [isCreating, setIsCreating] = useState(false)
+  const hasBotiqCase = cases.some((caseItem) => caseItem.slug === BOTIQ_CASE_SLUG)
 
   const handleSave = async (caseItem: Partial<Case>) => {
     const url = editing ? `/api/admin/cases/${editing.id}` : '/api/admin/cases'
@@ -76,13 +80,36 @@ export default function CasesManager({ initialCases }: { initialCases: Case[] })
     }
   }
 
+  const handleCreateBotiqCase = async () => {
+    try {
+      const response = await fetch(`/api/admin/cases/templates/${BOTIQ_CASE_SLUG}`, {
+        method: 'POST',
+      })
+
+      if (response.ok) {
+        window.location.reload()
+      } else {
+        const error = await response.json()
+        alert(error.error || 'Не удалось создать кейс Botiq')
+      }
+    } catch (error) {
+      console.error('Error creating Botiq case:', error)
+      alert('Не удалось создать кейс Botiq. Проверьте консоль для деталей.')
+    }
+  }
+
   return (
     <div>
-      <div className="mb-4">
+      <div className="mb-4 flex flex-wrap gap-3">
         <Button onClick={() => setIsCreating(true)} className="gap-2">
           <Plus className="w-4 h-4" />
           Добавить кейс
         </Button>
+        {!hasBotiqCase ? (
+          <Button variant="outline" onClick={handleCreateBotiqCase}>
+            Создать кейс Botiq
+          </Button>
+        ) : null}
       </div>
 
       {(isCreating || editing) && (
@@ -191,10 +218,9 @@ function CaseForm({
         uploadedUrls.push(url)
       }
 
-      const currentImages = formData.resultImages
-        .split('\n')
-        .map((item) => item.trim())
-        .filter(Boolean)
+      const currentImages = parseCaseGallery(formData.resultImages).map((item) =>
+        item.caption ? `${item.src} | ${item.caption}` : item.src
+      )
 
       setFormData({
         ...formData,
@@ -326,7 +352,7 @@ function CaseForm({
               onChange={(e) => setFormData({ ...formData, resultImages: e.target.value })}
               className="w-full px-4 py-3 border rounded-md"
               rows={4}
-              placeholder="/uploads/result-1.jpg&#10;/uploads/result-2.jpg&#10;/uploads/result-3.jpg"
+              placeholder="/uploads/result-1.jpg | Краткий комментарий к скрину&#10;/uploads/result-2.jpg&#10;/uploads/result-3.jpg | Что показывает этот экран"
             />
             <div className="flex flex-wrap gap-2">
               <Button
@@ -353,22 +379,21 @@ function CaseForm({
             </div>
             {formData.resultImages ? (
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {formData.resultImages
-                  .split('\n')
-                  .map((item) => item.trim())
-                  .filter(Boolean)
-                  .map((imageUrl) => (
+                {parseCaseGallery(formData.resultImages).map((image) => (
+                  <div key={`${image.src}-${image.caption || ''}`} className="space-y-2">
                     <img
-                      key={imageUrl}
-                      src={imageUrl}
+                      src={image.src}
                       alt="Скрин результата"
                       className="h-32 w-full rounded border object-cover"
                     />
-                  ))}
+                    {image.caption ? <p className="text-xs leading-5 text-gray-500">{image.caption}</p> : null}
+                  </div>
+                ))}
               </div>
             ) : null}
             <p className="text-xs text-gray-500">
-              Можно просто вставить ссылки по одной на строку или загрузить несколько файлов сразу.
+              Можно вставлять по одной ссылке на строку. Если нужен комментарий под скрином, используйте формат
+              `URL | подпись`.
             </p>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { botiqCase } from '@/lib/botiq-case'
 import { isPlaceholderCase } from '@/lib/case-listing'
 import { podocenterCase } from '@/lib/podocenter-case'
 import { prisma } from '@/lib/prisma'
@@ -73,6 +74,12 @@ export async function generateSitemapEntries(): Promise<SitemapEntry[]> {
     {
       url: getFullUrl(podocenterCase.url),
       lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.75,
+    },
+    {
+      url: getFullUrl(botiqCase.url),
+      lastModified: new Date(botiqCase.updatedAt),
       changeFrequency: 'monthly' as const,
       priority: 0.75,
     },

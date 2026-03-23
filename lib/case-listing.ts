@@ -1,3 +1,4 @@
+import { botiqCase } from '@/lib/botiq-case'
 import { podocenterCase } from '@/lib/podocenter-case'
 
 const PLACEHOLDER_CASE_TITLE = '\u043f\u0440\u0438\u043c\u0435\u0440 \u043a\u0435\u0439\u0441\u0430'
@@ -30,23 +31,40 @@ export function isPodocenterCase(caseItem: CaseListItem) {
   return caseItem.slug === podocenterCase.slug || title.includes('podocenter')
 }
 
+export function isBotiqCase(caseItem: CaseListItem) {
+  const title = normalizeText(caseItem.title)
+  const description = normalizeText(caseItem.description)
+
+  return caseItem.slug === botiqCase.slug || title.includes('botiq') || description.includes('botiq')
+}
+
 export function buildCaseListing<T extends CaseListItem>(cases: T[]) {
   const visibleCases = cases.filter((caseItem) => !isPlaceholderCase(caseItem))
   const hasPodocenterCard = visibleCases.some((caseItem) => isPodocenterCase(caseItem))
+  const hasBotiqCard = visibleCases.some((caseItem) => isBotiqCase(caseItem))
+  const builtInCases: T[] = []
 
-  if (hasPodocenterCard) {
-    return visibleCases
-  }
-
-  return [
-    {
+  if (!hasPodocenterCard) {
+    builtInCases.push({
       id: 'podocenter-static-case',
       slug: podocenterCase.slug,
       title: podocenterCase.h1,
       description: podocenterCase.excerpt,
       content: '',
       image: null,
-    } as T,
-    ...visibleCases,
-  ]
+    } as T)
+  }
+
+  if (!hasBotiqCard) {
+    builtInCases.push({
+      id: 'botiq-static-case',
+      slug: botiqCase.slug,
+      title: botiqCase.title,
+      description: botiqCase.description,
+      content: '',
+      image: botiqCase.image,
+    } as T)
+  }
+
+  return [...builtInCases, ...visibleCases]
 }

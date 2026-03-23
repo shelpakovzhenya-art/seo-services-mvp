@@ -1,32 +1,78 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
+import JsonLd from '@/components/JsonLd'
 import LazyContactForm from '@/components/LazyContactForm'
 import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
+import { botiqCase, getBuiltInCaseBySlug } from '@/lib/botiq-case'
+import { parseCaseGallery } from '@/lib/case-gallery'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { prisma } from '@/lib/prisma'
 import { getFullUrl } from '@/lib/site-url'
+import { createBreadcrumbSchema, createCaseArticleSchema } from '@/lib/structured-data'
 
-function parseResultImages(value?: string | null) {
-  return (value || '')
-    .split('\n')
-    .map((item) => item.trim())
-    .filter(Boolean)
+type CaseRecord = {
+  slug?: string | null
+  title: string
+  description?: string | null
+  content?: string | null
+  image?: string | null
+  resultImages?: string | null
+  createdAt?: Date | string | null
+  updatedAt?: Date | string | null
+}
+
+async function getCaseBySlug(slug: string): Promise<{ caseItem: CaseRecord | null; isBuiltIn: boolean }> {
+  try {
+    const dbCase = await prisma.case.findFirst({
+      where: { slug },
+    })
+
+    if (dbCase) {
+      return { caseItem: dbCase, isBuiltIn: false }
+    }
+  } catch (error) {
+    console.error('Error loading case:', error)
+  }
+
+  const builtInCase = getBuiltInCaseBySlug(slug)
+  return {
+    caseItem: builtInCase,
+    isBuiltIn: Boolean(builtInCase),
+  }
 }
 
 export default async function CasePage({ params }: { params: { slug: string } }) {
-  const caseItem = await prisma.case.findFirst({
-    where: { slug: params.slug },
-  })
+  const { caseItem, isBuiltIn } = await getCaseBySlug(params.slug)
 
   if (!caseItem) {
     notFound()
   }
 
-  const galleryImages = parseResultImages(caseItem.resultImages)
+  const galleryImages = parseCaseGallery(caseItem.resultImages)
+  const casePath = isBuiltIn && params.slug === botiqCase.slug ? botiqCase.url : `/cases/${params.slug}`
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: 'Главная', path: '/' },
+    { name: 'Кейсы', path: '/cases' },
+    { name: caseItem.title, path: casePath },
+  ])
+  const caseArticleSchema = createCaseArticleSchema({
+    path: casePath,
+    title: caseItem.title,
+    description:
+      caseItem.description ||
+      'Кейс по SEO-аудиту, структуре сайта и поэтапному усилению ключевых страниц под рост видимости и заявок.',
+    image: caseItem.image,
+    publishedAt: isBuiltIn && params.slug === botiqCase.slug ? botiqCase.publishedAt : caseItem.createdAt,
+    updatedAt: isBuiltIn && params.slug === botiqCase.slug ? botiqCase.updatedAt : caseItem.updatedAt,
+    about: isBuiltIn && params.slug === botiqCase.slug ? botiqCase.about : ['SEO-аудит', 'Структура сайта', 'Техническое SEO'],
+  })
 
   return (
     <div className="page-shell">
+      <JsonLd id={`case-breadcrumbs-${params.slug}`} data={breadcrumbSchema} />
+      <JsonLd id={`case-article-${params.slug}`} data={caseArticleSchema} />
+
       <section className="soft-section surface-pad overflow-hidden">
         <span className="warm-chip">Кейс</span>
         <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">{caseItem.title}</h1>
@@ -54,29 +100,34 @@ export default async function CasePage({ params }: { params: { slug: string } })
       <RichContent
         content={caseItem.content}
         title={caseItem.title}
-        className="page-card mt-8 prose max-w-none prose-slate"
+        className="reading-shell editorial-prose mt-8 max-w-none"
       />
 
       {galleryImages.length > 0 ? (
         <section className="page-card mt-8">
-          <h2 className="text-3xl font-semibold text-slate-950">Скрины и результаты</h2>
+          <h2 className="text-3xl font-semibold text-slate-950">Скрины и материалы из аудита</h2>
           <div className="uniform-grid-3 mt-8 gap-4">
-            {galleryImages.map((src, index) => (
+            {galleryImages.map((image, index) => (
               <article
-                key={src}
+                key={`${image.src}-${index}`}
                 className="overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_18px_45px_rgba(148,107,61,0.08)]"
               >
                 <div className="relative aspect-[16/10] w-full bg-[linear-gradient(180deg,#fffdf8,#f7fbff)] p-3">
                   <div className="relative h-full w-full overflow-hidden rounded-[20px] border border-white/80 bg-white">
                     <Image
-                      src={src}
-                      alt={`${caseItem.title} ${index + 1}`}
+                      src={image.src}
+                      alt={image.caption || `${caseItem.title} ${index + 1}`}
                       fill
                       unoptimized
                       className="object-contain p-2"
                     />
                   </div>
                 </div>
+                {image.caption ? (
+                  <div className="border-t border-orange-100 px-4 py-3 text-sm leading-6 text-slate-600">
+                    {image.caption}
+                  </div>
+                ) : null}
               </article>
             ))}
           </div>
@@ -106,15 +157,15 @@ export default async function CasePage({ params }: { params: { slug: string } })
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const caseItem = await prisma.case.findFirst({
-    where: { slug: params.slug },
-  })
+  const { caseItem, isBuiltIn } = await getCaseBySlug(params.slug)
 
   if (!caseItem) {
     return {}
   }
 
-  const url = getFullUrl(`/cases/${params.slug}`)
+  const url = getFullUrl(isBuiltIn && params.slug === botiqCase.slug ? botiqCase.url : `/cases/${params.slug}`)
+  const ogImage =
+    caseItem.image && !caseItem.image.startsWith('http') ? getFullUrl(caseItem.image) : caseItem.image || undefined
   const title = normalizeMetaTitle(caseItem.title, 'SEO-кейс')
   const description = normalizeMetaDescription(
     caseItem.description,
@@ -132,6 +183,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       description,
       url,
       type: 'article',
+      images: ogImage ? [{ url: ogImage }] : undefined,
     },
   }
 }
