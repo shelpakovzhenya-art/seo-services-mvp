@@ -3,6 +3,8 @@ from __future__ import annotations
 from html import escape
 from pathlib import Path
 
+from text_utils import normalize_output_text, normalize_structure
+
 try:
     from reportlab.lib import colors
     from reportlab.lib.enums import TA_CENTER
@@ -88,13 +90,17 @@ def _ensure_pdf_fonts() -> tuple[str, str]:
 
 
 def _escape_pdf_text(value: object) -> str:
-    text = str(value or "")
+    text = normalize_output_text(value)
     return (
         text.replace("&", "&amp;")
         .replace("<", "&lt;")
         .replace(">", "&gt;")
         .replace("\n", "<br/>")
     )
+
+
+def _escape_html_text(value: object) -> str:
+    return escape(normalize_output_text(value))
 
 
 def _build_pdf_styles():
@@ -260,6 +266,13 @@ def _section_header(story: list, kicker: str, title: str, lead: str, styles: dic
     story.append(Spacer(1, 4))
 
 
+def _action_meta_label(key: str) -> str:
+    return {
+        "impact": "Ожидаемый эффект",
+        "effort": "Сколько займет времени",
+    }.get(key, normalize_output_text(key))
+
+
 def _append_issue_cards(story: list, issues: list[dict], styles: dict) -> None:
     for issue in issues:
         evidence_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in issue.get("evidence", []))
@@ -294,7 +307,7 @@ def _append_action_cards(story: list, items: list[dict], kicker: str, title: str
         card = Table(
             [
                 [Paragraph(_escape_pdf_text(item.get("title", "")), styles["cardTitle"])],
-                [Paragraph(f"<b>Влияние:</b> {_escape_pdf_text(item.get('impact', ''))} &nbsp;&nbsp; <b>Усилие:</b> {_escape_pdf_text(item.get('effort', ''))}", styles["small"])],
+                [Paragraph(f"<b>{_escape_pdf_text(_action_meta_label('impact'))}:</b> {_escape_pdf_text(item.get('impact', ''))} &nbsp;&nbsp; <b>{_escape_pdf_text(_action_meta_label('effort'))}:</b> {_escape_pdf_text(item.get('effort', ''))}", styles["small"])],
                 [Paragraph(_escape_pdf_text(item.get("action") or item.get("details") or ""), styles["base"])],
             ],
             colWidths=[180 * mm],
@@ -318,7 +331,7 @@ def _append_action_cards(story: list, items: list[dict], kicker: str, title: str
 
 def _append_phase_sections(story: list, phase_sections: list[dict], styles: dict) -> None:
     for section in phase_sections:
-        _section_header(story, "Глубокий разбор", str(section.get("title", "")), str(section.get("intro", "")), styles)
+        _section_header(story, "Подробный разбор", str(section.get("title", "")), str(section.get("intro", "")), styles)
         for check in section.get("checks", []):
             metrics = "<br/>".join(
                 f"<b>{_escape_pdf_text(label)}:</b> {_escape_pdf_text(value)}"
@@ -376,9 +389,9 @@ def _append_phase_sections(story: list, phase_sections: list[dict], styles: dict
 def _append_roadmap(story: list, roadmap: list[list], styles: dict) -> None:
     _section_header(
         story,
-        "Roadmap",
+        "План работ",
         "План внедрения на 60 дней",
-        "Порядок выстроен так, чтобы сначала убрать технические стоп-факторы, потом усилить шаблоны, а после этого наращивать точки роста.",
+        "Сначала снимаем технические ограничения, потом усиливаем шаблоны и только после этого масштабируем рост.",
         styles,
     )
     cards = []
@@ -412,8 +425,8 @@ def _append_appendix(story: list, appendix_pages: list[dict], styles: dict) -> N
     _section_header(
         story,
         "Приложение",
-        "Ключевые URL, которые вошли в итоговый документ",
-        "В документ вынесены основные страницы, по которым проще всего понять качество шаблонов, SEO-обвязки и коммерческого слоя сайта.",
+        "Ключевые URL, которые вошли в разбор",
+        "Здесь собраны основные страницы, по которым проще всего понять качество шаблонов, SEO-обвязки и коммерческих блоков сайта.",
         styles,
     )
     rows = [["Путь", "Тип", "Код", "Title", "Desc", "H1", "Schema"]]
@@ -493,6 +506,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
         return False
 
     try:
+        audit_payload = normalize_structure(audit_payload)
         regular_font, bold_font = _ensure_pdf_fonts()
         styles = _build_pdf_styles()
         pdf_path.parent.mkdir(parents=True, exist_ok=True)
@@ -512,7 +526,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             Paragraph(f"SEO-аудит<br/>{_escape_pdf_text(audit_payload.get('domain', ''))}", styles["coverTitle"]),
             Paragraph(
                 _escape_pdf_text(
-                    "Коммерческий аудит с фокусом на индексацию, точки роста, шаблоны страниц, конверсию и реальный план внедрения."
+                    "Понятный технический аудит с приоритетами и планом работ."
                 ),
                 styles["coverBody"],
             ),
@@ -555,10 +569,10 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
         story.append(Spacer(1, 14))
 
         metrics = [
-            ("Sitemap unique", audit_payload.get("sitemap_url_count", 0)),
-            ("Sitemap entries", audit_payload.get("sitemap_total_entries", 0)),
+            ("URL в sitemap", audit_payload.get("sitemap_url_count", 0)),
+            ("Записей в sitemap", audit_payload.get("sitemap_total_entries", 0)),
             ("Средний ответ", f"{audit_payload.get('average_response_ms', 0)} ms"),
-            ("HTML обхода", f"{audit_payload.get('average_html_kb', 0)} KB"),
+            ("Средний HTML", f"{audit_payload.get('average_html_kb', 0)} KB"),
         ]
         metric_cards = [_metric_card(label, value, styles) for label, value in metrics]
         story.append(Table([metric_cards[:2], metric_cards[2:]], colWidths=[86 * mm, 86 * mm], rowHeights=[28 * mm, 28 * mm]))
@@ -566,9 +580,9 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
 
         _section_header(
             story,
-            "Executive summary",
-            "Главные выводы по проекту",
-            "Ниже не просто список ошибок, а короткая выжимка того, где сайт уже держится уверенно и что сейчас сильнее всего мешает росту.",
+            "Краткий вывод",
+            "Где сайт уже в порядке и что сейчас мешает росту",
+            "Ниже собрали короткую выжимку: что уже хорошо, где есть потери и с чего разумно начать.",
             styles,
         )
         story.extend(_paragraph_list(audit_payload.get("executive_summary", []), styles))
@@ -578,7 +592,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             story,
             "Сильные стороны",
             "На что уже можно опираться",
-            "Это база, которую не нужно ломать. На ней проще строить рост, чем пересобирать проект с нуля.",
+            "Это база, которую не нужно переделывать с нуля. На ней проще строить рост.",
             styles,
         )
         story.extend(_paragraph_list(audit_payload.get("strengths", []), styles))
@@ -590,8 +604,8 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
         _section_header(
             story,
             "Приоритеты",
-            "Матрица проблем по влиянию на рост",
-            "Здесь задачи разложены по impact, risk и business-effect, чтобы было понятно, что делать первым.",
+            "Какие задачи делать в первую очередь",
+            "Таблица ниже помогает быстро понять, что сильнее всего влияет на результат и кому это лучше передать в работу.",
             styles,
         )
         for row in audit_payload.get("priority_matrix", [])[:12]:
@@ -602,7 +616,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
                         [
                             Paragraph(
                                 _escape_pdf_text(
-                                    f"Impact: {row.get('impact', '')} | Risk: {row.get('risk', '')} | Business: {row.get('business', '')} | Итог: {row.get('total', '')}"
+                                    f"Влияние: {row.get('impact', '')} | Риск: {row.get('risk', '')} | Польза: {row.get('business', '')} | Итог: {row.get('total', '')}"
                                 ),
                                 styles["small"],
                             )
@@ -629,7 +643,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             story,
             "Критические ошибки",
             "Что сейчас реально блокирует рост",
-            "Это не весь backlog, а ограничения, которые первыми режут индекс, сниппеты, crawl budget и способность сайта забирать спрос.",
+            "Здесь только те проблемы, которые заметно влияют на индекс, сниппеты, трафик и заявки.",
             styles,
         )
         _append_issue_cards(story, audit_payload.get("critical_errors") or audit_payload.get("issues", []), styles)
@@ -637,17 +651,17 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
         _append_action_cards(
             story,
             audit_payload.get("quick_wins", []),
-            "Quick wins",
-            "Быстрые победы на ближайший спринт",
-            "Эти правки можно внедрить быстро и получить заметный эффект без большой перестройки проекта.",
+            "Быстрые исправления",
+            "Что можно исправить в ближайшее время",
+            "Это задачи, которые обычно внедряются быстро и дают заметный результат без большой переделки сайта.",
             styles,
         )
         _append_action_cards(
             story,
             audit_payload.get("strategic_moves", []),
             "Стратегические улучшения",
-            "Что усилит проект поверх базовых фиксов",
-            "Это уже не тушение пожара, а слой изменений, который превращает сайт в более сильный источник заявок и роста видимости.",
+            "Что даст рост после базовых исправлений",
+            "Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок в долгую.",
             styles,
         )
         _append_roadmap(story, audit_payload.get("roadmap", []), styles)
@@ -664,11 +678,11 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
 
 
 def _issue_card(issue: dict) -> str:
-    severity = escape(issue.get("severity", ""))
-    title = escape(issue.get("title", ""))
-    why = escape(issue.get("why_it_matters", ""))
-    recommendation = escape(issue.get("recommendation", ""))
-    evidence_items = "".join(f"<li>{escape(item)}</li>" for item in issue.get("evidence", []))
+    severity = _escape_html_text(issue.get("severity", ""))
+    title = _escape_html_text(issue.get("title", ""))
+    why = _escape_html_text(issue.get("why_it_matters", ""))
+    recommendation = _escape_html_text(issue.get("recommendation", ""))
+    evidence_items = "".join(f"<li>{_escape_html_text(item)}</li>" for item in issue.get("evidence", []))
     return f"""
     <article class="issue-card issue-{severity.lower()}">
       <div class="issue-head"><span>{severity}</span><strong>{title}</strong></div>
@@ -688,18 +702,18 @@ def _priority_table(rows: list[dict]) -> str:
     for row in rows:
         body.append(
             "<tr>"
-            f"<td>{escape(row.get('problem', ''))}</td>"
-            f"<td>{escape(str(row.get('impact', '')))}</td>"
-            f"<td>{escape(str(row.get('risk', '')))}</td>"
-            f"<td>{escape(str(row.get('business', '')))}</td>"
-            f"<td>{escape(str(row.get('total', '')))}</td>"
-            f"<td>{escape(row.get('severity', ''))}</td>"
-            f"<td>{escape(row.get('owner', ''))}</td>"
+            f"<td>{_escape_html_text(row.get('problem', ''))}</td>"
+            f"<td>{_escape_html_text(row.get('impact', ''))}</td>"
+            f"<td>{_escape_html_text(row.get('risk', ''))}</td>"
+            f"<td>{_escape_html_text(row.get('business', ''))}</td>"
+            f"<td>{_escape_html_text(row.get('total', ''))}</td>"
+            f"<td>{_escape_html_text(row.get('severity', ''))}</td>"
+            f"<td>{_escape_html_text(row.get('owner', ''))}</td>"
             "</tr>"
         )
     return (
         "<div class='table-wrap'><table class='priority-table'>"
-        "<thead><tr><th>Проблема</th><th>Impact</th><th>Risk</th><th>Business</th><th>Итог</th><th>Приоритет</th><th>Ответственный</th></tr></thead>"
+        "<thead><tr><th>Проблема</th><th>Влияние</th><th>Риск</th><th>Польза</th><th>Итог</th><th>Приоритет</th><th>Ответственный</th></tr></thead>"
         f"<tbody>{''.join(body)}</tbody></table></div>"
     )
 
@@ -710,16 +724,16 @@ def _phase_checks_html(phase_sections: list[dict]) -> str:
         checks_html = []
         for check in section.get("checks", []):
             metrics = "".join(
-                f"<li><strong>{escape(str(label))}:</strong> {escape(str(value))}</li>"
+                f"<li><strong>{_escape_html_text(label)}:</strong> {_escape_html_text(value)}</li>"
                 for label, value in check.get("metrics", [])
             )
-            findings = "".join(f"<li>{escape(item)}</li>" for item in check.get("findings", []))
+            findings = "".join(f"<li>{_escape_html_text(item)}</li>" for item in check.get("findings", []))
             checks_html.append(
                 f"""
                 <article class="phase-check">
-                  <h3>{escape(check.get('name', ''))}</h3>
-                  <p><strong>Что проверялось:</strong> {escape(check.get('checked', ''))}</p>
-                  <p><strong>Как проверялось:</strong> {escape(check.get('method', ''))}</p>
+                  <h3>{_escape_html_text(check.get('name', ''))}</h3>
+                  <p><strong>Что проверялось:</strong> {_escape_html_text(check.get('checked', ''))}</p>
+                  <p><strong>Как проверялось:</strong> {_escape_html_text(check.get('method', ''))}</p>
                   <div class="phase-grid">
                     <div class="phase-box">
                       <div class="phase-box-title">Ключевые метрики</div>
@@ -730,17 +744,17 @@ def _phase_checks_html(phase_sections: list[dict]) -> str:
                       <ul>{findings}</ul>
                     </div>
                   </div>
-                  <p class="phase-meta"><strong>Приоритет:</strong> {escape(check.get('priority', ''))} <span>•</span> <strong>Ответственный:</strong> {escape(check.get('owner', ''))}</p>
-                  <p class="recommendation"><strong>Что делать:</strong> {escape(check.get('recommendation', ''))}</p>
+                  <p class="phase-meta"><strong>Приоритет:</strong> {_escape_html_text(check.get('priority', ''))} <span>•</span> <strong>Ответственный:</strong> {_escape_html_text(check.get('owner', ''))}</p>
+                  <p class="recommendation"><strong>Что делать:</strong> {_escape_html_text(check.get('recommendation', ''))}</p>
                 </article>
                 """
             )
         blocks.append(
             f"""
             <section class="phase-section">
-              <div class="section-kicker">Глубокий разбор</div>
-              <h2>{escape(section.get('title', ''))}</h2>
-              <p class="lead">{escape(section.get('intro', ''))}</p>
+              <div class="section-kicker">Подробный разбор</div>
+              <h2>{_escape_html_text(section.get('title', ''))}</h2>
+              <p class="lead">{_escape_html_text(section.get('intro', ''))}</p>
               <div class="phase-checks">{''.join(checks_html)}</div>
             </section>
             """
@@ -751,11 +765,11 @@ def _phase_checks_html(phase_sections: list[dict]) -> str:
 def _roadmap_columns(roadmap: list[list]) -> str:
     chunks = []
     for period, tasks in roadmap:
-        items = "".join(f"<li>{escape(task)}</li>" for task in tasks)
+        items = "".join(f"<li>{_escape_html_text(task)}</li>" for task in tasks)
         chunks.append(
             f"""
             <div class="roadmap-card">
-              <div class="roadmap-period">{escape(period)}</div>
+              <div class="roadmap-period">{_escape_html_text(period)}</div>
               <ul>{items}</ul>
             </div>
             """
@@ -769,10 +783,10 @@ def _action_cards(items: list[dict], value_key: str, extra_key: str) -> str:
         cards.append(
             f"""
             <article class="action-card">
-              <h3>{escape(item.get('title', ''))}</h3>
-              <p class="action-meta"><strong>{escape(value_key.capitalize())}:</strong> {escape(item.get(value_key, ''))}</p>
-              <p class="action-meta"><strong>{escape(extra_key.capitalize())}:</strong> {escape(item.get(extra_key, ''))}</p>
-              <p>{escape(item.get('action') or item.get('details') or '')}</p>
+              <h3>{_escape_html_text(item.get('title', ''))}</h3>
+              <p class="action-meta"><strong>{_escape_html_text(_action_meta_label(value_key))}:</strong> {_escape_html_text(item.get(value_key, ''))}</p>
+              <p class="action-meta"><strong>{_escape_html_text(_action_meta_label(extra_key))}:</strong> {_escape_html_text(item.get(extra_key, ''))}</p>
+              <p>{_escape_html_text(item.get('action') or item.get('details') or '')}</p>
             </article>
             """
         )
@@ -780,10 +794,11 @@ def _action_cards(items: list[dict], value_key: str, extra_key: str) -> str:
 
 
 def write_preview_html(audit_payload: dict, html_path: Path) -> None:
+    audit_payload = normalize_structure(audit_payload)
     critical_source = audit_payload.get("critical_errors") or audit_payload.get("issues", [])
     issues_html = "".join(_issue_card(issue) for issue in critical_source)
-    strengths_html = "".join(f"<li>{escape(item)}</li>" for item in audit_payload.get("strengths", []))
-    growth_html = "".join(f"<li>{escape(item)}</li>" for item in audit_payload.get("growth_points", []))
+    strengths_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in audit_payload.get("strengths", []))
+    growth_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in audit_payload.get("growth_points", []))
     priority_html = _priority_table(audit_payload.get("priority_matrix", []))
     phases_html = _phase_checks_html(audit_payload.get("phase_sections", []))
     quick_wins_html = _action_cards(audit_payload.get("quick_wins", []), "effort", "impact")
@@ -794,7 +809,7 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SEO-аудит {escape(audit_payload.get('domain', ''))} — Shelpakov Digital</title>
+  <title>SEO-аудит {_escape_html_text(audit_payload.get('domain', ''))} - Shelpakov Digital</title>
   <style>
     :root {{
       --bg: #0f1c2d;
@@ -1084,52 +1099,52 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     <header class="hero">
       <div class="hero-main">
         <div class="hero-kicker">Shelpakov Digital</div>
-        <h1>SEO-аудит {escape(audit_payload.get("domain", ""))}</h1>
-        <p>Коммерческий аудит с фокусом на индексацию, точки роста, шаблоны страниц, конверсию и реальный план внедрения.</p>
+        <h1>SEO-аудит {_escape_html_text(audit_payload.get("domain", ""))}</h1>
+        <p>Понятный технический аудит с приоритетами и планом работ.</p>
       </div>
       <aside class="hero-side">
         <div class="section-kicker">Паспорт проекта</div>
-        <h2 style="font-size:32px;margin-bottom:8px;">{escape(audit_payload.get("company_name", ""))}</h2>
-        <p class="lead" style="font-size:16px;">Дата: {escape(audit_payload.get("generated_at", ""))}<br/>Домен: {escape(audit_payload.get("base_url", ""))}</p>
-        <div class="score">{escape(str(audit_payload.get("score", "")))}</div>
+        <h2 style="font-size:32px;margin-bottom:8px;">{_escape_html_text(audit_payload.get("company_name", ""))}</h2>
+        <p class="lead" style="font-size:16px;">Дата: {_escape_html_text(audit_payload.get("generated_at", ""))}<br/>Домен: {_escape_html_text(audit_payload.get("base_url", ""))}</p>
+        <div class="score">{_escape_html_text(audit_payload.get("score", ""))}</div>
         <div style="color:var(--muted);font-weight:700;">Индекс SEO-готовности из 100</div>
       </aside>
     </header>
 
     <div class="grid-4">
-      <div class="metric"><div class="metric-label">Sitemap unique</div><div class="metric-value">{audit_payload.get("sitemap_url_count", 0)}</div></div>
-      <div class="metric"><div class="metric-label">Sitemap entries</div><div class="metric-value">{audit_payload.get("sitemap_total_entries", 0)}</div></div>
+      <div class="metric"><div class="metric-label">URL в sitemap</div><div class="metric-value">{audit_payload.get("sitemap_url_count", 0)}</div></div>
+      <div class="metric"><div class="metric-label">Записей в sitemap</div><div class="metric-value">{audit_payload.get("sitemap_total_entries", 0)}</div></div>
       <div class="metric"><div class="metric-label">Средний ответ</div><div class="metric-value">{audit_payload.get("average_response_ms", 0)} ms</div></div>
-      <div class="metric"><div class="metric-label">HTML выборки</div><div class="metric-value">{audit_payload.get("average_html_kb", 0)} KB</div></div>
+      <div class="metric"><div class="metric-label">Средний HTML</div><div class="metric-value">{audit_payload.get("average_html_kb", 0)} KB</div></div>
     </div>
 
     <section>
       <div class="section-kicker">Приоритеты</div>
-      <h2>Матрица проблем по влиянию на рост</h2>
-      <p class="lead">Здесь задачи не просто перечислены, а разложены по impact, risk и business-effect, чтобы было понятно, что делать первым.</p>
+      <h2>Какие задачи делать в первую очередь</h2>
+      <p class="lead">Таблица ниже помогает быстро понять, что сильнее всего влияет на результат и кому это лучше передать в работу.</p>
       {priority_html}
     </section>
 
     <section>
       <div class="section-kicker">Критические ошибки</div>
       <h2>Что сейчас реально блокирует рост</h2>
-      <p class="lead">Это не весь backlog, а ограничения, которые первыми режут индекс, сниппеты, crawl budget и способность сайта забирать спрос.</p>
+      <p class="lead">Здесь только те проблемы, которые заметно влияют на индекс, сниппеты, трафик и заявки.</p>
       <div class="issue-list">{issues_html}</div>
     </section>
 
     {phases_html}
 
     <section>
-      <div class="section-kicker">Quick wins</div>
-      <h2>Быстрые победы на ближайший спринт</h2>
-      <p class="lead">Эти правки можно внедрить быстро и получить заметный эффект без большой перестройки проекта.</p>
+      <div class="section-kicker">Быстрые исправления</div>
+      <h2>Что можно исправить в ближайшее время</h2>
+      <p class="lead">Это задачи, которые обычно внедряются быстро и дают заметный результат без большой переделки сайта.</p>
       <div class="action-grid">{quick_wins_html}</div>
     </section>
 
     <section>
       <div class="section-kicker">Стратегические улучшения</div>
-      <h2>Что усилит проект поверх базовых фиксов</h2>
-      <p class="lead">Это уже не тушение пожара, а слой изменений, который превращает сайт в более сильный источник заявок и роста видимости.</p>
+      <h2>Что даст рост после базовых исправлений</h2>
+      <p class="lead">Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок в долгую.</p>
       <div class="action-grid">{strategic_html}</div>
     </section>
 
@@ -1148,13 +1163,13 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     </section>
 
     <section>
-      <div class="section-kicker">Roadmap</div>
+      <div class="section-kicker">План работ</div>
       <h2>План внедрения на 60 дней</h2>
-      <p class="lead">Порядок выстроен так, чтобы сначала снять технические стоп-факторы, потом усилить шаблоны и только после этого наращивать слой роста.</p>
+      <p class="lead">Сначала снимаем технические ограничения, потом усиливаем шаблоны и только после этого масштабируем рост.</p>
       <div class="roadmap">{_roadmap_columns(audit_payload.get("roadmap", []))}</div>
     </section>
 
-    <div class="footer-note">Аудит подготовлен {escape(audit_payload.get("generated_at", ""))} • {escape(audit_payload.get("domain", ""))} • Shelpakov Digital</div>
+    <div class="footer-note">Аудит подготовлен {_escape_html_text(audit_payload.get("generated_at", ""))} • {_escape_html_text(audit_payload.get("domain", ""))} • Shelpakov Digital</div>
   </div>
 </body>
 </html>

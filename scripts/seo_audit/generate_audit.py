@@ -24,6 +24,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Inches, Pt, RGBColor
 from preview_export import write_preview_html, write_preview_pdf
+from text_utils import normalize_output_text, normalize_structure
 
 BRAND_NAME = "Shelpakov Digital"
 BRAND_DARK = "101C2B"
@@ -180,7 +181,7 @@ def add_text_paragraph(container, text: str, *, size=11.5, color=BRAND_TEXT, bol
     paragraph = container.add_paragraph()
     if alignment is not None:
         paragraph.alignment = alignment
-    run = paragraph.add_run(text)
+    run = paragraph.add_run(normalize_output_text(text))
     set_font(run, size=size, bold=bold, color=color)
     paragraph.paragraph_format.space_after = Pt(space_after)
     paragraph.paragraph_format.line_spacing = 1.25
@@ -193,20 +194,27 @@ def add_bullet_list(container, items: Iterable[str], *, size=11.2, color=BRAND_T
         paragraph.paragraph_format.left_indent = Cm(0.4)
         paragraph.paragraph_format.first_line_indent = Cm(-0.4)
         paragraph.paragraph_format.space_after = Pt(4)
-        run = paragraph.add_run(f"вЂў {item}")
+        run = paragraph.add_run(f"• {normalize_output_text(item)}")
         set_font(run, size=size, color=color)
 
 
 def add_section_heading(doc: Document, kicker: str, title: str, intro: str | None = None) -> None:
     kicker_paragraph = doc.add_paragraph()
-    kicker_run = kicker_paragraph.add_run(kicker.upper())
+    kicker_run = kicker_paragraph.add_run(normalize_output_text(kicker).upper())
     set_font(kicker_run, size=9.5, bold=True, color=BRAND_ORANGE)
     title_paragraph = doc.add_paragraph()
-    title_run = title_paragraph.add_run(title)
+    title_run = title_paragraph.add_run(normalize_output_text(title))
     set_font(title_run, size=20, bold=True, color=BRAND_TEXT)
     title_paragraph.paragraph_format.space_after = Pt(6)
     if intro:
         add_text_paragraph(doc, intro, size=11.3, color=BRAND_MUTED, space_after=10)
+
+
+def action_meta_label(key: str) -> str:
+    return {
+        "impact": "Ожидаемый эффект",
+        "effort": "Сколько займет времени",
+    }.get(key, normalize_output_text(key))
 
 
 def strip_namespace(tag: str) -> str:
@@ -830,59 +838,56 @@ def dynamic_build_roadmap(audit: dict) -> list[tuple[str, list[str]]]:
 
     sprint_1 = []
     if robots_conflict:
-        sprint_1.append("РЈР±СЂР°С‚СЊ РєРѕРЅС„Р»РёРєС‚ РІ robots.txt Рё СЃРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°С‚СЊ Sitemap, Host Рё РєР°РЅРѕРЅРёС‡РµСЃРєРёР№ РґРѕРјРµРЅ.")
+        sprint_1.append("Убрать конфликт между robots.txt и sitemap.xml.")
     if redirect_chains:
-        sprint_1.append("РЎРІРµСЃС‚Рё РІСЃРµ РґРѕРјРµРЅРЅС‹Рµ РІР°СЂРёР°РЅС‚С‹ Рє РѕРґРЅРѕРјСѓ РїСЂСЏРјРѕРјСѓ 301-СЂРµРґРёСЂРµРєС‚Сѓ.")
+        sprint_1.append("Свести редиректы домена к одному шагу без лишних переходов.")
     if query_pages:
-        sprint_1.append("Р—Р°РєСЂС‹С‚СЊ РёР»Рё РЅРѕСЂРјР°Р»РёР·РѕРІР°С‚СЊ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Рµ query- Рё route-СЃС‚СЂР°РЅРёС†С‹ СЃ С‚РµС…РЅРёС‡РµСЃРєРёРјРё С„РѕСЂРјР°РјРё.")
-    sprint_1.append("РџРѕРґРіРѕС‚РѕРІРёС‚СЊ РµРґРёРЅРѕРµ РўР— РЅР° title, description, H1 Рё canonical РґР»СЏ РѕСЃРЅРѕРІРЅС‹С… С‚РёРїРѕРІ СЃС‚СЂР°РЅРёС†.")
+        sprint_1.append("Закрыть от индексации служебные query- и route-страницы.")
+    sprint_1.append("Подготовить единые правила для title, description, H1 и canonical.")
 
     sprint_2 = [
-        "Р’РЅРµРґСЂРёС‚СЊ alt-С€Р°Р±Р»РѕРЅС‹, РїСЂРѕРІРµСЂРёС‚СЊ lazy-load Рё РїРѕРґС‡РёСЃС‚РёС‚СЊ image SEO РЅР° РєР»СЋС‡РµРІС‹С… СЃС‚СЂР°РЅРёС†Р°С….",
-        "Р Р°Р·РґРµР»РёС‚СЊ sitemap РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС† Рё РїРѕРґР°С‚СЊ РѕС‚РґРµР»СЊРЅС‹Рµ РєР°СЂС‚С‹ РІ РЇРЅРґРµРєСЃ.Р’РµР±РјР°СЃС‚РµСЂ Рё GSC.",
-        "РћР±РЅРѕРІРёС‚СЊ С€Р°Р±Р»РѕРЅС‹ СЃРЅРёРїРїРµС‚РѕРІ Рё РїСЂРѕРІРµСЂРёС‚СЊ СЂРѕСЃС‚ CTR РїРѕ РїСЂРёРѕСЂРёС‚РµС‚РЅС‹Рј СЃС‚СЂР°РЅРёС†Р°Рј.",
+        "Навести порядок в изображениях: alt, lazy loading, размеры и сжатие.",
+        "Разделить sitemap по типам страниц и заново отправить карты сайта в панели вебмастеров.",
+        "Обновить шаблоны сниппетов на приоритетных страницах и проверить рост CTR.",
     ]
 
     if profile["is_catalog"]:
         sprint_3 = [
-            "РЈСЃРёР»РёС‚СЊ РєР°С‚РµРіРѕСЂРёРё Рё РїРѕРґРєР°С‚РµРіРѕСЂРёРё РєРѕРЅС‚РµРЅС‚РѕРј, FAQ, Р±Р»РѕРєР°РјРё РґРѕРІРµСЂРёСЏ Рё РїРµСЂРµР»РёРЅРєРѕРІРєРѕР№.",
-            "РџРµСЂРµСЃРѕР±СЂР°С‚СЊ РєР°СЂС‚РѕС‡РєРё Рё Р»РёСЃС‚РёРЅРіРё С‚Р°Рє, С‡С‚РѕР±С‹ РѕРЅРё Р»СѓС‡С€Рµ РєРѕРЅРІРµСЂС‚РёСЂРѕРІР°Р»Рё SEO-С‚СЂР°С„РёРє РІ Р·Р°СЏРІРєРё Рё РїСЂРѕРґР°Р¶Рё.",
-            "Р”РѕР±Р°РІРёС‚СЊ answer-first С„СЂР°РіРјРµРЅС‚С‹ Рё РєРѕРЅС‚РµРЅС‚ РїРѕРґ РР-РІС‹РґР°С‡Сѓ РЅР° РіР»Р°РІРЅС‹Рµ СЃРїСЂРѕСЃРѕРІС‹Рµ РєР»Р°СЃС‚РµСЂС‹.",
+            "Усилить категории и подкатегории: добавить полезный текст, FAQ, блоки доверия и перелинковку.",
+            "Пересобрать карточки и листинги так, чтобы они лучше отвечали на вопросы клиента и вели к заявке.",
+            "Добавить понятные ответы на частые вопросы по главным кластерам спроса.",
         ]
     else:
         sprint_3 = [
-            "РЈСЃРёР»РёС‚СЊ РїРѕСЃР°РґРѕС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ СѓСЃР»СѓРі, РєРµР№СЃРѕРІ Рё РєРѕРЅС‚Р°РєС‚РѕРІ Р±Р»РѕРєР°РјРё РґРѕРІРµСЂРёСЏ, CTA Рё answer-first РєРѕРЅС‚РµРЅС‚РѕРј.",
-            "Р Р°Р·РІРµСЃС‚Рё РєР»СЋС‡РµРІС‹Рµ РєР»Р°СЃС‚РµСЂС‹ СЃРїСЂРѕСЃР° РїРѕ РѕС‚РґРµР»СЊРЅС‹Рј СЃС‚СЂР°РЅРёС†Р°Рј Рё РІС‹СЃС‚СЂРѕРёС‚СЊ РјРµР¶РґСѓ РЅРёРјРё РїРµСЂРµР»РёРЅРєРѕРІРєСѓ.",
-            "Р”РѕР±Р°РІРёС‚СЊ FAQ Рё РєРѕСЂРѕС‚РєРёРµ СЌРєСЃРїРµСЂС‚РЅС‹Рµ Р±Р»РѕРєРё РїРѕРґ РѕР±С‹С‡РЅСѓСЋ Рё РР-РІС‹РґР°С‡Сѓ.",
+            "Усилить страницы услуг и контактов: добавить доказательства, FAQ и сильный призыв к действию.",
+            "Развести ключевые направления по отдельным страницам и связать их между собой.",
+            "Добавить короткие экспертные блоки, которые помогают принять решение.",
         ]
 
-    return [("0-14 РґРЅРµР№", sprint_1[:4]), ("15-30 РґРЅРµР№", sprint_2), ("31-60 РґРЅРµР№", sprint_3)]
+    return [("0-14 дней", sprint_1[:4]), ("15-30 дней", sprint_2), ("31-60 дней", sprint_3)]
 
 
 def build_executive_summary_dynamic(audit: dict) -> list[str]:
     profile = infer_project_profile(audit)
     top_issues = audit.get("issues", [])[:3]
-    top_issue_titles = "; ".join(issue.title for issue in top_issues) if top_issues else "С‚РµС…РЅРёС‡РµСЃРєРёРµ Рё С€Р°Р±Р»РѕРЅРЅС‹Рµ РѕРіСЂР°РЅРёС‡РµРЅРёСЏ"
-    project_shape = "РєР°С‚Р°Р»РѕРі Рё РєР»Р°СЃС‚РµСЂРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ URL" if profile["is_catalog"] else "РЅР°Р±РѕСЂ РїРѕСЃР°РґРѕС‡РЅС‹С… Рё Р»РёРґ-СЃС‚СЂР°РЅРёС†"
+    top_issue_titles = "; ".join(issue.title for issue in top_issues) if top_issues else "технические и шаблонные ограничения"
+    project_shape = "каталога и кластерной структуры URL" if profile["is_catalog"] else "посадочных и лид-страниц"
     growth_target = (
-        "Р»СѓС‡С€Рµ СЂР°СЃРєСЂС‹С‚СЊ СЃРїСЂРѕСЃ С‡РµСЂРµР· РєР°С‚РµРіРѕСЂРёРё, РєР°СЂС‚РѕС‡РєРё Рё СЃРІСЏР·Р°РЅРЅС‹Рµ РєР»Р°СЃС‚РµСЂС‹"
+        "лучше раскрывать спрос через категории, карточки и связанные кластеры"
         if profile["is_catalog"]
-        else "СЃРёР»СЊРЅРµРµ Р·Р°Р±РёСЂР°С‚СЊ СЃРїСЂРѕСЃ С‡РµСЂРµР· РѕС‚РґРµР»СЊРЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ Рё СЌРєСЃРїРµСЂС‚РЅС‹Рµ Р±Р»РѕРєРё"
+        else "лучше забирать спрос через отдельные посадочные страницы и экспертные блоки"
     )
 
     return [
         (
-            f"РЈ {audit['company_name']} СѓР¶Рµ РµСЃС‚СЊ СЂР°Р±РѕС‡РёР№ С„СѓРЅРґР°РјРµРЅС‚: СЃР°Р№С‚ РѕС‚РІРµС‡Р°РµС‚ РїРѕ HTTPS, РІ РІС‹Р±РѕСЂРєРµ РІРёРґРЅС‹ sitemap, "
-            f"H1-РїРѕРєСЂС‹С‚РёРµ {math.floor(audit['h1_coverage_ratio'] * 100)}%, schema-РїРѕРєСЂС‹С‚РёРµ {math.floor(audit['schema_coverage_ratio'] * 100)}% "
-            f"Рё {project_shape}, РєРѕС‚РѕСЂСѓСЋ РјРѕР¶РЅРѕ СѓСЃРёР»РёРІР°С‚СЊ Р±РµР· РїРѕР»РЅРѕР№ РїРµСЂРµСЃР±РѕСЂРєРё РїСЂРѕРµРєС‚Р°."
+            f"У {audit['company_name']} уже есть рабочий фундамент: сайт открывается по HTTPS, H1 есть на {math.floor(audit['h1_coverage_ratio'] * 100)}% страниц, "
+            f"schema - на {math.floor(audit['schema_coverage_ratio'] * 100)}%, а структура похожа на набор {project_shape}. Это можно усиливать без полной переделки сайта."
         ),
         (
-            f"РћСЃРЅРѕРІРЅС‹Рµ РїРѕС‚РµСЂРё СЃРµР№С‡Р°СЃ РёРґСѓС‚ РЅРµ РёР·-Р·Р° РѕС‚СЃСѓС‚СЃС‚РІРёСЏ СЃРїСЂРѕСЃР°, Р° РёР·-Р·Р° СЃР»РѕСЏ РёРЅРґРµРєСЃР°С†РёРё Рё С€Р°Р±Р»РѕРЅРѕРІ: {top_issue_titles}. "
-            "РРјРµРЅРЅРѕ СЌС‚Рё РѕРіСЂР°РЅРёС‡РµРЅРёСЏ СЃРёР»СЊРЅРµРµ РІСЃРµРіРѕ РІР»РёСЏСЋС‚ РЅР° crawl budget, CTR Рё С‡РёСЃС‚РѕС‚Сѓ РєРѕРјРјРµСЂС‡РµСЃРєРѕР№ РІС‹РґР°С‡Рё."
+            f"Сильнее всего рост сейчас тормозят {top_issue_titles}. Эти проблемы мешают индексации, снижают кликабельность сниппетов и делают приоритетные страницы слабее, чем они могли бы быть."
         ),
         (
-            f"Р•СЃР»Рё СЃРЅР°С‡Р°Р»Р° СѓР±СЂР°С‚СЊ С‚РµС…РЅРёС‡РµСЃРєРёР№ С€СѓРј, Р° Р·Р°С‚РµРј РїРµСЂРµСЃРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ Рё РїСЂРёРѕСЂРёС‚РµС‚РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹, РїСЂРѕРµРєС‚ СЃРјРѕР¶РµС‚ {growth_target} "
-            "Рё РїСЂРµРІСЂР°С‚РёС‚СЊ С‚РµРєСѓС‰СѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ СЃР°Р№С‚Р° РІ Р±РѕР»РµРµ СЃРёР»СЊРЅС‹Р№ РёСЃС‚РѕС‡РЅРёРє SEO-С‚СЂР°С„РёРєР° Рё Р·Р°СЏРІРѕРє."
+            f"Если сначала убрать технические ограничения, а потом привести в порядок шаблоны и ключевые страницы, проект сможет {growth_target} и получать больше заявок из поиска."
         ),
     ]
 
@@ -1217,40 +1222,40 @@ def build_strategic_moves(audit: dict) -> list[dict]:
     profile = infer_project_profile(audit)
     moves = [
         {
-            "title": "РџРµСЂРµСЃРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ РєРѕРјРјРµСЂС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС† РєР°Рє growth-layer",
-            "impact": "Р’С‹СЃРѕРєРѕРµ",
-            "effort": "5-10 РґРЅРµР№",
-            "details": "РЎРѕР±СЂР°С‚СЊ РµРґРёРЅС‹Рµ С‚СЂРµР±РѕРІР°РЅРёСЏ Рє H1, title, description, canonical, FAQ, CTA, trust-Р±Р»РѕРєР°Рј Рё РїРµСЂРµР»РёРЅРєРѕРІРєРµ РїРѕ РІСЃРµРј РєР»СЋС‡РµРІС‹Рј С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†.",
+            "title": "Пересобрать шаблоны ключевых страниц",
+            "impact": "Высокое",
+            "effort": "5-10 дней",
+            "details": "Собрать единые требования к H1, title, description, canonical, FAQ, CTA, блокам доверия и перелинковке по всем важным типам страниц.",
         },
         {
-            "title": "РЎРґРµР»Р°С‚СЊ СѓРїСЂР°РІР»СЏРµРјСѓСЋ Р°СЂС…РёС‚РµРєС‚СѓСЂСѓ РёРЅРґРµРєСЃР°С†РёРё",
-            "impact": "Р’С‹СЃРѕРєРѕРµ",
-            "effort": "3-7 РґРЅРµР№",
-            "details": "Р Р°Р·РґРµР»РёС‚СЊ sitemap РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†, Р·Р°С‡РёСЃС‚РёС‚СЊ СЃР»СѓР¶РµР±РЅС‹Рµ route/query URL Рё РЅР°СЃС‚СЂРѕРёС‚СЊ РµРґРёРЅС‹Р№ РєРѕРЅС‚СЂРѕР»СЊ РЅР°Рґ РєР°РЅРѕРЅРёС‡РµСЃРєРёРјРё РґРѕРјРµРЅР°РјРё Рё СЂРµРґРёСЂРµРєС‚Р°РјРё.",
+            "title": "Сделать индексацию управляемой",
+            "impact": "Высокое",
+            "effort": "3-7 дней",
+            "details": "Разделить sitemap по типам страниц, убрать служебные route/query URL из индекса и настроить единый контроль над canonical и редиректами.",
         },
         {
-            "title": "РЈСЃРёР»РёС‚СЊ structured data Рё entity-СЃРёРіРЅР°Р»С‹",
-            "impact": "РЎСЂРµРґРЅРµРµ / РІС‹СЃРѕРєРѕРµ",
-            "effort": "2-5 РґРЅРµР№",
-            "details": "РџРѕРєСЂС‹С‚СЊ РєР»СЋС‡РµРІС‹Рµ СЃС‚СЂР°РЅРёС†С‹ РІР°Р»РёРґРЅРѕР№ schema-СЂР°Р·РјРµС‚РєРѕР№ Рё СЃРѕР±СЂР°С‚СЊ РґР°РЅРЅС‹Рµ С‚Р°Рє, С‡С‚РѕР±С‹ СЃР°Р№С‚ Р±С‹Р» РїРѕРЅСЏС‚РЅРµРµ РѕР±С‹С‡РЅРѕР№ Рё РР-РІС‹РґР°С‡Рµ.",
+            "title": "Навести порядок в микроразметке",
+            "impact": "Среднее / высокое",
+            "effort": "2-5 дней",
+            "details": "Покрыть ключевые страницы валидной schema-разметкой и следить, чтобы она соответствовала реальному типу страницы и данным на сайте.",
         },
     ]
     if profile["is_catalog"]:
         moves.append(
             {
-                "title": "Р Р°Р·РІРёС‚СЊ СЃРїСЂРѕСЃРѕРІС‹Рµ РєР»Р°СЃС‚РµСЂС‹ С‡РµСЂРµР· РєР°С‚РµРіРѕСЂРёРё Рё РєР°СЂС‚РѕС‡РєРё",
-                "impact": "Р’С‹СЃРѕРєРѕРµ",
-                "effort": "2-4 РЅРµРґРµР»Рё",
-                "details": "РЎРѕР±СЂР°С‚СЊ РѕС‚РґРµР»СЊРЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ РїРѕРґ РіР»Р°РІРЅС‹Рµ РєР»Р°СЃС‚РµСЂС‹ СЃРїСЂРѕСЃР°, СѓСЃРёР»РёС‚СЊ РєР°С‚РµРіРѕСЂРёРё FAQ Рё РѕС‚РІРµС‚Р°РјРё РЅР° РІС‹Р±РѕСЂ, Р° РєР°СЂС‚РѕС‡РєРё СЃРґРµР»Р°С‚СЊ Р±РѕР»РµРµ РєРѕРЅРІРµСЂСЃРёРѕРЅРЅС‹РјРё.",
+                "title": "Развить спрос через категории и карточки",
+                "impact": "Высокое",
+                "effort": "2-4 недели",
+                "details": "Собрать отдельные посадочные страницы под главные кластеры спроса, усилить категории ответами на вопросы клиента, а карточки сделать более понятными и конверсионными.",
             }
         )
     else:
         moves.append(
             {
-                "title": "Р Р°Р·РІРµСЃС‚Рё СѓСЃР»СѓРіРё РїРѕ РѕС‚РґРµР»СЊРЅС‹Рј SEO-РїРѕСЃР°РґРѕС‡РЅС‹Рј",
-                "impact": "Р’С‹СЃРѕРєРѕРµ",
-                "effort": "1-3 РЅРµРґРµР»Рё",
-                "details": "Р’С‹РЅРµСЃС‚Рё РєР»СЋС‡РµРІС‹Рµ РёРЅС‚РµРЅС‚С‹ РІ СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅС‹Рµ РїРѕСЃР°РґРѕС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ Рё СЃРІСЏР·Р°С‚СЊ РёС… РїРµСЂРµР»РёРЅРєРѕРІРєРѕР№, РєРµР№СЃР°РјРё, FAQ Рё СЌРєСЃРїРµСЂС‚РЅС‹РјРё Р±Р»РѕРєР°РјРё.",
+                "title": "Развести услуги по отдельным посадочным страницам",
+                "impact": "Высокое",
+                "effort": "1-3 недели",
+                "details": "Вынести ключевые направления в самостоятельные страницы и связать их между собой кейсами, FAQ, экспертными блоками и понятной перелинковкой.",
             }
         )
     return moves
@@ -1850,6 +1855,65 @@ def shorten_path(url: str, max_length=48) -> str:
     return f"{path[: max_length - 1]}вЂ¦"
 
 
+def dynamic_build_strengths(audit: dict) -> list[str]:
+    strengths: list[str] = []
+    profile = infer_project_profile(audit)
+
+    if audit["home_page"].status_code == 200:
+        strengths.append("Главная страница стабильно открывается по HTTPS и не выглядит сломанной для базового обхода.")
+    if audit.get("average_response_ms", 0) and audit["average_response_ms"] < 1200:
+        strengths.append(f"Средний ответ по выборке {audit['average_response_ms']} ms. Серверная часть не выглядит перегруженной.")
+    if audit["sitemap_url_count"]:
+        strengths.append(f"У сайта уже есть карта сайта с {audit['sitemap_url_count']} уникальными URL. Это хорошая база для управляемой индексации.")
+    if audit.get("canonical_coverage_ratio", 0) >= 0.6:
+        strengths.append(f"На {math.floor(audit['canonical_coverage_ratio'] * 100)}% страниц в выборке уже есть canonical. Это хороший фундамент для чистой индексации.")
+    if audit["schema_coverage_ratio"] >= 0.4:
+        strengths.append(f"Schema-разметка уже используется на {math.floor(audit['schema_coverage_ratio'] * 100)}% страниц выборки.")
+    if audit["h1_coverage_ratio"] >= 0.8:
+        strengths.append(f"На {math.floor(audit['h1_coverage_ratio'] * 100)}% проверенных страниц есть H1. Структура документов уже не выглядит хаотичной.")
+    if profile["is_catalog"]:
+        strengths.append("У проекта уже есть каталог или кластерная структура URL, которую можно усиливать без полной смены архитектуры.")
+    else:
+        strengths.append("У проекта уже есть базовый набор посадочных страниц, который можно докручивать точечно, а не пересобирать с нуля.")
+
+    unique_strengths: list[str] = []
+    for point in strengths:
+        if point not in unique_strengths:
+            unique_strengths.append(point)
+    return unique_strengths[:6]
+
+
+def dynamic_build_growth_points(audit: dict) -> list[str]:
+    profile = infer_project_profile(audit)
+    points: list[str] = []
+
+    if profile["is_catalog"]:
+        points.append("Усилить категории и подкатегории: добавить вводные блоки, FAQ, условия покупки, блоки доверия и перелинковку на карточки.")
+        points.append("Пересобрать шаблоны карточек и листингов: короткие title, понятные description, canonical, alt, schema и заметный CTA.")
+    else:
+        points.append("Развести ключевые направления по отдельным посадочным страницам, а не держать несколько тем внутри одного документа.")
+        points.append("Усилить страницы услуг и лид-страницы кейсами, FAQ, блоками доверия и понятным CTA.")
+
+    points.append("Собрать единые шаблоны для title, description, H1 и canonical по всем типам страниц.")
+
+    if audit["total_missing_alt"] > 0:
+        points.append("Навести порядок в изображениях: alt, подписи, lazy loading и связь визуала с содержанием страницы.")
+
+    if get_contact_related_pages(audit["sample_pages"]):
+        points.append("Доработать контактные и заявочные страницы, чтобы они выглядели как полноценные SEO-страницы, а не как технические формы.")
+
+    points.append("Добавить понятные ответы на частые вопросы и связать важные разделы внутренней перелинковкой.")
+
+    if audit["sitemap_url_count"] > 2000 or audit.get("sitemap_total_entries", 0) > audit["sitemap_url_count"] * 1.2:
+        points.append("Разделить sitemap по типам страниц и держать под контролем служебные URL.")
+
+    unique_points: list[str] = []
+    for point in points:
+        if point not in unique_points:
+            unique_points.append(point)
+    return unique_points[:6]
+
+
 def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
     base_url = normalize_base_url(url)
     parsed = urlparse(base_url)
@@ -1984,7 +2048,7 @@ def add_header_footer(doc: Document, logo_path: Path, audit: dict) -> None:
         set_font(brand_run, size=10.5, bold=True, color="FFFFFF")
         label_paragraph = label_cell.paragraphs[0]
         label_paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        label_run = label_paragraph.add_run("SEO AUDIT / GROWTH MAP")
+        label_run = label_paragraph.add_run(normalize_output_text("SEO AUDIT / GROWTH MAP"))
         set_font(label_run, size=8.6, bold=True, color=BRAND_CYAN)
 
         footer = section.footer
@@ -1997,7 +2061,7 @@ def add_header_footer(doc: Document, logo_path: Path, audit: dict) -> None:
         set_cell_margins(left_cell, 50, 0, 20, 0)
         set_cell_margins(right_cell, 50, 0, 20, 0)
         left_paragraph = left_cell.paragraphs[0]
-        left_run = left_paragraph.add_run(f"{audit['domain']}  |  Audit by {BRAND_NAME}")
+        left_run = left_paragraph.add_run(normalize_output_text(f"{audit['domain']}  |  Audit by {BRAND_NAME}"))
         set_font(left_run, size=8.7, color=BRAND_MUTED)
         right_paragraph = right_cell.paragraphs[0]
         right_paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
@@ -2029,18 +2093,18 @@ def add_cover(doc: Document, audit: dict, logo_path: Path) -> None:
 
     p_tag = left.add_paragraph()
     p_tag.paragraph_format.space_before = Pt(30)
-    tag_run = p_tag.add_run("SEO AUDIT / РўРћР§РљР Р РћРЎРўРђ")
+    tag_run = p_tag.add_run("SEO-аудит / план роста")
     set_font(tag_run, size=10.5, bold=True, color=BRAND_CYAN)
 
     p_title = left.add_paragraph()
     p_title.paragraph_format.space_before = Pt(10)
-    title_run = p_title.add_run(f"SEO-Р°СѓРґРёС‚ СЃР°Р№С‚Р°\n{audit['domain']}")
+    title_run = p_title.add_run(f"SEO-аудит сайта\n{audit['domain']}")
     set_font(title_run, size=26, bold=True, color="FFFFFF")
 
     p_subtitle = left.add_paragraph()
     subtitle_run = p_subtitle.add_run(
-        "Р”РѕРєСѓРјРµРЅС‚ РґР»СЏ РїСЂРѕРґР°Р¶Рё СѓСЃР»СѓРіРё Рё РІРЅРµРґСЂРµРЅРёСЏ СЂРµР°Р»СЊРЅС‹С… SEO-С‚РѕС‡РµРє СЂРѕСЃС‚Р°. "
-        "РќРµ РїСЂРѕСЃС‚Рѕ СЃРїРёСЃРѕРє Р·Р°РјРµС‡Р°РЅРёР№, Р° РїР»Р°РЅ С‚РѕРіРѕ, РєР°Рє Р±С‹СЃС‚СЂРµРµ СѓСЃРёР»РёС‚СЊ РІРёРґРёРјРѕСЃС‚СЊ, РёРЅРґРµРєСЃ Рё РєРѕРјРјРµСЂС‡РµСЃРєРёР№ С‚СЂР°С„РёРє."
+        "Понятный технический аудит с приоритетами и планом работ. "
+        "Внутри только то, что реально влияет на видимость сайта, индекс и заявки."
     )
     set_font(subtitle_run, size=11.4, color="E8EEF6")
     p_subtitle.paragraph_format.space_after = Pt(18)
@@ -2051,22 +2115,20 @@ def add_cover(doc: Document, audit: dict, logo_path: Path) -> None:
     set_cell_shading(callout_cell, BRAND_DARK_ALT)
     set_cell_margins(callout_cell, 110, 130, 110, 130)
     callout_run = callout_cell.paragraphs[0].add_run(
-        "Р’РЅСѓС‚СЂРё: РёРЅРґРµРєСЃР°С†РёСЏ, robots/sitemap, С€Р°Р±Р»РѕРЅС‹ title/description, РєР°С‚РµРіРѕСЂРёРё, "
-        "С‚РѕРІР°СЂРЅС‹Рµ РєР°СЂС‚РѕС‡РєРё, РёР·РѕР±СЂР°Р¶РµРЅРёСЏ, РєРѕРјРјРµСЂС‡РµСЃРєРёРµ Р±Р»РѕРєРё Рё 60-РґРЅРµРІРЅС‹Р№ roadmap."
+        "Внутри: индексация, robots.txt и sitemap, мета-теги, структура страниц, изображения, коммерческие блоки и план работ на 60 дней."
     )
     set_font(callout_run, size=10.8, color="FFFFFF")
 
-    run = right.paragraphs[0].add_run("РџР°СЃРїРѕСЂС‚ РїСЂРѕРµРєС‚Р°")
+    run = right.paragraphs[0].add_run("Паспорт проекта")
     set_font(run, size=14, bold=True, color=BRAND_TEXT)
-    add_text_paragraph(right, f"Р‘СЂРµРЅРґ: {audit['company_name']}", size=11.4)
-    add_text_paragraph(right, f"Р”РѕРјРµРЅ: {audit['base_url']}", size=11.2)
-    add_text_paragraph(right, f"Р”Р°С‚Р°: {audit['generated_at']}", size=11.2)
-    add_text_paragraph(right, "Р¤РѕСЂРјР°С‚: SEO-Р°СѓРґРёС‚ / growth map", size=11.2)
-    add_text_paragraph(right, f"РСЃРїРѕР»РЅРёС‚РµР»СЊ: {BRAND_NAME}", size=11.2, bold=True)
+    add_text_paragraph(right, f"Бренд: {audit['company_name']}", size=11.4)
+    add_text_paragraph(right, f"Домен: {audit['base_url']}", size=11.2)
+    add_text_paragraph(right, f"Дата: {audit['generated_at']}", size=11.2)
+    add_text_paragraph(right, "Формат: SEO-аудит / план работ", size=11.2)
+    add_text_paragraph(right, f"Исполнитель: {BRAND_NAME}", size=11.2, bold=True)
     add_text_paragraph(
         right,
-        "Р¤РѕРєСѓСЃ Р°СѓРґРёС‚Р°: РёРЅРґРµРєСЃР°С†РёСЏ, СЃС‚СЂСѓРєС‚СѓСЂР° РєР°С‚Р°Р»РѕРіР°, С€Р°Р±Р»РѕРЅС‹ РјРµС‚Р°РґР°РЅРЅС‹С…, РёР·РѕР±СЂР°Р¶РµРЅРёСЏ, "
-        "РєРѕРЅС‚Р°РєС‚РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ Рё РїРѕС‚РµРЅС†РёР°Р» СЂРѕСЃС‚Р° РєР»Р°СЃС‚РµСЂРѕРІ СЃРїСЂРѕСЃР°.",
+        "Фокус аудита: индексация, структура сайта, мета-теги, изображения, коммерческие страницы и точки роста по поисковому спросу.",
         size=11,
         color=BRAND_MUTED,
         space_after=12,
@@ -2079,7 +2141,7 @@ def add_cover(doc: Document, audit: dict, logo_path: Path) -> None:
     set_cell_margins(score_cell, 120, 120, 120, 120)
     score_label = score_cell.paragraphs[0]
     score_label.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    label_run = score_label.add_run("РРЅРґРµРєСЃ SEO-РіРѕС‚РѕРІРЅРѕСЃС‚Рё")
+    label_run = score_label.add_run("Индекс SEO-готовности")
     set_font(label_run, size=10.2, bold=True, color=BRAND_MUTED)
     score_value = score_cell.add_paragraph()
     score_value.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -2087,7 +2149,7 @@ def add_cover(doc: Document, audit: dict, logo_path: Path) -> None:
     set_font(score_run, size=28, bold=True, color=BRAND_TEXT)
     score_hint = score_cell.add_paragraph()
     score_hint.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    hint_run = score_hint.add_run("РёР· 100")
+    hint_run = score_hint.add_run("из 100")
     set_font(hint_run, size=10.2, color=BRAND_MUTED)
 
     doc.add_paragraph().paragraph_format.space_after = Pt(4)
@@ -2095,14 +2157,14 @@ def add_cover(doc: Document, audit: dict, logo_path: Path) -> None:
 
 def add_metric_grid(doc: Document, audit: dict) -> None:
     metrics = [
-        ("Sitemap unique", str(audit["sitemap_url_count"])),
-        ("Sitemap entries", str(audit.get("sitemap_total_entries", audit["sitemap_url_count"]))),
-        ("РЎСЂРµРґРЅРёР№ РѕС‚РІРµС‚", f"{audit['average_response_ms']} ms"),
-        ("РЎСЂРµРґРЅРёР№ HTML", f"{audit['average_html_kb']} KB"),
-        ("Title > 70", f"{math.floor(audit['title_long_ratio'] * 100)}%"),
-        ("Desc РІРЅРµ РґРёР°РїР°Р·РѕРЅР°", f"{math.floor(audit['description_problem_ratio'] * 100)}%"),
-        ("Schema coverage", f"{math.floor(audit['schema_coverage_ratio'] * 100)}%"),
-        ("Alt gaps", str(audit["total_missing_alt"])),
+        ("URL в sitemap", str(audit["sitemap_url_count"])),
+        ("Записей в sitemap", str(audit.get("sitemap_total_entries", audit["sitemap_url_count"]))),
+        ("Средний ответ", f"{audit['average_response_ms']} ms"),
+        ("Средний HTML", f"{audit['average_html_kb']} KB"),
+        ("Title длиннее 70", f"{math.floor(audit['title_long_ratio'] * 100)}%"),
+        ("Проблемных description", f"{math.floor(audit['description_problem_ratio'] * 100)}%"),
+        ("Страниц со schema", f"{math.floor(audit['schema_coverage_ratio'] * 100)}%"),
+        ("Изображений без alt", str(audit["total_missing_alt"])),
     ]
     table = doc.add_table(rows=2, cols=4)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -2116,11 +2178,11 @@ def add_metric_grid(doc: Document, audit: dict) -> None:
             cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
             p1 = cell.paragraphs[0]
             p1.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            r1 = p1.add_run(title.upper())
+            r1 = p1.add_run(normalize_output_text(title).upper())
             set_font(r1, size=8.5, bold=True, color=BRAND_MUTED)
             p2 = cell.add_paragraph()
             p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            r2 = p2.add_run(value)
+            r2 = p2.add_run(normalize_output_text(value))
             set_font(r2, size=17, bold=True, color=BRAND_TEXT)
             index += 1
     doc.add_paragraph().paragraph_format.space_after = Pt(6)
@@ -2139,14 +2201,14 @@ def add_issue_cards(doc: Document, issues: list[AuditIssue]) -> None:
         set_cell_shading(body, "FFFFFF")
         set_cell_margins(head, 100, 120, 90, 120)
         set_cell_margins(body, 100, 120, 120, 120)
-        head_run = head.paragraphs[0].add_run(f"{issue.severity.upper()}  |  {issue.title}")
+        head_run = head.paragraphs[0].add_run(normalize_output_text(f"{issue.severity.upper()}  |  {issue.title}"))
         set_font(head_run, size=11.2, bold=True, color=severity_text_colors.get(issue.severity, BRAND_TEXT))
-        body_run = body.paragraphs[0].add_run(issue.why_it_matters)
+        body_run = body.paragraphs[0].add_run(normalize_output_text(issue.why_it_matters))
         set_font(body_run, size=11.1, color=BRAND_TEXT)
         body.paragraphs[0].paragraph_format.space_after = Pt(6)
         add_bullet_list(body, issue.evidence, size=10.8)
         recommendation = body.add_paragraph()
-        recommendation_run = recommendation.add_run(f"Р§С‚Рѕ РґРµР»Р°С‚СЊ: {issue.recommendation}")
+        recommendation_run = recommendation.add_run(normalize_output_text(f"Что делать: {issue.recommendation}"))
         set_font(recommendation_run, size=10.9, bold=True, color=BRAND_TEXT)
         doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
@@ -2169,14 +2231,14 @@ def add_roadmap_table(doc: Document, roadmap: list[tuple[str, list[str]]]) -> No
 def add_snapshot_table(doc: Document, snapshots: list[PageSnapshot]) -> None:
     table = doc.add_table(rows=1, cols=7)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    headers = ["РџСѓС‚СЊ", "РўРёРї", "РљРѕРґ", "Title", "Desc", "H1", "Schema"]
+    headers = ["Путь", "Тип", "Код", "Title", "Desc", "H1", "Schema"]
     for idx, header in enumerate(headers):
         cell = table.rows[0].cells[idx]
         set_cell_shading(cell, BRAND_DARK)
         set_cell_margins(cell, 90, 80, 90, 80)
         paragraph = cell.paragraphs[0]
         paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run = paragraph.add_run(header)
+        run = paragraph.add_run(normalize_output_text(header))
         set_font(run, size=9, bold=True, color="FFFFFF")
     for snapshot in snapshots[:12]:
         row = table.add_row().cells
@@ -2187,7 +2249,7 @@ def add_snapshot_table(doc: Document, snapshots: list[PageSnapshot]) -> None:
             str(len(snapshot.title)),
             str(len(snapshot.description)),
             str(len(snapshot.h1s)),
-            ", ".join(snapshot.schema_types[:2]) or "вЂ”",
+            ", ".join(snapshot.schema_types[:2]) or "-",
         ]
         for idx, value in enumerate(values):
             cell = row[idx]
@@ -2196,7 +2258,7 @@ def add_snapshot_table(doc: Document, snapshots: list[PageSnapshot]) -> None:
             paragraph = cell.paragraphs[0]
             if idx in (2, 3, 4, 5):
                 paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            run = paragraph.add_run(value)
+            run = paragraph.add_run(normalize_output_text(value))
             set_font(run, size=9.2, color=BRAND_TEXT)
 
 
@@ -2206,14 +2268,14 @@ def add_priority_matrix_table(doc: Document, rows: list[dict]) -> None:
     table = doc.add_table(rows=1, cols=7)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     remove_table_borders(table)
-    headers = ["РџСЂРѕР±Р»РµРјР°", "Impact", "Risk", "Business", "РС‚РѕРі", "РџСЂРёРѕСЂРёС‚РµС‚", "РћС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Р№"]
+    headers = ["Проблема", "Влияние", "Риск", "Польза", "Итог", "Приоритет", "Ответственный"]
     for idx, header in enumerate(headers):
         cell = table.rows[0].cells[idx]
         set_cell_shading(cell, BRAND_DARK)
         set_cell_margins(cell, 80, 70, 80, 70)
         paragraph = cell.paragraphs[0]
         paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run = paragraph.add_run(header)
+        run = paragraph.add_run(normalize_output_text(header))
         set_font(run, size=8.7, bold=True, color="FFFFFF")
     for row_data in rows:
         row = table.add_row().cells
@@ -2233,7 +2295,7 @@ def add_priority_matrix_table(doc: Document, rows: list[dict]) -> None:
             paragraph = cell.paragraphs[0]
             if idx in (1, 2, 3, 4):
                 paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            run = paragraph.add_run(value)
+            run = paragraph.add_run(normalize_output_text(value))
             set_font(run, size=8.9, color=BRAND_TEXT)
 
 
@@ -2241,15 +2303,15 @@ def add_metrics_list(container, metrics: list[tuple[str, str]]) -> None:
     for label, value in metrics:
         paragraph = container.add_paragraph()
         paragraph.paragraph_format.space_after = Pt(2)
-        key_run = paragraph.add_run(f"{label}: ")
+        key_run = paragraph.add_run(f"{normalize_output_text(label)}: ")
         set_font(key_run, size=10.1, bold=True, color=BRAND_TEXT)
-        value_run = paragraph.add_run(value)
+        value_run = paragraph.add_run(normalize_output_text(value))
         set_font(value_run, size=10.1, color=BRAND_MUTED)
 
 
 def add_phase_sections_doc(doc: Document, phase_sections: list[dict]) -> None:
     for section in phase_sections:
-        add_section_heading(doc, "Р“Р»СѓР±РѕРєРёР№ СЂР°Р·Р±РѕСЂ", section.get("title", ""), section.get("intro"))
+        add_section_heading(doc, "Подробный разбор", section.get("title", ""), section.get("intro"))
         for idx, check in enumerate(section.get("checks", []), start=1):
             card = doc.add_table(rows=2, cols=1)
             card.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -2260,23 +2322,23 @@ def add_phase_sections_doc(doc: Document, phase_sections: list[dict]) -> None:
             set_cell_shading(body, "FFFFFF")
             set_cell_margins(head, 90, 110, 80, 110)
             set_cell_margins(body, 100, 110, 110, 110)
-            title_run = head.paragraphs[0].add_run(f"{idx}. {check.get('name', '')}")
+            title_run = head.paragraphs[0].add_run(normalize_output_text(f"{idx}. {check.get('name', '')}"))
             set_font(title_run, size=11.4, bold=True, color=BRAND_TEXT)
 
-            add_text_paragraph(body, f"Р§С‚Рѕ РїСЂРѕРІРµСЂСЏР»РѕСЃСЊ: {check.get('checked', '')}", size=10.7, color=BRAND_TEXT, space_after=3)
-            add_text_paragraph(body, f"РљР°Рє РїСЂРѕРІРµСЂСЏР»РѕСЃСЊ: {check.get('method', '')}", size=10.5, color=BRAND_MUTED, space_after=4)
+            add_text_paragraph(body, f"Что проверялось: {check.get('checked', '')}", size=10.7, color=BRAND_TEXT, space_after=3)
+            add_text_paragraph(body, f"Как проверялось: {check.get('method', '')}", size=10.5, color=BRAND_MUTED, space_after=4)
             add_metrics_list(body, check.get("metrics", []))
-            add_text_paragraph(body, "Р§С‚Рѕ РЅР°С€Р»Рё:", size=10.5, bold=True, color=BRAND_TEXT, space_after=3)
+            add_text_paragraph(body, "Что нашли:", size=10.5, bold=True, color=BRAND_TEXT, space_after=3)
             add_bullet_list(body, check.get("findings", []), size=10.4)
             add_text_paragraph(
                 body,
-                f"РџСЂРёРѕСЂРёС‚РµС‚: {check.get('priority', '')}  |  РћС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Р№: {check.get('owner', '')}",
+                f"Приоритет: {check.get('priority', '')}  |  Ответственный: {check.get('owner', '')}",
                 size=10.2,
                 bold=True,
                 color=BRAND_ORANGE,
                 space_after=3,
             )
-            add_text_paragraph(body, f"Р§С‚Рѕ РґРµР»Р°С‚СЊ: {check.get('recommendation', '')}", size=10.4, color=BRAND_TEXT, bold=True, space_after=4)
+            add_text_paragraph(body, f"Что делать: {check.get('recommendation', '')}", size=10.4, color=BRAND_TEXT, bold=True, space_after=4)
             doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
 
@@ -2293,10 +2355,10 @@ def add_action_cards_doc(doc: Document, items: list[dict], value_key: str, extra
         set_cell_shading(body, "FFFFFF")
         set_cell_margins(head, 90, 110, 80, 110)
         set_cell_margins(body, 100, 110, 110, 110)
-        title_run = head.paragraphs[0].add_run(item.get("title", ""))
+        title_run = head.paragraphs[0].add_run(normalize_output_text(item.get("title", "")))
         set_font(title_run, size=11.2, bold=True, color=BRAND_TEXT)
-        add_text_paragraph(body, f"{value_key.capitalize()}: {item.get(value_key.lower(), item.get(value_key, ''))}", size=10.2, color=BRAND_ORANGE, bold=True, space_after=2)
-        add_text_paragraph(body, f"{extra_key.capitalize()}: {item.get(extra_key.lower(), item.get(extra_key, ''))}", size=10.2, color=BRAND_MUTED, bold=True, space_after=3)
+        add_text_paragraph(body, f"{action_meta_label(value_key)}: {item.get(value_key.lower(), item.get(value_key, ''))}", size=10.2, color=BRAND_ORANGE, bold=True, space_after=2)
+        add_text_paragraph(body, f"{action_meta_label(extra_key)}: {item.get(extra_key.lower(), item.get(extra_key, ''))}", size=10.2, color=BRAND_MUTED, bold=True, space_after=3)
         main_text = item.get("action") or item.get("details") or ""
         add_text_paragraph(body, main_text, size=10.5, color=BRAND_TEXT, space_after=4)
         doc.add_paragraph().paragraph_format.space_after = Pt(4)
@@ -2350,6 +2412,7 @@ def add_screenshot_gallery(doc: Document, screenshots: list[dict]) -> None:
 
 
 def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
+    audit = normalize_structure(audit)
     doc = Document()
     configure_document(doc)
     add_header_footer(doc, logo_path, audit)
@@ -2358,74 +2421,74 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
 
     add_section_heading(
         doc,
-        "Executive summary",
-        "Р“РґРµ РїСЂРѕРµРєС‚ СѓР¶Рµ СЃРёР»С‘РЅ Рё РіРґРµ РѕРЅ С‚РµСЂСЏРµС‚ СЂРѕСЃС‚",
-        "РќРёР¶Рµ РЅРµ РїСЂРѕСЃС‚Рѕ СЃРїРёСЃРѕРє Р·Р°РјРµС‡Р°РЅРёР№, Р° РєРѕРЅС†РµРЅС‚СЂР°С‚ С‚РµС… Р·РѕРЅ, РєРѕС‚РѕСЂС‹Рµ СЃРёР»СЊРЅРµРµ РІСЃРµРіРѕ РІР»РёСЏСЋС‚ РЅР° РёРЅРґРµРєСЃ, СЃРЅРёРїРїРµС‚С‹, СЃРїСЂРѕСЃ Рё РєРѕРЅРІРµСЂСЃРёСЋ.",
+        "Краткий вывод",
+        "Где сайт уже в порядке и что сейчас мешает росту",
+        "Собрали короткую выжимку по главным зонам: что уже хорошо, где есть потери и с чего разумно начать.",
     )
     for paragraph in build_executive_summary_dynamic(audit):
         add_text_paragraph(doc, paragraph, size=11.4, color=BRAND_TEXT, space_after=6)
     add_metric_grid(doc, audit)
 
-    add_section_heading(doc, "РЎРёР»СЊРЅС‹Рµ СЃС‚РѕСЂРѕРЅС‹", "Р§С‚Рѕ СѓР¶Рµ СЂР°Р±РѕС‚Р°РµС‚ РІ РїР»СЋСЃ РїСЂРѕРµРєС‚Сѓ")
+    add_section_heading(doc, "Сильные стороны", "Что уже работает в плюс проекту")
     add_bullet_list(doc, audit["strengths"], size=11.1)
 
     add_section_heading(
         doc,
-        "РўР°Р±Р»РёС†Р° РїСЂРёРѕСЂРёС‚РµС‚РѕРІ",
-        "РњР°С‚СЂРёС†Р° РїСЂРѕР±Р»РµРј РїРѕ РІР»РёСЏРЅРёСЋ РЅР° СЂРѕСЃС‚",
-        "Р—РґРµСЃСЊ Р·Р°РґР°С‡Рё РЅРµ РїСЂРѕСЃС‚Рѕ РїРµСЂРµС‡РёСЃР»РµРЅС‹, Р° СЂР°Р·Р»РѕР¶РµРЅС‹ РїРѕ impact, risk Рё business-effect, С‡С‚РѕР±С‹ Р±С‹Р»Рѕ РїРѕРЅСЏС‚РЅРѕ, С‡С‚Рѕ РґРµР»Р°С‚СЊ РїРµСЂРІС‹Рј.",
+        "Приоритеты",
+        "Какие задачи делать в первую очередь",
+        "Таблица ниже помогает быстро понять, что сильнее всего влияет на результат и кому это лучше передать в работу.",
     )
     add_priority_matrix_table(doc, audit.get("priority_matrix", []))
 
     add_section_heading(
         doc,
-        "РљСЂРёС‚РёС‡РµСЃРєРёРµ РѕС€РёР±РєРё",
-        "Р§С‚Рѕ СЃРµР№С‡Р°СЃ СЂРµР°Р»СЊРЅРѕ Р±Р»РѕРєРёСЂСѓРµС‚ СЂРѕСЃС‚",
-        "Р­С‚Рѕ РЅРµ РІРµСЃСЊ backlog, Р° РѕРіСЂР°РЅРёС‡РµРЅРёСЏ, РєРѕС‚РѕСЂС‹Рµ РїРµСЂРІС‹РјРё СЂРµР¶СѓС‚ РёРЅРґРµРєСЃ, СЃРЅРёРїРїРµС‚С‹, crawl budget Рё СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ СЃР°Р№С‚Р° Р·Р°Р±РёСЂР°С‚СЊ СЃРїСЂРѕСЃ.",
+        "Критичные ошибки",
+        "Что прямо сейчас мешает сайту расти",
+        "Здесь только те проблемы, которые заметно влияют на индекс, сниппеты, трафик и заявки.",
     )
     critical_issue_cards = [AuditIssue(**item) for item in audit.get("critical_errors", [])] or audit["issues"][:4]
     add_issue_cards(doc, critical_issue_cards)
 
     add_section_heading(
         doc,
-        "Р¤Р°Р·С‹ Р°СѓРґРёС‚Р°",
-        "Р“Р»СѓР±РѕРєРёР№ СЂР°Р·Р±РѕСЂ РїРѕ РєР»СЋС‡РµРІС‹Рј СЃР»РѕСЏРј СЃР°Р№С‚Р°",
-        "РќРёР¶Рµ Р°СѓРґРёС‚ СЂР°Р·РѕР±СЂР°РЅ РїРѕ СЌС‚Р°РїР°Рј, С‡С‚РѕР±С‹ Р±С‹Р»Рѕ РІРёРґРЅРѕ РЅРµ С‚РѕР»СЊРєРѕ СЃРїРёСЃРѕРє РѕС€РёР±РѕРє, РЅРѕ Рё СЂРµР°Р»СЊРЅСѓСЋ Р»РѕРіРёРєСѓ РїСЂРѕРІРµСЂРєРё РїСЂРѕРµРєС‚Р°.",
+        "Подробный разбор",
+        "Проверка по основным слоям сайта",
+        "Разбили аудит по этапам, чтобы было видно не только список проблем, но и логику проверки.",
     )
     add_phase_sections_doc(doc, audit.get("phase_sections", []))
 
     add_section_heading(
         doc,
-        "Quick wins",
-        "Р‘С‹СЃС‚СЂС‹Рµ РїРѕР±РµРґС‹ РЅР° Р±Р»РёР¶Р°Р№С€РёР№ СЃРїСЂРёРЅС‚",
-        "Р­С‚Рё РїСЂР°РІРєРё РјРѕР¶РЅРѕ РІРЅРµРґСЂРёС‚СЊ Р±С‹СЃС‚СЂРѕ Рё РїРѕР»СѓС‡РёС‚СЊ Р·Р°РјРµС‚РЅС‹Р№ СЌС„С„РµРєС‚ Р±РµР· Р±РѕР»СЊС€РѕР№ РїРµСЂРµСЃС‚СЂРѕР№РєРё РїСЂРѕРµРєС‚Р°.",
+        "Быстрые исправления",
+        "Что можно исправить в ближайшее время",
+        "Это задачи, которые обычно внедряются быстро и дают заметный результат без большой переделки сайта.",
     )
     add_action_cards_doc(doc, audit.get("quick_wins", []), "effort", "impact")
 
     add_section_heading(
         doc,
-        "РЎС‚СЂР°С‚РµРіРёС‡РµСЃРєРёРµ СѓР»СѓС‡С€РµРЅРёСЏ",
-        "Р§С‚Рѕ СѓСЃРёР»РёС‚ РїСЂРѕРµРєС‚ РїРѕРІРµСЂС… Р±Р°Р·РѕРІС‹С… С„РёРєСЃРѕРІ",
-        "Р­С‚Рѕ СѓР¶Рµ РЅРµ С‚СѓС€РµРЅРёРµ РїРѕР¶Р°СЂР°, Р° СЃР»РѕР№ РёР·РјРµРЅРµРЅРёР№, РєРѕС‚РѕСЂС‹Р№ РїСЂРµРІСЂР°С‰Р°РµС‚ СЃР°Р№С‚ РІ Р±РѕР»РµРµ СЃРёР»СЊРЅС‹Р№ РёСЃС‚РѕС‡РЅРёРє Р·Р°СЏРІРѕРє Рё СЂРѕСЃС‚Р° РІРёРґРёРјРѕСЃС‚Рё.",
+        "Стратегические улучшения",
+        "Что даст рост после базовых исправлений",
+        "Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок в долгую.",
     )
     add_action_cards_doc(doc, audit.get("strategic_moves", []), "impact", "effort")
 
-    add_section_heading(doc, "РўРѕС‡РєРё СЂРѕСЃС‚Р°", "РљСѓРґР° РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°С‚СЊ РїСЂРѕРµРєС‚ РїРѕСЃР»Рµ С„РёРєСЃРѕРІ")
+    add_section_heading(doc, "Точки роста", "Куда масштабировать проект после исправлений")
     add_bullet_list(doc, audit["growth_points"], size=11.1)
 
     add_section_heading(
         doc,
-        "Roadmap",
-        "РџР»Р°РЅ РІРЅРµРґСЂРµРЅРёСЏ РЅР° 60 РґРЅРµР№",
-        "РџРѕСЂСЏРґРѕРє РІС‹СЃС‚СЂРѕРµРЅ С‚Р°Рє, С‡С‚РѕР±С‹ СЃРЅР°С‡Р°Р»Р° СЃРЅСЏС‚СЊ С‚РµС…РЅРёС‡РµСЃРєРёРµ СЃС‚РѕРї-С„Р°РєС‚РѕСЂС‹, РїРѕС‚РѕРј СѓСЃРёР»РёС‚СЊ С€Р°Р±Р»РѕРЅС‹ Рё С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ СЌС‚РѕРіРѕ РЅР°СЂР°С‰РёРІР°С‚СЊ СЃР»РѕР№ СЂРѕСЃС‚Р°.",
+        "План работ",
+        "План внедрения на 60 дней",
+        "Порядок выстроен так, чтобы сначала снять технические ограничения, потом усилить шаблоны и только после этого масштабировать рост.",
     )
     add_roadmap_table(doc, audit["roadmap"])
 
     add_section_heading(
         doc,
-        "РџСЂРёР»РѕР¶РµРЅРёРµ",
-        "РљР°РєРёРµ СЃС‚СЂР°РЅРёС†С‹ СЂРµР°Р»СЊРЅРѕ Р»РµРіР»Рё РІ РѕСЃРЅРѕРІСѓ СЂР°Р·Р±РѕСЂР°",
-        "Р­С‚Рѕ РЅРµ СЃР»СѓС‡Р°Р№РЅР°СЏ РІС‹Р±РѕСЂРєР°: СЃСЋРґР° СЃРѕР±СЂР°РЅС‹ РіР»Р°РІРЅР°СЏ, РєРѕРјРјРµСЂС‡РµСЃРєРёРµ, РєРѕРЅС‚Р°РєС‚РЅС‹Рµ, СЃР»СѓР¶РµР±РЅС‹Рµ Рё РіР»СѓР±РёРЅРЅС‹Рµ URL, РїРѕ РєРѕС‚РѕСЂС‹Рј РІРёРґРЅРѕ РєР°С‡РµСЃС‚РІРѕ С€Р°Р±Р»РѕРЅРѕРІ РїСЂРѕРµРєС‚Р°.",
+        "Приложение",
+        "Какие страницы легли в основу разбора",
+        "Сюда собраны главная, коммерческие, контактные и служебные URL, по которым видно качество шаблонов и SEO-обвязки сайта.",
     )
     add_snapshot_table(doc, audit.get("appendix_pages") or audit["sample_pages"])
 
@@ -2440,7 +2503,7 @@ def serialize_audit(audit: dict) -> dict:
     payload["appendix_pages"] = [asdict(item) for item in audit.get("appendix_pages", [])]
     payload["issues"] = [asdict(item) for item in audit["issues"]]
     payload["screenshots"] = audit.get("screenshots", [])
-    return payload
+    return normalize_structure(payload)
 
 
 def main() -> None:

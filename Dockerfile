@@ -8,6 +8,8 @@ ENV PYTHONUNBUFFERED=1 \
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
+    fonts-dejavu-core \
+    fonts-liberation2 \
     openssl \
     python3 \
     python3-pip \
