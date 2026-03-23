@@ -11,7 +11,7 @@ const navItems = [
   { href: '/admin/blog', label: 'Блог' },
   { href: '/admin/cases', label: 'Кейсы' },
   { href: '/admin/reviews', label: 'Отзывы' },
-  { href: '/admin/parsers', label: 'Парсеры' },
+  { href: '/admin/seo-analytics', label: 'SEO / Аналитика' },
   { href: '/admin/seo-files', label: 'SEO файлы' },
   { href: '/admin/settings', label: 'Настройки' },
 ]

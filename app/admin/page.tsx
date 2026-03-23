@@ -9,6 +9,7 @@ const dashboardCards = [
   { title: 'Блог', href: '/admin/blog' },
   { title: 'Кейсы', href: '/admin/cases' },
   { title: 'Отзывы', href: '/admin/reviews' },
+  { title: 'SEO / Аналитика', href: '/admin/seo-analytics' },
   { title: 'Страницы', href: '/admin/pages' },
   { title: 'Настройки', href: '/admin/settings' },
 ]
@@ -25,6 +26,7 @@ export default async function AdminDashboard() {
   let publishedPostsCount = 0
   let casesCount = 0
   let reviewsCount = 0
+  let seoReportsCount = 0
 
   try {
     servicesCount = await prisma.service.count()
@@ -33,6 +35,7 @@ export default async function AdminDashboard() {
     publishedPostsCount = await prisma.blogPost.count({ where: { published: true } })
     casesCount = await prisma.case.count()
     reviewsCount = await prisma.review.count()
+    seoReportsCount = await prisma.parserJob.count({ where: { type: 'seo_monthly_report' } })
   } catch (error) {
     console.error('Error loading dashboard stats:', error)
   }
@@ -42,6 +45,7 @@ export default async function AdminDashboard() {
     `${publishedPostsCount} / ${blogPostsCount}`,
     `${casesCount}`,
     `${reviewsCount}`,
+    `${seoReportsCount}`,
     '—',
     '—',
   ]
