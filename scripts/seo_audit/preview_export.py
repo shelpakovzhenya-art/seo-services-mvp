@@ -580,17 +580,33 @@ def _append_competitor_comparison(story: list, comparison: dict, styles: dict) -
         story.extend(_paragraph_list(summary, styles))
         story.append(Spacer(1, 8))
 
+
     for competitor in comparison.get("competitors", []):
-        highlights_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("highlights", []))
+        highlights_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("highlights", []))
+        factor_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("factor_summary", []))
+        template_rows_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("template_rows", []))
+        template_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("template_findings", []))
+        snippet_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("snippet_findings", []))
+        commercial_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("commercial_findings", []))
         examples = competitor.get("sample_paths", [])[:3]
-        card = Table(
-            [
-                [Paragraph(_escape_pdf_text(f"{competitor.get('domain', '')} | проверено страниц: {competitor.get('pages_checked', 0)}"), styles["cardTitle"])],
-                [Paragraph(f"<b>Что у конкурента выглядит сильнее:</b>{highlights_html or '<br/>—'}", styles["base"])],
-                [Paragraph(f"<b>Где это видно:</b> {_escape_pdf_text(', '.join(examples) or '—')}", styles["small"])],
-            ],
-            colWidths=[180 * mm],
-        )
+        card_rows = [
+            [Paragraph(_escape_pdf_text(f"{competitor.get('domain', '')} | проверено страниц: {competitor.get('pages_checked', 0)}"), styles["cardTitle"])],
+        ]
+        if highlights_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('Коротко')}:</b>{highlights_html}", styles["base"])])
+        if factor_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('Ключевые факторы')}:</b>{factor_html}", styles["base"])])
+        if template_rows_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('Ключевые различия по шаблонам')}:</b>{template_rows_html}", styles["base"])])
+        if template_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('По шаблонам')}:</b>{template_html}", styles["base"])])
+        if snippet_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('По сниппетам')}:</b>{snippet_html}", styles["base"])])
+        if commercial_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('По FAQ, доверию и коммерческому слою')}:</b>{commercial_html}", styles["base"])])
+        if examples:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('Где это видно')}:</b> {_escape_pdf_text(', '.join(examples))}", styles["small"])])
+        card = Table(card_rows, colWidths=[180 * mm])
         card.setStyle(
             TableStyle(
                 [
@@ -835,28 +851,32 @@ def _append_competitor_comparison_v4(story: list, comparison: dict, styles: dict
     if summary:
         story.extend(_paragraph_list(summary, styles))
         story.append(Spacer(1, 8))
-
     for competitor in comparison.get("competitors", []):
-        highlights_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("highlights", []))
-        factor_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("factor_summary", []))
-        template_rows_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("template_rows", []))
-        template_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("template_findings", []))
-        snippet_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("snippet_findings", []))
-        commercial_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("commercial_findings", []))
+        highlights_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("highlights", []))
+        factor_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("factor_summary", []))
+        template_rows_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("template_rows", []))
+        template_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("template_findings", []))
+        snippet_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("snippet_findings", []))
+        commercial_html = "".join(f"<br/>- {_escape_pdf_text(item)}" for item in competitor.get("commercial_findings", []))
         examples = competitor.get("sample_paths", [])[:3]
-        card = Table(
-            [
-                [Paragraph(_escape_pdf_text(f"{competitor.get('domain', '')} | проверено страниц: {competitor.get('pages_checked', 0)}"), styles["cardTitle"])],
-                [Paragraph(f"<b>{_escape_pdf_text('Коротко')}:</b>{highlights_html or '<br/>—'}", styles["base"])],
-                [Paragraph(f"<b>{_escape_pdf_text('Ключевые факторы')}:</b>{factor_html or '<br/>—'}", styles["base"])],
-                [Paragraph(f"<b>{_escape_pdf_text('По шаблонам короче')}:</b>{template_rows_html or '<br/>—'}", styles["base"])],
-                [Paragraph(f"<b>{_escape_pdf_text('По шаблонам')}:</b>{template_html or '<br/>—'}", styles["base"])],
-                [Paragraph(f"<b>{_escape_pdf_text('По сниппетам')}:</b>{snippet_html or '<br/>—'}", styles["base"])],
-                [Paragraph(f"<b>{_escape_pdf_text('По FAQ, доверию и коммерческому слою')}:</b>{commercial_html or '<br/>—'}", styles["base"])],
-                [Paragraph(f"<b>{_escape_pdf_text('Где это видно')}:</b> {_escape_pdf_text(', '.join(examples) or '—')}", styles["small"])],
-            ],
-            colWidths=[180 * mm],
-        )
+        card_rows = [
+            [Paragraph(_escape_pdf_text(f"{competitor.get('domain', '')} | проверено страниц: {competitor.get('pages_checked', 0)}"), styles["cardTitle"])],
+        ]
+        if highlights_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('Коротко')}:</b>{highlights_html}", styles["base"])])
+        if factor_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('Ключевые факторы')}:</b>{factor_html}", styles["base"])])
+        if template_rows_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('Ключевые различия по шаблонам')}:</b>{template_rows_html}", styles["base"])])
+        if template_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('По шаблонам')}:</b>{template_html}", styles["base"])])
+        if snippet_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('По сниппетам')}:</b>{snippet_html}", styles["base"])])
+        if commercial_html:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('По FAQ, доверию и коммерческому слою')}:</b>{commercial_html}", styles["base"])])
+        if examples:
+            card_rows.append([Paragraph(f"<b>{_escape_pdf_text('Где это видно')}:</b> {_escape_pdf_text(', '.join(examples))}", styles["small"])])
+        card = Table(card_rows, colWidths=[180 * mm])
         card.setStyle(
             TableStyle(
                 [
@@ -1442,16 +1462,40 @@ def _competitor_comparison_html(comparison: dict) -> str:
 
     summary_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in summary)
     competitor_cards = []
+
     for competitor in competitors:
         highlights_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("highlights", []))
+        factor_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("factor_summary", []))
+        template_rows_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("template_rows", []))
+        template_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("template_findings", []))
+        snippet_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("snippet_findings", []))
+        commercial_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("commercial_findings", []))
         sample_paths = ", ".join(competitor.get("sample_paths", [])[:3])
+        sections_html: list[str] = []
+        if highlights_html:
+            sections_html.append(f"<h4>Коротко</h4><ul>{highlights_html}</ul>")
+        if factor_html:
+            sections_html.append(f"<h4>Ключевые факторы</h4><ul>{factor_html}</ul>")
+        if template_rows_html:
+            sections_html.append(f"<h4>Ключевые различия по шаблонам</h4><ul>{template_rows_html}</ul>")
+        if template_html:
+            sections_html.append(f"<h4>По шаблонам</h4><ul>{template_html}</ul>")
+        if snippet_html:
+            sections_html.append(f"<h4>По сниппетам</h4><ul>{snippet_html}</ul>")
+        if commercial_html:
+            sections_html.append(f"<h4>По FAQ, доверию и коммерческому слою</h4><ul>{commercial_html}</ul>")
+        sample_paths_html = (
+            f'<p class="action-meta"><strong>Где это видно:</strong> {_escape_html_text(sample_paths)}</p>'
+            if sample_paths
+            else ""
+        )
         competitor_cards.append(
             f"""
             <article class="competitor-card">
               <h3>{_escape_html_text(competitor.get('domain', ''))}</h3>
               <p class="action-meta"><strong>Проверено страниц:</strong> {_escape_html_text(competitor.get('pages_checked', 0))}</p>
-              <ul>{highlights_html}</ul>
-              <p class="action-meta"><strong>Где это видно:</strong> {_escape_html_text(sample_paths or '—')}</p>
+              {''.join(sections_html)}
+              {sample_paths_html}
             </article>
             """
         )
@@ -1674,24 +1718,31 @@ def _competitor_comparison_html_v4(comparison: dict) -> str:
         snippet_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("snippet_findings", []))
         commercial_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("commercial_findings", []))
         sample_paths = ", ".join(competitor.get("sample_paths", [])[:3])
+        sections_html: list[str] = []
+        if highlights_html:
+            sections_html.append(f"<h4>Коротко</h4><ul>{highlights_html}</ul>")
+        if factor_html:
+            sections_html.append(f"<h4>Ключевые факторы</h4><ul>{factor_html}</ul>")
+        if template_rows_html:
+            sections_html.append(f"<h4>Ключевые различия по шаблонам</h4><ul>{template_rows_html}</ul>")
+        if template_html:
+            sections_html.append(f"<h4>По шаблонам</h4><ul>{template_html}</ul>")
+        if snippet_html:
+            sections_html.append(f"<h4>По сниппетам</h4><ul>{snippet_html}</ul>")
+        if commercial_html:
+            sections_html.append(f"<h4>По FAQ, доверию и коммерческому слою</h4><ul>{commercial_html}</ul>")
+        sample_paths_html = (
+            f'<p class="action-meta"><strong>Где это видно:</strong> {_escape_html_text(sample_paths)}</p>'
+            if sample_paths
+            else ""
+        )
         competitor_cards.append(
             f"""
             <article class="competitor-card">
               <h3>{_escape_html_text(competitor.get('domain', ''))}</h3>
               <p class="action-meta"><strong>Проверено страниц:</strong> {_escape_html_text(competitor.get('pages_checked', 0))}</p>
-              <h4>Коротко</h4>
-              {'<ul>' + highlights_html + '</ul>' if highlights_html else '<p class="action-meta">—</p>'}
-              <h4>Ключевые факторы</h4>
-              {'<ul>' + factor_html + '</ul>' if factor_html else '<p class="action-meta">—</p>'}
-              <h4>По шаблонам короче</h4>
-              {'<ul>' + template_rows_html + '</ul>' if template_rows_html else '<p class="action-meta">—</p>'}
-              <h4>По шаблонам</h4>
-              {'<ul>' + template_html + '</ul>' if template_html else '<p class="action-meta">—</p>'}
-              <h4>По сниппетам</h4>
-              {'<ul>' + snippet_html + '</ul>' if snippet_html else '<p class="action-meta">—</p>'}
-              <h4>По FAQ, доверию и коммерческому слою</h4>
-              {'<ul>' + commercial_html + '</ul>' if commercial_html else '<p class="action-meta">—</p>'}
-              <p class="action-meta"><strong>Где это видно:</strong> {_escape_html_text(sample_paths or '—')}</p>
+              {''.join(sections_html)}
+              {sample_paths_html}
             </article>
             """
         )

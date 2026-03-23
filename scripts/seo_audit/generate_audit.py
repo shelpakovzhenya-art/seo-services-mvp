@@ -3606,7 +3606,7 @@ def add_competitor_comparison_doc(doc: Document, comparison: dict) -> None:
             add_text_paragraph(body, "Ключевые факторы:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
             add_bullet_list(body, competitor.get("factor_summary", []), size=10.15)
         if competitor.get("template_rows"):
-            add_text_paragraph(body, "По шаблонам короче:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
+            add_text_paragraph(body, "Ключевые различия по шаблонам:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
             add_bullet_list(body, competitor.get("template_rows", []), size=10.15)
         if competitor.get("template_findings"):
             add_text_paragraph(body, "Где конкурент сильнее по шаблонам:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
