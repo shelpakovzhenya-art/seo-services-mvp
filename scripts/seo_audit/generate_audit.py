@@ -217,6 +217,19 @@ def action_meta_label(key: str) -> str:
     }.get(key, normalize_output_text(key))
 
 
+def severity_label(value: str) -> str:
+    return {
+        "Critical": "Критично",
+        "CRITICAL": "Критично",
+        "High": "Высокий приоритет",
+        "HIGH": "Высокий приоритет",
+        "Medium": "Средний приоритет",
+        "MEDIUM": "Средний приоритет",
+        "Low": "Низкий приоритет",
+        "LOW": "Низкий приоритет",
+    }.get(value or "", normalize_output_text(value))
+
+
 def strip_namespace(tag: str) -> str:
     return tag.split("}", 1)[-1]
 
@@ -2201,12 +2214,15 @@ def add_issue_cards(doc: Document, issues: list[AuditIssue]) -> None:
         set_cell_shading(body, "FFFFFF")
         set_cell_margins(head, 100, 120, 90, 120)
         set_cell_margins(body, 100, 120, 120, 120)
-        head_run = head.paragraphs[0].add_run(normalize_output_text(f"{issue.severity.upper()}  |  {issue.title}"))
+        head_run = head.paragraphs[0].add_run(normalize_output_text(f"{severity_label(issue.severity)}  |  {issue.title}"))
         set_font(head_run, size=11.2, bold=True, color=severity_text_colors.get(issue.severity, BRAND_TEXT))
         body_run = body.paragraphs[0].add_run(normalize_output_text(issue.why_it_matters))
         set_font(body_run, size=11.1, color=BRAND_TEXT)
         body.paragraphs[0].paragraph_format.space_after = Pt(6)
-        add_bullet_list(body, issue.evidence, size=10.8)
+        if issue.evidence:
+            add_bullet_list(body, issue.evidence, size=10.8)
+        else:
+            add_text_paragraph(body, "Примеры страниц в выборке не найдены.", size=10.6, color=BRAND_MUTED, space_after=4)
         recommendation = body.add_paragraph()
         recommendation_run = recommendation.add_run(normalize_output_text(f"Что делать: {issue.recommendation}"))
         set_font(recommendation_run, size=10.9, bold=True, color=BRAND_TEXT)
@@ -2285,7 +2301,7 @@ def add_priority_matrix_table(doc: Document, rows: list[dict]) -> None:
             str(row_data.get("risk", "")),
             str(row_data.get("business", "")),
             str(row_data.get("total", "")),
-            row_data.get("severity", ""),
+            severity_label(str(row_data.get("severity", ""))),
             row_data.get("owner", ""),
         ]
         for idx, value in enumerate(values):
@@ -2332,7 +2348,7 @@ def add_phase_sections_doc(doc: Document, phase_sections: list[dict]) -> None:
             add_bullet_list(body, check.get("findings", []), size=10.4)
             add_text_paragraph(
                 body,
-                f"Приоритет: {check.get('priority', '')}  |  Ответственный: {check.get('owner', '')}",
+                f"Приоритет: {severity_label(str(check.get('priority', '')))}  |  Ответственный: {check.get('owner', '')}",
                 size=10.2,
                 bold=True,
                 color=BRAND_ORANGE,
@@ -2429,60 +2445,68 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
         add_text_paragraph(doc, paragraph, size=11.4, color=BRAND_TEXT, space_after=6)
     add_metric_grid(doc, audit)
 
-    add_section_heading(doc, "Сильные стороны", "Что уже работает в плюс проекту")
-    add_bullet_list(doc, audit["strengths"], size=11.1)
+    if audit.get("strengths"):
+        add_section_heading(doc, "Сильные стороны", "Что уже работает в плюс проекту")
+        add_bullet_list(doc, audit["strengths"], size=11.1)
 
-    add_section_heading(
-        doc,
-        "Приоритеты",
-        "Какие задачи делать в первую очередь",
-        "Таблица ниже помогает быстро понять, что сильнее всего влияет на результат и кому это лучше передать в работу.",
-    )
-    add_priority_matrix_table(doc, audit.get("priority_matrix", []))
+    if audit.get("priority_matrix"):
+        add_section_heading(
+            doc,
+            "Приоритеты",
+            "Какие задачи делать в первую очередь",
+            "Сначала закрываем критичные и массовые проблемы, которые сильнее всего бьют по индексации, сниппетам и ключевым страницам сайта.",
+        )
+        add_priority_matrix_table(doc, audit.get("priority_matrix", []))
 
-    add_section_heading(
-        doc,
-        "Критичные ошибки",
-        "Что прямо сейчас мешает сайту расти",
-        "Здесь только те проблемы, которые заметно влияют на индекс, сниппеты, трафик и заявки.",
-    )
     critical_issue_cards = [AuditIssue(**item) for item in audit.get("critical_errors", [])] or audit["issues"][:4]
-    add_issue_cards(doc, critical_issue_cards)
+    if critical_issue_cards:
+        add_section_heading(
+            doc,
+            "Критичные ошибки",
+            "Что прямо сейчас мешает сайту расти",
+            "Здесь только те проблемы, которые заметно влияют на индекс, сниппеты, трафик и заявки.",
+        )
+        add_issue_cards(doc, critical_issue_cards)
 
-    add_section_heading(
-        doc,
-        "Подробный разбор",
-        "Проверка по основным слоям сайта",
-        "Разбили аудит по этапам, чтобы было видно не только список проблем, но и логику проверки.",
-    )
-    add_phase_sections_doc(doc, audit.get("phase_sections", []))
+    if audit.get("phase_sections"):
+        add_section_heading(
+            doc,
+            "Подробный разбор",
+            "Проверка по основным слоям сайта",
+            "Разбили аудит по этапам, чтобы было видно не только список проблем, но и логику проверки.",
+        )
+        add_phase_sections_doc(doc, audit.get("phase_sections", []))
 
-    add_section_heading(
-        doc,
-        "Быстрые исправления",
-        "Что можно исправить в ближайшее время",
-        "Это задачи, которые обычно внедряются быстро и дают заметный результат без большой переделки сайта.",
-    )
-    add_action_cards_doc(doc, audit.get("quick_wins", []), "effort", "impact")
+    if audit.get("quick_wins"):
+        add_section_heading(
+            doc,
+            "Быстрые исправления",
+            "Что можно исправить в ближайшее время",
+            "Это задачи, которые обычно внедряются быстро и дают заметный результат без большой переделки сайта.",
+        )
+        add_action_cards_doc(doc, audit.get("quick_wins", []), "effort", "impact")
 
-    add_section_heading(
-        doc,
-        "Стратегические улучшения",
-        "Что даст рост после базовых исправлений",
-        "Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок в долгую.",
-    )
-    add_action_cards_doc(doc, audit.get("strategic_moves", []), "impact", "effort")
+    if audit.get("strategic_moves"):
+        add_section_heading(
+            doc,
+            "Стратегические улучшения",
+            "Что даст рост после базовых исправлений",
+            "Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок в долгую.",
+        )
+        add_action_cards_doc(doc, audit.get("strategic_moves", []), "impact", "effort")
 
-    add_section_heading(doc, "Точки роста", "Куда масштабировать проект после исправлений")
-    add_bullet_list(doc, audit["growth_points"], size=11.1)
+    if audit.get("growth_points"):
+        add_section_heading(doc, "Точки роста", "Куда масштабировать проект после исправлений")
+        add_bullet_list(doc, audit["growth_points"], size=11.1)
 
-    add_section_heading(
-        doc,
-        "План работ",
-        "План внедрения на 60 дней",
-        "Порядок выстроен так, чтобы сначала снять технические ограничения, потом усилить шаблоны и только после этого масштабировать рост.",
-    )
-    add_roadmap_table(doc, audit["roadmap"])
+    if audit.get("roadmap"):
+        add_section_heading(
+            doc,
+            "План работ",
+            "План внедрения на 60 дней",
+            "Порядок выстроен так, чтобы сначала снять технические ограничения, потом усилить шаблоны и только после этого масштабировать рост.",
+        )
+        add_roadmap_table(doc, audit["roadmap"])
 
     add_section_heading(
         doc,

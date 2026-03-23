@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import fields, is_dataclass, replace
 from typing import Any
 
@@ -74,6 +75,45 @@ _PHRASE_REPLACEMENTS = {
     "У проекта уже есть llms.txt, а значит можно дополнительно усиливать дополнительную видимость и брендовые ответы.": "У проекта уже есть llms.txt. При необходимости его можно использовать как дополнительный технический файл для внешних сервисов.",
 }
 
+_POST_REPLACEMENTS = {
+    "Title Рё meta description": "Title и meta description",
+    "Покрытие микроразметка-разметкой": "Покрытие микроразметкой",
+    "микроразметка-разметкой": "микроразметкой",
+    "микроразметка-разметку": "микроразметку",
+    "микроразметка-разметки": "микроразметки",
+    "Schema coverage": "Покрытие микроразметкой",
+    "Canonical coverage": "Покрытие каноническими ссылками",
+    "structured data": "микроразметка",
+    "route-URL": "служебные URL",
+    "query- или route-URL": "URL с параметрами или служебные URL",
+    "query-параметрам": "параметрам URL",
+    "route/query URL": "служебные URL и URL с параметрами",
+    "query/route URL": "URL с параметрами и служебные URL",
+    "query- или служебные URL": "URL с параметрами или служебные URL",
+    "query и route URL": "URL с параметрами и служебные URL",
+    "query и route-URL": "URL с параметрами и служебные URL",
+    "Разрулить индексируемые query и route URL": "Разобраться с индексируемыми URL с параметрами и служебными URL",
+    "Разрулить индексируемые URL с параметрами и служебные URL": "Закрыть индексируемые URL с параметрами и служебные URL",
+    "image SEO": "SEO для изображений",
+    "image-шаблон": "шаблон для изображений",
+    "image-схему/карту сайта": "карту изображений",
+    "contact-страниц": "контактных страниц",
+    "Служебные URL с параметрами и служебные URL": "URL с параметрами и служебные URL",
+    "служебные служебные URL": "служебные URL",
+    "ндексируемых URL с параметрами": "Индексируемых URL с параметрами",
+    "ИИндексируемых URL с параметрами": "Индексируемых URL с параметрами",
+    "ИИзображения": "Изображения",
+    "ИИзображений": "Изображений",
+    "ИИзображение": "Изображение",
+    "иИИзображения": "изображения",
+    "иИИзображений": "изображений",
+    "иИИзображение": "изображение",
+    "зображения": "Изображения",
+    "зображений": "Изображений",
+    "зображение": "Изображение",
+    "вЂў": "•",
+}
+
 
 def _text_score(text: str) -> int:
     score = 0
@@ -146,6 +186,17 @@ def normalize_output_text(value: object) -> str:
     text = best.replace("\xa0", " ")
     for source, target in _PHRASE_REPLACEMENTS.items():
         text = text.replace(source, target)
+    for source, target in _POST_REPLACEMENTS.items():
+        text = text.replace(source, target)
+    text = re.sub(r"\bРё\b", "и", text)
+    text = re.sub(r"\bР\b", "И", text)
+    text = re.sub(r"\bИИзображ", "Изображ", text)
+    text = re.sub(r"\bиИИзображ", "изображ", text)
+    text = re.sub(r"\bИИндексируем", "Индексируем", text)
+    text = re.sub(r"\bндексируем", "Индексируем", text)
+    text = re.sub(r"\bслужебные\s+служебные URL\b", "служебные URL", text, flags=re.IGNORECASE)
+    text = re.sub(r"\b(чистые|понятные|полноценные|микроразметка)\s+\1\b", r"\1", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s{2,}", " ", text).strip()
     return text
 
 

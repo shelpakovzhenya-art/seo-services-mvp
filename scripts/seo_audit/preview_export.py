@@ -273,11 +273,25 @@ def _action_meta_label(key: str) -> str:
     }.get(key, normalize_output_text(key))
 
 
+def _severity_label(severity: str) -> str:
+    return {
+        "Critical": "Критично",
+        "CRITICAL": "Критично",
+        "High": "Высокий приоритет",
+        "HIGH": "Высокий приоритет",
+        "Medium": "Средний приоритет",
+        "MEDIUM": "Средний приоритет",
+        "Low": "Низкий приоритет",
+        "LOW": "Низкий приоритет",
+    }.get(severity or "", normalize_output_text(severity))
+
+
 def _append_issue_cards(story: list, issues: list[dict], styles: dict) -> None:
     for issue in issues:
         evidence_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in issue.get("evidence", []))
+        severity_label = _escape_pdf_text(_severity_label(str(issue.get("severity", ""))))
         content = [
-            [Paragraph(_escape_pdf_text(f"{issue.get('severity', '').upper()}  {issue.get('title', '')}"), styles["cardTitle"])],
+            [Paragraph(_escape_pdf_text(f"{severity_label}  |  {issue.get('title', '')}"), styles["cardTitle"])],
             [Paragraph(_escape_pdf_text(issue.get("why_it_matters", "")), styles["base"])],
             [Paragraph(f"<b>Что нашли:</b>{evidence_html or '<br/>• Без дополнительных примеров.'}", styles["base"])],
             [Paragraph(f"<b>Что делать:</b> {_escape_pdf_text(issue.get('recommendation', ''))}", styles["base"])],
@@ -331,8 +345,15 @@ def _append_action_cards(story: list, items: list[dict], kicker: str, title: str
 
 def _append_phase_sections(story: list, phase_sections: list[dict], styles: dict) -> None:
     for section in phase_sections:
-        _section_header(story, "Подробный разбор", str(section.get("title", "")), str(section.get("intro", "")), styles)
-        for check in section.get("checks", []):
+        header_story: list = []
+        _section_header(header_story, "Подробный разбор", str(section.get("title", "")), str(section.get("intro", "")), styles)
+        checks = section.get("checks", [])
+        if not checks:
+            story.extend(header_story)
+            story.append(Paragraph("По этому этапу в выборке не нашлось данных для подробного блока.", styles["muted"]))
+            story.append(Spacer(1, 10))
+            continue
+        for idx, check in enumerate(checks):
             metrics = "<br/>".join(
                 f"<b>{_escape_pdf_text(label)}:</b> {_escape_pdf_text(value)}"
                 for label, value in check.get("metrics", [])
@@ -365,7 +386,7 @@ def _append_phase_sections(story: list, phase_sections: list[dict], styles: dict
                             ]
                         )
                     ],
-                    [Paragraph(f"<b>Приоритет:</b> {_escape_pdf_text(check.get('priority', ''))} &nbsp;&nbsp; <b>Ответственный:</b> {_escape_pdf_text(check.get('owner', ''))}", styles["small"])],
+                    [Paragraph(f"<b>Приоритет:</b> {_escape_pdf_text(_severity_label(str(check.get('priority', ''))))} &nbsp;&nbsp; <b>Ответственный:</b> {_escape_pdf_text(check.get('owner', ''))}", styles["small"])],
                     [Paragraph(f"<b>Что делать:</b> {_escape_pdf_text(check.get('recommendation', ''))}", styles["base"])],
                 ],
                 colWidths=[180 * mm],
@@ -383,7 +404,11 @@ def _append_phase_sections(story: list, phase_sections: list[dict], styles: dict
                     ]
                 )
             )
-            story.append(KeepTogether([card, Spacer(1, 10)]))
+            if idx == 0:
+                story.append(KeepTogether(header_story + [card, Spacer(1, 10)]))
+            else:
+                story.append(card)
+                story.append(Spacer(1, 10))
 
 
 def _append_roadmap(story: list, roadmap: list[list], styles: dict) -> None:
@@ -575,7 +600,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             ("Средний HTML", f"{audit_payload.get('average_html_kb', 0)} KB"),
         ]
         metric_cards = [_metric_card(label, value, styles) for label, value in metrics]
-        story.append(Table([metric_cards[:2], metric_cards[2:]], colWidths=[86 * mm, 86 * mm], rowHeights=[28 * mm, 28 * mm]))
+        story.append(Table([metric_cards[:2], metric_cards[2:]], colWidths=[86 * mm, 86 * mm]))
         story.append(PageBreak())
 
         _section_header(
@@ -605,7 +630,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             story,
             "Приоритеты",
             "Какие задачи делать в первую очередь",
-            "Таблица ниже помогает быстро понять, что сильнее всего влияет на результат и кому это лучше передать в работу.",
+            "Сначала закрываем критичные и массовые проблемы, которые сильнее всего бьют по индексации, сниппетам и ключевым страницам сайта.",
             styles,
         )
         for row in audit_payload.get("priority_matrix", [])[:12]:
@@ -621,7 +646,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
                                 styles["small"],
                             )
                         ],
-                        [Paragraph(f"<b>Приоритет:</b> {_escape_pdf_text(row.get('severity', ''))} &nbsp;&nbsp; <b>Ответственный:</b> {_escape_pdf_text(row.get('owner', ''))}", styles["base"])],
+                        [Paragraph(f"<b>Приоритет:</b> {_escape_pdf_text(_severity_label(str(row.get('severity', ''))))} &nbsp;&nbsp; <b>Ответственный:</b> {_escape_pdf_text(row.get('owner', ''))}", styles["base"])],
                     ],
                     colWidths=[180 * mm],
                     style=TableStyle(
@@ -678,17 +703,18 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
 
 
 def _issue_card(issue: dict) -> str:
-    severity = _escape_html_text(issue.get("severity", ""))
+    severity_raw = str(issue.get("severity", ""))
+    severity = _escape_html_text(_severity_label(severity_raw))
     title = _escape_html_text(issue.get("title", ""))
     why = _escape_html_text(issue.get("why_it_matters", ""))
     recommendation = _escape_html_text(issue.get("recommendation", ""))
     evidence_items = "".join(f"<li>{_escape_html_text(item)}</li>" for item in issue.get("evidence", []))
     return f"""
-    <article class="issue-card issue-{severity.lower()}">
+    <article class="issue-card issue-{severity_raw.lower()}">
       <div class="issue-head"><span>{severity}</span><strong>{title}</strong></div>
       <div class="issue-body">
         <p>{why}</p>
-        <ul>{evidence_items}</ul>
+        {'<ul>' + evidence_items + '</ul>' if evidence_items else '<p class="empty-note">Примеры страниц в выборке не найдены.</p>'}
         <p class="recommendation"><strong>Что делать:</strong> {recommendation}</p>
       </div>
     </article>
@@ -707,7 +733,7 @@ def _priority_table(rows: list[dict]) -> str:
             f"<td>{_escape_html_text(row.get('risk', ''))}</td>"
             f"<td>{_escape_html_text(row.get('business', ''))}</td>"
             f"<td>{_escape_html_text(row.get('total', ''))}</td>"
-            f"<td>{_escape_html_text(row.get('severity', ''))}</td>"
+            f"<td>{_escape_html_text(_severity_label(str(row.get('severity', ''))))}</td>"
             f"<td>{_escape_html_text(row.get('owner', ''))}</td>"
             "</tr>"
         )
@@ -737,18 +763,20 @@ def _phase_checks_html(phase_sections: list[dict]) -> str:
                   <div class="phase-grid">
                     <div class="phase-box">
                       <div class="phase-box-title">Ключевые метрики</div>
-                      <ul>{metrics}</ul>
+                      {'<ul>' + metrics + '</ul>' if metrics else '<p class="empty-note">Нет данных по метрикам.</p>'}
                     </div>
                     <div class="phase-box">
                       <div class="phase-box-title">Что нашли</div>
-                      <ul>{findings}</ul>
+                      {'<ul>' + findings + '</ul>' if findings else '<p class="empty-note">Явных проблем в выборке не найдено.</p>'}
                     </div>
                   </div>
-                  <p class="phase-meta"><strong>Приоритет:</strong> {_escape_html_text(check.get('priority', ''))} <span>•</span> <strong>Ответственный:</strong> {_escape_html_text(check.get('owner', ''))}</p>
+                  <p class="phase-meta"><strong>Приоритет:</strong> {_escape_html_text(_severity_label(str(check.get('priority', ''))))} <span>•</span> <strong>Ответственный:</strong> {_escape_html_text(check.get('owner', ''))}</p>
                   <p class="recommendation"><strong>Что делать:</strong> {_escape_html_text(check.get('recommendation', ''))}</p>
                 </article>
                 """
             )
+        if not checks_html:
+            checks_html.append("<p class='empty-note'>По этому этапу в выборке не нашлось данных для подробного блока.</p>")
         blocks.append(
             f"""
             <section class="phase-section">
@@ -778,6 +806,8 @@ def _roadmap_columns(roadmap: list[list]) -> str:
 
 
 def _action_cards(items: list[dict], value_key: str, extra_key: str) -> str:
+    if not items:
+        return "<p class='empty-note'>Для этого блока пока нет задач в выборке.</p>"
     cards = []
     for item in items:
         cards.append(
@@ -786,7 +816,7 @@ def _action_cards(items: list[dict], value_key: str, extra_key: str) -> str:
               <h3>{_escape_html_text(item.get('title', ''))}</h3>
               <p class="action-meta"><strong>{_escape_html_text(_action_meta_label(value_key))}:</strong> {_escape_html_text(item.get(value_key, ''))}</p>
               <p class="action-meta"><strong>{_escape_html_text(_action_meta_label(extra_key))}:</strong> {_escape_html_text(item.get(extra_key, ''))}</p>
-              <p>{_escape_html_text(item.get('action') or item.get('details') or '')}</p>
+              <p>{_escape_html_text(item.get('action') or item.get('details') or 'Подробности появятся после следующего прогона аудита.')}</p>
             </article>
             """
         )
@@ -1086,11 +1116,14 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     }}
     @media (max-width: 980px) {{
       .hero,
-      .grid-4,
       .roadmap,
       .two-col,
       .phase-grid,
       .action-grid {{ grid-template-columns: 1fr; }}
+      .grid-4 {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+    }}
+    @media (max-width: 640px) {{
+      .grid-4 {{ grid-template-columns: 1fr; }}
     }}
   </style>
 </head>
@@ -1121,7 +1154,7 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     <section>
       <div class="section-kicker">Приоритеты</div>
       <h2>Какие задачи делать в первую очередь</h2>
-      <p class="lead">Таблица ниже помогает быстро понять, что сильнее всего влияет на результат и кому это лучше передать в работу.</p>
+      <p class="lead">Сначала закрываем критичные и массовые проблемы, которые сильнее всего бьют по индексации, сниппетам и ключевым страницам сайта.</p>
       {priority_html}
     </section>
 
