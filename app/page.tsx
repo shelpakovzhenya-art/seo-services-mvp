@@ -176,15 +176,9 @@ export default async function HomePage() {
             </div>
             <div className="hero-beam drift-right" />
 
-            <div className="relative max-w-none lg:pr-[280px]">
-              <div className="mt-4 rounded-[24px] border border-slate-200/80 bg-white/88 p-4 shadow-[0_22px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:w-[240px]">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-700">
-                  Verification Code
-                </div>
-                <div className="mt-3 text-xs text-slate-500">shelpakov.online</div>
-                <code className="mt-3 block overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 font-mono text-[15px] font-medium tracking-[0.04em] text-slate-900">
-                  {verificationCode}
-                </code>
+            <div className="relative max-w-none">
+              <div className="hidden" aria-hidden="true">
+                {verificationCode}
               </div>
               <span className="warm-chip">SEO-продвижение под заявки</span>
               <h1 className="mt-4 max-w-[1100px] text-[clamp(2.15rem,3.4vw,4rem)] font-semibold leading-[0.93] tracking-[-0.045em] text-slate-950">
