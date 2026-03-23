@@ -20,6 +20,7 @@ type ParsedConfig = {
   url?: string
   company?: string
   sampleSize?: number
+  competitors?: string[]
 }
 
 function parseConfig(config: string | null | undefined): ParsedConfig {
@@ -39,6 +40,30 @@ function formatStoredResult(result: string) {
     return JSON.stringify(JSON.parse(result), null, 2)
   } catch {
     return result
+  }
+}
+
+function normalizeCompetitorUrls(rawValue: string) {
+  const unique = new Set<string>()
+
+  rawValue
+    .split(/\r?\n|,/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .forEach((item) => {
+      if (unique.size < 5) {
+        unique.add(item)
+      }
+    })
+
+  return Array.from(unique)
+}
+
+function getDomainLabel(rawUrl: string) {
+  try {
+    return new URL(rawUrl).hostname.replace(/^www\./, '')
+  } catch {
+    return rawUrl
   }
 }
 
@@ -68,6 +93,7 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
   const [sitemapUrl, setSitemapUrl] = useState('')
   const [auditUrl, setAuditUrl] = useState('')
   const [auditCompany, setAuditCompany] = useState('')
+  const [competitorUrlsText, setCompetitorUrlsText] = useState('')
   const [sampleSize, setSampleSize] = useState(0)
   const [isRunning, setIsRunning] = useState({ sitemap: false, audit: false })
 
@@ -126,6 +152,8 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
       return
     }
 
+    const competitors = normalizeCompetitorUrls(competitorUrlsText)
+
     setIsRunning((current) => ({ ...current, audit: true }))
     try {
       const response = await fetch('/api/admin/parsers/seo-audit', {
@@ -135,6 +163,7 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
           url: auditUrl,
           company: auditCompany,
           sampleSize,
+          competitors,
         }),
       })
 
@@ -146,6 +175,7 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
 
       setAuditUrl('')
       setAuditCompany('')
+      setCompetitorUrlsText('')
       setSampleSize(0)
       router.refresh()
       alert('SEO-аудит запущен. Когда задача завершится, здесь появятся кнопки превью, PDF и DOCX.')
@@ -241,6 +271,20 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
               </div>
             </div>
 
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">URL конкурентов</label>
+              <textarea
+                value={competitorUrlsText}
+                onChange={(event) => setCompetitorUrlsText(event.target.value)}
+                placeholder={'https://competitor-1.ru\nhttps://competitor-2.ru\nhttps://competitor-3.ru'}
+                className="min-h-[112px] w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-100"
+              />
+              <p className="mt-2 text-xs leading-5 text-slate-500">
+                По одному URL на строку. Можно добавить до 5 конкурентов. В отчёте появится отдельный блок со сравнением,
+                списком недостающих элементов, коротким ТЗ на внедрение и объяснением, что это даст сайту.
+              </p>
+            </div>
+
             <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3 text-sm leading-6 text-slate-600">
               <div>0 = полный обход сайта по sitemap и внутренним ссылкам.</div>
               После запуска задача появится в истории ниже. Как только статус станет <strong>completed</strong>, появятся кнопки
@@ -302,6 +346,11 @@ export default function ParsersManager({ initialJobs }: { initialJobs: ParserJob
                       {typeof config.sampleSize === 'number' ? (
                         <div className="mt-1 text-xs text-slate-500">
                           {config.sampleSize > 0 ? `Лимит: ${config.sampleSize} страниц` : 'Режим: полный обход сайта'}
+                        </div>
+                      ) : null}
+                      {config.competitors?.length ? (
+                        <div className="mt-1 text-xs text-slate-500">
+                          Конкуренты: {config.competitors.map((item) => getDomainLabel(item)).join(', ')}
                         </div>
                       ) : null}
                     </td>

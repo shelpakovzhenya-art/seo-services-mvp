@@ -10,6 +10,7 @@ const requestSchema = z.object({
   url: z.string().trim().url(),
   company: z.string().trim().optional(),
   sampleSize: z.coerce.number().int().min(0).max(5000).optional(),
+  competitors: z.array(z.string().trim().url()).max(5).optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -21,6 +22,20 @@ export async function POST(request: NextRequest) {
     const body = requestSchema.parse(await request.json())
     const company = body.company || deriveAuditCompanyName(body.url)
     const sampleSize = body.sampleSize ?? 0
+    const targetDomain = new URL(body.url).hostname.replace(/^www\./, '')
+    const seenCompetitorDomains = new Set<string>()
+    const competitors = (body.competitors || []).filter((item) => {
+      try {
+        const domain = new URL(item).hostname.replace(/^www\./, '')
+        if (!domain || domain === targetDomain || seenCompetitorDomains.has(domain)) {
+          return false
+        }
+        seenCompetitorDomains.add(domain)
+        return true
+      } catch {
+        return false
+      }
+    })
 
     const job = await prisma.parserJob.create({
       data: {
@@ -29,6 +44,7 @@ export async function POST(request: NextRequest) {
           url: body.url,
           company,
           sampleSize,
+          competitors,
         }),
         status: 'running',
       },
@@ -47,6 +63,7 @@ export async function POST(request: NextRequest) {
       url: body.url,
       company,
       sampleSize,
+      competitors,
     })
 
     return NextResponse.json(job)

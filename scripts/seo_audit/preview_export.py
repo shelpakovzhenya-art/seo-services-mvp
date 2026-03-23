@@ -411,6 +411,84 @@ def _append_phase_sections(story: list, phase_sections: list[dict], styles: dict
                 story.append(Spacer(1, 10))
 
 
+def _append_competitor_comparison(story: list, comparison: dict, styles: dict) -> None:
+    _section_header(
+        story,
+        "Сравнение с конкурентами",
+        "Чего не хватает на фоне сильных конкурентов",
+        "Сравнили ключевые шаблоны с конкурентами и оставили только те разрывы, которые можно превратить в понятное ТЗ на внедрение.",
+        styles,
+    )
+
+    summary = comparison.get("summary", [])
+    if summary:
+        story.extend(_paragraph_list(summary, styles))
+        story.append(Spacer(1, 8))
+
+    for competitor in comparison.get("competitors", []):
+        highlights_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("highlights", []))
+        examples = competitor.get("sample_paths", [])[:3]
+        card = Table(
+            [
+                [Paragraph(_escape_pdf_text(f"{competitor.get('domain', '')} | проверено страниц: {competitor.get('pages_checked', 0)}"), styles["cardTitle"])],
+                [Paragraph(f"<b>Что у конкурента выглядит сильнее:</b>{highlights_html or '<br/>—'}", styles["base"])],
+                [Paragraph(f"<b>Где это видно:</b> {_escape_pdf_text(', '.join(examples) or '—')}", styles["small"])],
+            ],
+            colWidths=[180 * mm],
+        )
+        card.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+                    ("BOX", (0, 0), (-1, -1), 1, colors.HexColor(BRAND_LINE)),
+                    ("ROUNDEDCORNERS", [14, 14, 14, 14]),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 12),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+                    ("TOPPADDING", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+                ]
+            )
+        )
+        story.append(card)
+        story.append(Spacer(1, 10))
+
+    for item in comparison.get("gap_items", []):
+        examples_html = "".join(f"<br/>• {_escape_pdf_text(example)}" for example in item.get("examples", []))
+        card = Table(
+            [
+                [Paragraph(_escape_pdf_text(item.get("title", "")), styles["cardTitle"])],
+                [Paragraph(f"<b>Приоритет:</b> {_escape_pdf_text(item.get('priority', ''))} &nbsp;&nbsp; <b>Ответственный:</b> {_escape_pdf_text(item.get('owner', ''))}", styles["small"])],
+                [Paragraph(f"<b>Что сейчас:</b> {_escape_pdf_text(item.get('current_state', ''))}", styles["base"])],
+                [Paragraph(f"<b>Что видно у конкурентов:</b> {_escape_pdf_text(item.get('competitor_state', ''))}", styles["base"])],
+                [Paragraph(f"<b>Примеры:</b>{examples_html or '<br/>—'}", styles["base"])],
+                [Paragraph(f"<b>Короткое ТЗ:</b> {_escape_pdf_text(item.get('task', ''))}", styles["base"])],
+                [Paragraph(f"<b>Что это даст:</b> {_escape_pdf_text(item.get('benefit', ''))}", styles["small"])],
+            ],
+            colWidths=[180 * mm],
+        )
+        card.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+                    ("BOX", (0, 0), (-1, -1), 1, colors.HexColor(BRAND_LINE)),
+                    ("ROUNDEDCORNERS", [14, 14, 14, 14]),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 12),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+                    ("TOPPADDING", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+                ]
+            )
+        )
+        story.append(card)
+        story.append(Spacer(1, 10))
+
+    failures = comparison.get("failures", [])
+    if failures:
+        story.append(Paragraph("Не по всем конкурентам удалось собрать рабочую выборку страниц.", styles["muted"]))
+        story.extend(_paragraph_list([f"{item.get('url', '')}: {item.get('error', '')}" for item in failures], styles))
+        story.append(Spacer(1, 8))
+
+
 def _append_roadmap(story: list, roadmap: list[list], styles: dict) -> None:
     _section_header(
         story,
@@ -673,6 +751,13 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
         )
         _append_issue_cards(story, audit_payload.get("critical_errors") or audit_payload.get("issues", []), styles)
         _append_phase_sections(story, audit_payload.get("phase_sections", []), styles)
+        competitor_comparison = audit_payload.get("competitor_comparison") or {}
+        if competitor_comparison and (
+            competitor_comparison.get("competitors")
+            or competitor_comparison.get("gap_items")
+            or competitor_comparison.get("failures")
+        ):
+            _append_competitor_comparison(story, competitor_comparison, styles)
         _append_action_cards(
             story,
             audit_payload.get("quick_wins", []),
@@ -823,6 +908,70 @@ def _action_cards(items: list[dict], value_key: str, extra_key: str) -> str:
     return "".join(cards)
 
 
+def _competitor_comparison_html(comparison: dict) -> str:
+    competitors = comparison.get("competitors", [])
+    gap_items = comparison.get("gap_items", [])
+    failures = comparison.get("failures", [])
+    summary = comparison.get("summary", [])
+
+    if not competitors and not gap_items and not failures:
+        return ""
+
+    summary_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in summary)
+    competitor_cards = []
+    for competitor in competitors:
+        highlights_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("highlights", []))
+        sample_paths = ", ".join(competitor.get("sample_paths", [])[:3])
+        competitor_cards.append(
+            f"""
+            <article class="competitor-card">
+              <h3>{_escape_html_text(competitor.get('domain', ''))}</h3>
+              <p class="action-meta"><strong>Проверено страниц:</strong> {_escape_html_text(competitor.get('pages_checked', 0))}</p>
+              <ul>{highlights_html}</ul>
+              <p class="action-meta"><strong>Где это видно:</strong> {_escape_html_text(sample_paths or '—')}</p>
+            </article>
+            """
+        )
+
+    gap_cards = []
+    for item in gap_items:
+        examples_html = "".join(f"<li>{_escape_html_text(example)}</li>" for example in item.get("examples", []))
+        gap_cards.append(
+            f"""
+            <article class="action-card competitor-gap-card">
+              <h3>{_escape_html_text(item.get('title', ''))}</h3>
+              <p class="action-meta"><strong>Приоритет:</strong> {_escape_html_text(item.get('priority', ''))}</p>
+              <p class="action-meta"><strong>Ответственный:</strong> {_escape_html_text(item.get('owner', ''))}</p>
+              <p><strong>Что сейчас:</strong> {_escape_html_text(item.get('current_state', ''))}</p>
+              <p><strong>Что видно у конкурентов:</strong> {_escape_html_text(item.get('competitor_state', ''))}</p>
+              {'<ul>' + examples_html + '</ul>' if examples_html else ''}
+              <p class="recommendation"><strong>Короткое ТЗ:</strong> {_escape_html_text(item.get('task', ''))}</p>
+              <p><strong>Что это даст:</strong> {_escape_html_text(item.get('benefit', ''))}</p>
+            </article>
+            """
+        )
+
+    failure_html = ""
+    if failures:
+        failure_items = "".join(
+            f"<li>{_escape_html_text(item.get('url', ''))}: {_escape_html_text(item.get('error', ''))}</li>"
+            for item in failures
+        )
+        failure_html = f"<div class='list-card'><div class='section-kicker' style='margin-bottom:8px;'>Не удалось проверить</div><ul>{failure_items}</ul></div>"
+
+    return f"""
+    <section class="competitor-section">
+      <div class="section-kicker">Сравнение с конкурентами</div>
+      <h2>Чего не хватает на фоне сильных конкурентов</h2>
+      <p class="lead">Сравнили ключевые шаблоны с конкурентами и оставили только те разрывы, которые можно превратить в понятное ТЗ на внедрение.</p>
+      <div class="list-card"><ul class="insight-list">{summary_html}</ul></div>
+      <div class="competitor-grid">{''.join(competitor_cards)}</div>
+      <div class="action-grid competitor-gap-grid">{''.join(gap_cards) if gap_cards else "<p class='empty-note'>Сильных разрывов по конкурентам в этой выборке не нашли.</p>"}</div>
+      {failure_html}
+    </section>
+    """
+
+
 def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     audit_payload = normalize_structure(audit_payload)
     critical_source = audit_payload.get("critical_errors") or audit_payload.get("issues", [])
@@ -833,6 +982,8 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     phases_html = _phase_checks_html(audit_payload.get("phase_sections", []))
     quick_wins_html = _action_cards(audit_payload.get("quick_wins", []), "effort", "impact")
     strategic_html = _action_cards(audit_payload.get("strategic_moves", []), "impact", "effort")
+    competitor_html = _competitor_comparison_html(audit_payload.get("competitor_comparison") or {})
+    has_competitors = bool(competitor_html)
 
     html = f"""<!doctype html>
 <html lang="ru">
@@ -1104,6 +1255,51 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       text-align: center;
       font-weight: 700;
     }}
+    .report-tabs {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 6px 0 12px;
+    }}
+    .report-tab {{
+      appearance: none;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.72);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s ease;
+    }}
+    .report-tab.is-active {{
+      background: #132238;
+      color: #fff;
+      border-color: #132238;
+      box-shadow: 0 18px 30px rgba(12, 25, 40, 0.12);
+    }}
+    .tab-panel[hidden] {{
+      display: none;
+    }}
+    .competitor-grid {{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }}
+    .competitor-card {{
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(180deg, #fff7ef 0%, #fff 100%);
+      padding: 22px;
+    }}
+    .competitor-gap-grid {{
+      margin-top: 16px;
+    }}
+    .insight-list {{
+      margin: 0;
+    }}
     .empty-note {{
       margin: 0;
       color: var(--muted);
@@ -1119,7 +1315,8 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       .roadmap,
       .two-col,
       .phase-grid,
-      .action-grid {{ grid-template-columns: 1fr; }}
+      .action-grid,
+      .competitor-grid {{ grid-template-columns: 1fr; }}
       .grid-4 {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
     }}
     @media (max-width: 640px) {{
@@ -1151,59 +1348,97 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       <div class="metric"><div class="metric-label">Средний HTML</div><div class="metric-value">{audit_payload.get("average_html_kb", 0)} KB</div></div>
     </div>
 
-    <section>
-      <div class="section-kicker">Приоритеты</div>
-      <h2>Какие задачи делать в первую очередь</h2>
-      <p class="lead">Сначала закрываем критичные и массовые проблемы, которые сильнее всего бьют по индексации, сниппетам и ключевым страницам сайта.</p>
-      {priority_html}
-    </section>
+    <div class="report-tabs" role="tablist" aria-label="Разделы аудита">
+      <button class="report-tab is-active" type="button" data-tab-button="overview">Обзор</button>
+      <button class="report-tab" type="button" data-tab-button="details">Подробно</button>
+      {'<button class="report-tab" type="button" data-tab-button="competitors">Конкуренты</button>' if has_competitors else ''}
+      <button class="report-tab" type="button" data-tab-button="plan">План работ</button>
+    </div>
 
-    <section>
-      <div class="section-kicker">Критические ошибки</div>
-      <h2>Что сейчас реально блокирует рост</h2>
-      <p class="lead">Здесь только те проблемы, которые заметно влияют на индекс, сниппеты, трафик и заявки.</p>
-      <div class="issue-list">{issues_html}</div>
-    </section>
+    <div class="tab-panel" data-tab-panel="overview">
+      <section>
+        <div class="section-kicker">Приоритеты</div>
+        <h2>Какие задачи делать в первую очередь</h2>
+        <p class="lead">Сначала закрываем критичные и массовые проблемы, которые сильнее всего бьют по индексации, сниппетам и ключевым страницам сайта.</p>
+        {priority_html}
+      </section>
 
-    {phases_html}
+      <section>
+        <div class="section-kicker">Критические ошибки</div>
+        <h2>Что сейчас реально блокирует рост</h2>
+        <p class="lead">Здесь только те проблемы, которые заметно влияют на индекс, сниппеты, трафик и заявки.</p>
+        <div class="issue-list">{issues_html}</div>
+      </section>
 
-    <section>
-      <div class="section-kicker">Быстрые исправления</div>
-      <h2>Что можно исправить в ближайшее время</h2>
-      <p class="lead">Это задачи, которые обычно внедряются быстро и дают заметный результат без большой переделки сайта.</p>
-      <div class="action-grid">{quick_wins_html}</div>
-    </section>
-
-    <section>
-      <div class="section-kicker">Стратегические улучшения</div>
-      <h2>Что даст рост после базовых исправлений</h2>
-      <p class="lead">Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок в долгую.</p>
-      <div class="action-grid">{strategic_html}</div>
-    </section>
-
-    <section>
-      <div class="section-kicker">Сильные стороны</div>
-      <h2>На что уже можно опираться</h2>
-      <div class="two-col">
-        <div class="list-card">
-          <ul>{strengths_html}</ul>
+      <section>
+        <div class="section-kicker">Сильные стороны</div>
+        <h2>На что уже можно опираться</h2>
+        <div class="two-col">
+          <div class="list-card">
+            <ul>{strengths_html}</ul>
+          </div>
+          <div class="list-card">
+            <div class="section-kicker" style="margin-bottom:8px;">Точки роста</div>
+            <ul>{growth_html}</ul>
+          </div>
         </div>
-        <div class="list-card">
-          <div class="section-kicker" style="margin-bottom:8px;">Точки роста</div>
-          <ul>{growth_html}</ul>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
 
-    <section>
-      <div class="section-kicker">План работ</div>
-      <h2>План внедрения на 60 дней</h2>
-      <p class="lead">Сначала снимаем технические ограничения, потом усиливаем шаблоны и только после этого масштабируем рост.</p>
-      <div class="roadmap">{_roadmap_columns(audit_payload.get("roadmap", []))}</div>
-    </section>
+    <div class="tab-panel" data-tab-panel="details" hidden>
+      {phases_html}
+    </div>
+
+    {f'<div class="tab-panel" data-tab-panel="competitors" hidden>{competitor_html}</div>' if has_competitors else ''}
+
+    <div class="tab-panel" data-tab-panel="plan" hidden>
+      <section>
+        <div class="section-kicker">Быстрые исправления</div>
+        <h2>Что можно исправить в ближайшее время</h2>
+        <p class="lead">Это задачи, которые обычно внедряются быстро и дают заметный результат без большой переделки сайта.</p>
+        <div class="action-grid">{quick_wins_html}</div>
+      </section>
+
+      <section>
+        <div class="section-kicker">Стратегические улучшения</div>
+        <h2>Что даст рост после базовых исправлений</h2>
+        <p class="lead">Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок в долгую.</p>
+        <div class="action-grid">{strategic_html}</div>
+      </section>
+
+      <section>
+        <div class="section-kicker">План работ</div>
+        <h2>План внедрения на 60 дней</h2>
+        <p class="lead">Сначала снимаем технические ограничения, потом усиливаем шаблоны и только после этого масштабируем рост.</p>
+        <div class="roadmap">{_roadmap_columns(audit_payload.get("roadmap", []))}</div>
+      </section>
+    </div>
 
     <div class="footer-note">Аудит подготовлен {_escape_html_text(audit_payload.get("generated_at", ""))} • {_escape_html_text(audit_payload.get("domain", ""))} • Shelpakov Digital</div>
   </div>
+  <script>
+    (() => {{
+      const buttons = Array.from(document.querySelectorAll('[data-tab-button]'));
+      const panels = Array.from(document.querySelectorAll('[data-tab-panel]'));
+      if (!buttons.length || !panels.length) return;
+
+      const activate = (tabName) => {{
+        buttons.forEach((button) => {{
+          const isActive = button.dataset.tabButton === tabName;
+          button.classList.toggle('is-active', isActive);
+        }});
+        panels.forEach((panel) => {{
+          panel.hidden = panel.dataset.tabPanel !== tabName;
+        }});
+      }};
+
+      buttons.forEach((button) => {{
+        button.addEventListener('click', () => activate(button.dataset.tabButton));
+      }});
+
+      activate('overview');
+    }})();
+  </script>
 </body>
 </html>
 """

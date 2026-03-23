@@ -65,6 +65,12 @@ class PageSnapshot:
     word_count: int
     has_meta_keywords: bool
     has_forms: bool
+    has_faq_block: bool
+    has_reviews_block: bool
+    has_trust_block: bool
+    has_commercial_block: bool
+    has_comparison_table: bool
+    has_breadcrumbs: bool
     html_size_kb: float
 
 
@@ -314,6 +320,125 @@ def extract_visible_text(soup: BeautifulSoup) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+FAQ_KEYWORDS = (
+    "faq",
+    "часто задаваемые вопросы",
+    "вопросы и ответы",
+    "популярные вопросы",
+    "ответы на вопросы",
+)
+
+REVIEW_KEYWORDS = (
+    "отзывы",
+    "reviews",
+    "testimonials",
+    "кейсы",
+    "портфолио",
+    "нам доверяют",
+    "истории клиентов",
+)
+
+TRUST_KEYWORDS = (
+    "гарантия",
+    "сертификат",
+    "сертифицирован",
+    "почему выбирают",
+    "опыт",
+    "лет на рынке",
+    "официальный",
+    "производитель",
+    "довер",
+)
+
+COMMERCIAL_KEYWORDS = (
+    "доставка",
+    "оплата",
+    "payment",
+    "delivery",
+    "shipping",
+    "срок",
+    "стоимость",
+    "цена",
+    "условия",
+    "возврат",
+    "обмен",
+    "монтаж",
+    "замер",
+)
+
+COMPARISON_KEYWORDS = (
+    "характеристик",
+    "сравнение",
+    "параметры",
+    "комплектация",
+    "specifications",
+    "features",
+    "compare",
+)
+
+BREADCRUMB_SELECTORS = (
+    '[class*="breadcrumb"]',
+    '[id*="breadcrumb"]',
+    'nav[aria-label*="breadcrumb" i]',
+)
+
+
+def text_has_any(text: str, keywords: tuple[str, ...]) -> bool:
+    haystack = text.lower()
+    return any(keyword in haystack for keyword in keywords)
+
+
+def pluralize_ru(count: int, one: str, few: str, many: str) -> str:
+    remainder_100 = count % 100
+    remainder_10 = count % 10
+    if 11 <= remainder_100 <= 14:
+        return many
+    if remainder_10 == 1:
+        return one
+    if 2 <= remainder_10 <= 4:
+        return few
+    return many
+
+
+def collect_dom_tokens(soup: BeautifulSoup, limit: int = 250) -> str:
+    tokens: list[str] = []
+    for tag in soup.find_all(True, limit=limit):
+        classes = tag.get("class")
+        if classes:
+            tokens.extend(str(item) for item in classes if item)
+        tag_id = tag.get("id")
+        if tag_id:
+            tokens.append(str(tag_id))
+        aria_label = tag.get("aria-label")
+        if aria_label:
+            tokens.append(str(aria_label))
+    return " ".join(tokens).lower()
+
+
+def detect_page_signals(soup: BeautifulSoup, visible_text: str, schema_types: list[str], has_forms: bool) -> dict[str, bool]:
+    headings_text = " ".join(tag.get_text(" ", strip=True) for tag in soup.find_all(["h1", "h2", "h3", "h4"]))
+    dom_tokens = collect_dom_tokens(soup)
+    haystack = " ".join(
+        [
+            headings_text.lower(),
+            visible_text.lower()[:12000],
+            dom_tokens,
+        ]
+    )
+    has_breadcrumbs = "BreadcrumbList" in schema_types or any(soup.select(selector) for selector in BREADCRUMB_SELECTORS)
+    has_comparison_table = bool(soup.find("table")) or text_has_any(haystack, COMPARISON_KEYWORDS)
+
+    return {
+        "has_faq_block": "FAQPage" in schema_types or text_has_any(haystack, FAQ_KEYWORDS),
+        "has_reviews_block": any(item in schema_types for item in ("Review", "AggregateRating")) or text_has_any(haystack, REVIEW_KEYWORDS),
+        "has_trust_block": text_has_any(haystack, TRUST_KEYWORDS),
+        "has_commercial_block": text_has_any(haystack, COMMERCIAL_KEYWORDS),
+        "has_comparison_table": has_comparison_table,
+        "has_breadcrumbs": has_breadcrumbs,
+        "has_forms": has_forms,
+    }
+
+
 def parse_jsonld_types(soup: BeautifulSoup) -> list[str]:
     found: list[str] = []
     for script in soup.find_all("script", attrs={"type": "application/ld+json"}):
@@ -382,6 +507,12 @@ def analyse_page(session: requests.Session, url: str, base_domain: str) -> PageS
             word_count=0,
             has_meta_keywords=False,
             has_forms=False,
+            has_faq_block=False,
+            has_reviews_block=False,
+            has_trust_block=False,
+            has_commercial_block=False,
+            has_comparison_table=False,
+            has_breadcrumbs=False,
             html_size_kb=0.0,
         )
     content_type = response.headers.get("content-type", "")
@@ -410,6 +541,7 @@ def analyse_page(session: requests.Session, url: str, base_domain: str) -> PageS
     word_count = len(re.findall(r"\w+", visible_text, flags=re.U))
     meta_keywords = soup.find("meta", attrs={"name": "keywords"}) is not None
     has_forms = bool(soup.find("form"))
+    signals = detect_page_signals(soup, visible_text, schema_types, has_forms)
     page_type = detect_page_type(url, schema_types)
     robots_meta_tag = soup.find("meta", attrs={"name": "robots"})
     return PageSnapshot(
@@ -432,7 +564,13 @@ def analyse_page(session: requests.Session, url: str, base_domain: str) -> PageS
         internal_links=internal_links,
         word_count=word_count,
         has_meta_keywords=meta_keywords,
-        has_forms=has_forms,
+        has_forms=signals["has_forms"],
+        has_faq_block=signals["has_faq_block"],
+        has_reviews_block=signals["has_reviews_block"],
+        has_trust_block=signals["has_trust_block"],
+        has_commercial_block=signals["has_commercial_block"],
+        has_comparison_table=signals["has_comparison_table"],
+        has_breadcrumbs=signals["has_breadcrumbs"],
         html_size_kb=round(len(response.content) / 1024, 1),
     )
 
@@ -556,6 +694,349 @@ def infer_project_profile(audit: dict) -> dict:
         "category_pages": category_pages,
         "form_pages": form_pages,
         "is_catalog": bool(product_pages or category_pages),
+    }
+
+
+COMPETITOR_SIGNAL_LIBRARY = [
+    {
+        "id": "faq",
+        "label": "FAQ и ответы на частые вопросы",
+        "field": "has_faq_block",
+        "priority": "Высокий приоритет",
+        "owner": "SEO / Content / Frontend",
+        "min_competitor_coverage": 0.25,
+        "implementation_brief": (
+            "Добавить на главную и ключевые коммерческие шаблоны блок FAQ из 5-7 вопросов: "
+            "о выборе услуги или товара, сроках, цене, гарантии и сценариях использования. "
+            "Собрать отдельные H2, короткие ответы, перелинковку на смежные разделы и при уместности микроразметку FAQPage."
+        ),
+        "benefit": (
+            "FAQ закрывает возражения до звонка, усиливает релевантность под длинные запросы и помогает странице забирать более теплый спрос."
+        ),
+        "weight": 9,
+    },
+    {
+        "id": "reviews",
+        "label": "Отзывы, кейсы и социальное доказательство",
+        "field": "has_reviews_block",
+        "priority": "Высокий приоритет",
+        "owner": "Marketing / Content / Frontend",
+        "min_competitor_coverage": 0.25,
+        "implementation_brief": (
+            "Добавить в приоритетные шаблоны блок с отзывами, кейсами или примерами работ: "
+            "имя клиента или компания, задача, результат, фото или скрин, короткий CTA на заявку."
+        ),
+        "benefit": (
+            "Такой блок усиливает доверие, повышает коммерческий интент страницы и помогает конвертировать трафик в заявку, а не только в просмотр."
+        ),
+        "weight": 9,
+    },
+    {
+        "id": "trust",
+        "label": "Блоки доверия и доказательства экспертизы",
+        "field": "has_trust_block",
+        "priority": "Средний приоритет",
+        "owner": "Marketing / Content",
+        "min_competitor_coverage": 0.3,
+        "implementation_brief": (
+            "Собрать единый доверительный слой: гарантии, сертификаты, опыт, реальные сроки, "
+            "этапы работы, подтверждение статуса производителя или эксперта и короткий блок \"почему нам доверяют\"."
+        ),
+        "benefit": (
+            "Доверительные блоки помогают пользователю быстрее принять решение и поддерживают коммерческие факторы, особенно на услугах и сложных товарах."
+        ),
+        "weight": 7,
+    },
+    {
+        "id": "commercial",
+        "label": "Коммерческие условия: цена, сроки, доставка, оплата",
+        "field": "has_commercial_block",
+        "priority": "Высокий приоритет",
+        "owner": "SEO / Content / Business",
+        "min_competitor_coverage": 0.35,
+        "implementation_brief": (
+            "Добавить на ключевые страницы видимые блоки с условиями: цены или диапазоны, сроки, "
+            "доставка, оплата, гарантия, возврат или сценарий сотрудничества. "
+            "Разнести их по шаблонам, а не держать только в подвале или на одной служебной странице."
+        ),
+        "benefit": (
+            "Это усиливает коммерческий интент страницы, снимает часть возражений и помогает поисковику лучше понимать, что страница готова к конверсии."
+        ),
+        "weight": 10,
+    },
+    {
+        "id": "comparison",
+        "label": "Таблицы, характеристики и сравнительные блоки",
+        "field": "has_comparison_table",
+        "priority": "Средний приоритет",
+        "owner": "SEO / Content",
+        "min_competitor_coverage": 0.25,
+        "implementation_brief": (
+            "Добавить в приоритетные шаблоны таблицы характеристик, сравнительные блоки или структурированные параметры: "
+            "что входит, чем отличается, какие размеры или опции доступны, кому подходит каждое решение."
+        ),
+        "benefit": (
+            "Таблицы помогают закрывать спрос на сравнение, повышают полезность страницы и упрощают выбор, особенно в B2B и каталогах."
+        ),
+        "weight": 7,
+    },
+    {
+        "id": "breadcrumbs",
+        "label": "Хлебные крошки и понятная навигационная цепочка",
+        "field": "has_breadcrumbs",
+        "priority": "Средний приоритет",
+        "owner": "Frontend / SEO",
+        "min_competitor_coverage": 0.35,
+        "implementation_brief": (
+            "Добавить хлебные крошки на шаблоны категорий, карточек и внутренних страниц, "
+            "связать их с реальной иерархией сайта и синхронизировать с BreadcrumbList в микроразметке."
+        ),
+        "benefit": (
+            "Это упрощает навигацию, поддерживает внутреннюю структуру сайта и помогает выдаче показывать более чистую иерархию URL."
+        ),
+        "weight": 6,
+    },
+    {
+        "id": "forms",
+        "label": "Формы и заметные точки входа в заявку",
+        "field": "has_forms",
+        "priority": "Высокий приоритет",
+        "owner": "Marketing / Frontend",
+        "min_competitor_coverage": 0.3,
+        "implementation_brief": (
+            "Добавить заметные формы и точки входа в заявку на главную, услуги, категории или карточки, "
+            "где пользователь уже готов оставить заявку: телефон, задача, бюджет или удобный следующий шаг."
+        ),
+        "benefit": (
+            "Даже при одинаковом трафике более заметные формы и точки входа в заявку дают больше обращений и помогают аудиту влиять не только на позиции, но и на продажи."
+        ),
+        "weight": 10,
+    },
+]
+
+
+def get_competitor_benchmark_pages(audit: dict) -> list[PageSnapshot]:
+    appendix_pages = audit.get("appendix_pages") or []
+    if appendix_pages:
+        return appendix_pages
+
+    sample_pages: list[PageSnapshot] = audit.get("sample_pages", [])
+    focus_pages = [
+        page
+        for page in sample_pages
+        if page.page_type in ("Р“Р»Р°РІРЅР°СЏ", "РљР°С‚РµРіРѕСЂРёСЏ", "РџРѕРґРєР°С‚РµРіРѕСЂРёСЏ", "РўРѕРІР°СЂ", "Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ")
+        or page.has_forms
+    ]
+    return focus_pages[:12] or sample_pages[:12]
+
+
+def build_site_feature_benchmark(base_url: str, sample_pages: list[PageSnapshot]) -> dict:
+    pages = [page for page in sample_pages if page.status_code == 200 and "html" in page.content_type]
+    pages_checked = len(pages)
+    signals: dict[str, dict] = {}
+
+    for signal in COMPETITOR_SIGNAL_LIBRARY:
+        matching_pages = [page for page in pages if bool(getattr(page, signal["field"], False))]
+        signals[signal["id"]] = {
+            "count": len(matching_pages),
+            "coverage": round((len(matching_pages) / pages_checked), 3) if pages_checked else 0,
+            "examples": [human_path(page.url) for page in matching_pages[:3]],
+        }
+
+    average_words = round(statistics.mean([page.word_count for page in pages]), 1) if pages else 0
+    ranked_signals = sorted(
+        COMPETITOR_SIGNAL_LIBRARY,
+        key=lambda signal: signals[signal["id"]]["coverage"],
+        reverse=True,
+    )
+    highlights = [signal["label"] for signal in ranked_signals if signals[signal["id"]]["coverage"] >= 0.34][:3]
+    if average_words >= 420:
+        highlights = ["Более плотный коммерческий контент", *highlights]
+
+    return {
+        "base_url": base_url,
+        "domain": urlparse(base_url).netloc.replace("www.", ""),
+        "pages_checked": pages_checked,
+        "average_words": average_words,
+        "signals": signals,
+        "highlights": highlights[:3] or ["Сильных шаблонных преимуществ в выборке не нашли."],
+        "sample_paths": [human_path(page.url) for page in pages[:4]],
+    }
+
+
+def collect_competitor_benchmark(base_url: str) -> dict:
+    session = make_session()
+    normalized_url = normalize_base_url(base_url)
+    base_domain = urlparse(normalized_url).netloc
+    robots_response, _ = safe_get(session, urljoin(f"{normalized_url}/", "robots.txt"))
+    robots_text = robots_response.text if robots_response is not None and robots_response.status_code < 400 else ""
+    sitemap_urls, _, _ = parse_sitemap_urls(
+        session,
+        discover_sitemaps(robots_text, normalized_url),
+        base_domain,
+        max_sitemaps=4,
+    )
+    home_links = discover_home_links(session, normalized_url, base_domain)
+    candidate_urls = select_representative_urls(normalized_url, home_links, sitemap_urls, 8)
+    sample_pages = analyse_pages_parallel(candidate_urls, base_domain, max_workers=8)
+    html_pages = [page for page in sample_pages if page.status_code == 200 and "html" in page.content_type]
+
+    if not html_pages:
+        raise RuntimeError(f"Не удалось собрать HTML-страницы по {normalized_url}")
+
+    return build_site_feature_benchmark(normalized_url, html_pages[:12])
+
+
+def build_competitor_gap_items(target_benchmark: dict, competitor_benchmarks: list[dict]) -> list[dict]:
+    if not competitor_benchmarks:
+        return []
+
+    gap_items: list[dict] = []
+
+    for signal in COMPETITOR_SIGNAL_LIBRARY:
+        target_signal = target_benchmark["signals"][signal["id"]]
+        competitor_with_signal = [
+            site for site in competitor_benchmarks if site["signals"][signal["id"]]["coverage"] >= signal["min_competitor_coverage"]
+        ]
+        if not competitor_with_signal:
+            continue
+
+        competitor_avg_coverage = statistics.mean(
+            [site["signals"][signal["id"]]["coverage"] for site in competitor_with_signal]
+        )
+        gap_size = competitor_avg_coverage - target_signal["coverage"]
+
+        if gap_size < 0.2 or target_signal["coverage"] >= competitor_avg_coverage * 0.75:
+            continue
+
+        examples = []
+        for site in competitor_with_signal[:3]:
+            example_paths = site["signals"][signal["id"]]["examples"]
+            if example_paths:
+                examples.append(f"{site['domain']}: {', '.join(example_paths[:2])}")
+            else:
+                examples.append(f"{site['domain']}: блок встречается в ключевой выборке.")
+
+        gap_items.append(
+            {
+                "title": signal["label"],
+                "priority": signal["priority"],
+                "owner": signal["owner"],
+                "current_state": (
+                    f"На сайте сигнал найден на {target_signal['count']} из {target_benchmark['pages_checked']} ключевых страниц."
+                    if target_benchmark["pages_checked"]
+                    else "По сайту не удалось собрать ключевую выборку для сравнения."
+                ),
+                "competitor_state": (
+                    f"У {len(competitor_with_signal)} из {len(competitor_benchmarks)} "
+                    f"{pluralize_ru(len(competitor_benchmarks), 'конкурента', 'конкурентов', 'конкурентов')} "
+                    "этот блок встречается заметно чаще."
+                ),
+                "examples": examples,
+                "task": signal["implementation_brief"],
+                "benefit": signal["benefit"],
+                "sort_score": round(gap_size + competitor_avg_coverage + signal["weight"] / 10, 3),
+            }
+        )
+
+    competitor_average_words = statistics.mean([site["average_words"] for site in competitor_benchmarks if site["average_words"] > 0]) if competitor_benchmarks else 0
+    target_average_words = target_benchmark.get("average_words", 0)
+    if competitor_average_words >= max(380, target_average_words * 1.35):
+        content_examples = [
+            f"{site['domain']}: средний текстовый слой {round(site['average_words'])} слов"
+            for site in sorted(competitor_benchmarks, key=lambda item: item["average_words"], reverse=True)[:3]
+            if site["average_words"] > 0
+        ]
+        gap_items.append(
+            {
+                "title": "Глубина коммерческого контента на ключевых страницах",
+                "priority": "Высокий приоритет",
+                "owner": "SEO / Content",
+                "current_state": (
+                    f"У сайта в ключевой выборке в среднем {round(target_average_words)} слов видимого текста на страницу."
+                    if target_average_words
+                    else "У сайта пока нет устойчивого текстового слоя на ключевых страницах."
+                ),
+                "competitor_state": (
+                    f"У конкурентов в среднем {round(competitor_average_words)} слов на ключевую страницу, и за счет этого они лучше закрывают интент и возражения."
+                ),
+                "examples": content_examples,
+                "task": (
+                    "Усилить приоритетные страницы не SEO-водой, а полезным коммерческим слоем: краткое интро, "
+                    "условия работы, сценарии выбора, FAQ, блоки доверия, таблицы и перелинковку на смежные страницы."
+                ),
+                "benefit": (
+                    "Более глубокий контент помогает закрывать спрос без возврата в выдачу, поддерживает коммерческий интент и дает больше точек входа по длинным запросам."
+                ),
+                "sort_score": round((competitor_average_words - target_average_words) / 300 + 1.2, 3),
+            }
+        )
+
+    gap_items.sort(key=lambda item: item["sort_score"], reverse=True)
+    for item in gap_items:
+        item.pop("sort_score", None)
+    return gap_items[:5]
+
+
+def build_competitor_comparison(audit: dict, competitor_urls: list[str]) -> dict | None:
+    normalized_competitors: list[str] = []
+    seen_domains: set[str] = set()
+    target_domain = urlparse(audit["base_url"]).netloc.replace("www.", "")
+
+    for item in competitor_urls:
+        try:
+            normalized = normalize_base_url(item)
+        except Exception:
+            continue
+        domain = urlparse(normalized).netloc.replace("www.", "")
+        if not domain or domain == target_domain or domain in seen_domains:
+            continue
+        seen_domains.add(domain)
+        normalized_competitors.append(normalized)
+
+    if not normalized_competitors:
+        return None
+
+    target_benchmark = build_site_feature_benchmark(audit["base_url"], get_competitor_benchmark_pages(audit))
+    competitor_benchmarks: list[dict] = []
+    failures: list[dict] = []
+
+    for competitor_url in normalized_competitors:
+        try:
+            competitor_benchmarks.append(collect_competitor_benchmark(competitor_url))
+        except Exception as exc:  # noqa: BLE001
+            failures.append(
+                {
+                    "url": competitor_url,
+                    "error": str(exc),
+                }
+            )
+
+    if not competitor_benchmarks:
+        return {
+            "summary": [
+                "Конкуренты были переданы в задачу, но по ним не удалось собрать рабочую выборку страниц.",
+                "Проверьте доступность URL и повторите прогон аудита.",
+            ],
+            "competitors": [],
+            "gap_items": [],
+            "failures": failures,
+        }
+
+    gap_items = build_competitor_gap_items(target_benchmark, competitor_benchmarks)
+    top_gaps = ", ".join(item["title"] for item in gap_items[:3]) if gap_items else "явных недостающих блоков в выборке не нашли"
+
+    return {
+        "summary": [
+            f"Сравнили сайт с {len(competitor_benchmarks)} {pluralize_ru(len(competitor_benchmarks), 'конкурентом', 'конкурентами', 'конкурентами')} "
+            "по ключевым SEO- и коммерческим сигналам на приоритетных страницах.",
+            f"Чаще всего у конкурентов сильнее закрыты: {top_gaps}.",
+            "Ниже только те элементы, которые можно превратить в понятные задачи на внедрение без расплывчатых общих советов.",
+        ],
+        "competitors": competitor_benchmarks,
+        "gap_items": gap_items,
+        "failures": failures,
+        "target_benchmark": target_benchmark,
     }
 
 
@@ -1927,7 +2408,7 @@ def dynamic_build_growth_points(audit: dict) -> list[str]:
     return unique_points[:6]
 
 
-def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
+def build_audit(url: str, company_name: str | None, sample_size: int, competitor_urls: list[str] | None = None) -> dict:
     base_url = normalize_base_url(url)
     parsed = urlparse(base_url)
     base_domain = parsed.netloc
@@ -1972,7 +2453,7 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
     company = company_name or re.sub(r"^www\.", "", base_domain)
 
     audit = {
-        "generator_version": 2,
+        "generator_version": 3,
         "base_url": base_url,
         "domain": base_domain,
         "company_name": company,
@@ -2005,6 +2486,7 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
         else 0,
         "average_words": round(statistics.mean([snapshot.word_count for snapshot in html_pages]), 1) if html_pages else 0,
         "redirect_checks": redirect_checks,
+        "requested_competitors": competitor_urls or [],
     }
     issues = dynamic_build_issue_list(audit)
     audit["issues"] = issues
@@ -2016,6 +2498,7 @@ def build_audit(url: str, company_name: str | None, sample_size: int) -> dict:
     audit["phase_sections"] = build_phase_sections(audit)
     audit["quick_wins"] = build_quick_wins(audit)
     audit["strategic_moves"] = build_strategic_moves(audit)
+    audit["competitor_comparison"] = build_competitor_comparison(audit, competitor_urls or [])
     audit["score"] = build_score(audit, issues)
     return audit
 
@@ -2380,6 +2863,69 @@ def add_action_cards_doc(doc: Document, items: list[dict], value_key: str, extra
         doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
 
+def add_competitor_comparison_doc(doc: Document, comparison: dict) -> None:
+    summary = comparison.get("summary", [])
+    if summary:
+        add_bullet_list(doc, summary, size=10.9)
+
+    for competitor in comparison.get("competitors", []):
+        card = doc.add_table(rows=2, cols=1)
+        card.alignment = WD_TABLE_ALIGNMENT.CENTER
+        remove_table_borders(card)
+        head = card.rows[0].cells[0]
+        body = card.rows[1].cells[0]
+        set_cell_shading(head, BRAND_SOFT)
+        set_cell_shading(body, "FFFFFF")
+        set_cell_margins(head, 90, 110, 80, 110)
+        set_cell_margins(body, 100, 110, 110, 110)
+        title_run = head.paragraphs[0].add_run(normalize_output_text(f"{competitor.get('domain', '')}  |  проверено страниц: {competitor.get('pages_checked', 0)}"))
+        set_font(title_run, size=11.2, bold=True, color=BRAND_TEXT)
+        add_text_paragraph(body, "Что у конкурента выглядит сильнее:", size=10.4, bold=True, color=BRAND_ORANGE, space_after=3)
+        add_bullet_list(body, competitor.get("highlights", []), size=10.3)
+        if competitor.get("sample_paths"):
+            add_text_paragraph(
+                body,
+                f"Где это видно: {', '.join(competitor.get('sample_paths', [])[:3])}",
+                size=10.1,
+                color=BRAND_MUTED,
+                space_after=4,
+            )
+        doc.add_paragraph().paragraph_format.space_after = Pt(4)
+
+    for item in comparison.get("gap_items", []):
+        card = doc.add_table(rows=2, cols=1)
+        card.alignment = WD_TABLE_ALIGNMENT.CENTER
+        remove_table_borders(card)
+        head = card.rows[0].cells[0]
+        body = card.rows[1].cells[0]
+        set_cell_shading(head, BRAND_ACCENT_SOFT)
+        set_cell_shading(body, "FFFFFF")
+        set_cell_margins(head, 90, 110, 80, 110)
+        set_cell_margins(body, 100, 110, 110, 110)
+        title_run = head.paragraphs[0].add_run(normalize_output_text(item.get("title", "")))
+        set_font(title_run, size=11.2, bold=True, color=BRAND_TEXT)
+        add_text_paragraph(
+            body,
+            f"Приоритет: {item.get('priority', '')}  |  Ответственный: {item.get('owner', '')}",
+            size=10.2,
+            color=BRAND_ORANGE,
+            bold=True,
+            space_after=3,
+        )
+        add_text_paragraph(body, f"Что сейчас: {item.get('current_state', '')}", size=10.4, color=BRAND_TEXT, space_after=3)
+        add_text_paragraph(body, f"Что видно у конкурентов: {item.get('competitor_state', '')}", size=10.4, color=BRAND_TEXT, space_after=3)
+        if item.get("examples"):
+            add_bullet_list(body, item.get("examples", []), size=10.2)
+        add_text_paragraph(body, f"Короткое ТЗ: {item.get('task', '')}", size=10.3, color=BRAND_TEXT, bold=True, space_after=3)
+        add_text_paragraph(body, f"Что это даст: {item.get('benefit', '')}", size=10.3, color=BRAND_MUTED, space_after=4)
+        doc.add_paragraph().paragraph_format.space_after = Pt(4)
+
+    failures = comparison.get("failures", [])
+    if failures:
+        add_text_paragraph(doc, "Не по всем конкурентам удалось собрать страницы. Ниже список URL, которые стоит перепроверить:", size=10.4, color=BRAND_MUTED, space_after=3)
+        add_bullet_list(doc, [f"{item.get('url', '')}: {item.get('error', '')}" for item in failures], size=10.1)
+
+
 def build_executive_summary(audit: dict) -> list[str]:
     return [
         (
@@ -2477,6 +3023,20 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
         )
         add_phase_sections_doc(doc, audit.get("phase_sections", []))
 
+    competitor_comparison = audit.get("competitor_comparison") or {}
+    if competitor_comparison and (
+        competitor_comparison.get("competitors")
+        or competitor_comparison.get("gap_items")
+        or competitor_comparison.get("failures")
+    ):
+        add_section_heading(
+            doc,
+            "Сравнение с конкурентами",
+            "Чего не хватает на фоне сильных конкурентов",
+            "Сравнили ключевые шаблоны с конкурентами и оставили только те разрывы, которые можно превратить в понятное ТЗ на внедрение.",
+        )
+        add_competitor_comparison_doc(doc, competitor_comparison)
+
     if audit.get("quick_wins"):
         add_section_heading(
             doc,
@@ -2538,6 +3098,7 @@ def main() -> None:
     parser.add_argument("--brand", default=BRAND_NAME, help="Brand label on the audit")
     parser.add_argument("--output", help="Output DOCX path")
     parser.add_argument("--sample-size", type=int, default=0, help="How many pages to analyze from the website; 0 = full crawl")
+    parser.add_argument("--competitor", action="append", default=[], help="Competitor URL to compare against. Repeat the flag for multiple domains.")
     parser.add_argument("--no-json", action="store_true", help="Do not save raw audit JSON next to the DOCX")
     parser.add_argument("--no-preview", action="store_true", help="Do not save HTML preview next to the DOCX")
     parser.add_argument("--no-pdf", action="store_true", help="Do not save PDF preview next to the DOCX")
@@ -2550,7 +3111,7 @@ def main() -> None:
     today = datetime.now().strftime("%Y-%m-%d")
     output = Path(args.output) if args.output else Path("audits") / f"{slugify_for_filename(target)}-{today}.docx"
 
-    audit = build_audit(target, args.company, args.sample_size)
+    audit = build_audit(target, args.company, args.sample_size, args.competitor)
     audit["screenshots"] = []
     logo_path = Path("public") / "android-chrome-512x512.png"
     generate_docx(audit, output, logo_path)

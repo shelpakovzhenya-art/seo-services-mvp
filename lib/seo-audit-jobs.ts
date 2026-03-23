@@ -8,6 +8,7 @@ export type SeoAuditJobConfig = {
   url: string
   company: string
   sampleSize: number
+  competitors?: string[]
 }
 
 type SeoAuditStoredResult = {
@@ -116,6 +117,7 @@ function runChild(command: string, args: string[]) {
 
 async function runPythonGenerator(config: SeoAuditJobConfig, outputPath: string) {
   const scriptPath = path.join(process.cwd(), 'scripts', 'seo_audit', 'generate_audit.py')
+  const competitorArgs = (config.competitors || []).flatMap((item) => ['--competitor', item])
   const scriptArgs = [
     scriptPath,
     '--url',
@@ -126,6 +128,7 @@ async function runPythonGenerator(config: SeoAuditJobConfig, outputPath: string)
     String(config.sampleSize),
     '--output',
     outputPath,
+    ...competitorArgs,
   ]
 
   let lastError: unknown = null
