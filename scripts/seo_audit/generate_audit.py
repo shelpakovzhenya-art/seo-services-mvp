@@ -815,6 +815,368 @@ COMPETITOR_SIGNAL_LIBRARY = [
 ]
 
 
+COMPETITOR_SNIPPET_LIBRARY = [
+    {
+        "id": "snippet_ready",
+        "label": "Сниппеты на ключевых страницах: title, description, H1 и canonical",
+        "priority": "Высокий приоритет",
+        "owner": "SEO / Frontend",
+        "min_competitor_coverage": 0.45,
+        "implementation_brief": (
+            "Собрать единый шаблон для ключевых страниц: рабочий title без переспама, понятный description, "
+            "один H1 по теме страницы и корректный canonical. Проверять это не точечно, а сразу на главной, категориях, услугах, карточках и страницах заявок."
+        ),
+        "benefit": (
+            "Ровные сниппеты помогают стабильно закрывать базовые SEO-сигналы, улучшают читаемость выдачи и уменьшают просадку шаблонов из-за пустых или кривых мета-полей."
+        ),
+        "weight": 9,
+    },
+    {
+        "id": "canonical_present",
+        "label": "Канонические адреса на ключевых шаблонах",
+        "priority": "Средний приоритет",
+        "owner": "SEO / Frontend",
+        "min_competitor_coverage": 0.7,
+        "implementation_brief": (
+            "Проверить и проставить canonical на ключевых типах страниц по шаблону, чтобы категории, карточки, услуги и служебные варианты не спорили между собой за индексацию."
+        ),
+        "benefit": (
+            "Корректный canonical помогает убрать шум в индексе и дает более чистый сигнал, какая страница должна ранжироваться по целевому спросу."
+        ),
+        "weight": 7,
+    },
+]
+
+
+TEMPLATE_LIBRARY = [
+    {"id": "home", "label": "Главная"},
+    {"id": "category", "label": "Категории и листинги"},
+    {"id": "product", "label": "Карточки товаров"},
+    {"id": "service", "label": "Услуги и внутренние коммерческие страницы"},
+    {"id": "contact", "label": "Контакты и страницы заявок"},
+]
+
+
+SIGNAL_SHORT_LABELS = {
+    "faq": "FAQ",
+    "reviews": "отзывы и кейсы",
+    "trust": "доверие",
+    "commercial": "условия",
+    "comparison": "таблицы и параметры",
+    "breadcrumbs": "хлебные крошки",
+    "forms": "формы заявки",
+}
+
+
+def is_title_in_range(title: str) -> bool:
+    length = len((title or "").strip())
+    return 25 <= length <= 70
+
+
+def is_description_in_range(description: str) -> bool:
+    length = len((description or "").strip())
+    return 110 <= length <= 180
+
+
+def cleaned_h1s(page: PageSnapshot) -> list[str]:
+    return [item.strip() for item in page.h1s if item and item.strip()]
+
+
+def page_has_snippet_ready(page: PageSnapshot) -> bool:
+    return (
+        is_title_in_range(page.title)
+        and is_description_in_range(page.description)
+        and len(cleaned_h1s(page)) == 1
+        and bool((page.canonical or "").strip())
+    )
+
+
+def build_metric_bucket(pages: list[PageSnapshot], predicate) -> dict:
+    matching_pages = [page for page in pages if predicate(page)]
+    total = len(pages)
+    return {
+        "count": len(matching_pages),
+        "coverage": round((len(matching_pages) / total), 3) if total else 0,
+        "examples": [human_path(page.url) for page in matching_pages[:3]],
+    }
+
+
+def build_snippet_metrics(pages: list[PageSnapshot]) -> dict[str, dict]:
+    return {
+        "title_present": build_metric_bucket(pages, lambda page: bool((page.title or "").strip())),
+        "title_good": build_metric_bucket(pages, lambda page: is_title_in_range(page.title)),
+        "description_present": build_metric_bucket(pages, lambda page: bool((page.description or "").strip())),
+        "description_good": build_metric_bucket(pages, lambda page: is_description_in_range(page.description)),
+        "h1_present": build_metric_bucket(pages, lambda page: bool(cleaned_h1s(page))),
+        "single_h1": build_metric_bucket(pages, lambda page: len(cleaned_h1s(page)) == 1),
+        "canonical_present": build_metric_bucket(pages, lambda page: bool((page.canonical or "").strip())),
+        "snippet_ready": build_metric_bucket(pages, page_has_snippet_ready),
+    }
+
+
+def get_template_bucket(page: PageSnapshot) -> str | None:
+    parsed = urlparse(page.url)
+    path = parsed.path or "/"
+    haystack = f"{parsed.path} {parsed.query}".lower()
+
+    if not parsed.path or parsed.path == "/":
+        return "home"
+    if any(token in haystack for token in CONTACT_PATH_KEYWORDS):
+        return "contact"
+    if page.page_type == "РўРѕРІР°СЂ" or "Product" in page.schema_types:
+        return "product"
+    if page.page_type in ("РљР°С‚РµРіРѕСЂРёСЏ", "РџРѕРґРєР°С‚РµРіРѕСЂРёСЏ"):
+        return "category"
+    if any(token in haystack for token in BLOG_PATH_KEYWORDS):
+        return None
+    return "service"
+
+
+def page_signal_score(page: PageSnapshot) -> float:
+    score = 0.0
+    for signal in COMPETITOR_SIGNAL_LIBRARY:
+        if bool(getattr(page, signal["field"], False)):
+            score += signal["weight"]
+    if is_title_in_range(page.title):
+        score += 2
+    if is_description_in_range(page.description):
+        score += 2
+    if len(cleaned_h1s(page)) == 1:
+        score += 1.5
+    if page.canonical:
+        score += 1
+    if page_has_snippet_ready(page):
+        score += 4
+    score += min(page.word_count, 800) / 200
+    return round(score, 2)
+
+
+def build_template_benchmark(pages: list[PageSnapshot]) -> dict[str, dict]:
+    buckets: dict[str, list[PageSnapshot]] = {template["id"]: [] for template in TEMPLATE_LIBRARY}
+    for page in pages:
+        template_id = get_template_bucket(page)
+        if template_id and template_id in buckets:
+            buckets[template_id].append(page)
+
+    template_benchmark: dict[str, dict] = {}
+    commercial_signal_ids = ("faq", "reviews", "trust", "commercial", "forms")
+    for template in TEMPLATE_LIBRARY:
+        template_pages = buckets.get(template["id"], [])
+        pages_checked = len(template_pages)
+        signals: dict[str, dict] = {}
+        for signal in COMPETITOR_SIGNAL_LIBRARY:
+            matching_pages = [page for page in template_pages if bool(getattr(page, signal["field"], False))]
+            signals[signal["id"]] = {
+                "count": len(matching_pages),
+                "coverage": round((len(matching_pages) / pages_checked), 3) if pages_checked else 0,
+                "examples": [human_path(page.url) for page in matching_pages[:2]],
+            }
+        snippet_metrics = build_snippet_metrics(template_pages)
+        commercial_coverages = [signals[signal_id]["coverage"] for signal_id in commercial_signal_ids]
+        best_layers = [
+            SIGNAL_SHORT_LABELS[signal_id]
+            for signal_id in commercial_signal_ids
+            if signals[signal_id]["coverage"] >= 0.34
+        ]
+        template_benchmark[template["id"]] = {
+            "label": template["label"],
+            "pages_checked": pages_checked,
+            "signals": signals,
+            "snippet_metrics": snippet_metrics,
+            "commercial_score": round(statistics.mean(commercial_coverages), 3) if commercial_coverages else 0,
+            "best_layers": best_layers[:3],
+            "sample_paths": [human_path(page.url) for page in sorted(template_pages, key=page_signal_score, reverse=True)[:3]],
+        }
+    return template_benchmark
+
+
+def metric_count_text(metric: dict, pages_checked: int) -> str:
+    if not pages_checked:
+        return "0 из 0"
+    return f"{metric.get('count', 0)} из {pages_checked}"
+
+
+def snippet_metric_state_text(metric_id: str, metric: dict, pages_checked: int) -> str:
+    metric_count = metric_count_text(metric, pages_checked)
+    if metric_id == "snippet_ready":
+        return f"связка title, description, H1 и canonical собрана на {metric_count} ключевых страниц"
+    if metric_id == "canonical_present":
+        return f"канонический адрес стоит на {metric_count} ключевых страниц"
+    return f"метрика выполнена на {metric_count} страниц"
+
+
+def build_competitor_template_findings(target_benchmark: dict, competitor_benchmark: dict) -> list[str]:
+    findings: list[dict] = []
+    target_templates = target_benchmark.get("templates", {})
+    competitor_templates = competitor_benchmark.get("templates", {})
+
+    for template in TEMPLATE_LIBRARY:
+        target_template = target_templates.get(template["id"], {})
+        competitor_template = competitor_templates.get(template["id"], {})
+        if competitor_template.get("pages_checked", 0) == 0:
+            continue
+
+        notes: list[str] = []
+        score = 0.0
+        competitor_snippet = competitor_template.get("snippet_metrics", {}).get("snippet_ready", {}).get("coverage", 0)
+        target_snippet = target_template.get("snippet_metrics", {}).get("snippet_ready", {}).get("coverage", 0)
+        if competitor_snippet >= max(0.45, target_snippet + 0.25):
+            notes.append("сниппеты собраны ровнее")
+            score += 1.0 + (competitor_snippet - target_snippet)
+
+        layer_candidates: list[tuple[float, str]] = []
+        for signal_id in ("commercial", "forms", "faq", "trust", "reviews", "comparison", "breadcrumbs"):
+            competitor_signal = competitor_template.get("signals", {}).get(signal_id, {}).get("coverage", 0)
+            target_signal = target_template.get("signals", {}).get(signal_id, {}).get("coverage", 0)
+            if competitor_signal >= max(0.4, target_signal + 0.25):
+                layer_candidates.append((competitor_signal - target_signal, SIGNAL_SHORT_LABELS.get(signal_id, signal_id)))
+
+        layer_candidates.sort(key=lambda item: item[0], reverse=True)
+        if layer_candidates:
+            notes.append("лучше видны " + ", ".join(label for _, label in layer_candidates[:2]))
+            score += 0.9 + sum(delta for delta, _ in layer_candidates[:2])
+        elif competitor_template.get("commercial_score", 0) >= max(0.45, target_template.get("commercial_score", 0) + 0.2):
+            notes.append("коммерческий слой собран полнее")
+            score += 0.8 + (competitor_template.get("commercial_score", 0) - target_template.get("commercial_score", 0))
+
+        if not notes:
+            continue
+
+        findings.append(
+            {
+                "text": f"{template['label']}: {'; '.join(notes)}.",
+                "score": round(score, 3),
+            }
+        )
+
+    findings.sort(key=lambda item: item["score"], reverse=True)
+    return [item["text"] for item in findings[:3]]
+
+
+def build_competitor_snippet_findings(target_benchmark: dict, competitor_benchmark: dict) -> list[str]:
+    target_metrics = target_benchmark.get("snippet_metrics", {})
+    competitor_metrics = competitor_benchmark.get("snippet_metrics", {})
+    target_pages = target_benchmark.get("pages_checked", 0)
+    competitor_pages = competitor_benchmark.get("pages_checked", 0)
+    findings: list[dict] = []
+
+    snippet_delta = competitor_metrics.get("snippet_ready", {}).get("coverage", 0) - target_metrics.get("snippet_ready", {}).get("coverage", 0)
+    if snippet_delta >= 0.25:
+        findings.append(
+            {
+                "text": (
+                    "Базовая связка title, description, H1 и canonical собрана на "
+                    f"{metric_count_text(competitor_metrics.get('snippet_ready', {}), competitor_pages)} страниц; "
+                    f"у сайта — на {metric_count_text(target_metrics.get('snippet_ready', {}), target_pages)}."
+                ),
+                "score": round(snippet_delta + 0.8, 3),
+            }
+        )
+
+    title_delta = competitor_metrics.get("title_good", {}).get("coverage", 0) - target_metrics.get("title_good", {}).get("coverage", 0)
+    if title_delta >= 0.25:
+        findings.append(
+            {
+                "text": (
+                    f"Title чаще попадает в рабочий диапазон длины: {metric_count_text(competitor_metrics.get('title_good', {}), competitor_pages)} "
+                    f"против {metric_count_text(target_metrics.get('title_good', {}), target_pages)}."
+                ),
+                "score": round(title_delta + 0.45, 3),
+            }
+        )
+
+    description_delta = competitor_metrics.get("description_good", {}).get("coverage", 0) - target_metrics.get("description_good", {}).get("coverage", 0)
+    if description_delta >= 0.25:
+        findings.append(
+            {
+                "text": (
+                    "Описание страницы чаще заполнено и ближе к нормальной длине: "
+                    f"{metric_count_text(competitor_metrics.get('description_good', {}), competitor_pages)} "
+                    f"против {metric_count_text(target_metrics.get('description_good', {}), target_pages)}."
+                ),
+                "score": round(description_delta + 0.45, 3),
+            }
+        )
+
+    h1_delta = competitor_metrics.get("single_h1", {}).get("coverage", 0) - target_metrics.get("single_h1", {}).get("coverage", 0)
+    if h1_delta >= 0.25:
+        findings.append(
+            {
+                "text": (
+                    f"H1 чаще собран по одному на страницу: {metric_count_text(competitor_metrics.get('single_h1', {}), competitor_pages)} "
+                    f"против {metric_count_text(target_metrics.get('single_h1', {}), target_pages)}."
+                ),
+                "score": round(h1_delta + 0.35, 3),
+            }
+        )
+
+    canonical_delta = competitor_metrics.get("canonical_present", {}).get("coverage", 0) - target_metrics.get("canonical_present", {}).get("coverage", 0)
+    if canonical_delta >= 0.25:
+        findings.append(
+            {
+                "text": (
+                    "Канонический адрес проставлен стабильнее: "
+                    f"{metric_count_text(competitor_metrics.get('canonical_present', {}), competitor_pages)} "
+                    f"против {metric_count_text(target_metrics.get('canonical_present', {}), target_pages)}."
+                ),
+                "score": round(canonical_delta + 0.35, 3),
+            }
+        )
+
+    findings.sort(key=lambda item: item["score"], reverse=True)
+    return [item["text"] for item in findings[:3]]
+
+
+def build_competitor_commercial_findings(target_benchmark: dict, competitor_benchmark: dict) -> list[str]:
+    findings: list[dict] = []
+    target_pages = target_benchmark.get("pages_checked", 0)
+    competitor_pages = competitor_benchmark.get("pages_checked", 0)
+
+    for signal in COMPETITOR_SIGNAL_LIBRARY:
+        competitor_signal = competitor_benchmark.get("signals", {}).get(signal["id"], {})
+        target_signal = target_benchmark.get("signals", {}).get(signal["id"], {})
+        gap_size = competitor_signal.get("coverage", 0) - target_signal.get("coverage", 0)
+        if gap_size < 0.25 or competitor_signal.get("coverage", 0) < signal["min_competitor_coverage"]:
+            continue
+        findings.append(
+            {
+                "text": (
+                    f"{signal['label']}: у конкурента видно на {metric_count_text(competitor_signal, competitor_pages)} страниц; "
+                    f"у сайта — на {metric_count_text(target_signal, target_pages)}."
+                ),
+                "score": round(gap_size + signal["weight"] / 12, 3),
+            }
+        )
+
+    findings.sort(key=lambda item: item["score"], reverse=True)
+    return [item["text"] for item in findings[:3]]
+
+
+def summarize_template_gap_labels(target_benchmark: dict, competitor_benchmarks: list[dict]) -> list[str]:
+    labels: list[tuple[float, str]] = []
+    for template in TEMPLATE_LIBRARY:
+        relevant_templates = [
+            site.get("templates", {}).get(template["id"], {})
+            for site in competitor_benchmarks
+            if site.get("templates", {}).get(template["id"], {}).get("pages_checked", 0) > 0
+        ]
+        if not relevant_templates:
+            continue
+
+        target_template = target_benchmark.get("templates", {}).get(template["id"], {})
+        avg_snippet = statistics.mean(
+            item.get("snippet_metrics", {}).get("snippet_ready", {}).get("coverage", 0) for item in relevant_templates
+        )
+        avg_commercial = statistics.mean(item.get("commercial_score", 0) for item in relevant_templates)
+        delta = max(avg_snippet - target_template.get("snippet_metrics", {}).get("snippet_ready", {}).get("coverage", 0), 0)
+        delta += max(avg_commercial - target_template.get("commercial_score", 0), 0)
+        if delta >= 0.28:
+            labels.append((round(delta, 3), template["label"]))
+
+    labels.sort(key=lambda item: item[0], reverse=True)
+    return [label for _, label in labels[:3]]
+
+
 def get_competitor_benchmark_pages(audit: dict) -> list[PageSnapshot]:
     appendix_pages = audit.get("appendix_pages") or []
     if appendix_pages:
@@ -843,6 +1205,8 @@ def build_site_feature_benchmark(base_url: str, sample_pages: list[PageSnapshot]
             "examples": [human_path(page.url) for page in matching_pages[:3]],
         }
 
+    snippet_metrics = build_snippet_metrics(pages)
+    template_benchmark = build_template_benchmark(pages)
     average_words = round(statistics.mean([page.word_count for page in pages]), 1) if pages else 0
     ranked_signals = sorted(
         COMPETITOR_SIGNAL_LIBRARY,
@@ -850,6 +1214,8 @@ def build_site_feature_benchmark(base_url: str, sample_pages: list[PageSnapshot]
         reverse=True,
     )
     highlights = [signal["label"] for signal in ranked_signals if signals[signal["id"]]["coverage"] >= 0.34][:3]
+    if snippet_metrics["snippet_ready"]["coverage"] >= 0.55:
+        highlights = ["Сниппеты на ключевых страницах собраны ровнее", *highlights]
     if average_words >= 420:
         highlights = ["Более плотный коммерческий контент", *highlights]
 
@@ -859,8 +1225,10 @@ def build_site_feature_benchmark(base_url: str, sample_pages: list[PageSnapshot]
         "pages_checked": pages_checked,
         "average_words": average_words,
         "signals": signals,
+        "snippet_metrics": snippet_metrics,
+        "templates": template_benchmark,
         "highlights": highlights[:3] or ["Сильных шаблонных преимуществ в выборке не нашли."],
-        "sample_paths": [human_path(page.url) for page in pages[:4]],
+        "sample_paths": [human_path(page.url) for page in sorted(pages, key=page_signal_score, reverse=True)[:4]],
     }
 
 
@@ -877,7 +1245,7 @@ def collect_competitor_benchmark(base_url: str) -> dict:
         max_sitemaps=4,
     )
     home_links = discover_home_links(session, normalized_url, base_domain)
-    candidate_urls = select_representative_urls(normalized_url, home_links, sitemap_urls, 8)
+    candidate_urls = select_representative_urls(normalized_url, home_links, sitemap_urls, 10)
     sample_pages = analyse_pages_parallel(candidate_urls, base_domain, max_workers=8)
     html_pages = [page for page in sample_pages if page.status_code == 200 and "html" in page.content_type]
 
@@ -936,6 +1304,49 @@ def build_competitor_gap_items(target_benchmark: dict, competitor_benchmarks: li
                 "task": signal["implementation_brief"],
                 "benefit": signal["benefit"],
                 "sort_score": round(gap_size + competitor_avg_coverage + signal["weight"] / 10, 3),
+            }
+        )
+
+    for snippet_signal in COMPETITOR_SNIPPET_LIBRARY:
+        target_metric = target_benchmark.get("snippet_metrics", {}).get(snippet_signal["id"], {})
+        competitor_with_signal = [
+            site
+            for site in competitor_benchmarks
+            if site.get("snippet_metrics", {}).get(snippet_signal["id"], {}).get("coverage", 0) >= snippet_signal["min_competitor_coverage"]
+        ]
+        if not competitor_with_signal:
+            continue
+
+        competitor_avg_coverage = statistics.mean(
+            site.get("snippet_metrics", {}).get(snippet_signal["id"], {}).get("coverage", 0) for site in competitor_with_signal
+        )
+        gap_size = competitor_avg_coverage - target_metric.get("coverage", 0)
+        if gap_size < 0.2 or target_metric.get("coverage", 0) >= competitor_avg_coverage * 0.8:
+            continue
+
+        examples = [
+            f"{site['domain']}: {snippet_metric_state_text(snippet_signal['id'], site.get('snippet_metrics', {}).get(snippet_signal['id'], {}), site.get('pages_checked', 0))}"
+            for site in competitor_with_signal[:3]
+        ]
+        gap_items.append(
+            {
+                "title": snippet_signal["label"],
+                "priority": snippet_signal["priority"],
+                "owner": snippet_signal["owner"],
+                "current_state": (
+                    f"На сайте {snippet_metric_state_text(snippet_signal['id'], target_metric, target_benchmark.get('pages_checked', 0))}."
+                    if target_benchmark.get("pages_checked", 0)
+                    else "По сайту не удалось собрать ключевую выборку для сравнения."
+                ),
+                "competitor_state": (
+                    f"У {len(competitor_with_signal)} из {len(competitor_benchmarks)} "
+                    f"{pluralize_ru(len(competitor_benchmarks), 'конкурента', 'конкурентов', 'конкурентов')} "
+                    "эта шаблонная база собрана заметно стабильнее."
+                ),
+                "examples": examples,
+                "task": snippet_signal["implementation_brief"],
+                "benefit": snippet_signal["benefit"],
+                "sort_score": round(gap_size + competitor_avg_coverage + snippet_signal["weight"] / 10, 3),
             }
         )
 
@@ -1023,16 +1434,26 @@ def build_competitor_comparison(audit: dict, competitor_urls: list[str]) -> dict
             "failures": failures,
         }
 
+    for competitor_benchmark in competitor_benchmarks:
+        competitor_benchmark["template_findings"] = build_competitor_template_findings(target_benchmark, competitor_benchmark)
+        competitor_benchmark["snippet_findings"] = build_competitor_snippet_findings(target_benchmark, competitor_benchmark)
+        competitor_benchmark["commercial_findings"] = build_competitor_commercial_findings(target_benchmark, competitor_benchmark)
+
     gap_items = build_competitor_gap_items(target_benchmark, competitor_benchmarks)
     top_gaps = ", ".join(item["title"] for item in gap_items[:3]) if gap_items else "явных недостающих блоков в выборке не нашли"
+    template_focus = summarize_template_gap_labels(target_benchmark, competitor_benchmarks)
+
+    summary = [
+        f"Сравнили сайт с {len(competitor_benchmarks)} {pluralize_ru(len(competitor_benchmarks), 'конкурентом', 'конкурентами', 'конкурентами')} "
+        "по шаблонам страниц, сниппетам, FAQ, блокам доверия и коммерческим факторам.",
+        f"Чаще всего у конкурентов сильнее закрыты: {top_gaps}.",
+        "Ниже оставлены только те разрывы, которые можно быстро перевести в понятные задачи для SEO, контента, дизайна и разработки.",
+    ]
+    if template_focus:
+        summary.insert(2, f"Сильнее всего проседают шаблоны: {', '.join(template_focus)}.")
 
     return {
-        "summary": [
-            f"Сравнили сайт с {len(competitor_benchmarks)} {pluralize_ru(len(competitor_benchmarks), 'конкурентом', 'конкурентами', 'конкурентами')} "
-            "по ключевым SEO- и коммерческим сигналам на приоритетных страницах.",
-            f"Чаще всего у конкурентов сильнее закрыты: {top_gaps}.",
-            "Ниже только те элементы, которые можно превратить в понятные задачи на внедрение без расплывчатых общих советов.",
-        ],
+        "summary": summary,
         "competitors": competitor_benchmarks,
         "gap_items": gap_items,
         "failures": failures,
@@ -1166,7 +1587,7 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
                 severity="Medium",
                 title="Meta description РЅР° С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† РІРЅРµ СЂР°Р±РѕС‡РµРіРѕ РґРёР°РїР°Р·РѕРЅР°",
                 why_it_matters=(
-                    "Description вЂ” СЌС‚Рѕ СѓРїСЂР°РІР»СЏРµРјС‹Р№ РѕС„С„РµСЂ РІ СЃРЅРёРїРїРµС‚Рµ. РљРѕРіРґР° РѕРЅ СЃР»РёС€РєРѕРј РєРѕСЂРѕС‚РєРёР№ РёР»Рё РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№, "
+                    "Описание страницы — это управляемый оффер в сниппете. Когда оно слишком короткое или перегруженное, "
                     "РїРѕРёСЃРєРѕРІРёРє С‡Р°С‰Рµ Р±РµСЂРµС‚ СЃР»СѓС‡Р°Р№РЅС‹Р№ РєСѓСЃРѕРє С‚РµРєСЃС‚Р° СЃРѕ СЃС‚СЂР°РЅРёС†С‹."
                 ),
                 evidence=[
@@ -1902,18 +2323,18 @@ def build_phase_sections(audit: dict) -> list[dict]:
             "intro": "Р Р°Р·Р±РёСЂР°СЋ С€Р°Р±Р»РѕРЅС‹ title, description, H1 Рё С‚Рѕ, РЅР°СЃРєРѕР»СЊРєРѕ СЃС‚СЂР°РЅРёС†С‹ РіРѕС‚РѕРІС‹ Рє РЅРѕСЂРјР°Р»СЊРЅРѕРјСѓ СЃРЅРёРїРїРµС‚Сѓ.",
             "checks": [
                 {
-                    "name": "Title Рё meta description",
+                    "name": "Title и описание сниппета",
                     "checked": "РџРѕРєСЂС‹С‚РёРµ, РґР»РёРЅР° Рё РїСЂРёРіРѕРґРЅРѕСЃС‚СЊ СЃРЅРёРїРїРµС‚РѕРІ Рє СѓРїСЂР°РІР»СЏРµРјРѕР№ РІС‹РґР°С‡Рµ.",
                     "method": "РџР°СЂСЃРёРЅРі title Рё meta description РїРѕ СЂРµРїСЂРµР·РµРЅС‚Р°С‚РёРІРЅРѕР№ РІС‹Р±РѕСЂРєРµ СЃС‚СЂР°РЅРёС†.",
                     "metrics": [
-                        ("Title > 70 СЃРёРјРІРѕР»РѕРІ", str(len([page for page in sample_pages if len(page.title) > 70]))),
+                        ("Title длиннее 70 символов", str(len([page for page in sample_pages if len(page.title) > 70]))),
                         ("Title РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚", str(len(missing_title_pages))),
-                        ("Description РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚", str(len(missing_description_pages))),
-                        ("Description РІРЅРµ РґРёР°РїР°Р·РѕРЅР°", str(len([page for page in sample_pages if len(page.description) > 160 or (0 < len(page.description) < 120)]))),
+                        ("Описание страницы отсутствует", str(len(missing_description_pages))),
+                        ("Описание страницы вне диапазона", str(len([page for page in sample_pages if len(page.description) > 160 or (0 < len(page.description) < 120)]))),
                     ],
                     "findings": [
                         "РЁР°Р±Р»РѕРЅС‹ title РЅР° С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† РїРµСЂРµРіСЂСѓР¶РµРЅС‹ РїРѕ РґР»РёРЅРµ." if any("title" in issue.title.lower() for issue in audit["issues"]) else "РљСЂРёС‚РёС‡РµСЃРєРѕР№ СЏРјС‹ РїРѕ title РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.",
-                        "Р•СЃС‚СЊ СЃС‚СЂР°РЅРёС†С‹ Р±РµР· description, РёР·-Р·Р° С‡РµРіРѕ СЃРЅРёРїРїРµС‚ Р±СѓРґРµС‚ СЃРѕР±РёСЂР°С‚СЊСЃСЏ СЃР»СѓС‡Р°Р№РЅРѕ." if missing_description_pages else "Description РїРѕРєСЂС‹С‚С‹ РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ СЂРѕРІРЅРѕ.",
+                        "Есть страницы без описания, из-за чего сниппет будет собираться случайно." if missing_description_pages else "Описания страниц покрыты достаточно ровно.",
                         f"РџСѓСЃС‚РѕР№ title РЅР°Р№РґРµРЅ РЅР°: {', '.join(human_path(page.url) for page in missing_title_pages[:3])}." if missing_title_pages else "РџСѓСЃС‚С‹С… title РІ РІС‹Р±РѕСЂРєРµ РїРѕС‡С‚Рё РЅРµС‚.",
                     ],
                     "priority": "HIGH",
@@ -1925,7 +2346,7 @@ def build_phase_sections(audit: dict) -> list[dict]:
                     "checked": "РќР°Р»РёС‡РёРµ H1, РїР»РѕС‚РЅРѕСЃС‚СЊ С‚РµРєСЃС‚РѕРІРѕРіРѕ СЃР»РѕСЏ Рё РєР°С‡РµСЃС‚РІРѕ Р±Р°Р·РѕРІРѕРіРѕ on-page РєР°СЂРєР°СЃР°.",
                     "method": "РџР°СЂСЃРёРЅРі H1 Рё РїРѕРґСЃС‡РµС‚ СЃР»РѕРІ РІ РІРёРґРёРјРѕРј РєРѕРЅС‚РµРЅС‚Рµ.",
                     "metrics": [
-                        ("H1 coverage", f"{math.floor(audit['h1_coverage_ratio'] * 100)}%"),
+                        ("Покрытие H1", f"{math.floor(audit['h1_coverage_ratio'] * 100)}%"),
                         ("РЎС‚СЂР°РЅРёС† Р±РµР· H1", str(len(missing_h1_pages))),
                         ("РЎСЂРµРґРЅРµРµ С‡РёСЃР»Рѕ СЃР»РѕРІ", str(audit.get("average_words", 0))),
                         ("РўРѕРЅРєРёС… СЃС‚СЂР°РЅРёС† (<250 СЃР»РѕРІ)", str(len(thin_pages))),
@@ -2880,8 +3301,18 @@ def add_competitor_comparison_doc(doc: Document, comparison: dict) -> None:
         set_cell_margins(body, 100, 110, 110, 110)
         title_run = head.paragraphs[0].add_run(normalize_output_text(f"{competitor.get('domain', '')}  |  проверено страниц: {competitor.get('pages_checked', 0)}"))
         set_font(title_run, size=11.2, bold=True, color=BRAND_TEXT)
-        add_text_paragraph(body, "Что у конкурента выглядит сильнее:", size=10.4, bold=True, color=BRAND_ORANGE, space_after=3)
-        add_bullet_list(body, competitor.get("highlights", []), size=10.3)
+        if competitor.get("highlights"):
+            add_text_paragraph(body, "Коротко:", size=10.4, bold=True, color=BRAND_ORANGE, space_after=3)
+            add_bullet_list(body, competitor.get("highlights", []), size=10.3)
+        if competitor.get("template_findings"):
+            add_text_paragraph(body, "Где конкурент сильнее по шаблонам:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
+            add_bullet_list(body, competitor.get("template_findings", []), size=10.15)
+        if competitor.get("snippet_findings"):
+            add_text_paragraph(body, "Что видно по сниппетам:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
+            add_bullet_list(body, competitor.get("snippet_findings", []), size=10.15)
+        if competitor.get("commercial_findings"):
+            add_text_paragraph(body, "Что сильнее по FAQ, доверию и коммерческому слою:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
+            add_bullet_list(body, competitor.get("commercial_findings", []), size=10.15)
         if competitor.get("sample_paths"):
             add_text_paragraph(
                 body,
@@ -3033,7 +3464,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Сравнение с конкурентами",
             "Чего не хватает на фоне сильных конкурентов",
-            "Сравнили ключевые шаблоны с конкурентами и оставили только те разрывы, которые можно превратить в понятное ТЗ на внедрение.",
+            "Сравнили шаблоны страниц, сниппеты, FAQ, доверие и коммерческий слой. Ниже только те разрывы, которые можно быстро превратить в понятное ТЗ на внедрение.",
         )
         add_competitor_comparison_doc(doc, competitor_comparison)
 

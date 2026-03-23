@@ -489,6 +489,90 @@ def _append_competitor_comparison(story: list, comparison: dict, styles: dict) -
         story.append(Spacer(1, 8))
 
 
+def _append_competitor_comparison_v2(story: list, comparison: dict, styles: dict) -> None:
+    _section_header(
+        story,
+        "Сравнение с конкурентами",
+        "Чего не хватает на фоне сильных конкурентов",
+        "Сравнили шаблоны страниц, сниппеты, FAQ, доверие и коммерческий слой. Ниже оставлены только те разрывы, которые можно превратить в понятное ТЗ на внедрение.",
+        styles,
+    )
+
+    summary = comparison.get("summary", [])
+    if summary:
+        story.extend(_paragraph_list(summary, styles))
+        story.append(Spacer(1, 8))
+
+    for competitor in comparison.get("competitors", []):
+        highlights_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("highlights", []))
+        template_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("template_findings", []))
+        snippet_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("snippet_findings", []))
+        commercial_html = "".join(f"<br/>• {_escape_pdf_text(item)}" for item in competitor.get("commercial_findings", []))
+        examples = competitor.get("sample_paths", [])[:3]
+        card = Table(
+            [
+                [Paragraph(_escape_pdf_text(f"{competitor.get('domain', '')} | проверено страниц: {competitor.get('pages_checked', 0)}"), styles["cardTitle"])],
+                [Paragraph(f"<b>Коротко:</b>{highlights_html or '<br/>—'}", styles["base"])],
+                [Paragraph(f"<b>По шаблонам:</b>{template_html or '<br/>—'}", styles["base"])],
+                [Paragraph(f"<b>По сниппетам:</b>{snippet_html or '<br/>—'}", styles["base"])],
+                [Paragraph(f"<b>По FAQ, доверию и коммерческому слою:</b>{commercial_html or '<br/>—'}", styles["base"])],
+                [Paragraph(f"<b>Где это видно:</b> {_escape_pdf_text(', '.join(examples) or '—')}", styles["small"])],
+            ],
+            colWidths=[180 * mm],
+        )
+        card.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+                    ("BOX", (0, 0), (-1, -1), 1, colors.HexColor(BRAND_LINE)),
+                    ("ROUNDEDCORNERS", [14, 14, 14, 14]),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 12),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+                    ("TOPPADDING", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+                ]
+            )
+        )
+        story.append(card)
+        story.append(Spacer(1, 10))
+
+    for item in comparison.get("gap_items", []):
+        examples_html = "".join(f"<br/>• {_escape_pdf_text(example)}" for example in item.get("examples", []))
+        card = Table(
+            [
+                [Paragraph(_escape_pdf_text(item.get("title", "")), styles["cardTitle"])],
+                [Paragraph(f"<b>Приоритет:</b> {_escape_pdf_text(item.get('priority', ''))} &nbsp;&nbsp; <b>Ответственный:</b> {_escape_pdf_text(item.get('owner', ''))}", styles["small"])],
+                [Paragraph(f"<b>Что сейчас:</b> {_escape_pdf_text(item.get('current_state', ''))}", styles["base"])],
+                [Paragraph(f"<b>Что видно у конкурентов:</b> {_escape_pdf_text(item.get('competitor_state', ''))}", styles["base"])],
+                [Paragraph(f"<b>Примеры:</b>{examples_html or '<br/>—'}", styles["base"])],
+                [Paragraph(f"<b>Короткое ТЗ:</b> {_escape_pdf_text(item.get('task', ''))}", styles["base"])],
+                [Paragraph(f"<b>Что это даст:</b> {_escape_pdf_text(item.get('benefit', ''))}", styles["small"])],
+            ],
+            colWidths=[180 * mm],
+        )
+        card.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+                    ("BOX", (0, 0), (-1, -1), 1, colors.HexColor(BRAND_LINE)),
+                    ("ROUNDEDCORNERS", [14, 14, 14, 14]),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 12),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+                    ("TOPPADDING", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+                ]
+            )
+        )
+        story.append(card)
+        story.append(Spacer(1, 10))
+
+    failures = comparison.get("failures", [])
+    if failures:
+        story.append(Paragraph("Не по всем конкурентам удалось собрать рабочую выборку страниц.", styles["muted"]))
+        story.extend(_paragraph_list([f"{item.get('url', '')}: {item.get('error', '')}" for item in failures], styles))
+        story.append(Spacer(1, 8))
+
+
 def _append_roadmap(story: list, roadmap: list[list], styles: dict) -> None:
     _section_header(
         story,
@@ -757,7 +841,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             or competitor_comparison.get("gap_items")
             or competitor_comparison.get("failures")
         ):
-            _append_competitor_comparison(story, competitor_comparison, styles)
+            _append_competitor_comparison_v2(story, competitor_comparison, styles)
         _append_action_cards(
             story,
             audit_payload.get("quick_wins", []),
@@ -972,6 +1056,80 @@ def _competitor_comparison_html(comparison: dict) -> str:
     """
 
 
+def _competitor_comparison_html_v2(comparison: dict) -> str:
+    competitors = comparison.get("competitors", [])
+    gap_items = comparison.get("gap_items", [])
+    failures = comparison.get("failures", [])
+    summary = comparison.get("summary", [])
+
+    if not competitors and not gap_items and not failures:
+        return ""
+
+    summary_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in summary)
+    competitor_cards = []
+    for competitor in competitors:
+        highlights_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("highlights", []))
+        template_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("template_findings", []))
+        snippet_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("snippet_findings", []))
+        commercial_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in competitor.get("commercial_findings", []))
+        sample_paths = ", ".join(competitor.get("sample_paths", [])[:3])
+        competitor_cards.append(
+            f"""
+            <article class="competitor-card">
+              <h3>{_escape_html_text(competitor.get('domain', ''))}</h3>
+              <p class="action-meta"><strong>Проверено страниц:</strong> {_escape_html_text(competitor.get('pages_checked', 0))}</p>
+              <h4>Коротко</h4>
+              {'<ul>' + highlights_html + '</ul>' if highlights_html else '<p class="action-meta">—</p>'}
+              <h4>По шаблонам</h4>
+              {'<ul>' + template_html + '</ul>' if template_html else '<p class="action-meta">—</p>'}
+              <h4>По сниппетам</h4>
+              {'<ul>' + snippet_html + '</ul>' if snippet_html else '<p class="action-meta">—</p>'}
+              <h4>По FAQ, доверию и коммерческому слою</h4>
+              {'<ul>' + commercial_html + '</ul>' if commercial_html else '<p class="action-meta">—</p>'}
+              <p class="action-meta"><strong>Где это видно:</strong> {_escape_html_text(sample_paths or '—')}</p>
+            </article>
+            """
+        )
+
+    gap_cards = []
+    for item in gap_items:
+        examples_html = "".join(f"<li>{_escape_html_text(example)}</li>" for example in item.get("examples", []))
+        gap_cards.append(
+            f"""
+            <article class="action-card competitor-gap-card">
+              <h3>{_escape_html_text(item.get('title', ''))}</h3>
+              <p class="action-meta"><strong>Приоритет:</strong> {_escape_html_text(item.get('priority', ''))}</p>
+              <p class="action-meta"><strong>Ответственный:</strong> {_escape_html_text(item.get('owner', ''))}</p>
+              <p><strong>Что сейчас:</strong> {_escape_html_text(item.get('current_state', ''))}</p>
+              <p><strong>Что видно у конкурентов:</strong> {_escape_html_text(item.get('competitor_state', ''))}</p>
+              {'<ul>' + examples_html + '</ul>' if examples_html else ''}
+              <p class="recommendation"><strong>Короткое ТЗ:</strong> {_escape_html_text(item.get('task', ''))}</p>
+              <p><strong>Что это даст:</strong> {_escape_html_text(item.get('benefit', ''))}</p>
+            </article>
+            """
+        )
+
+    failure_html = ""
+    if failures:
+        failure_items = "".join(
+            f"<li>{_escape_html_text(item.get('url', ''))}: {_escape_html_text(item.get('error', ''))}</li>"
+            for item in failures
+        )
+        failure_html = f"<div class='list-card'><div class='section-kicker' style='margin-bottom:8px;'>Не удалось проверить</div><ul>{failure_items}</ul></div>"
+
+    return f"""
+    <section class="competitor-section">
+      <div class="section-kicker">Сравнение с конкурентами</div>
+      <h2>Чего не хватает на фоне сильных конкурентов</h2>
+      <p class="lead">Сравнили шаблоны страниц, сниппеты, FAQ, доверие и коммерческий слой. Ниже только те разрывы, которые можно превратить в понятное ТЗ на внедрение.</p>
+      <div class="list-card"><ul class="insight-list">{summary_html}</ul></div>
+      <div class="competitor-grid">{''.join(competitor_cards)}</div>
+      <div class="action-grid competitor-gap-grid">{''.join(gap_cards) if gap_cards else "<p class='empty-note'>Сильных разрывов по конкурентам в этой выборке не нашли.</p>"}</div>
+      {failure_html}
+    </section>
+    """
+
+
 def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     audit_payload = normalize_structure(audit_payload)
     critical_source = audit_payload.get("critical_errors") or audit_payload.get("issues", [])
@@ -982,7 +1140,7 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     phases_html = _phase_checks_html(audit_payload.get("phase_sections", []))
     quick_wins_html = _action_cards(audit_payload.get("quick_wins", []), "effort", "impact")
     strategic_html = _action_cards(audit_payload.get("strategic_moves", []), "impact", "effort")
-    competitor_html = _competitor_comparison_html(audit_payload.get("competitor_comparison") or {})
+    competitor_html = _competitor_comparison_html_v2(audit_payload.get("competitor_comparison") or {})
     has_competitors = bool(competitor_html)
 
     html = f"""<!doctype html>
@@ -1284,7 +1442,7 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     }}
     .competitor-grid {{
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 16px;
       margin-top: 16px;
     }}
@@ -1293,6 +1451,19 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       border-radius: 24px;
       background: linear-gradient(180deg, #fff7ef 0%, #fff 100%);
       padding: 22px;
+      break-inside: avoid;
+    }}
+    .competitor-card h4 {{
+      margin: 14px 0 8px;
+      font-size: 14px;
+      color: var(--text);
+    }}
+    .competitor-card ul {{
+      margin: 0 0 10px 18px;
+      padding: 0;
+    }}
+    .competitor-card li {{
+      margin-bottom: 6px;
     }}
     .competitor-gap-grid {{
       margin-top: 16px;
