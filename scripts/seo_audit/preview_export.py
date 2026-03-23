@@ -906,7 +906,7 @@ def _append_competitor_comparison_v4(story: list, comparison: dict, styles: dict
                 [Paragraph(f"<b>{_escape_pdf_text('Что видно у конкурентов')}:</b> {_escape_pdf_text(item.get('competitor_state', ''))}", styles["base"])],
                 [Paragraph(f"<b>{_escape_pdf_text('Примеры')}:</b>{examples_html or '<br/>—'}", styles["base"])],
                 [Paragraph(f"<b>{_escape_pdf_text('Где внедрять')}:</b> {_escape_pdf_text(scope or 'главная, услуги, категории и страницы заявок')}", styles["base"])],
-                [Paragraph(f"<b>{_escape_pdf_text('Расширенное ТЗ')}:</b> {_escape_pdf_text(item.get('task', ''))}", styles["base"])],
+                [Paragraph(f"<b>{_escape_pdf_text('Техническое задание')}:</b> {_escape_pdf_text(item.get('task', ''))}", styles["base"])],
                 [Paragraph(f"<b>{_escape_pdf_text('Шаги внедрения')}:</b>{steps_html or '<br/>—'}", styles["base"])],
                 [Paragraph(f"<b>{_escape_pdf_text('Что это даст')}:</b> {_escape_pdf_text(item.get('benefit', ''))}", styles["base"])],
                 [Paragraph(f"<b>{_escape_pdf_text('Ожидаемый эффект')}:</b>{impact_html or '<br/>—'}", styles["small"])],
@@ -1170,12 +1170,6 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
         cover_left = [
             Paragraph("SHELPAKOV DIGITAL", styles["coverTag"]),
             Paragraph(f"SEO-аудит<br/>{_escape_pdf_text(audit_payload.get('domain', ''))}", styles["coverTitle"]),
-            Paragraph(
-                _escape_pdf_text(
-                    "Понятный технический аудит с приоритетами и планом работ."
-                ),
-                styles["coverBody"],
-            ),
         ]
         cover_right = [
             Paragraph("Паспорт проекта", styles["passportKicker"]),
@@ -1763,7 +1757,7 @@ def _competitor_comparison_html_v4(comparison: dict) -> str:
               <p><strong>Что видно у конкурентов:</strong> {_escape_html_text(item.get('competitor_state', ''))}</p>
               {'<ul>' + examples_html + '</ul>' if examples_html else ''}
               <p><strong>Где внедрять:</strong> {_escape_html_text(scope or 'главная, услуги, категории и страницы заявок')}</p>
-              <p class="recommendation"><strong>Расширенное ТЗ:</strong> {_escape_html_text(item.get('task', ''))}</p>
+              <p class="recommendation"><strong>Техническое задание:</strong> {_escape_html_text(item.get('task', ''))}</p>
               {'<div><strong>Шаги внедрения:</strong><ul>' + steps_html + '</ul></div>' if steps_html else ''}
               <p><strong>Что это даст:</strong> {_escape_html_text(item.get('benefit', ''))}</p>
               {'<div><strong>Ожидаемый эффект:</strong><ul>' + impact_html + '</ul></div>' if impact_html else ''}
@@ -2174,7 +2168,6 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       <div class="hero-main">
         <div class="hero-kicker">Shelpakov Digital</div>
         <h1>SEO-аудит {_escape_html_text(audit_payload.get("domain", ""))}</h1>
-        <p>Понятный технический аудит с приоритетами и планом работ.</p>
       </div>
       <aside class="hero-side">
         <div class="section-kicker">Паспорт проекта</div>

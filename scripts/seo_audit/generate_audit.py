@@ -1138,27 +1138,81 @@ def build_competitor_factor_summary(target_benchmark: dict, competitor_benchmark
     competitor_signals = competitor_benchmark.get("signals", {})
     target_snippet = target_benchmark.get("snippet_metrics", {}).get("snippet_ready", {})
     competitor_snippet = competitor_benchmark.get("snippet_metrics", {}).get("snippet_ready", {})
+    findings: list[dict[str, float | str]] = []
 
-    return [
-        (
-            "Сниппетная база: "
-            f"{metric_count_text(competitor_snippet, competitor_pages)} страниц против {metric_count_text(target_snippet, target_pages)} у сайта."
-        ),
-        (
-            "FAQ и доверие: "
-            f"FAQ {coverage_percent(competitor_signals.get('faq', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('faq', {}).get('coverage', 0))}; "
-            f"доверие {coverage_percent(competitor_signals.get('trust', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('trust', {}).get('coverage', 0))}."
-        ),
-        (
-            "Коммерческий слой и точки входа: "
-            f"условия {coverage_percent(competitor_signals.get('commercial', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('commercial', {}).get('coverage', 0))}; "
-            f"формы {coverage_percent(competitor_signals.get('forms', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('forms', {}).get('coverage', 0))}."
-        ),
-        (
-            f"Средний текстовый слой: {round(competitor_benchmark.get('average_words', 0))} слов на страницу "
-            f"против {round(target_benchmark.get('average_words', 0))} у сайта."
-        ),
-    ]
+    target_snippet_coverage = target_snippet.get("coverage", 0)
+    competitor_snippet_coverage = competitor_snippet.get("coverage", 0)
+    if competitor_snippet_coverage >= max(0.2, target_snippet_coverage + 0.12):
+        findings.append(
+            {
+                "text": (
+                    "Сниппетная база: "
+                    f"{metric_count_text(competitor_snippet, competitor_pages)} страниц против {metric_count_text(target_snippet, target_pages)} у сайта."
+                ),
+                "score": round(competitor_snippet_coverage - target_snippet_coverage + 0.35, 3),
+            }
+        )
+
+    faq_gap = competitor_signals.get("faq", {}).get("coverage", 0) - target_signals.get("faq", {}).get("coverage", 0)
+    trust_gap = competitor_signals.get("trust", {}).get("coverage", 0) - target_signals.get("trust", {}).get("coverage", 0)
+    faq_parts: list[str] = []
+    faq_score = 0.0
+    if faq_gap >= 0.1:
+        faq_parts.append(
+            f"FAQ {coverage_percent(competitor_signals.get('faq', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('faq', {}).get('coverage', 0))}"
+        )
+        faq_score += faq_gap + 0.2
+    if trust_gap >= 0.1:
+        faq_parts.append(
+            f"доверие {coverage_percent(competitor_signals.get('trust', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('trust', {}).get('coverage', 0))}"
+        )
+        faq_score += trust_gap + 0.2
+    if faq_parts:
+        findings.append(
+            {
+                "text": "FAQ и доверие: " + "; ".join(faq_parts) + ".",
+                "score": round(faq_score, 3),
+            }
+        )
+
+    commercial_gap = competitor_signals.get("commercial", {}).get("coverage", 0) - target_signals.get("commercial", {}).get("coverage", 0)
+    forms_gap = competitor_signals.get("forms", {}).get("coverage", 0) - target_signals.get("forms", {}).get("coverage", 0)
+    commercial_parts: list[str] = []
+    commercial_score = 0.0
+    if commercial_gap >= 0.1:
+        commercial_parts.append(
+            f"условия {coverage_percent(competitor_signals.get('commercial', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('commercial', {}).get('coverage', 0))}"
+        )
+        commercial_score += commercial_gap + 0.2
+    if forms_gap >= 0.1:
+        commercial_parts.append(
+            f"формы {coverage_percent(competitor_signals.get('forms', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('forms', {}).get('coverage', 0))}"
+        )
+        commercial_score += forms_gap + 0.2
+    if commercial_parts:
+        findings.append(
+            {
+                "text": "Коммерческий слой и точки входа: " + "; ".join(commercial_parts) + ".",
+                "score": round(commercial_score, 3),
+            }
+        )
+
+    target_average_words = target_benchmark.get("average_words", 0)
+    competitor_average_words = competitor_benchmark.get("average_words", 0)
+    min_content_gap = max(120, target_average_words * 0.15) if target_average_words else 180
+    if competitor_average_words >= target_average_words + min_content_gap:
+        findings.append(
+            {
+                "text": (
+                    f"Средний текстовый слой: {round(competitor_average_words)} слов на страницу "
+                    f"против {round(target_average_words)} у сайта."
+                ),
+                "score": round((competitor_average_words - target_average_words) / 400 + 0.25, 3),
+            }
+        )
+
+    findings.sort(key=lambda item: float(item["score"]), reverse=True)
+    return [str(item["text"]) for item in findings[:3]]
 
 
 def build_competitor_template_rows(target_benchmark: dict, competitor_benchmark: dict) -> list[str]:
@@ -1670,17 +1724,21 @@ def build_competitor_comparison(audit: dict, competitor_urls: list[str]) -> dict
         competitor_benchmark["commercial_findings"] = build_competitor_commercial_findings(target_benchmark, competitor_benchmark)
 
     gap_items = build_competitor_gap_items(target_benchmark, competitor_benchmarks)
-    top_gaps = ", ".join(item["title"] for item in gap_items[:3]) if gap_items else "явных недостающих блоков в выборке не нашли"
     template_focus = summarize_template_gap_labels(target_benchmark, competitor_benchmarks)
 
     summary = [
         f"Сравнили сайт с {len(competitor_benchmarks)} {pluralize_ru(len(competitor_benchmarks), 'конкурентом', 'конкурентами', 'конкурентами')} "
         "по шаблонам страниц, сниппетам, FAQ, блокам доверия и коммерческим факторам.",
-        f"Чаще всего у конкурентов сильнее закрыты: {top_gaps}.",
-        "Ниже оставлены только те разрывы, которые можно быстро перевести в понятные задачи для SEO, контента, дизайна и разработки.",
     ]
-    if template_focus:
-        summary.insert(2, f"Сильнее всего проседают шаблоны: {', '.join(template_focus)}.")
+    if gap_items:
+        summary.append(f"Чаще всего у конкурентов сильнее закрыты: {', '.join(item['title'] for item in gap_items[:3])}.")
+        if template_focus:
+            summary.append(f"Сильнее всего проседают шаблоны: {', '.join(template_focus)}.")
+        summary.append("Ниже оставлены только те разрывы, которые можно быстро перевести в понятные задачи для SEO, контента, дизайна и разработки.")
+    else:
+        if template_focus:
+            summary.append(f"Сильнее всего отличаются шаблоны: {', '.join(template_focus)}.")
+        summary.append("Сильных системных разрывов по этой выборке не нашли, но карточки конкурентов ниже всё равно показывают удачные решения по структуре и подаче.")
 
     return {
         "summary": summary,
@@ -2645,9 +2703,9 @@ def build_phase_sections(audit: dict) -> list[dict]:
                     "method": "РџР°СЂСЃРёРЅРі application/ld+json Рё СЃР±РѕСЂ @type РїРѕ РєР»СЋС‡РµРІС‹Рј URL.",
                     "metrics": [
                         ("Schema coverage", f"{math.floor(audit['schema_coverage_ratio'] * 100)}%"),
-                        ("РЎС‚СЂР°РЅРёС† СЃ Р±РёС‚РѕР№ JSON-LD", str(len(invalid_schema_pages))),
-                        ("РЎС‚СЂР°РЅРёС† Р±РµР· schema", str(len([page for page in sample_pages if not page.schema_types]))),
-                        ("РўРѕРї schema types", ", ".join(f"{name} ({count})" for name, count in schema_counter.most_common(3)) or "РЅРµС‚"),
+                        ("Страниц с битой JSON-LD", str(len(invalid_schema_pages))),
+                        ("Страниц без микроразметки", str(len([page for page in sample_pages if not page.schema_types]))),
+                        ("Типы микроразметки", ", ".join(f"{name} ({count})" for name, count in schema_counter.most_common(3)) or "нет"),
                     ],
                     "findings": [
                         "Р•СЃС‚СЊ СЃС‚СЂР°РЅРёС†С‹ СЃ РЅРµРІР°Р»РёРґРЅРѕР№ JSON-LD." if invalid_schema_pages else "РЇРІРЅС‹С… РїРѕР»РѕРјРѕРє JSON-LD РІ РІС‹Р±РѕСЂРєРµ РЅРµ РІРёРґРЅРѕ.",
@@ -3309,14 +3367,7 @@ def add_cover(doc: Document, audit: dict, logo_path: Path) -> None:
     p_title.paragraph_format.space_before = Pt(10)
     title_run = p_title.add_run(f"SEO-аудит сайта\n{audit['domain']}")
     set_font(title_run, size=26, bold=True, color="FFFFFF")
-
-    p_subtitle = left.add_paragraph()
-    subtitle_run = p_subtitle.add_run(
-        "Понятный технический аудит с приоритетами и планом работ. "
-        "Внутри только то, что реально влияет на видимость сайта, индекс и заявки."
-    )
-    set_font(subtitle_run, size=11.4, color="E8EEF6")
-    p_subtitle.paragraph_format.space_after = Pt(18)
+    p_title.paragraph_format.space_after = Pt(18)
 
     callout = left.add_table(rows=1, cols=1)
     remove_table_borders(callout)
@@ -3653,7 +3704,7 @@ def add_competitor_comparison_doc(doc: Document, comparison: dict) -> None:
             add_bullet_list(body, item.get("examples", []), size=10.2)
         if item.get("where_to_implement"):
             add_text_paragraph(body, f"Где внедрять: {', '.join(item.get('where_to_implement', []))}", size=10.25, color=BRAND_TEXT, space_after=3)
-        add_text_paragraph(body, f"Расширенное ТЗ: {item.get('task', '')}", size=10.3, color=BRAND_TEXT, bold=True, space_after=3)
+        add_text_paragraph(body, f"Техническое задание: {item.get('task', '')}", size=10.3, color=BRAND_TEXT, bold=True, space_after=3)
         if item.get("implementation_steps"):
             add_text_paragraph(body, "Шаги внедрения:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
             add_bullet_list(body, item.get("implementation_steps", []), size=10.15)
