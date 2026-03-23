@@ -818,7 +818,7 @@ COMPETITOR_SIGNAL_LIBRARY = [
 COMPETITOR_SNIPPET_LIBRARY = [
     {
         "id": "snippet_ready",
-        "label": "Сниппеты на ключевых страницах: title, description, H1 и canonical",
+        "label": "Сниппеты на ключевых страницах: title, описание страницы, H1 и канонический адрес",
         "priority": "Высокий приоритет",
         "owner": "SEO / Frontend",
         "min_competitor_coverage": 0.45,
@@ -996,10 +996,14 @@ def metric_count_text(metric: dict, pages_checked: int) -> str:
     return f"{metric.get('count', 0)} из {pages_checked}"
 
 
+def coverage_percent(value: float) -> str:
+    return f"{round((value or 0) * 100)}%"
+
+
 def snippet_metric_state_text(metric_id: str, metric: dict, pages_checked: int) -> str:
     metric_count = metric_count_text(metric, pages_checked)
     if metric_id == "snippet_ready":
-        return f"связка title, description, H1 и canonical собрана на {metric_count} ключевых страниц"
+        return f"связка title, описания страницы, H1 и канонического адреса собрана на {metric_count} ключевых страниц"
     if metric_id == "canonical_present":
         return f"канонический адрес стоит на {metric_count} ключевых страниц"
     return f"метрика выполнена на {metric_count} страниц"
@@ -1065,7 +1069,7 @@ def build_competitor_snippet_findings(target_benchmark: dict, competitor_benchma
         findings.append(
             {
                 "text": (
-                    "Базовая связка title, description, H1 и canonical собрана на "
+                    "Базовая связка title, описания страницы, H1 и канонического адреса собрана на "
                     f"{metric_count_text(competitor_metrics.get('snippet_ready', {}), competitor_pages)} страниц; "
                     f"у сайта — на {metric_count_text(target_metrics.get('snippet_ready', {}), target_pages)}."
                 ),
@@ -1078,7 +1082,7 @@ def build_competitor_snippet_findings(target_benchmark: dict, competitor_benchma
         findings.append(
             {
                 "text": (
-                    f"Title чаще попадает в рабочий диапазон длины: {metric_count_text(competitor_metrics.get('title_good', {}), competitor_pages)} "
+                    f"Заголовок title чаще попадает в рабочий диапазон длины: {metric_count_text(competitor_metrics.get('title_good', {}), competitor_pages)} "
                     f"против {metric_count_text(target_metrics.get('title_good', {}), target_pages)}."
                 ),
                 "score": round(title_delta + 0.45, 3),
@@ -1125,6 +1129,216 @@ def build_competitor_snippet_findings(target_benchmark: dict, competitor_benchma
 
     findings.sort(key=lambda item: item["score"], reverse=True)
     return [item["text"] for item in findings[:3]]
+
+
+def build_competitor_factor_summary(target_benchmark: dict, competitor_benchmark: dict) -> list[str]:
+    target_pages = target_benchmark.get("pages_checked", 0)
+    competitor_pages = competitor_benchmark.get("pages_checked", 0)
+    target_signals = target_benchmark.get("signals", {})
+    competitor_signals = competitor_benchmark.get("signals", {})
+    target_snippet = target_benchmark.get("snippet_metrics", {}).get("snippet_ready", {})
+    competitor_snippet = competitor_benchmark.get("snippet_metrics", {}).get("snippet_ready", {})
+
+    return [
+        (
+            "Сниппетная база: "
+            f"{metric_count_text(competitor_snippet, competitor_pages)} страниц против {metric_count_text(target_snippet, target_pages)} у сайта."
+        ),
+        (
+            "FAQ и доверие: "
+            f"FAQ {coverage_percent(competitor_signals.get('faq', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('faq', {}).get('coverage', 0))}; "
+            f"доверие {coverage_percent(competitor_signals.get('trust', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('trust', {}).get('coverage', 0))}."
+        ),
+        (
+            "Коммерческий слой и точки входа: "
+            f"условия {coverage_percent(competitor_signals.get('commercial', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('commercial', {}).get('coverage', 0))}; "
+            f"формы {coverage_percent(competitor_signals.get('forms', {}).get('coverage', 0))} против {coverage_percent(target_signals.get('forms', {}).get('coverage', 0))}."
+        ),
+        (
+            f"Средний текстовый слой: {round(competitor_benchmark.get('average_words', 0))} слов на страницу "
+            f"против {round(target_benchmark.get('average_words', 0))} у сайта."
+        ),
+    ]
+
+
+def build_competitor_template_rows(target_benchmark: dict, competitor_benchmark: dict) -> list[str]:
+    rows: list[dict] = []
+    target_templates = target_benchmark.get("templates", {})
+    competitor_templates = competitor_benchmark.get("templates", {})
+
+    for template in TEMPLATE_LIBRARY:
+        target_template = target_templates.get(template["id"], {})
+        competitor_template = competitor_templates.get(template["id"], {})
+        if competitor_template.get("pages_checked", 0) == 0:
+            continue
+
+        target_snippet = target_template.get("snippet_metrics", {}).get("snippet_ready", {}).get("coverage", 0)
+        competitor_snippet = competitor_template.get("snippet_metrics", {}).get("snippet_ready", {}).get("coverage", 0)
+        target_commercial = target_template.get("commercial_score", 0)
+        competitor_commercial = competitor_template.get("commercial_score", 0)
+        snippet_gap = competitor_snippet - target_snippet
+        commercial_gap = competitor_commercial - target_commercial
+        if max(snippet_gap, commercial_gap) < 0.14:
+            continue
+
+        stronger_layers: list[str] = []
+        for signal_id in ("commercial", "forms", "faq", "trust", "reviews", "comparison", "breadcrumbs"):
+            competitor_coverage = competitor_template.get("signals", {}).get(signal_id, {}).get("coverage", 0)
+            target_coverage = target_template.get("signals", {}).get(signal_id, {}).get("coverage", 0)
+            if competitor_coverage - target_coverage >= 0.2:
+                stronger_layers.append(SIGNAL_SHORT_LABELS.get(signal_id, signal_id))
+
+        parts: list[str] = []
+        if snippet_gap >= 0.14:
+            parts.append(f"сниппеты {coverage_percent(competitor_snippet)} против {coverage_percent(target_snippet)}")
+        if commercial_gap >= 0.14:
+            parts.append(f"коммерческий слой {coverage_percent(competitor_commercial)} против {coverage_percent(target_commercial)}")
+        if stronger_layers:
+            parts.append("сильнее закрыты: " + ", ".join(stronger_layers[:3]))
+
+        rows.append(
+            {
+                "text": f"{template['label']}: {'; '.join(parts)}.",
+                "score": round(max(snippet_gap, commercial_gap) + len(stronger_layers) / 10, 3),
+            }
+        )
+
+    rows.sort(key=lambda item: item["score"], reverse=True)
+    return [item["text"] for item in rows[:4]]
+
+
+def pick_templates_for_gap(
+    target_benchmark: dict,
+    competitor_benchmarks: list[dict],
+    *,
+    signal_id: str | None = None,
+    snippet_id: str | None = None,
+    use_commercial_score: bool = False,
+) -> list[str]:
+    template_gaps: list[tuple[float, str]] = []
+
+    for template in TEMPLATE_LIBRARY:
+        relevant_templates = [
+            site.get("templates", {}).get(template["id"], {})
+            for site in competitor_benchmarks
+            if site.get("templates", {}).get(template["id"], {}).get("pages_checked", 0) > 0
+        ]
+        if not relevant_templates:
+            continue
+
+        target_template = target_benchmark.get("templates", {}).get(template["id"], {})
+        if signal_id:
+            competitor_average = statistics.mean(
+                item.get("signals", {}).get(signal_id, {}).get("coverage", 0) for item in relevant_templates
+            )
+            target_value = target_template.get("signals", {}).get(signal_id, {}).get("coverage", 0)
+        elif snippet_id:
+            competitor_average = statistics.mean(
+                item.get("snippet_metrics", {}).get(snippet_id, {}).get("coverage", 0) for item in relevant_templates
+            )
+            target_value = target_template.get("snippet_metrics", {}).get(snippet_id, {}).get("coverage", 0)
+        elif use_commercial_score:
+            competitor_average = statistics.mean(item.get("commercial_score", 0) for item in relevant_templates)
+            target_value = target_template.get("commercial_score", 0)
+        else:
+            continue
+
+        gap = competitor_average - target_value
+        if gap >= 0.15:
+            template_gaps.append((round(gap, 3), template["label"]))
+
+    template_gaps.sort(key=lambda item: item[0], reverse=True)
+    return [label for _, label in template_gaps[:3]]
+
+
+def build_gap_execution_details(title: str, templates: list[str]) -> dict[str, list[str]]:
+    scope = templates or ["Главная", "Услуги и внутренние коммерческие страницы", "Контакты и страницы заявок"]
+    scope_text = ", ".join(scope)
+    title_lower = title.lower()
+
+    if "faq" in title_lower:
+        steps = [
+            f"Определить шаблоны для внедрения: {scope_text}.",
+            "Собрать 5-7 вопросов с короткими ответами, которые реально закрывают выбор, сроки, цену, гарантии и частые возражения.",
+            "Сверстать блок с отдельными подзаголовками, связать его с перелинковкой и при необходимости добавить FAQPage.",
+        ]
+        impact = [
+            "Страница лучше отвечает на длинные и уточняющие запросы.",
+            "Пользователь быстрее снимает возражения и доходит до заявки.",
+            "Коммерческий слой становится полезнее, а не просто длиннее.",
+        ]
+    elif "отзывы" in title_lower or "кейсы" in title_lower:
+        steps = [
+            f"Выбрать приоритетные шаблоны: {scope_text}.",
+            "Собрать 3-5 реальных отзывов, кейсов или примеров работ с задачей, результатом и понятным подтверждением.",
+            "Разместить блок рядом с оффером и формой заявки, чтобы он усиливал решение о контакте.",
+        ]
+        impact = [
+            "Доверие к странице и бренду растет быстрее.",
+            "Пользователю проще понять, какой результат он получит.",
+            "Трафик чаще превращается в обращение, а не в отказ.",
+        ]
+    elif "довер" in title_lower:
+        steps = [
+            f"Определить шаблоны: {scope_text}.",
+            "Собрать единый слой доверия: опыт, гарантии, сертификаты, этапы работы, фото команды или производства.",
+            "Встроить блок в ключевые шаблоны так, чтобы он поддерживал оффер, а не висел отдельно внизу страницы.",
+        ]
+        impact = [
+            "Страница выглядит убедительнее для холодного трафика.",
+            "Коммерческие факторы становятся заметнее и понятнее.",
+            "Снижается количество отказов на этапе первого знакомства с компанией.",
+        ]
+    elif "коммерческие условия" in title_lower:
+        steps = [
+            f"Определить шаблоны: {scope_text}.",
+            "Прописать для каждого типа страницы цену или диапазон, сроки, доставку, оплату, гарантию и сценарий работы.",
+            "Собрать блок в шаблон и проверить, чтобы условия были видны без ухода в служебные страницы.",
+        ]
+        impact = [
+            "Поисковик видит более сильный коммерческий сигнал.",
+            "Пользователь быстрее понимает, подходит ли ему предложение.",
+            "Страница лучше закрывает спрос на покупку или заявку.",
+        ]
+    elif "сниппет" in title_lower or "каноническ" in title_lower:
+        steps = [
+            f"Определить шаблоны: {scope_text}.",
+            "Собрать правила для title, описания страницы, H1 и канонического адреса по каждому типу страниц.",
+            "Внедрить шаблоны и проверить результат массово: по HTML, индексации и контрольной выборке URL.",
+        ]
+        impact = [
+            "Снижается количество пустых и кривых мета-полей.",
+            "Выдача становится понятнее и ровнее по ключевым страницам.",
+            "Шаблоны перестают проседать из-за технической разболтанности.",
+        ]
+    elif "контента" in title_lower:
+        steps = [
+            f"Определить шаблоны: {scope_text}.",
+            "Собрать для каждой страницы структуру из интро, условий, преимуществ, FAQ, доверия, сравнений и перелинковки.",
+            "Написать и внедрить текстовый слой так, чтобы он помогал выбору, а не раздувал страницу ради объема.",
+        ]
+        impact = [
+            "Страница лучше закрывает интент и возражения.",
+            "Появляется больше точек входа по длинным и коммерческим запросам.",
+            "Контент начинает поддерживать конверсию, а не мешать ей.",
+        ]
+    else:
+        steps = [
+            f"Определить шаблоны: {scope_text}.",
+            "Собрать требования к блоку и его полям на уровне шаблона, а не одной страницы.",
+            "Внедрить изменения, проверить отображение, индексацию и связку с перелинковкой и CTA.",
+        ]
+        impact = [
+            "Шаблоны становятся сильнее и стабильнее в выдаче.",
+            "Страницы лучше поддерживают коммерческий сценарий пользователя.",
+            "Команда получает понятный пакет задач для внедрения и контроля результата.",
+        ]
+
+    return {
+        "where_to_implement": scope,
+        "implementation_steps": steps,
+        "impact_points": impact,
+    }
 
 
 def build_competitor_commercial_findings(target_benchmark: dict, competitor_benchmark: dict) -> list[str]:
@@ -1285,6 +1499,10 @@ def build_competitor_gap_items(target_benchmark: dict, competitor_benchmarks: li
             else:
                 examples.append(f"{site['domain']}: блок встречается в ключевой выборке.")
 
+        execution_details = build_gap_execution_details(
+            signal["label"],
+            pick_templates_for_gap(target_benchmark, competitor_benchmarks, signal_id=signal["id"]),
+        )
         gap_items.append(
             {
                 "title": signal["label"],
@@ -1303,6 +1521,7 @@ def build_competitor_gap_items(target_benchmark: dict, competitor_benchmarks: li
                 "examples": examples,
                 "task": signal["implementation_brief"],
                 "benefit": signal["benefit"],
+                **execution_details,
                 "sort_score": round(gap_size + competitor_avg_coverage + signal["weight"] / 10, 3),
             }
         )
@@ -1328,6 +1547,10 @@ def build_competitor_gap_items(target_benchmark: dict, competitor_benchmarks: li
             f"{site['domain']}: {snippet_metric_state_text(snippet_signal['id'], site.get('snippet_metrics', {}).get(snippet_signal['id'], {}), site.get('pages_checked', 0))}"
             for site in competitor_with_signal[:3]
         ]
+        execution_details = build_gap_execution_details(
+            snippet_signal["label"],
+            pick_templates_for_gap(target_benchmark, competitor_benchmarks, snippet_id=snippet_signal["id"]),
+        )
         gap_items.append(
             {
                 "title": snippet_signal["label"],
@@ -1346,6 +1569,7 @@ def build_competitor_gap_items(target_benchmark: dict, competitor_benchmarks: li
                 "examples": examples,
                 "task": snippet_signal["implementation_brief"],
                 "benefit": snippet_signal["benefit"],
+                **execution_details,
                 "sort_score": round(gap_size + competitor_avg_coverage + snippet_signal["weight"] / 10, 3),
             }
         )
@@ -1378,6 +1602,10 @@ def build_competitor_gap_items(target_benchmark: dict, competitor_benchmarks: li
                 ),
                 "benefit": (
                     "Более глубокий контент помогает закрывать спрос без возврата в выдачу, поддерживает коммерческий интент и дает больше точек входа по длинным запросам."
+                ),
+                **build_gap_execution_details(
+                    "Глубина коммерческого контента на ключевых страницах",
+                    pick_templates_for_gap(target_benchmark, competitor_benchmarks, use_commercial_score=True),
                 ),
                 "sort_score": round((competitor_average_words - target_average_words) / 300 + 1.2, 3),
             }
@@ -1435,6 +1663,8 @@ def build_competitor_comparison(audit: dict, competitor_urls: list[str]) -> dict
         }
 
     for competitor_benchmark in competitor_benchmarks:
+        competitor_benchmark["factor_summary"] = build_competitor_factor_summary(target_benchmark, competitor_benchmark)
+        competitor_benchmark["template_rows"] = build_competitor_template_rows(target_benchmark, competitor_benchmark)
         competitor_benchmark["template_findings"] = build_competitor_template_findings(target_benchmark, competitor_benchmark)
         competitor_benchmark["snippet_findings"] = build_competitor_snippet_findings(target_benchmark, competitor_benchmark)
         competitor_benchmark["commercial_findings"] = build_competitor_commercial_findings(target_benchmark, competitor_benchmark)
@@ -1548,13 +1778,13 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
                 severity="High",
                 title="Р’ РІС‹Р±РѕСЂРєРµ РµСЃС‚СЊ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Рµ СЃР»СѓР¶РµР±РЅС‹Рµ РёР»Рё query-URL Р±РµР· РЅРѕСЂРјР°Р»СЊРЅРѕР№ SEO-РѕР±РІСЏР·РєРё",
                 why_it_matters=(
-                    "РЎР»СѓР¶РµР±РЅС‹Рµ route-СЃС‚СЂР°РЅРёС†С‹ Рё query-URL Р±РµР· title, description Рё H1 СЃРѕР·РґР°СЋС‚ С€СѓРј РІ РёРЅРґРµРєСЃРµ, "
-                    "СЂР°Р·РјС‹РІР°СЋС‚ СЂРµР»РµРІР°РЅС‚РЅРѕСЃС‚СЊ Рё С‚СЂР°С‚СЏС‚ crawl budget."
+                    "Служебные страницы и URL с параметрами без title, description и H1 создают шум в индексе, "
+                    "размывают релевантность и тратят ресурсы на обход."
                 ),
                 evidence=evidence,
                 recommendation=(
-                    "Р›РёР±Рѕ Р·Р°РєСЂС‹С‚СЊ С‚Р°РєРёРµ URL РѕС‚ РёРЅРґРµРєСЃР°С†РёРё Рё СѓР±СЂР°С‚СЊ РїСЂСЏРјС‹Рµ СЃСЃС‹Р»РєРё РЅР° РЅРёС…, Р»РёР±Рѕ РїРµСЂРµРІРµСЃС‚Рё РёС… РЅР° РЅРѕСЂРјР°Р»СЊРЅС‹Рµ SEO-friendly СЃС‚СЂР°РЅРёС†С‹ "
-                    "СЃ РїРѕР»РЅРѕС†РµРЅРЅС‹Рј РјРµС‚Р°-РѕС„РѕСЂРјР»РµРЅРёРµРј."
+                    "Либо закрыть такие URL от индексации и убрать прямые ссылки на них, либо перевести их на нормальные страницы для поиска "
+                    "с полноценным мета-оформлением."
                 ),
             )
         )
@@ -2093,10 +2323,10 @@ def build_quick_wins(audit: dict) -> list[dict]:
     if audit.get("invalid_schema_count", 0):
         quick_wins.append(
             {
-                "title": "РСЃРїСЂР°РІРёС‚СЊ Р±РёС‚СѓСЋ JSON-LD СЂР°Р·РјРµС‚РєСѓ",
+                "title": "Исправить битую JSON-LD разметку",
                 "effort": "15-40 РјРёРЅСѓС‚",
-                "impact": "Р’РµСЂРЅРµС‚ РІР°Р»РёРґРЅСѓСЋ structured data РІ РёРЅРґРµРєСЃ",
-                "action": "РџСЂРѕРІРµСЂРёС‚СЊ СЃРёРЅС‚Р°РєСЃРёСЃ JSON-LD Рё РїРµСЂРµСЃРѕР±СЂР°С‚СЊ РїСЂРѕР±Р»РµРјРЅС‹Рµ Р±Р»РѕРєРё schema РЅР° РєР»СЋС‡РµРІС‹С… СЃС‚СЂР°РЅРёС†Р°С….",
+                "impact": "Вернет валидную микроразметку в индекс",
+                "action": "Проверить синтаксис JSON-LD и пересобрать проблемные блоки микроразметки на ключевых страницах.",
             }
         )
 
@@ -2113,10 +2343,10 @@ def build_quick_wins(audit: dict) -> list[dict]:
     if audit.get("indexable_query_count", 0):
         quick_wins.append(
             {
-                "title": "Р Р°Р·СЂСѓР»РёС‚СЊ РёРЅРґРµРєСЃРёСЂСѓРµРјС‹Рµ query Рё route URL",
+                "title": "Закрыть индексируемые URL с параметрами и служебные страницы",
                 "effort": "30-90 РјРёРЅСѓС‚",
-                "impact": "РЎРѕРєСЂР°С‚РёС‚ С€СѓРј РІ РёРЅРґРµРєСЃРµ Рё РѕСЃРІРѕР±РѕРґРёС‚ crawl budget",
-                "action": "Р—Р°РєСЂС‹С‚СЊ СЃР»СѓР¶РµР±РЅС‹Рµ query-СЃС‚СЂР°РЅРёС†С‹ РѕС‚ РёРЅРґРµРєСЃР°С†РёРё РёР»Рё РїРµСЂРµРІРµСЃС‚Рё РёС… РЅР° С‡РёСЃС‚С‹Рµ SEO-friendly URL.",
+                "impact": "Сократит шум в индексе и освободит ресурсы на обход",
+                "action": "Закрыть служебные страницы и URL с параметрами от индексации или перевести их на чистые страницы для поиска.",
             }
         )
 
@@ -2767,7 +2997,9 @@ def shorten_path(url: str, max_length=48) -> str:
         path = f"{path}?{parsed.query}"
     if len(path) <= max_length:
         return path
-    return f"{path[: max_length - 1]}вЂ¦"
+    if max_length <= 3:
+        return path[:max_length]
+    return f"{path[: max_length - 3]}..."
 
 
 def dynamic_build_strengths(audit: dict) -> list[str]:
@@ -2827,6 +3059,66 @@ def dynamic_build_growth_points(audit: dict) -> list[str]:
         if point not in unique_points:
             unique_points.append(point)
     return unique_points[:6]
+
+
+PHASE_TEXT_REPLACEMENTS = {
+    "Разбираю шаблоны title, description, H1 и то, насколько страницы готовы к нормальному сниппету.": "Проверка title, описания страницы и H1 на ключевых шаблонах.",
+    "По H1 каркас у выборки в целом собран неплохо.": "На проверенных страницах H1 в целом оформлен нормально.",
+    "Сильно пустых страниц в выборке немного.": "Пустых страниц в выборке почти нет.",
+    "Даже при нормальном объеме текста нужно отдельно проверить, насколько хорошо он поддерживает коммерческий интент и FAQ-слой.": "Даже при нормальном объеме текста важно проверить, закрывает ли контент выбор, условия, FAQ и доверие.",
+    "Критической ямы по title в выборке не видно.": "Критических провалов по title в выборке не видно.",
+    "Описания страниц покрыты достаточно ровно.": "Описания страниц заполнены на большей части выборки.",
+    "Есть llms.txt, значит сайт уже можно дожимать и под дополнительную видимость.": "Дополнительных ограничений по техническим файлам для обхода в выборке не видно.",
+    "Отдельного llms.txt не найдено.": "Отдельных ограничений по техническим файлам для обхода в выборке не видно.",
+}
+
+
+def polish_phase_text(value: object) -> str:
+    text = normalize_output_text(value)
+    for source, target in PHASE_TEXT_REPLACEMENTS.items():
+        text = text.replace(source, target)
+    text = text.replace("FAQ-слой", "FAQ и блоки доверия")
+    return text.strip()
+
+
+def polish_phase_sections(phase_sections: list[dict]) -> list[dict]:
+    polished_sections: list[dict] = []
+    for section in phase_sections:
+        polished_checks: list[dict] = []
+        for check in section.get("checks", []):
+            findings: list[str] = []
+            for item in check.get("findings", []):
+                cleaned = polish_phase_text(item)
+                if not cleaned:
+                    continue
+                if "llms.txt" in cleaned.lower():
+                    cleaned = "Дополнительных ограничений по техническим файлам для обхода в выборке не видно."
+                if cleaned not in findings:
+                    findings.append(cleaned)
+
+            metrics = [(polish_phase_text(label), polish_phase_text(value)) for label, value in check.get("metrics", [])]
+            polished_checks.append(
+                {
+                    **check,
+                    "name": polish_phase_text(check.get("name", "")),
+                    "checked": polish_phase_text(check.get("checked", "")),
+                    "method": polish_phase_text(check.get("method", "")),
+                    "metrics": metrics,
+                    "findings": findings or ["Явных проблем в этой выборке не нашли."],
+                    "owner": polish_phase_text(check.get("owner", "")),
+                    "recommendation": polish_phase_text(check.get("recommendation", "")),
+                }
+            )
+
+        polished_sections.append(
+            {
+                **section,
+                "title": polish_phase_text(section.get("title", "")),
+                "intro": polish_phase_text(section.get("intro", "")),
+                "checks": polished_checks,
+            }
+        )
+    return polished_sections
 
 
 def build_audit(url: str, company_name: str | None, sample_size: int, competitor_urls: list[str] | None = None) -> dict:
@@ -2916,7 +3208,7 @@ def build_audit(url: str, company_name: str | None, sample_size: int, competitor
     audit["roadmap"] = dynamic_build_roadmap(audit)
     audit["priority_matrix"] = build_priority_matrix(audit)
     audit["critical_errors"] = build_critical_errors(audit)
-    audit["phase_sections"] = build_phase_sections(audit)
+    audit["phase_sections"] = polish_phase_sections(build_phase_sections(audit))
     audit["quick_wins"] = build_quick_wins(audit)
     audit["strategic_moves"] = build_strategic_moves(audit)
     audit["competitor_comparison"] = build_competitor_comparison(audit, competitor_urls or [])
@@ -3151,9 +3443,13 @@ def add_roadmap_table(doc: Document, roadmap: list[tuple[str, list[str]]]) -> No
 def add_snapshot_table(doc: Document, snapshots: list[PageSnapshot]) -> None:
     table = doc.add_table(rows=1, cols=7)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    table.autofit = False
+    widths = [Cm(8.3), Cm(2.6), Cm(1.2), Cm(1.3), Cm(1.3), Cm(1.0), Cm(3.1)]
     headers = ["Путь", "Тип", "Код", "Title", "Desc", "H1", "Schema"]
     for idx, header in enumerate(headers):
         cell = table.rows[0].cells[idx]
+        cell.width = widths[idx]
+        cell.vertical_alignment = WD_ALIGN_VERTICAL.TOP
         set_cell_shading(cell, BRAND_DARK)
         set_cell_margins(cell, 90, 80, 90, 80)
         paragraph = cell.paragraphs[0]
@@ -3163,7 +3459,7 @@ def add_snapshot_table(doc: Document, snapshots: list[PageSnapshot]) -> None:
     for snapshot in snapshots[:12]:
         row = table.add_row().cells
         values = [
-            shorten_path(snapshot.url),
+            shorten_path(snapshot.url, 42),
             snapshot.page_type,
             str(snapshot.status_code),
             str(len(snapshot.title)),
@@ -3173,6 +3469,8 @@ def add_snapshot_table(doc: Document, snapshots: list[PageSnapshot]) -> None:
         ]
         for idx, value in enumerate(values):
             cell = row[idx]
+            cell.width = widths[idx]
+            cell.vertical_alignment = WD_ALIGN_VERTICAL.TOP
             set_cell_shading(cell, BRAND_SOFT if idx % 2 == 0 else "FFFFFF")
             set_cell_margins(cell, 70, 70, 70, 70)
             paragraph = cell.paragraphs[0]
@@ -3304,6 +3602,12 @@ def add_competitor_comparison_doc(doc: Document, comparison: dict) -> None:
         if competitor.get("highlights"):
             add_text_paragraph(body, "Коротко:", size=10.4, bold=True, color=BRAND_ORANGE, space_after=3)
             add_bullet_list(body, competitor.get("highlights", []), size=10.3)
+        if competitor.get("factor_summary"):
+            add_text_paragraph(body, "Ключевые факторы:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
+            add_bullet_list(body, competitor.get("factor_summary", []), size=10.15)
+        if competitor.get("template_rows"):
+            add_text_paragraph(body, "По шаблонам короче:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
+            add_bullet_list(body, competitor.get("template_rows", []), size=10.15)
         if competitor.get("template_findings"):
             add_text_paragraph(body, "Где конкурент сильнее по шаблонам:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
             add_bullet_list(body, competitor.get("template_findings", []), size=10.15)
@@ -3347,8 +3651,16 @@ def add_competitor_comparison_doc(doc: Document, comparison: dict) -> None:
         add_text_paragraph(body, f"Что видно у конкурентов: {item.get('competitor_state', '')}", size=10.4, color=BRAND_TEXT, space_after=3)
         if item.get("examples"):
             add_bullet_list(body, item.get("examples", []), size=10.2)
-        add_text_paragraph(body, f"Короткое ТЗ: {item.get('task', '')}", size=10.3, color=BRAND_TEXT, bold=True, space_after=3)
-        add_text_paragraph(body, f"Что это даст: {item.get('benefit', '')}", size=10.3, color=BRAND_MUTED, space_after=4)
+        if item.get("where_to_implement"):
+            add_text_paragraph(body, f"Где внедрять: {', '.join(item.get('where_to_implement', []))}", size=10.25, color=BRAND_TEXT, space_after=3)
+        add_text_paragraph(body, f"Расширенное ТЗ: {item.get('task', '')}", size=10.3, color=BRAND_TEXT, bold=True, space_after=3)
+        if item.get("implementation_steps"):
+            add_text_paragraph(body, "Шаги внедрения:", size=10.25, bold=True, color=BRAND_TEXT, space_after=3)
+            add_bullet_list(body, item.get("implementation_steps", []), size=10.15)
+        add_text_paragraph(body, f"Что это даст: {item.get('benefit', '')}", size=10.3, color=BRAND_TEXT, space_after=3)
+        if item.get("impact_points"):
+            add_text_paragraph(body, "Ожидаемый эффект:", size=10.25, bold=True, color=BRAND_MUTED, space_after=3)
+            add_bullet_list(body, item.get("impact_points", []), size=10.1, color=BRAND_MUTED)
         doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
     failures = comparison.get("failures", [])
@@ -3416,7 +3728,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
         doc,
         "Краткий вывод",
         "Где сайт уже в порядке и что сейчас мешает росту",
-        "Собрали короткую выжимку по главным зонам: что уже хорошо, где есть потери и с чего разумно начать.",
+        "Ниже краткий вывод по основным зонам сайта: что уже работает, где есть потери и с чего лучше начать.",
     )
     for paragraph in build_executive_summary_dynamic(audit):
         add_text_paragraph(doc, paragraph, size=11.4, color=BRAND_TEXT, space_after=6)
@@ -3450,7 +3762,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Подробный разбор",
             "Проверка по основным слоям сайта",
-            "Разбили аудит по этапам, чтобы было видно не только список проблем, но и логику проверки.",
+            "Аудит разбит по этапам, чтобы было понятно, где именно находятся проблемы и как они проверялись.",
         )
         add_phase_sections_doc(doc, audit.get("phase_sections", []))
 
@@ -3464,7 +3776,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Сравнение с конкурентами",
             "Чего не хватает на фоне сильных конкурентов",
-            "Сравнили шаблоны страниц, сниппеты, FAQ, доверие и коммерческий слой. Ниже только те разрывы, которые можно быстро превратить в понятное ТЗ на внедрение.",
+            "Сравнение показывает, какие шаблоны, блоки и коммерческие сигналы конкуренты используют лучше и что стоит внедрить в первую очередь.",
         )
         add_competitor_comparison_doc(doc, competitor_comparison)
 
@@ -3473,7 +3785,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Быстрые исправления",
             "Что можно исправить в ближайшее время",
-            "Это задачи, которые обычно внедряются быстро и дают заметный результат без большой переделки сайта.",
+            "Это задачи, которые можно внедрить быстро и без большой переделки сайта.",
         )
         add_action_cards_doc(doc, audit.get("quick_wins", []), "effort", "impact")
 
@@ -3482,7 +3794,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Стратегические улучшения",
             "Что даст рост после базовых исправлений",
-            "Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок в долгую.",
+            "Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок.",
         )
         add_action_cards_doc(doc, audit.get("strategic_moves", []), "impact", "effort")
 
@@ -3503,7 +3815,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
         doc,
         "Приложение",
         "Какие страницы легли в основу разбора",
-        "Сюда собраны главная, коммерческие, контактные и служебные URL, по которым видно качество шаблонов и SEO-обвязки сайта.",
+        "В приложении собраны главная, коммерческие, контактные и служебные URL, по которым видно качество шаблонов и SEO-оформления сайта.",
     )
     add_snapshot_table(doc, audit.get("appendix_pages") or audit["sample_pages"])
 
