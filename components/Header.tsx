@@ -5,15 +5,18 @@ import TelegramIconLink from "@/components/TelegramIconLink";
 
 export default async function Header() {
   const settings = await getSiteSettings();
+  const siteName = settings.siteName || "Студия Английского";
+  const [firstWord, ...restWords] = siteName.split(" ");
+  const restName = restWords.join(" ");
 
   return (
     <header className="site-shell relative z-10 flex items-center justify-between gap-4 py-6">
       <Link href="/" className="brand-lockup no-underline">
-        <span className="brand-lockup-mark">Studio</span>
-        <span className="brand-lockup-name">
-          {settings.siteName || "Студия Английского"}
+        <span className="brand-lockup-kicker">{firstWord}</span>
+        <span className="brand-lockup-row">
+          <span className="brand-lockup-name">{restName || firstWord}</span>
+          <span className="brand-lockup-dot" aria-hidden="true" />
         </span>
-        <span className="brand-lockup-note">online english center</span>
       </Link>
 
       <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex">
