@@ -3,6 +3,17 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
+const fields = [
+  { key: "siteName", label: "Название сайта", type: "text" },
+  { key: "siteDescription", label: "Описание сайта", type: "textarea", span: "md:col-span-2" },
+  { key: "phone", label: "Телефон", type: "text" },
+  { key: "telegram", label: "Telegram URL", type: "text" },
+  { key: "whatsapp", label: "WhatsApp URL", type: "text" },
+  { key: "email", label: "Email", type: "text" },
+  { key: "address", label: "Адрес", type: "text", span: "md:col-span-2" },
+  { key: "footerText", label: "Текст в подвале", type: "textarea", span: "md:col-span-2" },
+];
+
 export default function SettingsForm({
   initialSettings,
 }: {
@@ -13,7 +24,7 @@ export default function SettingsForm({
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    setStatus("Сохранение...");
+    setStatus("Сохраняем...");
 
     const response = await fetch("/api/admin/settings", {
       method: "PUT",
@@ -31,39 +42,51 @@ export default function SettingsForm({
 
   return (
     <div className="space-y-6">
-      <div className="admin-card">
-        <h1 className="text-3xl font-bold text-slate-900">Настройки сайта</h1>
-        <p className="mt-2 text-slate-600">
-          Сквозные данные центра, контакты и подписи.
+      <section className="admin-card">
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-rose-500">
+          Site Settings
         </p>
-      </div>
-      <form onSubmit={handleSubmit} className="admin-card grid gap-4 md:grid-cols-2">
-        {[ 
-          ["siteName", "Название сайта"],
-          ["siteDescription", "Описание сайта"],
-          ["phone", "Телефон"],
-          ["telegram", "Telegram URL"],
-          ["whatsapp", "WhatsApp URL"],
-          ["email", "Email"],
-          ["address", "Адрес"],
-          ["footerText", "Текст в подвале"],
-        ].map(([key, label]) => (
-          <label key={key} className={key === "footerText" || key === "siteDescription" ? "md:col-span-2" : ""}>
-            <span className="admin-label">{label}</span>
-            <textarea
-              className="admin-input min-h-24"
-              value={form[key] || ""}
-              onChange={(event) =>
-                setForm((current: Record<string, any>) => ({
-                  ...current,
-                  [key]: event.target.value,
-                }))
-              }
-            />
+        <h1 className="mt-2 text-3xl font-bold text-slate-900">Настройки сайта</h1>
+        <p className="mt-3 max-w-3xl text-slate-600">
+          Сквозные данные центра, контактные каналы и тексты, которые влияют на
+          публичную часть сайта.
+        </p>
+      </section>
+
+      <form onSubmit={handleSubmit} className="admin-card grid gap-5 md:grid-cols-2">
+        {fields.map((field) => (
+          <label key={field.key} className={field.span || ""}>
+            <span className="admin-label">{field.label}</span>
+            {field.type === "textarea" ? (
+              <textarea
+                className="admin-input min-h-28"
+                value={form[field.key] || ""}
+                onChange={(event) =>
+                  setForm((current: Record<string, any>) => ({
+                    ...current,
+                    [field.key]: event.target.value,
+                  }))
+                }
+              />
+            ) : (
+              <input
+                className="admin-input"
+                value={form[field.key] || ""}
+                onChange={(event) =>
+                  setForm((current: Record<string, any>) => ({
+                    ...current,
+                    [field.key]: event.target.value,
+                  }))
+                }
+              />
+            )}
           </label>
         ))}
-        <div className="md:col-span-2 flex items-center gap-3">
-          <Button type="submit">Сохранить настройки</Button>
+
+        <div className="flex flex-wrap items-center gap-3 md:col-span-2">
+          <Button type="submit" className="rounded-full px-6">
+            Сохранить настройки
+          </Button>
           <span className="text-sm text-slate-500">{status}</span>
         </div>
       </form>

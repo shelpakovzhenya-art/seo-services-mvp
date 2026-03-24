@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { defaultRobotsTxt, defaultSitemapXml } from "../lib/site-settings";
 
 const prisma = new PrismaClient();
 
@@ -25,7 +26,9 @@ async function main() {
       siteDescription:
         "Онлайн-центр английского языка с теплой атмосферой и сильной системой обучения.",
       footerText:
-        "Студия Английского — онлайн-центр с мягкой подачей, экспертной методикой и понятной структурой обучения.",
+        "Студия Английского. Онлайн-центр с современной подачей, экспертной методикой и понятной структурой обучения.",
+      robotsTxt: defaultRobotsTxt,
+      sitemapXml: defaultSitemapXml,
     },
   });
 }

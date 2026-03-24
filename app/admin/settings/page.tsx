@@ -1,18 +1,14 @@
 import { redirect } from "next/navigation";
 import SettingsForm from "@/components/admin/SettingsForm";
 import { isAuthenticated } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { getSiteSettings } from "@/lib/site-settings";
 
 export default async function AdminSettingsPage() {
   if (!(await isAuthenticated())) {
     redirect("/admin/login");
   }
 
-  const settings = await prisma.siteSettings.upsert({
-    where: { id: "main" },
-    update: {},
-    create: { id: "main", siteName: "Студия Английского" },
-  });
+  const settings = await getSiteSettings();
 
   return <SettingsForm initialSettings={settings} />;
 }

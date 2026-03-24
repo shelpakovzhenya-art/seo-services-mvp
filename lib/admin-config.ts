@@ -1,7 +1,13 @@
 export type FieldConfig = {
   key: string;
   label: string;
-  type?: "text" | "textarea" | "number" | "checkbox" | "datetime-local";
+  type?:
+    | "text"
+    | "textarea"
+    | "richtext"
+    | "number"
+    | "checkbox"
+    | "datetime-local";
   required?: boolean;
 };
 
@@ -14,12 +20,12 @@ export type ResourceConfig = {
 export const adminResources: Record<string, ResourceConfig> = {
   programs: {
     label: "Программы",
-    description: "Направления обучения и SEO-посадки центра.",
+    description: "Направления обучения и посадочные страницы центра.",
     fields: [
       { key: "slug", label: "Slug", required: true },
       { key: "title", label: "Название", required: true },
       { key: "summary", label: "Краткое описание", type: "textarea" },
-      { key: "description", label: "Полное описание", type: "textarea" },
+      { key: "description", label: "Полное описание", type: "richtext" },
       { key: "price", label: "Стоимость" },
       { key: "order", label: "Порядок", type: "number" },
       { key: "isPublished", label: "Опубликовано", type: "checkbox" },
@@ -33,7 +39,7 @@ export const adminResources: Record<string, ResourceConfig> = {
       { key: "name", label: "Имя", required: true },
       { key: "role", label: "Роль" },
       { key: "experience", label: "Опыт" },
-      { key: "bio", label: "Описание", type: "textarea" },
+      { key: "bio", label: "Описание", type: "richtext" },
       { key: "photo", label: "Фото URL" },
       { key: "order", label: "Порядок", type: "number" },
       { key: "isPublished", label: "Опубликовано", type: "checkbox" },
@@ -41,19 +47,19 @@ export const adminResources: Record<string, ResourceConfig> = {
   },
   pages: {
     label: "Страницы",
-    description: "Статические и SEO-страницы сайта.",
+    description: "SEO-страницы и контент для сайта.",
     fields: [
       { key: "slug", label: "Slug", required: true },
       { key: "title", label: "Title", required: true },
       { key: "h1", label: "H1" },
-      { key: "description", label: "Описание", type: "textarea" },
-      { key: "content", label: "Контент", type: "textarea" },
+      { key: "description", label: "Meta description", type: "textarea" },
+      { key: "content", label: "Контент", type: "richtext" },
       { key: "isPublished", label: "Опубликовано", type: "checkbox" },
     ],
   },
   faq: {
     label: "FAQ",
-    description: "Часто задаваемые вопросы и ответы.",
+    description: "Частые вопросы и ответы.",
     fields: [
       { key: "question", label: "Вопрос", type: "textarea", required: true },
       { key: "answer", label: "Ответ", type: "textarea", required: true },
@@ -75,12 +81,12 @@ export const adminResources: Record<string, ResourceConfig> = {
   },
   blog: {
     label: "Блог",
-    description: "Статьи для экспертности и SEO-трафика.",
+    description: "Статьи для экспертности и поискового трафика.",
     fields: [
       { key: "slug", label: "Slug", required: true },
       { key: "title", label: "Заголовок", required: true },
       { key: "excerpt", label: "Краткое описание", type: "textarea" },
-      { key: "content", label: "Контент", type: "textarea", required: true },
+      { key: "content", label: "Контент", type: "richtext", required: true },
       { key: "isPublished", label: "Опубликовано", type: "checkbox" },
       { key: "publishedAt", label: "Дата публикации", type: "datetime-local" },
     ],
