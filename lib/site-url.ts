@@ -1,3 +1,5 @@
+import { defaultLocale, locales, type Locale } from '@/lib/i18n'
+
 /**
  * Get the base URL of the site
  * Works in both development and production
@@ -38,4 +40,25 @@ export function getFullUrl(path: string): string {
   const baseUrl = getSiteUrl()
   const cleanPath = path.startsWith('/') ? path : `/${path}`
   return `${baseUrl}${cleanPath}`
+}
+
+export function getLocalizedPath(path: string, locale: Locale = defaultLocale): string {
+  const cleanPath = path.startsWith('/') ? path : `/${path}`
+  return cleanPath === '/' ? `/${locale}` : `/${locale}${cleanPath}`
+}
+
+export function getLocalizedUrl(path: string, locale: Locale = defaultLocale) {
+  return getFullUrl(getLocalizedPath(path, locale))
+}
+
+export function getLocaleAlternates(path: string) {
+  const languages = Object.fromEntries(locales.map((locale) => [locale, getLocalizedUrl(path, locale)]))
+
+  return {
+    canonical: getLocalizedUrl(path, defaultLocale),
+    languages: {
+      ...languages,
+      'x-default': getLocalizedUrl(path, defaultLocale),
+    },
+  }
 }

@@ -6,6 +6,7 @@ import Header from '@/components/Header'
 import JsonLd from '@/components/JsonLd'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import SiteAtmosphere from '@/components/SiteAtmosphere'
+import { getRouteLocale } from '@/lib/i18n'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getSiteUrl } from '@/lib/site-url'
 import { createOrganizationSchema, createWebsiteSchema } from '@/lib/structured-data'
@@ -79,12 +80,13 @@ export default async function RootLayout({
 }) {
   const headersList = await headers()
   const pathname = headersList.get('x-pathname') || ''
+  const locale = getRouteLocale(headersList.get('x-locale'))
   const isAdmin = pathname.startsWith('/admin')
   const organizationSchema = createOrganizationSchema()
   const websiteSchema = createWebsiteSchema()
 
   return (
-    <html lang="ru">
+    <html lang={locale}>
       <body className={isAdmin ? 'admin-theme admin-body' : 'site-shell'}>
         {!isAdmin ? (
           <>

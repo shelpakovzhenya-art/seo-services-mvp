@@ -1,19 +1,47 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { headers } from 'next/headers'
 import { MessageCircle, MessagesSquare, Wrench } from 'lucide-react'
+import { getDictionary } from '@/lib/dictionaries'
+import { getRouteLocale, prefixPathWithLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { featuredReads } from '@/lib/site-recommendations'
 
 const DEFAULT_MENU_ITEMS = [
-  { id: '1', label: 'Главная', url: '/', order: 1, isActive: true },
-  { id: '2', label: 'Услуги', url: '/services', order: 2, isActive: true },
-  { id: '3', label: 'Кейсы', url: '/cases', order: 3, isActive: true },
-  { id: '4', label: 'Отзывы', url: '/reviews', order: 4, isActive: true },
-  { id: '5', label: 'Блог', url: '/blog', order: 5, isActive: true },
-  { id: '6', label: 'Контакты', url: '/contacts', order: 6, isActive: true },
+  { id: '1', label: 'Home', url: '/', order: 1, isActive: true },
+  { id: '2', label: 'Services', url: '/services', order: 2, isActive: true },
+  { id: '3', label: 'Cases', url: '/cases', order: 3, isActive: true },
+  { id: '4', label: 'Reviews', url: '/reviews', order: 4, isActive: true },
+  { id: '5', label: 'Blog', url: '/blog', order: 5, isActive: true },
+  { id: '6', label: 'Contacts', url: '/contacts', order: 6, isActive: true },
 ]
 
+function localizeMenuLabel(url: string, fallbackLabel: string, locale: 'ru' | 'en') {
+  const dictionary = getDictionary(locale)
+
+  switch (url) {
+    case '/':
+      return dictionary.menu.home
+    case '/services':
+      return dictionary.menu.services
+    case '/cases':
+      return dictionary.menu.cases
+    case '/reviews':
+      return dictionary.menu.reviews
+    case '/blog':
+      return dictionary.menu.blog
+    case '/contacts':
+      return dictionary.menu.contacts
+    default:
+      return fallbackLabel
+  }
+}
+
 export default async function Footer() {
+  const headersList = await headers()
+  const locale = getRouteLocale(headersList.get('x-locale'))
+  const dictionary = getDictionary(locale)
+
   let settings: any = null
   let menuItems: any[] = []
 
@@ -34,26 +62,10 @@ export default async function Footer() {
 
   const currentYear = new Date().getFullYear()
   const socialLinks = [
-    {
-      href: settings?.telegramUrl,
-      label: 'Telegram',
-      type: 'telegram' as const,
-    },
-    {
-      href: settings?.whatsappUrl,
-      label: 'WhatsApp',
-      type: 'whatsapp' as const,
-    },
-    {
-      href: settings?.vkUrl,
-      label: 'VK',
-      type: 'vk' as const,
-    },
-    {
-      href: settings?.maxUrl,
-      label: 'Messenger',
-      type: 'max' as const,
-    },
+    { href: settings?.telegramUrl, label: 'Telegram', type: 'telegram' as const },
+    { href: settings?.whatsappUrl, label: 'WhatsApp', type: 'whatsapp' as const },
+    { href: settings?.vkUrl, label: 'VK', type: 'vk' as const },
+    { href: settings?.maxUrl, label: 'Messenger', type: 'max' as const },
   ].filter((item) => item.href)
 
   return (
@@ -63,13 +75,8 @@ export default async function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.75fr_0.8fr_1.1fr]">
           <div className="space-y-5">
             <span className="warm-chip">Shelpakov Digital</span>
-            <h3 className="max-w-xl text-3xl font-semibold text-white">
-              SEO и доработка сайта под заявки, доверие и рост.
-            </h3>
-            <p className="max-w-xl text-sm leading-7 text-slate-400">
-              {settings?.footerText ||
-                'Помогаю сделать сайт понятнее для клиента, сильнее для поисковиков и полезнее для бизнеса.'}
-            </p>
+            <h3 className="max-w-xl text-3xl font-semibold text-white">{dictionary.footer.heading}</h3>
+            <p className="max-w-xl text-sm leading-7 text-slate-400">{settings?.footerText || dictionary.footer.description}</p>
 
             {socialLinks.length > 0 ? (
               <div className="flex flex-wrap gap-3 pt-2">
@@ -97,12 +104,12 @@ export default async function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">Навигация</h3>
+            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">{dictionary.footer.navigation}</h3>
             <ul className="space-y-3">
               {menuItems.map((item) => (
                 <li key={item.id}>
-                  <Link href={item.url} className="transition hover:text-white">
-                    {item.label}
+                  <Link href={prefixPathWithLocale(item.url, locale)} className="transition hover:text-white">
+                    {localizeMenuLabel(item.url, item.label, locale)}
                   </Link>
                 </li>
               ))}
@@ -110,37 +117,37 @@ export default async function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">Контакты</h3>
+            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">{dictionary.footer.contacts}</h3>
             <div className="text-sm">
               <div className="space-y-3">
-                <p>{settings?.workSchedule || 'Пн-Пт 09:00-17:00'}</p>
+                <p>{settings?.workSchedule || 'Mon-Fri 09:00-17:00'}</p>
                 <a href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`} className="transition hover:text-white">
                   {settings?.email || 'shelpakovzhenya@gmail.com'}
                 </a>
-                <p className="text-slate-400">Аудит, стратегия, коммерческие факторы и рост заявок.</p>
+                <p className="text-slate-400">{dictionary.footer.toolsTitle}</p>
               </div>
 
               <div className="pt-6">
                 <Link
-                  href="/tools"
+                  href={prefixPathWithLocale('/tools', locale)}
                   className="inline-flex w-fit items-center gap-3 border border-white/14 bg-[#09111d]/88 px-5 py-4 text-sm font-medium uppercase tracking-[0.22em] text-slate-200 transition hover:border-cyan-300/34 hover:bg-[#0d1624] hover:text-white"
                 >
                   <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/5 text-slate-100">
                     <Wrench className="h-4 w-4" />
                   </span>
-                  <span>SEO-TOOLS</span>
+                  <span>{dictionary.footer.tools}</span>
                 </Link>
               </div>
             </div>
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">Почитать дальше</h3>
+            <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">{dictionary.footer.readingMore}</h3>
             <div className="space-y-4">
               {featuredReads.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={prefixPathWithLocale(item.href, locale)}
                   className="block rounded-[24px] border border-white/12 bg-white/8 p-4 transition hover:border-cyan-300/40 hover:bg-white/12 hover:text-white"
                 >
                   <div className="text-[11px] uppercase tracking-[0.22em] text-orange-300">{item.kicker}</div>
@@ -152,13 +159,10 @@ export default async function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-          <Link
-            href="/sitemap.xml"
-            className="w-fit text-sm text-slate-500 transition hover:text-white"
-          >
-            Карта сайта
+          <Link href="/sitemap.xml" className="w-fit text-sm text-slate-500 transition hover:text-white">
+            {dictionary.footer.sitemap}
           </Link>
-          <p>&copy; {currentYear} Shelpakov Digital. Все права защищены.</p>
+          <p>&copy; {currentYear} Shelpakov Digital. {dictionary.footer.rights}</p>
         </div>
       </div>
     </footer>

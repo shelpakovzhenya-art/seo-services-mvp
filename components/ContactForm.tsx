@@ -2,9 +2,15 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { getDictionary } from '@/lib/dictionaries'
+import { getLocaleFromPathname, getRouteLocale } from '@/lib/i18n'
 
 export default function ContactForm() {
+  const pathname = usePathname()
+  const locale = getRouteLocale(getLocaleFromPathname(pathname))
+  const dictionary = getDictionary(locale)
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
@@ -38,19 +44,20 @@ export default function ContactForm() {
           honeypot: formData.honeypot,
           sourceUrl: window.location.href,
           sourceTitle: document.title,
+          locale,
         }),
       })
 
-      const data = await response.json()
+      await response.json().catch(() => null)
 
       if (response.ok) {
-        setMessage({ type: 'success', text: data.message || 'Спасибо. Получил заявку и скоро свяжусь с вами.' })
+        setMessage({ type: 'success', text: dictionary.form.success })
         setFormData({ name: '', contact: '', site: '', honeypot: '' })
       } else {
-        setMessage({ type: 'error', text: data.error || 'Не удалось отправить заявку. Попробуйте ещё раз чуть позже.' })
+        setMessage({ type: 'error', text: dictionary.form.error })
       }
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Не удалось отправить заявку. Попробуйте ещё раз чуть позже.' })
+    } catch {
+      setMessage({ type: 'error', text: dictionary.form.error })
     } finally {
       setIsSubmitting(false)
     }
@@ -70,7 +77,7 @@ export default function ContactForm() {
 
       <div>
         <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-700">
-          Как к вам обращаться
+          {dictionary.form.nameLabel}
         </label>
         <input
           type="text"
@@ -79,13 +86,13 @@ export default function ContactForm() {
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="w-full rounded-2xl border border-orange-100 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-200"
-          placeholder="Имя"
+          placeholder={dictionary.form.namePlaceholder}
         />
       </div>
 
       <div>
         <label htmlFor="contact" className="mb-2 block text-sm font-medium text-slate-700">
-          Телефон, Telegram или email
+          {dictionary.form.contactLabel}
         </label>
         <div className="mb-3 flex flex-wrap items-center gap-3 rounded-2xl border border-cyan-100 bg-cyan-50/70 px-4 py-3 text-sm text-slate-700">
           <a
@@ -95,9 +102,9 @@ export default function ContactForm() {
             className="inline-flex items-center gap-2 font-medium text-cyan-800 transition hover:text-cyan-900"
           >
             <Image src="/telegram-logo.svg" alt="Telegram" width={24} height={24} className="h-6 w-6" />
-            Написать в Telegram
+            {dictionary.form.telegramLabel}
           </a>
-          <span className="text-slate-400">или оставьте контакт в форме ниже</span>
+          <span className="text-slate-400">{dictionary.form.telegramHint}</span>
         </div>
         <input
           type="text"
@@ -107,13 +114,13 @@ export default function ContactForm() {
           value={formData.contact}
           onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
           className="w-full rounded-2xl border border-orange-100 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-200"
-          placeholder="+7 999 000-00-00 или @telegram"
+          placeholder={dictionary.form.contactPlaceholder}
         />
       </div>
 
       <div>
         <label htmlFor="site" className="mb-2 block text-sm font-medium text-slate-700">
-          Сайт
+          {dictionary.form.siteLabel}
         </label>
         <input
           type="text"
@@ -122,12 +129,12 @@ export default function ContactForm() {
           value={formData.site}
           onChange={(e) => setFormData({ ...formData, site: e.target.value })}
           className="w-full rounded-2xl border border-orange-100 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-200"
-          placeholder="https://example.ru"
+          placeholder={dictionary.form.sitePlaceholder}
         />
       </div>
 
       <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-600">
-        Ответим в течение дня, без обязательств и с понятным ориентиром по следующему шагу.
+        {dictionary.form.note}
       </div>
 
       {message && (
@@ -143,7 +150,7 @@ export default function ContactForm() {
       )}
 
       <Button type="submit" disabled={isSubmitting} className="w-full rounded-2xl">
-        {isSubmitting ? 'Отправляю заявку...' : 'Отправить заявку'}
+        {isSubmitting ? dictionary.form.submitting : dictionary.form.submit}
       </Button>
     </form>
   )

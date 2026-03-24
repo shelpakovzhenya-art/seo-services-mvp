@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight, Mail, Menu, MessageCircle, MessagesSquare, X } from 'lucide-react'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
+import { getDictionary } from '@/lib/dictionaries'
+import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
 
 type MenuItem = {
   id: string
@@ -30,17 +33,13 @@ type Props = {
   workSchedule: string
   workStatus: WorkStatus
   socialLinks: SocialLink[]
+  locale: Locale
+  currentPath: string
 }
 
-const OPEN_MENU_LABEL = '\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u043c\u0435\u043d\u044e'
-const CLOSE_MENU_LABEL = '\u0417\u0430\u043a\u0440\u044b\u0442\u044c \u043c\u0435\u043d\u044e'
-const MENU_TITLE = '\u041c\u0435\u043d\u044e'
-const CONTACTS_TITLE = '\u0421\u0432\u044f\u0437\u044c'
-const DISCUSS_PROJECT = '\u041e\u0431\u0441\u0443\u0434\u0438\u0442\u044c \u043f\u0440\u043e\u0435\u043a\u0442'
-const CONTACT_FORM_HREF = '/contacts#contact-form'
-
-export default function MobileMenu({ menuItems, email, workSchedule, workStatus, socialLinks }: Props) {
+export default function MobileMenu({ menuItems, email, workSchedule, workStatus, socialLinks, locale, currentPath }: Props) {
   const [open, setOpen] = useState(false)
+  const dictionary = getDictionary(locale)
 
   useEffect(() => {
     if (!open) {
@@ -57,20 +56,23 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
 
   return (
     <>
-      <button
-        type="button"
-        aria-label={open ? CLOSE_MENU_LABEL : OPEN_MENU_LABEL}
-        aria-expanded={open}
-        onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/16 bg-white/12 text-slate-50 shadow-[0_12px_26px_rgba(2,8,23,0.24)] transition hover:bg-white/18 lg:hidden"
-      >
-        {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-      </button>
+      <div className="flex items-center gap-2 lg:hidden">
+        <LanguageSwitcher locale={locale} pathname={currentPath} />
+        <button
+          type="button"
+          aria-label={open ? dictionary.mobileMenu.close : dictionary.mobileMenu.open}
+          aria-expanded={open}
+          onClick={() => setOpen((value) => !value)}
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/16 bg-white/12 text-slate-50 shadow-[0_12px_26px_rgba(2,8,23,0.24)] transition hover:bg-white/18"
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
 
       <div className={`fixed inset-0 z-[70] lg:hidden ${open ? 'pointer-events-auto' : 'pointer-events-none'}`}>
         <button
           type="button"
-          aria-label={CLOSE_MENU_LABEL}
+          aria-label={dictionary.mobileMenu.close}
           className={`absolute inset-0 bg-slate-950/44 backdrop-blur-md transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
           onClick={() => setOpen(false)}
         />
@@ -81,12 +83,12 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
           <div className="sticky top-0 z-10 border-b border-white/10 bg-[#09111f]/88 px-6 py-5 backdrop-blur-2xl">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="text-xs uppercase tracking-[0.24em] text-orange-300">{MENU_TITLE}</div>
+                <div className="text-xs uppercase tracking-[0.24em] text-orange-300">{dictionary.mobileMenu.menuTitle}</div>
                 <div className="mt-1 text-2xl font-semibold text-white">Shelpakov Digital</div>
               </div>
               <button
                 type="button"
-                aria-label={CLOSE_MENU_LABEL}
+                aria-label={dictionary.mobileMenu.close}
                 onClick={() => setOpen(false)}
                 className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/12 bg-white/10 text-slate-100 shadow-[0_12px_30px_rgba(2,8,23,0.3)]"
               >
@@ -107,10 +109,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
                   {workStatus.text}
                 </span>
               </div>
-              <a
-                href={`mailto:${email}`}
-                className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-slate-100 transition hover:text-cyan-100"
-              >
+              <a href={`mailto:${email}`} className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-slate-100 transition hover:text-cyan-100">
                 <Mail className="h-4 w-4 text-cyan-300" />
                 {email}
               </a>
@@ -120,7 +119,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
               {menuItems.map((item) => (
                 <Link
                   key={item.id}
-                  href={item.url}
+                  href={prefixPathWithLocale(item.url, locale)}
                   onClick={() => setOpen(false)}
                   className="flex items-center justify-between rounded-[30px] border border-white/12 bg-white/[0.08] px-5 py-5 text-[clamp(1.2rem,4.4vw,1.56rem)] font-bold tracking-[0.01em] text-white shadow-[0_18px_36px_rgba(2,8,23,0.2)] backdrop-blur-xl transition hover:border-cyan-300/40 hover:bg-white/[0.12]"
                 >
@@ -131,7 +130,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
             </nav>
 
             <div className="mt-6 rounded-[30px] border border-white/12 bg-[linear-gradient(145deg,rgba(255,186,140,0.15),rgba(255,255,255,0.06)_48%,rgba(96,227,255,0.08))] p-5 backdrop-blur-xl">
-              <div className="text-xs uppercase tracking-[0.22em] text-orange-300">{CONTACTS_TITLE}</div>
+              <div className="text-xs uppercase tracking-[0.22em] text-orange-300">{dictionary.mobileMenu.contactsTitle}</div>
 
               {socialLinks.length > 0 ? (
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -158,11 +157,11 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
             </div>
 
             <Link
-              href={CONTACT_FORM_HREF}
+              href={prefixPathWithLocale('/contacts#contact-form', locale)}
               onClick={() => setOpen(false)}
               className="site-cta-button mt-6 inline-flex w-full justify-center px-5 py-4 text-base"
             >
-              {DISCUSS_PROJECT}
+              {dictionary.header.discussProject}
               <ArrowUpRight className="h-5 w-5" />
             </Link>
           </div>
