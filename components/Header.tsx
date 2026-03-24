@@ -7,13 +7,12 @@ export default async function Header() {
 
   return (
     <header className="site-shell relative z-10 flex items-center justify-between gap-4 py-6">
-      <Link href="/" className="flex flex-col no-underline">
-        <span className="text-sm uppercase tracking-[0.3em] text-rose-500">
-          Онлайн-центр
-        </span>
-        <span className="text-xl font-extrabold text-slate-900 md:text-2xl">
+      <Link href="/" className="brand-lockup no-underline">
+        <span className="brand-lockup-mark">Studio</span>
+        <span className="brand-lockup-name">
           {settings.siteName || "Студия Английского"}
         </span>
+        <span className="brand-lockup-note">online english center</span>
       </Link>
 
       <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex">
