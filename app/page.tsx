@@ -68,16 +68,17 @@ export default function HomePage() {
       <main className="site-shell relative z-10">
         <section className="glass-card overflow-hidden px-6 py-8 md:px-10 md:py-12">
           <div>
-            <p className="mb-4 inline-flex rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-rose-600">
+            <p className="hero-badge">
               Онлайн-центр нового поколения
             </p>
-            <h1 className="section-title max-w-3xl">
-              Студия Английского
-              <span className="mt-2 block text-slate-700">
+            <h1 className="hero-title max-w-4xl">
+              <span className="hero-title-script">Студия</span>
+              <span className="hero-title-main">Английского</span>
+              <span className="hero-title-subline">
                 теплый, эстетичный и сильный центр английского языка
               </span>
             </h1>
-            <p className="section-copy mt-6 max-w-2xl">
+            <p className="hero-copy mt-6 max-w-2xl">
               Мы выстраиваем обучение так, чтобы английский становился понятным,
               живым и устойчивым навыком. В центре внимания не просто уроки, а
               продуманная система: диагностика, маршрут, регулярная практика и
