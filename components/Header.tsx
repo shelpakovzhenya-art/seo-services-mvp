@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { ArrowUpRight, Mail, MessageCircle, MessagesSquare } from 'lucide-react'
@@ -155,7 +154,7 @@ export default async function Header() {
                     className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/14 bg-white/10 text-slate-100 transition hover:border-cyan-300/60 hover:bg-white/16 hover:text-cyan-100"
                   >
                     {item.type === 'telegram' ? (
-                      <Image src="/telegram-logo.svg" alt="Telegram" width={20} height={20} className="h-5 w-5" />
+                      <img src="/telegram-logo.svg" alt="Telegram" width={20} height={20} className="h-5 w-5" />
                     ) : item.type === 'vk' ? (
                       <MessagesSquare className="h-4 w-4" />
                     ) : (
@@ -173,8 +172,8 @@ export default async function Header() {
         <div className="container mx-auto px-4">
           <nav className="my-2 flex items-center justify-between gap-3 rounded-[26px] border border-white/14 bg-[linear-gradient(145deg,rgba(11,20,37,0.9),rgba(15,28,48,0.84))] px-3.5 py-3 shadow-[0_22px_52px_rgba(2,8,23,0.28)] md:my-3 md:mb-4 md:gap-4 md:rounded-[32px] md:px-4 md:py-4">
             <Link href={prefixPathWithLocale('/', locale)} className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-              <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-2xl border border-cyan-200/40 bg-white/95 shadow-[0_10px_24px_rgba(15,23,42,0.14)] sm:h-11 sm:w-11 md:h-12 md:w-12">
-                <Image src="/favicon-48.png" alt="Shelpakov Digital logo" width={28} height={28} className="h-6 w-6 object-contain md:h-7 md:w-7" />
+              <span className="brand-mark grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-2xl sm:h-11 sm:w-11 md:h-12 md:w-12">
+                <span className="brand-mark-text">SD</span>
               </span>
               <span className="flex min-w-0 flex-col">
                 <span className="truncate text-[0.92rem] font-semibold uppercase tracking-[0.12em] text-white sm:text-[1rem] md:text-lg md:tracking-[0.16em]">Shelpakov Digital</span>
