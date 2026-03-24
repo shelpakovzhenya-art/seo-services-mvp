@@ -1,10 +1,13 @@
-import Link from 'next/link'
+'use client'
+
+import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { getDictionary } from '@/lib/dictionaries'
 import { type Locale, locales, prefixPathWithLocale } from '@/lib/i18n'
 
 type LanguageSwitcherProps = {
   locale: Locale
-  pathname: string
+  pathname?: string
 }
 
 function FlagIcon({ locale }: { locale: Locale }) {
@@ -39,24 +42,42 @@ function FlagIcon({ locale }: { locale: Locale }) {
 }
 
 export default function LanguageSwitcher({ locale, pathname }: LanguageSwitcherProps) {
+  const currentPathname = usePathname()
+  const [pendingLocale, setPendingLocale] = useState<Locale | null>(null)
+  const activePathname = pathname || currentPathname || '/'
+
+  function handleLanguageChange(targetLocale: Locale, href: string) {
+    if (targetLocale === locale || pendingLocale) {
+      return
+    }
+
+    setPendingLocale(targetLocale)
+    document.cookie = `locale=${targetLocale}; path=/; SameSite=Lax`
+    document.body.classList.add('locale-transitioning')
+    window.location.assign(href)
+  }
+
   return (
     <div className="language-switcher" aria-label={getDictionary(locale).switchTo}>
       {locales.map((item) => {
         const active = item === locale
+        const href = prefixPathWithLocale(activePathname, item)
+        const isPending = pendingLocale === item
 
         return (
-          <Link
+          <button
             key={item}
-            href={prefixPathWithLocale(pathname, item)}
+            type="button"
             className={`language-pill ${active ? 'is-active' : ''}`}
-            hrefLang={item}
-            lang={item}
             aria-current={active ? 'page' : undefined}
-            prefetch={false}
+            aria-pressed={active}
+            disabled={Boolean(pendingLocale)}
+            onClick={() => handleLanguageChange(item, href)}
           >
             <FlagIcon locale={item} />
             <span>{item === 'ru' ? 'RU' : 'US'}</span>
-          </Link>
+            {isPending ? <span className="language-pill-loader" aria-hidden="true" /> : null}
+          </button>
         )
       })}
     </div>
