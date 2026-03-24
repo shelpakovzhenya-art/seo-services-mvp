@@ -14,10 +14,10 @@ export default async function Header() {
   return (
     <header className="site-shell relative z-10 flex items-center justify-between gap-4 py-6">
       <Link href="/" className="brand-lockup no-underline">
-        <span className="brand-lockup-kicker">{firstWord}</span>
-        <span className="brand-lockup-row">
+        <span className="brand-lockup-accent" aria-hidden="true" />
+        <span className="brand-lockup-body">
+          <span className="brand-lockup-kicker">{firstWord}</span>
           <span className="brand-lockup-name">{restName || firstWord}</span>
-          <span className="brand-lockup-dot" aria-hidden="true" />
         </span>
       </Link>
 
