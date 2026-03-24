@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getSiteSettings } from "@/lib/site-settings";
+import TelegramIconLink from "@/components/TelegramIconLink";
 
 export default async function Header() {
   const settings = await getSiteSettings();
@@ -24,14 +25,7 @@ export default async function Header() {
 
       <div className="flex items-center gap-3">
         {settings.telegram ? (
-          <a
-            href={settings.telegram}
-            target="_blank"
-            rel="noreferrer"
-            className="hidden rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-rose-200 hover:text-rose-600 md:inline-flex"
-          >
-            Telegram
-          </a>
+          <TelegramIconLink href={settings.telegram} className="hidden md:flex" />
         ) : null}
         <Button asChild className="rounded-full px-5">
           <a href="#contact">Оставить заявку</a>

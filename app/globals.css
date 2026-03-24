@@ -98,6 +98,17 @@
     color: #8b93a8;
   }
 
+  .telegram-icon-link {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-full transition;
+    box-shadow:
+      0 14px 26px rgba(65, 157, 209, 0.18),
+      0 0 0 1px rgba(255, 255, 255, 0.82);
+  }
+
+  .telegram-icon-link:hover {
+    transform: translateY(-1px) scale(1.02);
+  }
+
   .hero-panel {
     @apply grid gap-6 rounded-[32px] border border-white/70 bg-white/80 px-6 py-6 backdrop-blur-xl md:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] md:px-8 md:py-7;
     box-shadow: 0 24px 70px rgba(122, 88, 96, 0.1);
