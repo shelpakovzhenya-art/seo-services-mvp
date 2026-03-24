@@ -35,8 +35,13 @@ const decorItems = [
   "decor-ruler",
   "decor-notebook",
   "decor-book",
+  "decor-book-reading",
+  "decor-book-grammar",
+  "decor-book-speaking",
   "decor-clip",
   "decor-card",
+  "decor-eraser",
+  "decor-eraser-two",
   "decor-hand",
   "decor-pencil-two",
 ];

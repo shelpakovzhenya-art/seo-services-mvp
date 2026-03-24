@@ -195,15 +195,46 @@
 .decor-ruler {
   top: 310px;
   left: 110px;
-  width: 190px;
-  height: 26px;
-  border-radius: 18px;
+  width: 228px;
+  height: 30px;
+  border-radius: 10px;
   transform: rotate(-24deg);
   background:
-    repeating-linear-gradient(90deg, transparent 0 12px, rgba(145, 104, 63, 0.42) 12px 14px),
-    linear-gradient(90deg, #f0deb6, #e9ca92);
+    repeating-linear-gradient(
+      90deg,
+      rgba(122, 92, 54, 0.78) 0 1px,
+      transparent 1px 10px,
+      rgba(122, 92, 54, 0.48) 10px 11px,
+      transparent 11px 20px
+    ),
+    linear-gradient(90deg, rgba(122, 92, 54, 0.15) 0 100%),
+    linear-gradient(90deg, #f6e3ba, #ecd198);
+  border: 1px solid rgba(149, 109, 63, 0.26);
   animation-duration: 12s;
   animation-delay: -3s;
+}
+
+.decor-ruler::before {
+  inset: 0;
+  border-radius: 10px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 19px,
+      rgba(120, 88, 49, 0.85) 19px 20px,
+      transparent 20px 39px,
+      rgba(120, 88, 49, 0.55) 39px 40px
+    );
+  opacity: 0.9;
+}
+
+.decor-ruler::after {
+  left: 16px;
+  right: 16px;
+  top: 8px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
 }
 
 .decor-notebook {
@@ -247,6 +278,80 @@
   border: 2px solid rgba(255, 255, 255, 0.56);
 }
 
+.decor-book-reading,
+.decor-book-grammar,
+.decor-book-speaking {
+  width: 148px;
+  height: 110px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.12),
+    0 18px 36px rgba(92, 68, 64, 0.12);
+}
+
+.decor-book-reading {
+  top: 138px;
+  right: 360px;
+  transform: rotate(14deg);
+  background: linear-gradient(135deg, #f2aeb7, #de8796);
+  animation-duration: 12.2s;
+}
+
+.decor-book-grammar {
+  top: 560px;
+  left: 80px;
+  transform: rotate(-10deg);
+  background: linear-gradient(135deg, #95b9f0, #6c95d4);
+  animation-duration: 10.6s;
+  animation-delay: -1.6s;
+}
+
+.decor-book-speaking {
+  right: 90px;
+  bottom: 180px;
+  transform: rotate(11deg);
+  background: linear-gradient(135deg, #f0c18f, #db9b5d);
+  animation-duration: 11.4s;
+  animation-delay: -2.6s;
+}
+
+.decor-book-reading::before,
+.decor-book-grammar::before,
+.decor-book-speaking::before {
+  left: 14px;
+  right: 14px;
+  top: 16px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.decor-book-reading::after,
+.decor-book-grammar::after,
+.decor-book-speaking::after {
+  left: 18px;
+  top: 52px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.decor-book-reading::after {
+  content: "Reading";
+}
+
+.decor-book-grammar::after {
+  content: "Grammar";
+}
+
+.decor-book-speaking::after {
+  content: "Speaking";
+}
+
 .decor-clip {
   top: 210px;
   left: 360px;
@@ -284,6 +389,41 @@
   box-shadow:
     0 14px 0 rgba(192, 201, 219, 0.9),
     0 28px 0 rgba(192, 201, 219, 0.9);
+}
+
+.decor-eraser,
+.decor-eraser-two {
+  width: 82px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid rgba(180, 152, 152, 0.2);
+  background:
+    linear-gradient(90deg, #f8d2d7 0 50%, #fff7ef 50% 100%);
+  box-shadow:
+    inset 0 -4px 0 rgba(0, 0, 0, 0.04),
+    0 16px 28px rgba(92, 68, 64, 0.12);
+}
+
+.decor-eraser {
+  top: 242px;
+  right: 220px;
+  transform: rotate(-12deg);
+  animation-duration: 9.4s;
+}
+
+.decor-eraser-two {
+  left: 330px;
+  bottom: 140px;
+  transform: rotate(17deg);
+  animation-duration: 10.2s;
+  animation-delay: -2.2s;
+}
+
+.decor-eraser::before,
+.decor-eraser-two::before {
+  inset: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .decor-hand {
@@ -341,6 +481,18 @@
   --rotate: -13deg;
 }
 
+.decor-book-reading {
+  --rotate: 14deg;
+}
+
+.decor-book-grammar {
+  --rotate: -10deg;
+}
+
+.decor-book-speaking {
+  --rotate: 11deg;
+}
+
 .decor-clip {
   --rotate: 20deg;
 }
@@ -351,6 +503,14 @@
 
 .decor-hand {
   --rotate: -18deg;
+}
+
+.decor-eraser {
+  --rotate: -12deg;
+}
+
+.decor-eraser-two {
+  --rotate: 17deg;
 }
 
 @media (max-width: 1200px) {
@@ -375,6 +535,10 @@
     display: none;
   }
 
+  .decor-book-speaking {
+    display: none;
+  }
+
   .school-float {
     opacity: 0.48;
   }
@@ -384,7 +548,9 @@
   .decor-pencil,
   .decor-pencil-two,
   .decor-notebook,
-  .decor-clip {
+  .decor-clip,
+  .decor-eraser,
+  .decor-eraser-two {
     transform: scale(0.72);
   }
 
@@ -406,5 +572,20 @@
   .decor-clip {
     left: 24px;
     top: 260px;
+  }
+
+  .decor-book-reading,
+  .decor-book-grammar {
+    transform: scale(0.74);
+  }
+
+  .decor-book-reading {
+    right: 20px;
+    top: 240px;
+  }
+
+  .decor-book-grammar {
+    left: 12px;
+    top: 640px;
   }
 }
