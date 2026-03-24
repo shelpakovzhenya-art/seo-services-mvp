@@ -47,7 +47,8 @@ export async function sendLeadEmail(payload: LeadEmailPayload) {
     body: JSON.stringify({
       from: config.from,
       to: [config.to],
-      subject: `Новая заявка: ${payload.name}`,
+      subject: "Новая заявка с сайта Студии Английского",
+      reply_to: config.from,
       text: `Новая заявка с сайта\n\nИмя: ${payload.name}\nКонтакт: ${payload.contact}\nСообщение: ${payload.message || "Не указано"}`,
       html: `
         <div style="font-family:Arial,sans-serif;line-height:1.6;color:#1f2937">
