@@ -61,7 +61,18 @@ const decorItems = [
   "decor-pencil-two",
 ];
 
-export default function HomePage() {
+type HomePageProps = {
+  searchParams?: Promise<{
+    success?: string;
+    error?: string;
+  }>;
+};
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const isSuccess = resolvedSearchParams?.success === "1";
+  const isError = resolvedSearchParams?.error === "1";
+
   return (
     <div className="relative overflow-hidden pb-8">
       <div className="school-scene" aria-hidden="true">
@@ -257,6 +268,17 @@ export default function HomePage() {
             method="post"
             className="soft-card grid gap-4 p-6 md:p-8"
           >
+            {isSuccess ? (
+              <div className="form-status form-status-success">
+                Заявка отправлена. Мы скоро свяжемся с вами.
+              </div>
+            ) : null}
+            {isError ? (
+              <div className="form-status form-status-error">
+                Не удалось отправить заявку. Попробуйте еще раз или напишите
+                нам в Telegram.
+              </div>
+            ) : null}
             <label>
               <span className="admin-label">Имя</span>
               <input className="admin-input" name="name" required />

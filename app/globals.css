@@ -215,6 +215,18 @@
     @apply mb-2 block text-sm font-semibold text-slate-700;
   }
 
+  .form-status {
+    @apply rounded-2xl border px-4 py-3 text-sm font-medium leading-6;
+  }
+
+  .form-status-success {
+    @apply border-emerald-200 bg-emerald-50 text-emerald-800;
+  }
+
+  .form-status-error {
+    @apply border-rose-200 bg-rose-50 text-rose-700;
+  }
+
   .about-shell {
     @apply rounded-[34px] border border-white/70 bg-white/70 p-5 shadow-[0_24px_70px_rgba(122,88,96,0.08)] md:p-7;
     backdrop-filter: blur(18px);
