@@ -1,7 +1,12 @@
 node_modules/
 dist/
+.next/
+.vercel/
+.turbo/
 .DS_Store
 Thumbs.db
 .env
 .env.local
 .env.*.local
+prisma/dev.db
+prisma/dev.db-journal
