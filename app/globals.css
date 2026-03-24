@@ -84,6 +84,49 @@
   .admin-label {
     @apply mb-2 block text-sm font-semibold text-slate-700;
   }
+
+  .about-gallery {
+    @apply grid gap-6 rounded-[34px] border border-white/70 bg-white/65 p-4 shadow-[0_24px_70px_rgba(122,88,96,0.08)] md:grid-cols-2 md:p-6;
+    backdrop-filter: blur(18px);
+  }
+
+  .about-feature-card {
+    @apply overflow-hidden rounded-[30px] border border-white/80;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow:
+      0 20px 46px rgba(122, 88, 96, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  }
+
+  .about-feature-image {
+    @apply w-full object-cover;
+    aspect-ratio: 5 / 4;
+    background: linear-gradient(180deg, #efedf1 0%, #f8f4f2 100%);
+  }
+
+  .about-feature-image-left {
+    object-position: center 24%;
+  }
+
+  .about-feature-image-right {
+    object-position: center 18%;
+  }
+
+  .about-feature-copy {
+    @apply px-6 pb-6 pt-5 md:px-7 md:pb-7;
+  }
+
+  .about-feature-kicker {
+    @apply text-xs font-semibold uppercase tracking-[0.28em] text-rose-500;
+  }
+
+  .about-feature-title {
+    @apply mt-3 max-w-[18ch] text-2xl font-bold leading-[1.18] text-slate-900 md:text-[2rem];
+  }
+
+  .about-feature-text {
+    @apply mt-4 max-w-[34rem] text-[1.02rem] leading-8 text-slate-600;
+  }
 }
 
 .school-scene {
@@ -600,5 +643,13 @@
   .decor-book-grammar {
     left: 12px;
     top: 640px;
+  }
+
+  .about-feature-copy {
+    @apply px-5 pb-5 pt-4;
+  }
+
+  .about-feature-title {
+    @apply text-[1.75rem];
   }
 }

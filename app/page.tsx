@@ -149,23 +149,23 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="glass-card grid gap-6 p-6 md:grid-cols-2 md:p-8">
-            <article className="overflow-hidden rounded-[26px] border border-white/70 bg-white/85 shadow-[0_18px_50px_rgba(122,88,96,0.08)]">
+          <div className="about-gallery">
+            <article className="about-feature-card about-feature-card-left">
               <Image
                 src="/images/lena-founder-hero.jpg"
                 alt="Основатель и лицо Студии Английского"
                 width={927}
                 height={1648}
-                className="h-[420px] w-full object-cover"
+                className="about-feature-image about-feature-image-left"
               />
-              <div className="p-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">
+              <div className="about-feature-copy">
+                <p className="about-feature-kicker">
                   Опыт и качество
                 </p>
-                <h3 className="mt-2 text-2xl font-bold text-slate-900">
+                <h3 className="about-feature-title">
                   Многолетний преподавательский опыт и сильный академический стандарт
                 </h3>
-                <p className="mt-3 text-slate-600 leading-7">
+                <p className="about-feature-text">
                   В центре собран подход, где важны не просто уроки, а глубина
                   объяснения, логика программы и умение привести ученика к
                   реальному языковому росту.
@@ -173,22 +173,22 @@ export default function HomePage() {
               </div>
             </article>
 
-            <article className="overflow-hidden rounded-[26px] border border-white/70 bg-white/85 shadow-[0_18px_50px_rgba(122,88,96,0.08)]">
+            <article className="about-feature-card about-feature-card-right">
               <Image
                 src="/images/lena-founder-profile.jpg"
                 alt="Экспертный и эстетичный образ Студии Английского"
                 width={927}
                 height={1648}
-                className="h-[420px] w-full object-cover"
+                className="about-feature-image about-feature-image-right"
               />
-              <div className="p-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">
+              <div className="about-feature-copy">
+                <p className="about-feature-kicker">
                   Подход и преимущества
                 </p>
-                <h3 className="mt-2 text-2xl font-bold text-slate-900">
+                <h3 className="about-feature-title">
                   Бережная атмосфера, персональный маршрут и понятный прогресс
                 </h3>
-                <p className="mt-3 text-slate-600 leading-7">
+                <p className="about-feature-text">
                   Мы выстраиваем обучение так, чтобы ученик чувствовал себя
                   уверенно, понимал свои шаги и видел результат без перегруза и
                   хаотичной подачи.
