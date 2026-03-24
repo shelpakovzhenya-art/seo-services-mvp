@@ -4,6 +4,7 @@ import Script from 'next/script'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import JsonLd from '@/components/JsonLd'
+import LocaleHtmlSync from '@/components/LocaleHtmlSync'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import SiteAtmosphere from '@/components/SiteAtmosphere'
 import { getRouteLocale } from '@/lib/i18n'
@@ -88,6 +89,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={isAdmin ? 'admin-theme admin-body' : 'site-shell'}>
+        {!isAdmin && <LocaleHtmlSync />}
         {!isAdmin ? (
           <>
             <JsonLd id="site-organization-schema" data={organizationSchema} />
