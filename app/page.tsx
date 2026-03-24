@@ -171,6 +171,10 @@ export default function HomePage() {
                   объяснения, логика программы и умение привести ученика к
                   реальному языковому росту.
                 </p>
+                <div className="about-feature-points">
+                  <span>Сильная методическая база</span>
+                  <span>Понятная логика обучения</span>
+                </div>
               </div>
             </article>
 
@@ -194,6 +198,10 @@ export default function HomePage() {
                   уверенно, понимал свои шаги и видел результат без перегруза и
                   хаотичной подачи.
                 </p>
+                <div className="about-feature-points">
+                  <span>Комфортный темп</span>
+                  <span>Прозрачная обратная связь</span>
+                </div>
               </div>
             </article>
           </div>
