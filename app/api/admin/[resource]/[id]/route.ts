@@ -32,8 +32,9 @@ function normalizePayload(resource: string, body: Record<string, any>) {
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { resource: string; id: string } }
+  context: { params: Promise<{ resource: string; id: string }> }
 ) {
+  const params = await context.params;
   const unauthorized = await requireAdmin();
   if (unauthorized) {
     return unauthorized;
@@ -55,8 +56,9 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { resource: string; id: string } }
+  context: { params: Promise<{ resource: string; id: string }> }
 ) {
+  const params = await context.params;
   const unauthorized = await requireAdmin();
   if (unauthorized) {
     return unauthorized;

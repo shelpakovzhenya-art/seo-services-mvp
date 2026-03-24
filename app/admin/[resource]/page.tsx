@@ -6,17 +6,18 @@ import { isAuthenticated } from "@/lib/auth";
 export default async function AdminResourcePage({
   params,
 }: {
-  params: { resource: string };
+  params: Promise<{ resource: string }>;
 }) {
+  const resolvedParams = await params;
   if (!(await isAuthenticated())) {
     redirect("/admin/login");
   }
 
-  const config = adminResources[params.resource];
+  const config = adminResources[resolvedParams.resource];
 
   if (!config) {
     notFound();
   }
 
-  return <CollectionManager resource={params.resource} config={config} />;
+  return <CollectionManager resource={resolvedParams.resource} config={config} />;
 }
