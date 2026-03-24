@@ -85,3 +85,326 @@
     @apply mb-2 block text-sm font-semibold text-slate-700;
   }
 }
+
+.school-scene {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.chalkboard {
+  position: absolute;
+  width: 190px;
+  height: 132px;
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(41, 62, 48, 0.96), rgba(25, 39, 30, 0.96)),
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 40%);
+  border: 10px solid #d8b585;
+  box-shadow: 0 24px 60px rgba(72, 51, 40, 0.18);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18px;
+}
+
+.chalkboard span,
+.chalkboard small {
+  color: #f3f1e6;
+  font-family: "Comic Sans MS", "Trebuchet MS", cursive;
+  transform: rotate(-2deg);
+}
+
+.chalkboard span {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.chalkboard small {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  opacity: 0.92;
+}
+
+.chalkboard-left {
+  top: 170px;
+  left: -34px;
+  transform: rotate(-7deg);
+}
+
+.chalkboard-right {
+  top: 430px;
+  right: -34px;
+  transform: rotate(8deg);
+}
+
+.school-float {
+  position: absolute;
+  opacity: 0.78;
+  filter: drop-shadow(0 12px 28px rgba(92, 68, 64, 0.14));
+  animation: schoolFloat 10s ease-in-out infinite;
+}
+
+.school-float::before,
+.school-float::after {
+  content: "";
+  position: absolute;
+}
+
+.decor-pencil {
+  top: 110px;
+  right: 160px;
+  width: 170px;
+  height: 20px;
+  border-radius: 999px;
+  transform: rotate(-16deg);
+  background: linear-gradient(90deg, #f0c47d 0 76%, #3f4a5a 76% 88%, #f5e2bc 88% 100%);
+  animation-duration: 11s;
+}
+
+.decor-pencil::after {
+  right: -10px;
+  top: 0;
+  border-left: 14px solid #f3dec4;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+}
+
+.decor-pencil-two {
+  bottom: 130px;
+  left: 140px;
+  width: 150px;
+  height: 18px;
+  border-radius: 999px;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, #f6b87b 0 74%, #5b6577 74% 87%, #f5e2bc 87% 100%);
+  animation-duration: 9s;
+  animation-delay: -2s;
+}
+
+.decor-pencil-two::after {
+  right: -10px;
+  top: -1px;
+  border-left: 14px solid #f3dec4;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+}
+
+.decor-ruler {
+  top: 310px;
+  left: 110px;
+  width: 190px;
+  height: 26px;
+  border-radius: 18px;
+  transform: rotate(-24deg);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 12px, rgba(145, 104, 63, 0.42) 12px 14px),
+    linear-gradient(90deg, #f0deb6, #e9ca92);
+  animation-duration: 12s;
+  animation-delay: -3s;
+}
+
+.decor-notebook {
+  top: 520px;
+  right: 160px;
+  width: 112px;
+  height: 146px;
+  border-radius: 20px;
+  transform: rotate(12deg);
+  background:
+    linear-gradient(90deg, #d2d9ef 0 16px, #f8fbff 16px 100%),
+    linear-gradient(180deg, #ffffff, #eef3fb);
+  border: 1px solid rgba(139, 151, 180, 0.3);
+  animation-duration: 10.5s;
+}
+
+.decor-notebook::before {
+  inset: 20px 18px auto 28px;
+  height: 2px;
+  background: rgba(182, 194, 220, 0.7);
+  box-shadow:
+    0 18px 0 rgba(182, 194, 220, 0.7),
+    0 36px 0 rgba(182, 194, 220, 0.7),
+    0 54px 0 rgba(182, 194, 220, 0.7);
+}
+
+.decor-book {
+  top: 720px;
+  left: 230px;
+  width: 132px;
+  height: 92px;
+  border-radius: 14px;
+  transform: rotate(-13deg);
+  background: linear-gradient(135deg, #f1aeb8, #d98d98);
+  animation-duration: 13s;
+}
+
+.decor-book::before {
+  inset: 10px 12px 10px 12px;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.56);
+}
+
+.decor-clip {
+  top: 210px;
+  left: 360px;
+  width: 34px;
+  height: 58px;
+  border: 4px solid #96a7d9;
+  border-radius: 20px;
+  transform: rotate(20deg);
+  animation-duration: 8.5s;
+}
+
+.decor-clip::before {
+  inset: 8px;
+  border: 4px solid #96a7d9;
+  border-radius: 16px;
+}
+
+.decor-card {
+  top: 180px;
+  left: 50%;
+  width: 122px;
+  height: 82px;
+  border-radius: 18px;
+  transform: translateX(-50%) rotate(-11deg);
+  background:
+    linear-gradient(180deg, #fff 0 36%, #e7edf8 36% 38%, #fff 38% 100%);
+  border: 1px solid rgba(162, 172, 192, 0.4);
+  animation-duration: 9.8s;
+}
+
+.decor-card::before {
+  inset: 18px 18px auto 18px;
+  height: 2px;
+  background: rgba(192, 201, 219, 0.9);
+  box-shadow:
+    0 14px 0 rgba(192, 201, 219, 0.9),
+    0 28px 0 rgba(192, 201, 219, 0.9);
+}
+
+.decor-hand {
+  right: 330px;
+  bottom: 70px;
+  width: 94px;
+  height: 118px;
+  border-radius: 48px 48px 40px 40px;
+  transform: rotate(-18deg);
+  background: linear-gradient(180deg, #f4c6a8, #e5a988);
+  animation-duration: 10.8s;
+}
+
+.decor-hand::before {
+  left: 10px;
+  top: -16px;
+  width: 18px;
+  height: 54px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f4c6a8, #e5a988);
+  box-shadow:
+    20px -2px 0 #efbc9a,
+    40px 2px 0 #ecb48f,
+    58px 14px 0 #e8ac86;
+}
+
+@keyframes schoolFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(var(--rotate, 0deg));
+  }
+
+  50% {
+    transform: translate3d(0, -20px, 0) rotate(calc(var(--rotate, 0deg) + 4deg));
+  }
+}
+
+.decor-pencil {
+  --rotate: -16deg;
+}
+
+.decor-pencil-two {
+  --rotate: 18deg;
+}
+
+.decor-ruler {
+  --rotate: -24deg;
+}
+
+.decor-notebook {
+  --rotate: 12deg;
+}
+
+.decor-book {
+  --rotate: -13deg;
+}
+
+.decor-clip {
+  --rotate: 20deg;
+}
+
+.decor-card {
+  --rotate: -11deg;
+}
+
+.decor-hand {
+  --rotate: -18deg;
+}
+
+@media (max-width: 1200px) {
+  .chalkboard {
+    opacity: 0.65;
+    transform: scale(0.85);
+  }
+
+  .decor-card,
+  .decor-hand {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .chalkboard {
+    display: none;
+  }
+
+  .decor-ruler,
+  .decor-book {
+    display: none;
+  }
+
+  .school-float {
+    opacity: 0.48;
+  }
+}
+
+@media (max-width: 640px) {
+  .decor-pencil,
+  .decor-pencil-two,
+  .decor-notebook,
+  .decor-clip {
+    transform: scale(0.72);
+  }
+
+  .decor-pencil {
+    right: 20px;
+    top: 120px;
+  }
+
+  .decor-pencil-two {
+    left: 10px;
+    bottom: 120px;
+  }
+
+  .decor-notebook {
+    right: 10px;
+    top: 520px;
+  }
+
+  .decor-clip {
+    left: 24px;
+    top: 260px;
+  }
+}

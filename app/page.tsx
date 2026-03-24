@@ -5,19 +5,19 @@ import Footer from "@/components/Footer";
 const programs = [
   {
     title: "Английский для детей",
-    text: "Мягкое знакомство с языком, развитие словарного запаса, внимания и уверенности в речи.",
+    text: "Мягкий вход в язык через интерес, игровую динамику, правильное произношение и сильную языковую базу.",
   },
   {
     title: "Английский для школьников",
-    text: "Системная работа со школьной программой, грамматикой, лексикой и устной практикой.",
+    text: "Системная работа с грамматикой, лексикой, устной практикой и уверенностью в учебе.",
   },
   {
     title: "Подготовка к экзаменам",
-    text: "ЕГЭ, ОГЭ и международные форматы с понятным маршрутом и регулярным контролем прогресса.",
+    text: "ЕГЭ, ОГЭ и международные форматы с четким планом подготовки и контролем результата.",
   },
   {
     title: "Разговорный английский",
-    text: "Фокус на свободной речи, восприятии на слух и использовании языка в реальных ситуациях.",
+    text: "Для тех, кому важно начать говорить свободно и использовать английский в реальной жизни.",
   },
 ];
 
@@ -27,31 +27,56 @@ const advantages = [
   "Индивидуальный маршрут обучения под уровень и цель ученика.",
   "Теплая атмосфера без стресса и перегруза.",
   "Регулярная обратная связь и прозрачный контроль прогресса.",
-  "Готовая база для SEO-роста и масштабирования центра.",
+  "Сильная база для масштабирования центра и SEO-роста.",
+];
+
+const decorItems = [
+  "decor-pencil",
+  "decor-ruler",
+  "decor-notebook",
+  "decor-book",
+  "decor-clip",
+  "decor-card",
+  "decor-hand",
+  "decor-pencil-two",
 ];
 
 export default function HomePage() {
   return (
-    <div className="pb-8">
+    <div className="relative overflow-hidden pb-8">
+      <div className="school-scene" aria-hidden="true">
+        <div className="chalkboard chalkboard-left">
+          <span>Class Work</span>
+          <small>Reading • Speaking</small>
+        </div>
+        <div className="chalkboard chalkboard-right">
+          <span>Class Work</span>
+          <small>Grammar • Vocabulary</small>
+        </div>
+        {decorItems.map((item) => (
+          <div key={item} className={`school-float ${item}`} />
+        ))}
+      </div>
+
       <Header />
 
-      <main className="site-shell">
+      <main className="site-shell relative z-10">
         <section className="glass-card grid items-center gap-10 overflow-hidden px-6 py-8 md:grid-cols-[1.15fr_0.85fr] md:px-10 md:py-12">
           <div>
             <p className="mb-4 inline-flex rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-rose-600">
-              Новый формат онлайн-обучения
+              Онлайн-центр нового поколения
             </p>
             <h1 className="section-title max-w-3xl">
               Студия Английского
               <span className="mt-2 block text-slate-700">
-                теплый и сильный центр английского языка
+                теплый, эстетичный и сильный центр английского языка
               </span>
             </h1>
             <p className="section-copy mt-6 max-w-2xl">
-              Мы выстраиваем обучение так, чтобы английский становился
-              понятным, живым и устойчивым навыком. В центре внимания не просто
-              уроки, а продуманная система: диагностика, маршрут, регулярная
-              практика и понятный прогресс.
+              Мы выстраиваем обучение так, чтобы английский становился понятным,
+              живым и устойчивым навыком. В центре внимания не просто уроки, а
+              продуманная система: диагностика, маршрут, регулярная практика и
+              ясный прогресс.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a
@@ -104,8 +129,8 @@ export default function HomePage() {
             <p className="section-copy">
               Студия Английского задумана как современный онлайн-центр, где
               сочетаются академическая системность, забота о состоянии ученика и
-              эстетичная, дружелюбная подача. Мы не давим, но ведем к
-              результату. Не перегружаем, но строим сильную языковую базу.
+              эстетичная подача. Мы не перегружаем, а ведем к результату через
+              ясную структуру, дисциплину и комфортный темп.
             </p>
           </div>
         </section>
@@ -136,7 +161,7 @@ export default function HomePage() {
                 Преимущества
               </p>
               <h2 className="section-title max-w-3xl">
-                Почему семьям и взрослым ученикам комфортно учиться у нас
+                Почему детям, подросткам и взрослым комфортно учиться у нас
               </h2>
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
