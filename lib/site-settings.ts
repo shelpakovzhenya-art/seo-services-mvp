@@ -1,18 +1,30 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { defaultSiteUrl } from "@/lib/site-url";
 
 export const defaultRobotsTxt = `User-agent: *
 Allow: /
 
-Sitemap: https://lenochkin-center-production.up.railway.app/sitemap.xml
+Sitemap: ${defaultSiteUrl}/sitemap.xml
 `;
 
 export const defaultSitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://lenochkin-center-production.up.railway.app/</loc>
+    <loc>${defaultSiteUrl}/ru</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ru" href="${defaultSiteUrl}/ru" />
+    <xhtml:link rel="alternate" hreflang="en" href="${defaultSiteUrl}/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${defaultSiteUrl}/ru" />
+  </url>
+  <url>
+    <loc>${defaultSiteUrl}/en</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ru" href="${defaultSiteUrl}/ru" />
+    <xhtml:link rel="alternate" hreflang="en" href="${defaultSiteUrl}/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${defaultSiteUrl}/ru" />
   </url>
 </urlset>
 `;

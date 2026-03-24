@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getRequestOrigin } from "@/lib/request-origin";
 import { sendLeadEmail } from "@/lib/resend";
+import { getRequestOrigin } from "@/lib/request-origin";
+import { isLocale } from "@/lib/i18n";
 
 export async function POST(request: NextRequest) {
   const origin = getRequestOrigin(request);
   const formData = await request.formData();
+  const localeInput = String(formData.get("locale") || "ru").trim();
+  const locale = isLocale(localeInput) ? localeInput : "ru";
   const name = String(formData.get("name") || "").trim();
   const contact = String(formData.get("contact") || "").trim();
   const message = String(formData.get("message") || "").trim();
 
   if (!name || !contact) {
-    return NextResponse.redirect(new URL("/?error=1#contact", origin));
+    return NextResponse.redirect(new URL(`/${locale}?error=1#contact`, origin));
   }
 
   let savedToDatabase = false;
@@ -23,7 +26,7 @@ export async function POST(request: NextRequest) {
         name,
         contact,
         message,
-        source: "site",
+        source: `site:${locale}`,
         status: "new",
       },
     });
@@ -40,8 +43,8 @@ export async function POST(request: NextRequest) {
   }
 
   if (!savedToDatabase && !sentByEmail) {
-    return NextResponse.redirect(new URL("/?error=1#contact", origin));
+    return NextResponse.redirect(new URL(`/${locale}?error=1#contact`, origin));
   }
 
-  return NextResponse.redirect(new URL("/?success=1#contact", origin));
+  return NextResponse.redirect(new URL(`/${locale}?success=1#contact`, origin));
 }
