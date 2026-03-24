@@ -2,12 +2,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getSiteSettings } from "@/lib/site-settings";
 import TelegramIconLink from "@/components/TelegramIconLink";
+import { normalizeTelegramLink } from "@/lib/contact-links";
 
 export default async function Header() {
   const settings = await getSiteSettings();
   const siteName = settings.siteName || "Студия Английского";
   const [firstWord, ...restWords] = siteName.split(" ");
   const restName = restWords.join(" ");
+  const telegramLink = normalizeTelegramLink(settings.telegram);
 
   return (
     <header className="site-shell relative z-10 flex items-center justify-between gap-4 py-6">
@@ -27,8 +29,8 @@ export default async function Header() {
       </nav>
 
       <div className="flex items-center gap-3">
-        {settings.telegram ? (
-          <TelegramIconLink href={settings.telegram} className="hidden md:flex" />
+        {telegramLink ? (
+          <TelegramIconLink href={telegramLink} />
         ) : null}
         <Button asChild className="rounded-full px-5">
           <a href="#contact">Оставить заявку</a>
