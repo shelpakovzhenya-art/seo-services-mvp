@@ -2,11 +2,17 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { defaultLocale, getLocaleFromPathname, prefixPathWithLocale, stripLocaleFromPathname } from '@/lib/i18n'
 
+const PUBLIC_FILE = /\.[^/]+$/
+
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const localeFromPath = getLocaleFromPathname(pathname)
   const cookieLocale = request.cookies.get('locale')?.value
   const locale = localeFromPath || (cookieLocale === 'en' ? 'en' : defaultLocale)
+
+  if (PUBLIC_FILE.test(pathname) || pathname.startsWith('/_next') || pathname.startsWith('/api')) {
+    return NextResponse.next()
+  }
 
   if (pathname.startsWith('/admin')) {
     const requestHeaders = new Headers(request.headers)
@@ -51,6 +57,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/admin/:path*',
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|.*\\..*).*)',
   ],
 }
