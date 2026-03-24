@@ -38,12 +38,12 @@ export default function SettingsForm({
         </p>
       </div>
       <form onSubmit={handleSubmit} className="admin-card grid gap-4 md:grid-cols-2">
-        {[
+        {[ 
           ["siteName", "Название сайта"],
           ["siteDescription", "Описание сайта"],
           ["phone", "Телефон"],
-          ["telegram", "Telegram"],
-          ["whatsapp", "WhatsApp"],
+          ["telegram", "Telegram URL"],
+          ["whatsapp", "WhatsApp URL"],
           ["email", "Email"],
           ["address", "Адрес"],
           ["footerText", "Текст в подвале"],

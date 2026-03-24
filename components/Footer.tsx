@@ -1,10 +1,58 @@
-export default function Footer() {
+import { getSiteSettings } from "@/lib/site-settings";
+
+export default async function Footer() {
+  const settings = await getSiteSettings();
+
   return (
     <footer className="site-shell py-10 text-center text-sm text-slate-500">
       <p>
-        Студия Английского. Бережный онлайн-центр английского языка с
-        современной методикой, понятной системой обучения и теплой атмосферой.
+        {settings.footerText ||
+          "Студия Английского. Бережный онлайн-центр английского языка с современной методикой, понятной системой обучения и теплой атмосферой."}
       </p>
+
+      {(settings.telegram || settings.whatsapp || settings.email || settings.phone) ? (
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+          {settings.telegram ? (
+            <a
+              href={settings.telegram}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-rose-200 hover:text-rose-600"
+            >
+              Telegram
+            </a>
+          ) : null}
+
+          {settings.whatsapp ? (
+            <a
+              href={settings.whatsapp}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-rose-200 hover:text-rose-600"
+            >
+              WhatsApp
+            </a>
+          ) : null}
+
+          {settings.phone ? (
+            <a
+              href={`tel:${settings.phone}`}
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-rose-200 hover:text-rose-600"
+            >
+              {settings.phone}
+            </a>
+          ) : null}
+
+          {settings.email ? (
+            <a
+              href={`mailto:${settings.email}`}
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-rose-200 hover:text-rose-600"
+            >
+              {settings.email}
+            </a>
+          ) : null}
+        </div>
+      ) : null}
     </footer>
   );
 }
