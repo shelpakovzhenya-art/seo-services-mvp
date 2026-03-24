@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { ArrowUpRight, Mail, MessageCircle, MessagesSquare } from 'lucide-react'
@@ -55,6 +56,8 @@ function localizeMenuLabel(url: string, fallbackLabel: string, locale: 'ru' | 'e
       return dictionary.menu.contacts
     case '/tools':
       return dictionary.menu.tools
+    case '/calculator':
+      return locale === 'ru' ? 'Калькулятор' : 'Calculator'
     default:
       return fallbackLabel
   }
@@ -172,8 +175,15 @@ export default async function Header() {
         <div className="container mx-auto px-4">
           <nav className="my-2 flex items-center justify-between gap-3 rounded-[26px] border border-white/14 bg-[linear-gradient(145deg,rgba(11,20,37,0.9),rgba(15,28,48,0.84))] px-3.5 py-3 shadow-[0_22px_52px_rgba(2,8,23,0.28)] md:my-3 md:mb-4 md:gap-4 md:rounded-[32px] md:px-4 md:py-4">
             <Link href={prefixPathWithLocale('/', locale)} className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-              <span className="brand-mark grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-2xl sm:h-11 sm:w-11 md:h-12 md:w-12">
-                <span className="brand-mark-text">SD</span>
+              <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/14 bg-white/95 shadow-[0_12px_30px_rgba(2,8,23,0.22)] sm:h-11 sm:w-11 md:h-12 md:w-12">
+                <Image
+                  src="/favicon-48.png"
+                  alt="Shelpakov Digital"
+                  width={40}
+                  height={40}
+                  className="h-[78%] w-[78%] object-contain"
+                  priority
+                />
               </span>
               <span className="flex min-w-0 flex-col">
                 <span className="truncate text-[0.92rem] font-semibold uppercase tracking-[0.12em] text-white sm:text-[1rem] md:text-lg md:tracking-[0.16em]">Shelpakov Digital</span>

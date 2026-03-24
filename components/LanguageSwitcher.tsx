@@ -42,7 +42,6 @@ export default function LanguageSwitcher({ locale, pathname }: LanguageSwitcherP
   return (
     <div className="language-switcher" aria-label={getDictionary(locale).switchTo}>
       {locales.map((item) => {
-        const dictionary = getDictionary(item)
         const active = item === locale
 
         return (
@@ -52,9 +51,11 @@ export default function LanguageSwitcher({ locale, pathname }: LanguageSwitcherP
             className={`language-pill ${active ? 'is-active' : ''}`}
             hrefLang={item}
             lang={item}
+            aria-current={active ? 'page' : undefined}
+            prefetch={false}
           >
             <FlagIcon locale={item} />
-            <span>{dictionary.localeLabel}</span>
+            <span>{item === 'ru' ? 'RU' : 'US'}</span>
           </Link>
         )
       })}

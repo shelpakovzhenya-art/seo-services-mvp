@@ -5,7 +5,7 @@ import { MessageCircle, MessagesSquare, Wrench } from 'lucide-react'
 import { getDictionary } from '@/lib/dictionaries'
 import { getRouteLocale, prefixPathWithLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
-import { featuredReads } from '@/lib/site-recommendations'
+import { getFeaturedReads } from '@/lib/public-copy'
 
 const DEFAULT_MENU_ITEMS = [
   { id: '1', label: 'Home', url: '/', order: 1, isActive: true },
@@ -32,6 +32,8 @@ function localizeMenuLabel(url: string, fallbackLabel: string, locale: 'ru' | 'e
       return dictionary.menu.blog
     case '/contacts':
       return dictionary.menu.contacts
+    case '/calculator':
+      return locale === 'ru' ? 'Калькулятор' : 'Calculator'
     default:
       return fallbackLabel
   }
@@ -41,6 +43,7 @@ export default async function Footer() {
   const headersList = await headers()
   const locale = getRouteLocale(headersList.get('x-locale'))
   const dictionary = getDictionary(locale)
+  const featuredReads = getFeaturedReads(locale)
 
   let settings: any = null
   let menuItems: any[] = []

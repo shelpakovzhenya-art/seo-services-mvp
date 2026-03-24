@@ -12,136 +12,175 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { buildCaseListing } from '@/lib/case-listing'
+import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
+import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
+import { getLocaleAlternates } from '@/lib/site-url'
 import { Button } from '@/components/ui/button'
 import LazyContactForm from '@/components/LazyContactForm'
 import ServicesCatalogSection from '@/components/services/ServicesCatalogSection'
 
-const defaultHomeMetadata = {
-  title: 'SEO-продвижение сайтов под заявки | Shelpakov Digital',
-  description:
-    'SEO-продвижение, аудит и доработка структуры сайта под заявки, доверие и рост органического трафика для услуг, B2B-проектов и локального бизнеса.',
-  keywords:
-    'seo продвижение сайтов, seo аудит, техническое seo, коммерческие факторы, рост заявок, органический трафик',
-}
-
-const trustMetrics = [
-  {
-    value: 'Трафик и заявки',
-    label: 'Поисковый рост должен приводить не только к визитам, но и к обращениям в бизнес.',
-  },
-  {
-    value: 'Услуги и B2B',
-    label: 'Особенно полезно там, где клиенту важно доверие, экспертность и понятный следующий шаг.',
-  },
-  {
-    value: 'Понятный план',
-    label: 'После старта проекта есть приоритеты, логика внедрения и список точек роста.',
-  },
-]
-
-const advantageCards = [
-  {
-    icon: FileText,
-    title: 'Аудит без воды',
-    text: 'Сначала показываю, где сайт реально теряет потенциал, а не перегружаю второстепенными замечаниями.',
-  },
-  {
-    icon: LineChart,
-    title: 'Фокус на результате',
-    text: 'Работа строится вокруг органики, доверия и конверсии, а не вокруг формального списка SEO-действий.',
-  },
-  {
-    icon: BarChart3,
-    title: 'Системный подход',
-    text: 'Структура, контент, техническая база и подача сайта собираются в одну рабочую систему роста.',
-  },
-]
-
-const packageCards = [
-  {
-    name: 'Старт',
-    price: '15 000 ₽',
-    accent:
-      'Когда нужно быстро понять слабые места сайта и получить понятный список первых шагов.',
-    icon: Rocket,
-    items: [
-      'Базовый SEO-аудит сайта',
-      'Проверка индексации, метаданных и структуры',
-      'Список быстрых правок с приоритетами',
-      'Короткий разбор дальнейших шагов',
-    ],
-  },
-  {
-    name: 'Оптимальный',
-    price: '30 000 ₽',
-    accent:
-      'Когда проекту уже нужен рабочий план усиления ключевых страниц, спроса и коммерческой подачи.',
-    icon: Gem,
-    items: [
-      'Всё из тарифа «Старт»',
-      'Сбор и кластеризация приоритетной семантики',
-      'Доработка ключевых страниц услуг',
-      'Усиление коммерческих факторов и CTA',
-    ],
-  },
-  {
-    name: 'Про',
-    price: '50 000 ₽',
-    accent:
-      'Когда нужен более глубокий контур роста: структура, контентные гипотезы и сопровождение проекта.',
-    icon: BarChart3,
-    items: [
-      'Всё из тарифа «Оптимальный»',
-      'Расширение структуры и новых посадочных',
-      'Глубокая работа с оффером и упаковкой',
-      'Приоритетное сопровождение проекта',
-    ],
-  },
-]
-
-const industryBlocks = [
-  'Сайты услуг, где трафик есть, а заявок мало.',
-  'B2B-проекты с длинным циклом принятия решения.',
-  'Локальный бизнес с плотной конкуренцией в выдаче.',
-  'Проекты, которым нужен более сильный и дорогой образ.',
-]
-
-const processBlocks = [
-  {
-    step: '01',
-    title: 'Разбираю спрос и текущее состояние сайта',
-    text: 'Смотрю структуру, ключевые страницы, коммерческие блоки и путь пользователя до заявки.',
-  },
-  {
-    step: '02',
-    title: 'Собираю рабочий план',
-    text: 'Фиксирую приоритеты: что исправить срочно, что усилить следующим этапом и куда не тратить ресурсы.',
-  },
-  {
-    step: '03',
-    title: 'Дорабатываю сайт под рост',
-    text: 'Усиливаю страницы, тексты, доверие и SEO-основу так, чтобы сайт выглядел и работал сильнее.',
-  },
-]
-
 const verificationCode = 'yilk8rn94r0d3m5v'
 
+const homeCopy: Record<Locale, any> = {
+  ru: {
+    metadata: {
+      title: 'SEO-продвижение сайтов под заявки | Shelpakov Digital',
+      description:
+        'SEO-продвижение, аудит и доработка структуры сайта под заявки, доверие и рост органического трафика для услуг, B2B-проектов и локального бизнеса.',
+      keywords:
+        'seo продвижение сайтов, seo аудит, техническое seo, коммерческие факторы, рост заявок, органический трафик',
+    },
+    heroChip: 'SEO-продвижение под заявки',
+    heroTitle: 'SEO и структура сайта, которые помогают получать больше обращений, а не просто расти по позициям.',
+    heroText:
+      'Помогаю бизнесу усиливать сайт под поиск и под клиента: дорабатываю ключевые страницы, оффер, структуру, коммерческие факторы и логику заявки, чтобы органика становилась каналом роста.',
+    primaryCta: 'Получить разбор сайта',
+    secondaryCta: 'Посмотреть кейсы',
+    heroBadges: ['Быстрый ответ по заявке', 'План работ после созвона', 'Фокус на заявках и доверии'],
+    trustMetrics: [
+      { value: 'Трафик и заявки', label: 'Поисковый рост должен приводить не только к визитам, но и к обращениям в бизнес.' },
+      { value: 'Услуги и B2B', label: 'Особенно полезно там, где клиенту важно доверие, экспертность и понятный следующий шаг.' },
+      { value: 'Понятный план', label: 'После старта проекта есть приоритеты, логика внедрения и список точек роста.' },
+    ],
+    approachKicker: 'Подход к проекту',
+    approachTitle: 'Сайт должен быть убедительным и для поиска, и для клиента',
+    approachText:
+      'Поэтому работа строится вокруг связки: спрос, структура, коммерческие блоки, тексты, доверие и путь к заявке.',
+    advantageCards: [
+      { icon: FileText, title: 'Аудит без воды', text: 'Сначала показываю, где сайт реально теряет потенциал, а не перегружаю второстепенными замечаниями.' },
+      { icon: LineChart, title: 'Фокус на результате', text: 'Работа строится вокруг органики, доверия и конверсии, а не вокруг формального списка SEO-действий.' },
+      { icon: BarChart3, title: 'Системный подход', text: 'Структура, контент, техническая база и подача сайта собираются в одну рабочую систему роста.' },
+    ],
+    packageKicker: 'Тарифы',
+    packageTitle: 'Форматы работ под разную задачу',
+    packageText: 'От быстрого разбора до более глубокого сопровождения проекта с усилением структуры, подачи и SEO-основы.',
+    packages: [
+      { name: 'Старт', price: '15 000 ₽', accent: 'Когда нужно быстро понять слабые места сайта и получить понятный список первых шагов.', icon: Rocket, items: ['Базовый SEO-аудит сайта', 'Проверка индексации, метаданных и структуры', 'Список быстрых правок с приоритетами', 'Короткий разбор дальнейших шагов'] },
+      { name: 'Оптимальный', price: '30 000 ₽', accent: 'Когда проекту уже нужен рабочий план усиления ключевых страниц, спроса и коммерческой подачи.', icon: Gem, items: ['Всё из тарифа «Старт»', 'Сбор и кластеризация приоритетной семантики', 'Доработка ключевых страниц услуг', 'Усиление коммерческих факторов и CTA'] },
+      { name: 'Про', price: '50 000 ₽', accent: 'Когда нужен более глубокий контур роста: структура, контентные гипотезы и сопровождение проекта.', icon: BarChart3, items: ['Всё из тарифа «Оптимальный»', 'Расширение структуры и новых посадочных', 'Глубокая работа с оффером и упаковкой', 'Приоритетное сопровождение проекта'] },
+    ],
+    packageButton: 'Выбрать тариф',
+    industryKicker: 'Кому особенно полезно',
+    industryTitle: 'Если сайт уже есть, но работает слабее, чем должен',
+    industryBlocks: ['Сайты услуг, где трафик есть, а заявок мало.', 'B2B-проекты с длинным циклом принятия решения.', 'Локальный бизнес с плотной конкуренцией в выдаче.', 'Проекты, которым нужен более сильный и дорогой образ.'],
+    processBlocks: [
+      { step: '01', title: 'Разбираю спрос и текущее состояние сайта', text: 'Смотрю структуру, ключевые страницы, коммерческие блоки и путь пользователя до заявки.' },
+      { step: '02', title: 'Собираю рабочий план', text: 'Фиксирую приоритеты: что исправить срочно, что усилить следующим этапом и куда не тратить ресурсы.' },
+      { step: '03', title: 'Дорабатываю сайт под рост', text: 'Усиливаю страницы, тексты, доверие и SEO-основу так, чтобы сайт выглядел и работал сильнее.' },
+    ],
+    casesKicker: 'Кейсы',
+    casesTitle: 'Примеры проектов, где сайт стал сильнее',
+    casesLink: 'Открыть кейсы',
+    caseLabel: 'Кейс',
+    caseFallback: 'Разбор проекта, в котором доработка структуры, контента и ключевых страниц усилила органический потенциал сайта.',
+    caseEmptyTitle: 'Кейсы с разбором задачи, работ и результата',
+    caseEmptyText: 'Здесь публикуются проекты, в которых видно, как структура сайта, SEO и коммерческие факторы влияют на трафик, заявки и стоимость обращения.',
+    openCase: 'Открыть кейс',
+    blogKicker: 'Блог',
+    blogTitle: 'Материалы, которые усиливают экспертность сайта',
+    blogLink: 'Перейти в блог',
+    blogCardKicker: 'Материал',
+    blogFallback: 'Материал, который помогает клиенту лучше понять подход, ошибки и точки роста сайта.',
+    blogEmptyTitle: 'Блог усиливает доверие и поисковое покрытие',
+    blogEmptyText: 'Здесь лучше всего работают экспертные материалы: разборы ошибок, практика по SEO и ответы на частые вопросы клиентов.',
+    reviewsKicker: 'Отзывы',
+    reviewsTitle: 'Подтверждение, которое работает на доверие',
+    reviewsEmptyTitle: 'Отзывы клиентов и рабочий контекст проекта',
+    reviewsEmptyText: 'Лучше всего этот блок работает, когда в нём есть реальные отзывы с именем, компанией и коротким описанием задачи, которую нужно было решить.',
+    contactKicker: 'Следующий шаг',
+    contactTitle: 'Оставьте заявку, и я подготовлю разбор сайта',
+    contactText: 'Покажу, что мешает росту, где сайт недожимает по заявкам и с каких изменений логичнее начать.',
+    contactFastTitle: 'Быстрая обратная связь',
+    contactFastText: 'Обычно отвечаю в течение дня после заявки.',
+    contactConcreteTitle: 'Конкретные выводы',
+    contactConcreteText: 'Без общих фраз: только понятные точки роста и следующий шаг.',
+  },
+  en: {
+    metadata: {
+      title: 'SEO for lead growth | Shelpakov Digital',
+      description:
+        'SEO strategy, audits, and site structure improvements built to increase qualified inquiries, trust, and organic growth for service businesses, B2B brands, and local companies.',
+      keywords: 'seo services, seo audit, technical seo, conversion-focused seo, lead growth, organic traffic',
+    },
+    heroChip: 'SEO built for lead generation',
+    heroTitle: 'SEO and site structure that help you win more inquiries, not just better rankings.',
+    heroText:
+      'I help businesses strengthen their websites for both search and the client journey: refining key pages, the offer, structure, commercial signals, and conversion logic so organic traffic becomes a real growth channel.',
+    primaryCta: 'Get a website review',
+    secondaryCta: 'View case studies',
+    heroBadges: ['Fast response to new inquiries', 'Clear action plan after the call', 'Focused on leads and trust'],
+    trustMetrics: [
+      { value: 'Traffic and leads', label: 'Search growth should lead not only to visits, but to real business conversations.' },
+      { value: 'Services and B2B', label: 'Especially valuable where trust, expertise, and a clear next step shape the buying decision.' },
+      { value: 'Clear roadmap', label: 'Every project starts with priorities, delivery logic, and a defined list of growth opportunities.' },
+    ],
+    approachKicker: 'Approach',
+    approachTitle: 'A website should be convincing for both search engines and real clients',
+    approachText: 'That is why the work is built around a connected system: demand, structure, commercial blocks, copy, trust, and the path to conversion.',
+    advantageCards: [
+      { icon: FileText, title: 'No-noise audits', text: 'I show where the website is genuinely losing momentum instead of overwhelming the project with secondary remarks.' },
+      { icon: LineChart, title: 'Outcome-driven work', text: 'The process is built around organic growth, trust, and conversion, not a checklist of formal SEO tasks.' },
+      { icon: BarChart3, title: 'System thinking', text: 'Structure, content, technical foundations, and presentation are assembled into one working growth system.' },
+    ],
+    packageKicker: 'Formats',
+    packageTitle: 'Work formats for different stages of growth',
+    packageText: 'From a fast expert review to deeper ongoing support with stronger structure, positioning, and SEO foundations.',
+    packages: [
+      { name: 'Start', price: 'from ₽15,000', accent: 'When you need to quickly identify weak points and get a clear list of first actions.', icon: Rocket, items: ['Core SEO audit', 'Indexation, metadata, and structure review', 'Quick-win fixes with priorities', 'Short expert breakdown of next steps'] },
+      { name: 'Optimal', price: 'from ₽30,000', accent: 'When the project already needs a working plan to strengthen key pages, demand capture, and commercial presentation.', icon: Gem, items: ['Everything from Start', 'Priority keyword research and clustering', 'Improvement of key service pages', 'Stronger commercial signals and CTA logic'] },
+      { name: 'Pro', price: 'from ₽50,000', accent: 'When you need a deeper growth contour: structure, content hypotheses, and closer strategic support.', icon: BarChart3, items: ['Everything from Optimal', 'Structure expansion and new landing pages', 'Deeper work on positioning and offer packaging', 'Priority project support'] },
+    ],
+    packageButton: 'Choose a package',
+    industryKicker: 'Best fit',
+    industryTitle: 'When the site already exists, but is performing below its potential',
+    industryBlocks: ['Service websites that already get traffic but too few inquiries.', 'B2B projects with a long and complex decision cycle.', 'Local businesses competing in crowded search results.', 'Projects that need a stronger and more premium digital image.'],
+    processBlocks: [
+      { step: '01', title: 'I assess demand and the current state of the site', text: 'I review the structure, key pages, commercial blocks, and the user path toward a lead.' },
+      { step: '02', title: 'I assemble a working roadmap', text: 'We lock priorities: what needs urgent fixing, what should be strengthened next, and where resources should not be wasted.' },
+      { step: '03', title: 'I refine the site for growth', text: 'I strengthen pages, copy, trust signals, and SEO foundations so the website looks sharper and performs better.' },
+    ],
+    casesKicker: 'Case studies',
+    casesTitle: 'Examples of projects where the website became stronger',
+    casesLink: 'Open case studies',
+    caseLabel: 'Case study',
+    caseFallback: 'A project breakdown showing how structural work, better content, and stronger key pages improved organic potential.',
+    caseEmptyTitle: 'Case studies with task, implementation, and outcome',
+    caseEmptyText: 'This section features projects where you can clearly see how site structure, SEO, and commercial signals influence traffic, leads, and acquisition efficiency.',
+    openCase: 'Open case study',
+    blogKicker: 'Blog',
+    blogTitle: 'Articles that strengthen your website’s expert positioning',
+    blogLink: 'Go to the blog',
+    blogCardKicker: 'Article',
+    blogFallback: 'A practical article that helps clients better understand the approach, mistakes, and growth points of a website.',
+    blogEmptyTitle: 'The blog reinforces trust and search visibility',
+    blogEmptyText: 'Expert content works especially well here: practical SEO notes, breakdowns of common mistakes, and answers to recurring client questions.',
+    reviewsKicker: 'Reviews',
+    reviewsTitle: 'Proof that supports trust',
+    reviewsEmptyTitle: 'Client reviews and working context',
+    reviewsEmptyText: 'This section works best when it includes real feedback with a name, company, and a brief description of the task that had to be solved.',
+    contactKicker: 'Next step',
+    contactTitle: 'Send a request and I will prepare a website review',
+    contactText: 'I will show what is blocking growth, where the site is underperforming on leads, and which changes make the most sense to start with.',
+    contactFastTitle: 'Fast feedback',
+    contactFastText: 'I usually reply within one business day after a request.',
+    contactConcreteTitle: 'Clear conclusions',
+    contactConcreteText: 'No vague talk, only understandable growth points and a sensible next step.',
+  },
+}
+
 export default async function HomePage() {
+  const locale = await getRequestLocale()
+  const copy = homeCopy[locale]
+
   let reviews: any[] = []
   let cases: any[] = []
   let posts: any[] = []
 
   try {
-    reviews = await prisma.review.findMany({
-      orderBy: { order: 'asc' },
-      take: 3,
-    })
-    cases = await prisma.case.findMany({
-      orderBy: { order: 'asc' },
-      take: 2,
-    })
+    reviews = await prisma.review.findMany({ orderBy: { order: 'asc' }, take: 3 })
+    cases = await prisma.case.findMany({ orderBy: { order: 'asc' }, take: 2 })
     posts = await prisma.blogPost.findMany({
       where: { published: true },
       orderBy: { publishedAt: 'desc' },
@@ -180,51 +219,37 @@ export default async function HomePage() {
               <div className="hidden" aria-hidden="true">
                 {verificationCode}
               </div>
-              <span className="warm-chip">SEO-продвижение под заявки</span>
+              <span className="warm-chip">{copy.heroChip}</span>
               <h1 className="mt-4 max-w-[1100px] text-[clamp(2.15rem,3.4vw,4rem)] font-semibold leading-[0.93] tracking-[-0.045em] text-slate-950">
-                SEO и структура сайта, которые помогают получать больше обращений, а не просто расти по позициям.
+                {copy.heroTitle}
               </h1>
-              <p className="mt-4 max-w-[860px] text-[0.95rem] leading-7 text-slate-600 md:text-[1.02rem] md:leading-7">
-                Помогаю бизнесу усиливать сайт под поиск и под клиента: дорабатываю ключевые страницы, оффер,
-                структуру, коммерческие факторы и логику заявки, чтобы органика становилась каналом роста.
-              </p>
+              <p className="mt-4 max-w-[860px] text-[0.95rem] leading-7 text-slate-600 md:text-[1.02rem] md:leading-7">{copy.heroText}</p>
 
               <div className="mt-5 flex flex-wrap gap-3">
                 <a href="#contact-form">
                   <Button size="lg" className="rounded-full px-5 py-5 text-sm">
-                    Получить разбор сайта
+                    {copy.primaryCta}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </a>
-                <Link href="/cases">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="rounded-full border-slate-300 bg-white px-5 py-5 text-sm text-slate-900 hover:bg-slate-50"
-                  >
-                    Посмотреть кейсы
+                <Link href={prefixPathWithLocale('/cases', locale)}>
+                  <Button size="lg" variant="outline" className="rounded-full border-slate-300 bg-white px-5 py-5 text-sm text-slate-900 hover:bg-slate-50">
+                    {copy.secondaryCta}
                   </Button>
                 </Link>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2 text-[12px] text-slate-600 md:text-[13px]">
-                <span className="rounded-full border border-orange-200 bg-white/90 px-3.5 py-1.5 shadow-sm">
-                  Быстрый ответ по заявке
-                </span>
-                <span className="rounded-full border border-orange-200 bg-white/90 px-3.5 py-1.5 shadow-sm">
-                  План работ после созвона
-                </span>
-                <span className="rounded-full border border-orange-200 bg-white/90 px-3.5 py-1.5 shadow-sm">
-                  Фокус на заявках и доверии
-                </span>
+                {copy.heroBadges.map((badge: string) => (
+                  <span key={badge} className="rounded-full border border-orange-200 bg-white/90 px-3.5 py-1.5 shadow-sm">
+                    {badge}
+                  </span>
+                ))}
               </div>
 
               <div className="mt-4 grid max-w-[980px] gap-2.5 md:grid-cols-3">
-                {trustMetrics.map((metric) => (
-                  <div
-                    key={metric.value}
-                    className="rounded-[20px] border border-orange-100 bg-white/82 p-3.5 shadow-[0_18px_35px_rgba(138,103,63,0.06)] backdrop-blur-sm"
-                  >
+                {copy.trustMetrics.map((metric: any) => (
+                  <div key={metric.value} className="rounded-[20px] border border-orange-100 bg-white/82 p-3.5 shadow-[0_18px_35px_rgba(138,103,63,0.06)] backdrop-blur-sm">
                     <div className="text-base font-semibold text-slate-950 md:text-lg">{metric.value}</div>
                     <div className="mt-1 text-[12px] leading-5 text-slate-600 md:text-[13px] md:leading-5">{metric.label}</div>
                   </div>
@@ -237,31 +262,26 @@ export default async function HomePage() {
 
       <section className="section-shell-tight !pb-10 !pt-4 md:!pb-12 md:!pt-6">
         <div className="surface-signal surface-pad">
-        <div className="section-heading">
-          <div>
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Подход к проекту</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">
-              Сайт должен быть убедительным и для поиска, и для клиента
-            </h2>
+          <div className="section-heading">
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.approachKicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.approachTitle}</h2>
+            </div>
+            <p className="max-w-2xl text-sm leading-7 text-slate-600">{copy.approachText}</p>
           </div>
-          <p className="max-w-2xl text-sm leading-7 text-slate-600">
-            Поэтому работа строится вокруг связки: спрос, структура, коммерческие блоки, тексты, доверие и путь
-            к заявке.
-          </p>
-        </div>
 
-        <div className="uniform-grid-3">
-          {advantageCards.map((item) => {
-            const Icon = item.icon
-            return (
-              <div key={item.title} className="uniform-card glass-panel interactive-card p-7">
-                <Icon className="h-8 w-8 text-cyan-700" />
-                <h3 className="mt-5 text-2xl font-semibold text-slate-950">{item.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
-              </div>
-            )
-          })}
-        </div>
+          <div className="uniform-grid-3">
+            {copy.advantageCards.map((item: any) => {
+              const Icon = item.icon
+              return (
+                <div key={item.title} className="uniform-card glass-panel interactive-card p-7">
+                  <Icon className="h-8 w-8 text-cyan-700" />
+                  <h3 className="mt-5 text-2xl font-semibold text-slate-950">{item.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </section>
 
@@ -269,18 +289,14 @@ export default async function HomePage() {
         <div className="surface-dawn surface-pad">
           <div className="section-heading">
             <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Тарифы</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">
-                Форматы работ под разную задачу
-              </h2>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.packageKicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.packageTitle}</h2>
             </div>
-            <p className="max-w-2xl text-sm leading-7 text-slate-600">
-              От быстрого разбора до более глубокого сопровождения проекта с усилением структуры, подачи и SEO-основы.
-            </p>
+            <p className="max-w-2xl text-sm leading-7 text-slate-600">{copy.packageText}</p>
           </div>
 
           <div className="uniform-grid-3">
-            {packageCards.map((pkg, index) => {
+            {copy.packages.map((pkg: any, index: number) => {
               const Icon = pkg.icon
               return (
                 <div
@@ -298,23 +314,17 @@ export default async function HomePage() {
                     </div>
                     <Icon className="h-8 w-8 text-cyan-700" />
                   </div>
-
                   <p className="mt-4 text-sm leading-7 text-slate-600">{pkg.accent}</p>
-
                   <div className="mt-6 flex-1 space-y-3">
-                    {pkg.items.map((item) => (
-                      <div
-                        key={item}
-                        className="flex items-start gap-3 rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3"
-                      >
+                    {pkg.items.map((item: string) => (
+                      <div key={item} className="flex items-start gap-3 rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan-700" />
                         <span className="text-sm leading-6 text-slate-700">{item}</span>
                       </div>
                     ))}
                   </div>
-
                   <a href="#contact-form" className="mt-6">
-                    <Button className="w-full rounded-2xl">Выбрать тариф</Button>
+                    <Button className="w-full rounded-2xl">{copy.packageButton}</Button>
                   </a>
                 </div>
               )
@@ -329,16 +339,11 @@ export default async function HomePage() {
         <div className="surface-dawn surface-pad">
           <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
             <div className="glass-panel interactive-card p-8">
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Кому особенно полезно</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950">
-                Если сайт уже есть, но работает слабее, чем должен
-              </h2>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.industryKicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.industryTitle}</h2>
               <div className="mt-8 space-y-4">
-                {industryBlocks.map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-slate-700"
-                  >
+                {copy.industryBlocks.map((item: string) => (
+                  <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-slate-700">
                     {item}
                   </div>
                 ))}
@@ -346,7 +351,7 @@ export default async function HomePage() {
             </div>
 
             <div className="space-y-4">
-              {processBlocks.map((item) => (
+              {copy.processBlocks.map((item: any) => (
                 <div key={item.step} className="glass-panel interactive-card flex gap-5 p-6">
                   <div className="text-3xl font-semibold text-cyan-700">{item.step}</div>
                   <div>
@@ -362,71 +367,54 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-grid surface-pad">
-        <div className="section-heading">
-          <div>
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Кейсы</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">
-              Примеры проектов, где сайт стал сильнее
-            </h2>
+          <div className="section-heading">
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.casesKicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.casesTitle}</h2>
+            </div>
+            <Link href={prefixPathWithLocale('/cases', locale)} className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
+              {copy.casesLink}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
-          <Link href="/cases" className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
-            Открыть кейсы
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
 
-        <div className="uniform-grid-2">
-          {featuredCases.length > 0 ? (
-            featuredCases.map((item, index) => {
-              const cardContent = (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm uppercase tracking-[0.24em] text-orange-700">{`\u041a\u0435\u0439\u0441 ${index + 1}`}</span>
-                    <Building2 className="h-5 w-5 text-cyan-700" />
-                  </div>
-                  <h3 className="mt-6 text-3xl font-semibold text-slate-950">{item.title}</h3>
-                  <p className="mt-4 text-sm leading-7 text-slate-600">
-                    {item.description ||
-                      item.content ||
-                      '\u0420\u0430\u0437\u0431\u043e\u0440 \u043f\u0440\u043e\u0435\u043a\u0442\u0430, \u0432 \u043a\u043e\u0442\u043e\u0440\u043e\u043c \u0434\u043e\u0440\u0430\u0431\u043e\u0442\u043a\u0430 \u0441\u0442\u0440\u0443\u043a\u0442\u0443\u0440\u044b, \u043a\u043e\u043d\u0442\u0435\u043d\u0442\u0430 \u0438 \u043a\u043b\u044e\u0447\u0435\u0432\u044b\u0445 \u0441\u0442\u0440\u0430\u043d\u0438\u0446 \u0443\u0441\u0438\u043b\u0438\u043b\u0430 \u043e\u0440\u0433\u0430\u043d\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043f\u043e\u0442\u0435\u043d\u0446\u0438\u0430\u043b \u0441\u0430\u0439\u0442\u0430.'}
-                  </p>
-                  {item.slug ? (
-                    <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700 transition group-hover:text-slate-950">
-                      {'\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u043a\u0435\u0439\u0441'}
-                      <ArrowRight className="h-4 w-4" />
+          <div className="uniform-grid-2">
+            {featuredCases.length > 0 ? (
+              featuredCases.map((item, index) => {
+                const cardContent = (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm uppercase tracking-[0.24em] text-orange-700">{`${copy.caseLabel} ${index + 1}`}</span>
+                      <Building2 className="h-5 w-5 text-cyan-700" />
                     </div>
-                  ) : null}
-                </>
-              )
+                    <h3 className="mt-6 text-3xl font-semibold text-slate-950">{item.title}</h3>
+                    <p className="mt-4 text-sm leading-7 text-slate-600">{item.description || item.content || copy.caseFallback}</p>
+                    {item.slug ? (
+                      <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700 transition group-hover:text-slate-950">
+                        {copy.openCase}
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
+                    ) : null}
+                  </>
+                )
 
-              if (item.slug) {
-                return (
-                  <Link
-                    key={item.id}
-                    href={`/cases/${item.slug}`}
-                    className="uniform-card glass-panel interactive-card group block p-8 transition hover:border-cyan-200"
-                  >
+                return item.slug ? (
+                  <Link key={item.id} href={prefixPathWithLocale(`/cases/${item.slug}`, locale)} className="uniform-card glass-panel interactive-card group block p-8 transition hover:border-cyan-200">
                     {cardContent}
                   </Link>
+                ) : (
+                  <div key={item.id} className="uniform-card glass-panel interactive-card p-8">
+                    {cardContent}
+                  </div>
                 )
-              }
-
-              return (
-                <div key={item.id} className="uniform-card glass-panel interactive-card p-8">
-                  {cardContent}
-                </div>
-              )
-            })
-          ) : (
-            <div className="glass-panel p-8 lg:col-span-2">
-              <h3 className="text-2xl font-semibold text-slate-950">Кейсы с разбором задачи, работ и результата</h3>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
-                Здесь публикуются проекты, в которых видно, как структура сайта, SEO и коммерческие факторы влияют на
-                трафик, заявки и стоимость обращения.
-              </p>
-            </div>
-          )}
-        </div>
+              })
+            ) : (
+              <div className="glass-panel p-8 lg:col-span-2">
+                <h3 className="text-2xl font-semibold text-slate-950">{copy.caseEmptyTitle}</h3>
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">{copy.caseEmptyText}</p>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -434,13 +422,11 @@ export default async function HomePage() {
         <div className="surface-grid surface-pad">
           <div className="section-heading">
             <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Блог</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">
-                Материалы, которые усиливают экспертность сайта
-              </h2>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.blogKicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.blogTitle}</h2>
             </div>
-            <Link href="/blog" className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
-              Перейти в блог
+            <Link href={prefixPathWithLocale('/blog', locale)} className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
+              {copy.blogLink}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -448,26 +434,16 @@ export default async function HomePage() {
           <div className="uniform-grid-3">
             {posts.length > 0 ? (
               posts.map((post) => (
-                <Link
-                  key={post.id}
-                  href={`/blog/${post.slug}`}
-                  className="uniform-card glass-panel interactive-card group p-7 transition hover:border-cyan-200"
-                >
-                  <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Материал</div>
+                <Link key={post.id} href={prefixPathWithLocale(`/blog/${post.slug}`, locale)} className="uniform-card glass-panel interactive-card group p-7 transition hover:border-cyan-200">
+                  <div className="text-xs uppercase tracking-[0.24em] text-slate-400">{copy.blogCardKicker}</div>
                   <h3 className="mt-4 text-2xl font-semibold text-slate-950">{post.title}</h3>
-                  <p className="mt-4 text-sm leading-7 text-slate-600">
-                    {post.excerpt ||
-                      'Материал, который помогает клиенту лучше понять подход, ошибки и точки роста сайта.'}
-                  </p>
+                  <p className="mt-4 text-sm leading-7 text-slate-600">{post.excerpt || copy.blogFallback}</p>
                 </Link>
               ))
             ) : (
               <div className="glass-panel p-7 md:col-span-3">
-                <h3 className="text-2xl font-semibold text-slate-950">Блог усиливает доверие и поисковое покрытие</h3>
-                <p className="mt-4 text-sm leading-7 text-slate-600">
-                  Здесь лучше всего работают экспертные материалы: разборы ошибок, практика по SEO и ответы на частые
-                  вопросы клиентов.
-                </p>
+                <h3 className="text-2xl font-semibold text-slate-950">{copy.blogEmptyTitle}</h3>
+                <p className="mt-4 text-sm leading-7 text-slate-600">{copy.blogEmptyText}</p>
               </div>
             )}
           </div>
@@ -476,78 +452,65 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-signal surface-pad">
-        <div className="section-heading">
-          <div>
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Отзывы</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">
-              Подтверждение, которое работает на доверие
-            </h2>
-          </div>
-        </div>
-
-        <div className="uniform-grid-3">
-          {reviews.length > 0 ? (
-            reviews.map((review) => (
-              <div key={review.id} className="uniform-card glass-panel interactive-card p-7">
-                <div className="text-sm uppercase tracking-[0.24em] text-orange-700">{review.author}</div>
-                <p className="mt-5 text-sm leading-7 text-slate-600">{review.text}</p>
-                {(review.company || review.position) && (
-                  <div className="mt-6 text-sm text-slate-400">
-                    {[review.company, review.position].filter(Boolean).join(', ')}
-                  </div>
-                )}
-              </div>
-            ))
-          ) : (
-            <div className="glass-panel p-7 md:col-span-3">
-              <h3 className="text-2xl font-semibold text-slate-950">Отзывы клиентов и рабочий контекст проекта</h3>
-              <p className="mt-4 text-sm leading-7 text-slate-600">
-                Лучше всего этот блок работает, когда в нём есть реальные отзывы с именем, компанией и коротким описанием
-                задачи, которую нужно было решить.
-              </p>
+          <div className="section-heading">
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.reviewsKicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.reviewsTitle}</h2>
             </div>
-          )}
-        </div>
+          </div>
+
+          <div className="uniform-grid-3">
+            {reviews.length > 0 ? (
+              reviews.map((review) => (
+                <div key={review.id} className="uniform-card glass-panel interactive-card p-7">
+                  <div className="text-sm uppercase tracking-[0.24em] text-orange-700">{review.author}</div>
+                  <p className="mt-5 text-sm leading-7 text-slate-600">{review.text}</p>
+                  {(review.company || review.position) && (
+                    <div className="mt-6 text-sm text-slate-400">{[review.company, review.position].filter(Boolean).join(', ')}</div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="glass-panel p-7 md:col-span-3">
+                <h3 className="text-2xl font-semibold text-slate-950">{copy.reviewsEmptyTitle}</h3>
+                <p className="mt-4 text-sm leading-7 text-slate-600">{copy.reviewsEmptyText}</p>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
       <section id="contact-form" className="scroll-mt-32">
         <div className="section-shell">
           <div className="surface-grid p-4 md:p-6">
-          <div className="soft-section grid gap-8 overflow-hidden lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Следующий шаг</p>
-              <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
-                Оставьте заявку, и я подготовлю разбор сайта
-              </h2>
-              <p className="mt-6 max-w-xl text-sm leading-7 text-slate-600">
-                Покажу, что мешает росту, где сайт недожимает по заявкам и с каких изменений логичнее начать.
-              </p>
+            <div className="soft-section grid gap-8 overflow-hidden lg:grid-cols-[0.9fr_1.1fr]">
+              <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
+                <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.contactKicker}</p>
+                <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
+                <p className="mt-6 max-w-xl text-sm leading-7 text-slate-600">{copy.contactText}</p>
 
-              <div className="mt-8 space-y-4">
-                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4">
-                  <div className="flex items-center gap-3 text-slate-900">
-                    <Clock3 className="h-5 w-5 text-cyan-700" />
-                    <span className="font-medium">Быстрая обратная связь</span>
+                <div className="mt-8 space-y-4">
+                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4">
+                    <div className="flex items-center gap-3 text-slate-900">
+                      <Clock3 className="h-5 w-5 text-cyan-700" />
+                      <span className="font-medium">{copy.contactFastTitle}</span>
+                    </div>
+                    <p className="mt-2 text-sm text-slate-600">{copy.contactFastText}</p>
                   </div>
-                  <p className="mt-2 text-sm text-slate-600">Обычно отвечаю в течение дня после заявки.</p>
-                </div>
-                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4">
-                  <div className="flex items-center gap-3 text-slate-900">
-                    <ShieldCheck className="h-5 w-5 text-cyan-700" />
-                    <span className="font-medium">Конкретные выводы</span>
+                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4">
+                    <div className="flex items-center gap-3 text-slate-900">
+                      <ShieldCheck className="h-5 w-5 text-cyan-700" />
+                      <span className="font-medium">{copy.contactConcreteTitle}</span>
+                    </div>
+                    <p className="mt-2 text-sm text-slate-600">{copy.contactConcreteText}</p>
                   </div>
-                  <p className="mt-2 text-sm text-slate-600">
-                    Без общих фраз: только понятные точки роста и следующий шаг.
-                  </p>
                 </div>
               </div>
-            </div>
 
-            <div className="p-8">
-              <LazyContactForm />
+              <div className="p-8">
+                <LazyContactForm />
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </section>
@@ -556,27 +519,31 @@ export default async function HomePage() {
 }
 
 export async function generateMetadata() {
+  const locale = await getRequestLocale()
+  const copy = homeCopy[locale]
+
   let page: any = null
   try {
     page = await prisma.page.findUnique({ where: { slug: 'home' } })
   } catch (error) {
     page = null
   }
-  const { getSiteUrl } = await import('@/lib/site-url')
-  const siteUrl = getSiteUrl()
+
+  const alternates = getLocaleAlternates('/')
+  const title = normalizeMetaTitle(page?.title, copy.metadata.title)
+  const description = normalizeMetaDescription(page?.description, copy.metadata.description)
 
   return {
-    title: normalizeMetaTitle(page?.title, defaultHomeMetadata.title),
-    description: normalizeMetaDescription(page?.description, defaultHomeMetadata.description),
-    keywords: page?.keywords || defaultHomeMetadata.keywords,
-    alternates: {
-      canonical: siteUrl,
-    },
+    title,
+    description,
+    keywords: page?.keywords || copy.metadata.keywords,
+    alternates,
     openGraph: {
-      title: normalizeMetaTitle(page?.title, defaultHomeMetadata.title),
-      description: normalizeMetaDescription(page?.description, defaultHomeMetadata.description),
-      url: siteUrl,
+      title,
+      description,
+      url: alternates.canonical,
       type: 'website',
+      locale: locale === 'ru' ? 'ru_RU' : 'en_US',
     },
   }
 }

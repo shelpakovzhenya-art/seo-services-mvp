@@ -84,7 +84,12 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
             <div className="flex items-center justify-between gap-4">
               <div>
                 <div className="text-xs uppercase tracking-[0.24em] text-orange-300">{dictionary.mobileMenu.menuTitle}</div>
-                <div className="mt-1 text-2xl font-semibold text-white">Shelpakov Digital</div>
+                <div className="mt-1 flex items-center gap-3">
+                  <span className="grid h-11 w-11 place-items-center overflow-hidden rounded-2xl border border-white/12 bg-white/95 shadow-[0_10px_24px_rgba(2,8,23,0.22)]">
+                    <Image src="/favicon-48.png" alt="Shelpakov Digital" width={36} height={36} className="h-[78%] w-[78%] object-contain" />
+                  </span>
+                  <span className="text-2xl font-semibold text-white">Shelpakov Digital</span>
+                </div>
               </div>
               <button
                 type="button"

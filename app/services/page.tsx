@@ -5,72 +5,147 @@ import JsonLd from '@/components/JsonLd'
 import { Button } from '@/components/ui/button'
 import ServicesCatalogSection from '@/components/services/ServicesCatalogSection'
 import LazyContactForm from '@/components/LazyContactForm'
+import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
+import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
-import { getFullUrl } from '@/lib/site-url'
+import { getLocaleAlternates } from '@/lib/site-url'
 import { servicePages } from '@/lib/service-pages'
 import { createBreadcrumbSchema, createCollectionPageSchema, createFaqSchema, createItemListSchema } from '@/lib/structured-data'
 
-const pageTitle = 'SEO и разработка сайтов под заявки'
-const pageDescription =
-  'SEO-услуги и разработка сайтов под заявки: аудит, техническая база, структура, контент, разработка новых страниц и запуск площадки с основой под рост.'
-
-const serviceFaq = [
-  {
-    question: 'Как понять, что проекту нужен новый сайт, а не только SEO?',
-    answer:
-      'Обычно это видно по архитектуре и логике страниц. Если сайт неудобно расширять, он слабо презентует услуги, не ведет к обращению и мешает росту, логичнее смотреть в сторону разработки или перезапуска.',
+const servicesIndexCopy: Record<Locale, any> = {
+  ru: {
+    pageTitle: 'SEO и разработка сайтов под заявки',
+    pageDescription:
+      'SEO-услуги и разработка сайтов под заявки: аудит, техническая база, структура, контент, разработка новых страниц и запуск площадки с основой под рост.',
+    chip: 'SEO и разработка',
+    cta: 'Получить ориентир по услуге',
+    back: 'Вернуться на главную',
+    chooseKicker: 'Как выбрать формат',
+    chooseCards: [
+      'Если нужно понять текущее состояние сайта и ограничения роста, логично начинать с SEO-аудита или консультационного разбора.',
+      'Если площадка устарела или не дает нормальных обращений, лучше смотреть в сторону разработки или перезапуска сайта с новой структурой и логикой.',
+      'Если сайт уже есть и ему нужен системный рост, дальше подключаются SEO-продвижение, техническая база, контент и усиление ключевых посадочных.',
+    ],
+    faqKicker: 'FAQ',
+    faqTitle: 'Частые вопросы по услугам',
+    faqCount: 'Всего направлений',
+    contactKicker: 'Консультация',
+    contactTitle: 'Получить консультацию по выбору услуги',
+    contactText:
+      'Коротко опишите задачу, и я подскажу, с какого формата работ логичнее начать именно в вашем проекте: с аудита, разработки, доработки сайта или системного продвижения.',
+    contactNoteA: 'Ответим в течение дня.',
+    contactNoteB: 'Покажем точки роста и следующий шаг без лишних обязательств.',
+    metaTitle: 'SEO и разработка сайтов | Shelpakov Digital',
+    metaDescription:
+      'SEO-услуги и разработка сайтов под заявки: аудит, техническая база, контент, перезапуск текущего сайта и создание новой площадки с основой под рост и обращения.',
+    faq: [
+      {
+        question: 'Как понять, что проекту нужен новый сайт, а не только SEO?',
+        answer:
+          'Обычно это видно по архитектуре и логике страниц. Если сайт неудобно расширять, он слабо презентует услуги, не ведет к обращению и мешает росту, логичнее смотреть в сторону разработки или перезапуска.',
+      },
+      {
+        question: 'Можно ли начать с одной услуги, а потом наращивать сайт?',
+        answer:
+          'Да. Это нормальный сценарий: сначала запускается компактная версия под ключевую задачу, затем добавляются новые разделы, статьи, кейсы и дополнительные посадочные страницы.',
+      },
+      {
+        question: 'Вы подключаете разработку и SEO отдельно или вместе?',
+        answer:
+          'Возможны оба формата. Для одного проекта важнее сначала разработать сильную базу, для другого уже нужен аудит, техническое SEO или системное продвижение поверх существующего сайта.',
+      },
+      {
+        question: 'Почему на сайте указаны стартовые цены, а не фиксированная стоимость?',
+        answer:
+          'Итоговый бюджет зависит от структуры сайта, количества уникальных страниц, контента, сложности дизайна, интеграций и того, нужен проекту просто запуск или сразу запас под дальнейшее масштабирование.',
+      },
+    ],
   },
-  {
-    question: 'Можно ли начать с одной услуги, а потом наращивать сайт?',
-    answer:
-      'Да. Это нормальный сценарий: сначала запускается компактная версия под ключевую задачу, затем добавляются новые разделы, статьи, кейсы и дополнительные посадочные страницы.',
-  },
-  {
-    question: 'Вы подключаете разработку и SEO отдельно или вместе?',
-    answer:
-      'Возможны оба формата. Для одного проекта важнее сначала разработать сильную базу, для другого уже нужен аудит, техническое SEO или системное продвижение поверх существующего сайта.',
-  },
-  {
-    question: 'Почему на сайте указаны стартовые цены, а не фиксированная стоимость?',
-    answer:
-      'Итоговый бюджет зависит от структуры сайта, количества уникальных страниц, контента, сложности дизайна, интеграций и того, нужен ли проекту просто запуск или сразу запас под дальнейшее масштабирование.',
-  },
-]
-
-export const metadata: Metadata = {
-  title: normalizeMetaTitle(pageTitle, 'SEO и разработка сайтов'),
-  description: normalizeMetaDescription(
-    pageDescription,
-    'SEO-услуги и разработка сайтов под заявки: аудит, техническая база, контент, перезапуск текущего сайта и создание новой площадки с основой под рост и обращения.'
-  ),
-  alternates: {
-    canonical: getFullUrl('/services'),
-  },
-  openGraph: {
-    title: normalizeMetaTitle(pageTitle, 'SEO и разработка сайтов'),
-    description: normalizeMetaDescription(
-      pageDescription,
-      'SEO-услуги и разработка сайтов под заявки: аудит, техническая база, контент, перезапуск текущего сайта и создание новой площадки с основой под рост и обращения.'
-    ),
-    url: getFullUrl('/services'),
-    type: 'website',
+  en: {
+    pageTitle: 'SEO and website development built for lead generation',
+    pageDescription:
+      'SEO services and website development for lead growth: audits, technical foundations, structure, content, new landing pages, and launching a platform prepared for scale.',
+    chip: 'SEO and development',
+    cta: 'Get guidance on the right service',
+    back: 'Back to home',
+    chooseKicker: 'How to choose the format',
+    chooseCards: [
+      'If you need to understand the site’s current condition and its growth constraints, it makes sense to start with an SEO audit or a strategic review.',
+      'If the platform is outdated or fails to generate solid inquiries, development or a relaunch with new structure and logic is usually the stronger move.',
+      'If the site already exists and needs systematic growth, the next step is ongoing SEO, technical foundations, content, and stronger key landing pages.',
+    ],
+    faqKicker: 'FAQ',
+    faqTitle: 'Frequently asked questions about services',
+    faqCount: 'Total service lines',
+    contactKicker: 'Consultation',
+    contactTitle: 'Get guidance on the right service mix',
+    contactText:
+      'Briefly describe the task, and I will suggest which format makes the most sense for your project right now: audit, development, refinement, or ongoing SEO.',
+    contactNoteA: 'Reply within one business day.',
+    contactNoteB: 'Clear growth points and a sensible next step without pressure.',
+    metaTitle: 'SEO and website development | Shelpakov Digital',
+    metaDescription:
+      'SEO services and website development for lead growth: audits, technical foundations, content, relaunching an existing website, and building a stronger platform for scale.',
+    faq: [
+      {
+        question: 'How do you know when a project needs a new website rather than just SEO?',
+        answer:
+          'You can usually tell from the architecture and the page logic. If the website is hard to expand, presents services weakly, fails to guide the user toward inquiry, and limits growth, development or a relaunch is often the right move.',
+      },
+      {
+        question: 'Can we start with one service and expand the website later?',
+        answer:
+          'Yes. That is a healthy scenario: a compact version can launch around the main goal first, and new sections, articles, case studies, and landing pages can be added after that.',
+      },
+      {
+        question: 'Do you handle development and SEO separately or together?',
+        answer:
+          'Both formats are possible. Some projects need a strong platform first, while others already need an audit, technical SEO, or ongoing growth work on top of an existing site.',
+      },
+      {
+        question: 'Why do you show starting prices instead of a fixed cost?',
+        answer:
+          'The final budget depends on the site structure, number of unique pages, content scope, design complexity, integrations, and whether the project needs a launch-only version or room for future expansion from day one.',
+      },
+    ],
   },
 }
 
-export default function ServicesIndexPage() {
-  const faqSchema = createFaqSchema(serviceFaq)
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale()
+  const copy = servicesIndexCopy[locale]
+  const alternates = getLocaleAlternates('/services')
+
+  return {
+    title: normalizeMetaTitle(copy.pageTitle, copy.metaTitle),
+    description: normalizeMetaDescription(copy.pageDescription, copy.metaDescription),
+    alternates,
+    openGraph: {
+      title: normalizeMetaTitle(copy.pageTitle, copy.metaTitle),
+      description: normalizeMetaDescription(copy.pageDescription, copy.metaDescription),
+      url: alternates.canonical,
+      type: 'website',
+    },
+  }
+}
+
+export default async function ServicesIndexPage() {
+  const locale = await getRequestLocale()
+  const copy = servicesIndexCopy[locale]
+
+  const faqSchema = createFaqSchema(copy.faq)
   const breadcrumbsSchema = createBreadcrumbSchema([
-    { name: 'Главная', path: '/' },
-    { name: 'Услуги', path: '/services' },
+    { name: locale === 'ru' ? 'Главная' : 'Home', path: '/' },
+    { name: locale === 'ru' ? 'Услуги' : 'Services', path: '/services' },
   ])
   const collectionSchema = createCollectionPageSchema({
     path: '/services',
-    name: pageTitle,
-    description: pageDescription,
+    name: copy.pageTitle,
+    description: copy.pageDescription,
   })
   const itemListSchema = createItemListSchema({
     path: '/services',
-    name: 'SEO-услуги и разработка сайтов',
+    name: copy.pageTitle,
     items: servicePages.map((service) => ({
       name: service.shortName,
       path: `/services/${service.slug}`,
@@ -87,48 +162,42 @@ export default function ServicesIndexPage() {
 
       <div className="page-shell">
         <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500">
-          <Link href="/" className="transition hover:text-slate-900">
-            Главная
+          <Link href={prefixPathWithLocale('/', locale)} className="transition hover:text-slate-900">
+            {locale === 'ru' ? 'Главная' : 'Home'}
           </Link>
           <ChevronRight className="h-4 w-4" />
-          <span className="text-slate-900">Услуги</span>
+          <span className="text-slate-900">{locale === 'ru' ? 'Услуги' : 'Services'}</span>
         </nav>
 
         <section className="surface-grid surface-pad">
           <div className="grid gap-6 lg:grid-cols-[1.04fr_0.96fr] lg:items-start">
             <div>
-              <span className="warm-chip">SEO и разработка</span>
-              <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{pageTitle}</h1>
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
-                Подберите подходящий формат работ под задачу бизнеса: от аудита и SEO-базы до разработки нового сайта, перезапуска текущей площадки и дальнейшего роста через органику.
-              </p>
+              <span className="warm-chip">{copy.chip}</span>
+              <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{copy.pageTitle}</h1>
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{copy.pageDescription}</p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <a href="#contact-form">
                   <Button size="lg" className="rounded-full px-7">
-                    Получить ориентир по услуге
+                    {copy.cta}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </a>
-                <Link href="/">
+                <Link href={prefixPathWithLocale('/', locale)}>
                   <Button size="lg" variant="outline" className="rounded-full border-slate-300 bg-white px-7 text-slate-900 hover:bg-slate-50">
-                    Вернуться на главную
+                    {copy.back}
                   </Button>
                 </Link>
               </div>
             </div>
 
             <div className="glass-panel p-6">
-              <div className="text-sm uppercase tracking-[0.24em] text-orange-700">Как выбрать формат</div>
+              <div className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.chooseKicker}</div>
               <div className="mt-4 space-y-3">
-                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
-                  Если нужно понять текущее состояние сайта и ограничения роста, логично начинать с SEO-аудита или консультационного разбора.
-                </div>
-                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
-                  Если площадка устарела или не дает нормальных обращений, лучше смотреть в сторону разработки или перезапуска сайта с новой структурой и логикой.
-                </div>
-                <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
-                  Если сайт уже есть и ему нужен системный рост, дальше подключаются SEO-продвижение, техническая база, контент и усиление ключевых посадочных.
-                </div>
+                {copy.chooseCards.map((item: string) => (
+                  <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
+                    {item}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -139,14 +208,14 @@ export default function ServicesIndexPage() {
         <section className="reading-shell">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">FAQ</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950">Частые вопросы по услугам</h2>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.faqKicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.faqTitle}</h2>
             </div>
-            <div className="text-sm text-slate-500">Всего направлений: {servicePages.length}</div>
+            <div className="text-sm text-slate-500">{copy.faqCount}: {servicePages.length}</div>
           </div>
 
           <div className="uniform-grid-2 mt-6 gap-4">
-            {serviceFaq.map((item) => (
+            {copy.faq.map((item: any) => (
               <div key={item.question} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
                 <h3 className="text-lg font-semibold text-slate-950">{item.question}</h3>
                 <p className="mt-3 text-sm leading-7 text-slate-600">{item.answer}</p>
@@ -159,18 +228,12 @@ export default function ServicesIndexPage() {
           <div className="soft-section overflow-hidden">
             <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
               <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
-                <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Консультация</p>
-                <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">Получить консультацию по выбору услуги</h2>
-                <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">
-                  Коротко опишите задачу, и я подскажу, с какого формата работ логичнее начать именно в вашем проекте: с аудита, разработки, доработки сайта или системного продвижения.
-                </p>
+                <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.contactKicker}</p>
+                <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
+                <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">{copy.contactText}</p>
                 <div className="mt-8 space-y-4">
-                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
-                    Ответим в течение дня.
-                  </div>
-                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
-                    Покажем точки роста и следующий шаг без лишних обязательств.
-                  </div>
+                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">{copy.contactNoteA}</div>
+                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">{copy.contactNoteB}</div>
                 </div>
               </div>
               <div className="p-8">
