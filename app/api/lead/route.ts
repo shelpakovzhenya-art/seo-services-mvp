@@ -14,20 +14,33 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(new URL("/?error=1#contact", origin));
   }
 
-  await prisma.lead.create({
-    data: {
-      name,
-      contact,
-      message,
-      source: "site",
-      status: "new",
-    },
-  });
+  let savedToDatabase = false;
+  let sentByEmail = false;
+
+  try {
+    await prisma.lead.create({
+      data: {
+        name,
+        contact,
+        message,
+        source: "site",
+        status: "new",
+      },
+    });
+    savedToDatabase = true;
+  } catch (error) {
+    console.error("Lead database save failed", error);
+  }
 
   try {
     await sendLeadEmail({ name, contact, message });
+    sentByEmail = true;
   } catch (error) {
     console.error("Lead email send failed", error);
+  }
+
+  if (!savedToDatabase && !sentByEmail) {
+    return NextResponse.redirect(new URL("/?error=1#contact", origin));
   }
 
   return NextResponse.redirect(new URL("/?success=1#contact", origin));
