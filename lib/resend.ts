@@ -43,6 +43,7 @@ export async function sendLeadEmail(payload: LeadEmailPayload) {
     headers: {
       Authorization: `Bearer ${config.apiKey}`,
       "Content-Type": "application/json",
+      "User-Agent": "studio-angliyskogo/1.0",
     },
     body: JSON.stringify({
       from: config.from,
