@@ -4,7 +4,7 @@ import { normalizeExternalLink, normalizeTelegramLink } from "@/lib/contact-link
 
 export default async function Footer() {
   const settings = await getSiteSettings();
-  const telegramLink = normalizeTelegramLink(settings.telegram);
+  const telegramLink = normalizeTelegramLink(settings.telegram) || "#contact";
   const whatsappLink = normalizeExternalLink(settings.whatsapp);
 
   return (
@@ -16,9 +16,7 @@ export default async function Footer() {
 
       {(telegramLink || whatsappLink || settings.email || settings.phone) ? (
         <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-          {telegramLink ? (
-            <TelegramIconLink href={telegramLink} />
-          ) : null}
+          <TelegramIconLink href={telegramLink} />
 
           {whatsappLink ? (
             <a

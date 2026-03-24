@@ -9,7 +9,7 @@ export default async function Header() {
   const siteName = settings.siteName || "Студия Английского";
   const [firstWord, ...restWords] = siteName.split(" ");
   const restName = restWords.join(" ");
-  const telegramLink = normalizeTelegramLink(settings.telegram);
+  const telegramLink = normalizeTelegramLink(settings.telegram) || "#contact";
 
   return (
     <header className="site-shell relative z-10 flex items-center justify-between gap-4 py-6">
@@ -29,9 +29,7 @@ export default async function Header() {
       </nav>
 
       <div className="flex items-center gap-3">
-        {telegramLink ? (
-          <TelegramIconLink href={telegramLink} />
-        ) : null}
+        <TelegramIconLink href={telegramLink} />
         <Button asChild className="rounded-full px-5">
           <a href="#contact">Оставить заявку</a>
         </Button>
