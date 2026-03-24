@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getRequestOrigin } from "@/lib/request-origin";
 import { sendLeadEmail } from "@/lib/resend";
 
 export async function POST(request: NextRequest) {
+  const origin = getRequestOrigin(request);
   const formData = await request.formData();
   const name = String(formData.get("name") || "").trim();
   const contact = String(formData.get("contact") || "").trim();
   const message = String(formData.get("message") || "").trim();
 
   if (!name || !contact) {
-    return NextResponse.redirect(new URL("/?error=1", request.url));
+    return NextResponse.redirect(new URL("/?error=1#contact", origin));
   }
 
   await prisma.lead.create({
@@ -28,5 +30,5 @@ export async function POST(request: NextRequest) {
     console.error("Lead email send failed", error);
   }
 
-  return NextResponse.redirect(new URL("/?success=1#contact", request.url));
+  return NextResponse.redirect(new URL("/?success=1#contact", origin));
 }
