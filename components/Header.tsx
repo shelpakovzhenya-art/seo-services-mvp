@@ -23,9 +23,6 @@ export default function Header() {
       </nav>
 
       <div className="flex items-center gap-3">
-        <Link href="/admin/login" className="hidden text-sm text-slate-600 md:block">
-          Админка
-        </Link>
         <Button asChild className="rounded-full px-5">
           <a href="#contact">Оставить заявку</a>
         </Button>
