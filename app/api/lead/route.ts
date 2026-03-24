@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendLeadEmail } from "@/lib/resend";
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
@@ -20,6 +21,12 @@ export async function POST(request: NextRequest) {
       status: "new",
     },
   });
+
+  try {
+    await sendLeadEmail({ name, contact, message });
+  } catch (error) {
+    console.error("Lead email send failed", error);
+  }
 
   return NextResponse.redirect(new URL("/?success=1#contact", request.url));
 }
