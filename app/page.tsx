@@ -66,7 +66,7 @@ export default function HomePage() {
       <Header />
 
       <main className="site-shell relative z-10">
-        <section className="glass-card grid items-center gap-10 overflow-hidden px-6 py-8 md:grid-cols-[1.15fr_0.85fr] md:px-10 md:py-12">
+        <section className="glass-card overflow-hidden px-6 py-8 md:px-10 md:py-12">
           <div>
             <p className="mb-4 inline-flex rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-rose-600">
               Онлайн-центр нового поколения
@@ -97,46 +97,128 @@ export default function HomePage() {
                 Посмотреть преимущества
               </a>
             </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="soft-card overflow-hidden">
-              <Image
-                src="/images/lena-founder-hero.jpg"
-                alt="Атмосфера Студии Английского"
-                width={927}
-                height={1648}
-                className="h-full min-h-[320px] w-full object-cover"
-              />
-            </div>
-            <div className="soft-card overflow-hidden">
-              <Image
-                src="/images/lena-founder-profile.jpg"
-                alt="Образ Студии Английского"
-                width={927}
-                height={1648}
-                className="h-full min-h-[320px] w-full object-cover"
-              />
+            <div className="mt-10 grid gap-4 md:grid-cols-3">
+              <div className="soft-card p-5">
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">
+                  Методика
+                </p>
+                <p className="mt-3 text-slate-600 leading-7">
+                  Диагностика, понятный маршрут, регулярная практика и работа на
+                  устойчивый результат.
+                </p>
+              </div>
+              <div className="soft-card p-5">
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">
+                  Атмосфера
+                </p>
+                <p className="mt-3 text-slate-600 leading-7">
+                  Эстетичная и спокойная среда, где можно учиться без давления,
+                  но с высокой академической планкой.
+                </p>
+              </div>
+              <div className="soft-card p-5">
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">
+                  Прогресс
+                </p>
+                <p className="mt-3 text-slate-600 leading-7">
+                  Прозрачная обратная связь для родителей и взрослых учеников и
+                  понятная логика каждого этапа.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
-        <section id="about" className="grid gap-6 py-8 md:grid-cols-2">
-          <div className="soft-card p-6 md:p-8">
-            <p className="mb-3 text-sm font-bold uppercase tracking-[0.22em] text-rose-500">
-              О нас
-            </p>
-            <h2 className="section-title text-3xl md:text-4xl">
-              Не просто занятия, а целая образовательная среда
-            </h2>
+        <section id="about" className="grid gap-6 py-8">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="soft-card p-6 md:p-8">
+              <p className="mb-3 text-sm font-bold uppercase tracking-[0.22em] text-rose-500">
+                О нас
+              </p>
+              <h2 className="section-title text-3xl md:text-4xl">
+                Не просто занятия, а целая образовательная среда
+              </h2>
+            </div>
+            <div className="soft-card p-6 md:p-8">
+              <p className="section-copy">
+                Студия Английского задумана как современный онлайн-центр, где
+                сочетаются академическая системность, забота о состоянии ученика и
+                эстетичная подача. Мы не перегружаем, а ведем к результату через
+                ясную структуру, дисциплину и комфортный темп.
+              </p>
+            </div>
           </div>
-          <div className="soft-card p-6 md:p-8">
-            <p className="section-copy">
-              Студия Английского задумана как современный онлайн-центр, где
-              сочетаются академическая системность, забота о состоянии ученика и
-              эстетичная подача. Мы не перегружаем, а ведем к результату через
-              ясную структуру, дисциплину и комфортный темп.
-            </p>
+
+          <div className="glass-card grid gap-6 p-6 md:grid-cols-2 md:p-8">
+            <article className="overflow-hidden rounded-[26px] border border-white/70 bg-white/85 shadow-[0_18px_50px_rgba(122,88,96,0.08)]">
+              <Image
+                src="/images/lena-founder-hero.jpg"
+                alt="Основатель и лицо Студии Английского"
+                width={927}
+                height={1648}
+                className="h-[420px] w-full object-cover"
+              />
+              <div className="p-5">
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">
+                  Опыт и качество
+                </p>
+                <h3 className="mt-2 text-2xl font-bold text-slate-900">
+                  Многолетний преподавательский опыт и сильный академический стандарт
+                </h3>
+                <p className="mt-3 text-slate-600 leading-7">
+                  В центре собран подход, где важны не просто уроки, а глубина
+                  объяснения, логика программы и умение привести ученика к
+                  реальному языковому росту.
+                </p>
+              </div>
+            </article>
+
+            <article className="overflow-hidden rounded-[26px] border border-white/70 bg-white/85 shadow-[0_18px_50px_rgba(122,88,96,0.08)]">
+              <Image
+                src="/images/lena-founder-profile.jpg"
+                alt="Экспертный и эстетичный образ Студии Английского"
+                width={927}
+                height={1648}
+                className="h-[420px] w-full object-cover"
+              />
+              <div className="p-5">
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">
+                  Подход и преимущества
+                </p>
+                <h3 className="mt-2 text-2xl font-bold text-slate-900">
+                  Бережная атмосфера, персональный маршрут и понятный прогресс
+                </h3>
+                <p className="mt-3 text-slate-600 leading-7">
+                  Мы выстраиваем обучение так, чтобы ученик чувствовал себя
+                  уверенно, понимал свои шаги и видел результат без перегруза и
+                  хаотичной подачи.
+                </p>
+              </div>
+            </article>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="soft-card p-5">
+              <p className="text-lg font-bold text-slate-900">Сильный опыт</p>
+              <p className="mt-2 text-slate-600 leading-7">
+                Практика преподавания, выстроенные программы и понимание, как вести
+                учеников разного возраста и уровня.
+              </p>
+            </div>
+            <div className="soft-card p-5">
+              <p className="text-lg font-bold text-slate-900">Экспертная подача</p>
+              <p className="mt-2 text-slate-600 leading-7">
+                Материал подается структурно, понятно и красиво, без ощущения
+                перегрузки и школьной сухости.
+              </p>
+            </div>
+            <div className="soft-card p-5">
+              <p className="text-lg font-bold text-slate-900">Результат без стресса</p>
+              <p className="mt-2 text-slate-600 leading-7">
+                Мы соединяем дисциплину результата с комфортным темпом, поддержкой
+                и уважением к состоянию ученика.
+              </p>
+            </div>
           </div>
         </section>
 
