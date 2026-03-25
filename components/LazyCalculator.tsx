@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, type ComponentType } from 'react'
+import type { Locale } from '@/lib/i18n'
 
 type Service = {
   id?: string
@@ -14,6 +15,7 @@ type Service = {
 }
 
 type CalculatorProps = {
+  locale: Locale
   services: Service[]
 }
 
@@ -49,7 +51,7 @@ function CalculatorSkeleton() {
   )
 }
 
-export default function LazyCalculator({ services }: CalculatorProps) {
+export default function LazyCalculator({ locale, services }: CalculatorProps) {
   const [CalculatorComponent, setCalculatorComponent] = useState<CalculatorComponent | null>(null)
 
   useEffect(() => {
@@ -66,5 +68,5 @@ export default function LazyCalculator({ services }: CalculatorProps) {
     }
   }, [])
 
-  return CalculatorComponent ? <CalculatorComponent services={services} /> : <CalculatorSkeleton />
+  return CalculatorComponent ? <CalculatorComponent locale={locale} services={services} /> : <CalculatorSkeleton />
 }

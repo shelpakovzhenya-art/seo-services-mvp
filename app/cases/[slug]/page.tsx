@@ -7,7 +7,7 @@ import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
 import { botiqCase, getBuiltInCaseBySlug, hydrateBotiqCaseRecord } from '@/lib/botiq-case'
 import { parseCaseGallery } from '@/lib/case-gallery'
-import { localizeCaseRecord } from '@/lib/case-localization'
+import { hasRussianCaseContent, localizeCaseRecord, type LocalizableCaseRecord } from '@/lib/case-localization'
 import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
@@ -15,7 +15,7 @@ import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getFullUrl, getLocaleAlternates } from '@/lib/site-url'
 import { createBreadcrumbSchema, createCaseArticleSchema } from '@/lib/structured-data'
 
-type CaseRecord = {
+type CaseRecord = LocalizableCaseRecord & {
   slug?: string | null
   title: string
   description?: string | null
@@ -99,6 +99,10 @@ export default async function CasePage({ params }: { params: { slug: string } })
     notFound()
   }
 
+  if (locale === 'en' && hasRussianCaseContent(caseItem)) {
+    notFound()
+  }
+
   const galleryImages = parseCaseGallery(caseItem.resultImages)
   const baseCasePath = isBuiltIn && params.slug === botiqCase.slug ? botiqCase.url : `/cases/${params.slug}`
   const localizedCasePath = prefixPathWithLocale(baseCasePath, locale)
@@ -115,8 +119,8 @@ export default async function CasePage({ params }: { params: { slug: string } })
     publishedAt: isBuiltIn && params.slug === botiqCase.slug ? botiqCase.publishedAt : caseItem.createdAt,
     updatedAt: isBuiltIn && params.slug === botiqCase.slug ? botiqCase.updatedAt : caseItem.updatedAt,
     about:
-      isBuiltIn && params.slug === botiqCase.slug
-        ? botiqCase.about
+      caseItem.about && caseItem.about.length > 0
+        ? caseItem.about
         : locale === 'en'
           ? ['SEO audit', 'Site structure', 'Technical SEO']
           : ['SEO-аудит', 'Структура сайта', 'Техническое SEO'],
@@ -183,6 +187,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const { isBuiltIn } = result
 
   if (!caseItem) {
+    return {}
+  }
+
+  if (locale === 'en' && hasRussianCaseContent(caseItem)) {
     return {}
   }
 

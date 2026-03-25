@@ -7,6 +7,7 @@ import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
+import { containsCyrillic } from '@/lib/text-detection'
 
 const contactsCopy: Record<Locale, any> = {
   ru: {
@@ -60,14 +61,17 @@ export default async function ContactsPage() {
     console.error('Error loading contacts page:', error)
   }
 
-  const pageContent = stripLeadingMarkdownH1(page?.content, page?.h1 || page?.title || copy.chip)
+  const localizedPage = locale === 'ru' ? page : null
+  const pageContent = stripLeadingMarkdownH1(localizedPage?.content, localizedPage?.h1 || localizedPage?.title || copy.chip)
+  const workSchedule =
+    locale === 'en' && containsCyrillic(settings?.workSchedule) ? copy.scheduleFallback : settings?.workSchedule || copy.scheduleFallback
 
   return (
     <div className="page-shell">
       <section className="surface-grid surface-pad">
         <span className="warm-chip">{copy.chip}</span>
-        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{page?.h1 || copy.title}</h1>
-        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{page?.description || copy.description}</p>
+        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{localizedPage?.description || copy.description}</p>
       </section>
 
       <section className="reading-shell">
@@ -96,7 +100,7 @@ export default async function ContactsPage() {
             </div>
             <div className="flex items-center gap-3 text-slate-700">
               <Clock className="h-5 w-5 text-cyan-700" />
-              <span>{settings?.workSchedule || copy.scheduleFallback}</span>
+              <span>{workSchedule}</span>
             </div>
           </div>
 
@@ -129,9 +133,10 @@ export async function generateMetadata() {
     page = null
   }
 
+  const localizedPage = locale === 'ru' ? page : null
   const alternates = getLocaleAlternates('/contacts')
-  const title = normalizeMetaTitle(page?.title, copy.metaTitle)
-  const description = normalizeMetaDescription(page?.description, copy.metaDescription)
+  const title = normalizeMetaTitle(localizedPage?.title, copy.metaTitle)
+  const description = normalizeMetaDescription(localizedPage?.description, copy.metaDescription)
 
   return {
     title,

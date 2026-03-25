@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import RichContent from '@/components/RichContent'
 import { buildCaseListing } from '@/lib/case-listing'
-import { localizeCaseRecord } from '@/lib/case-localization'
+import { hasRussianCaseContent, localizeCaseRecord } from '@/lib/case-localization'
 import { prefixPathWithLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
@@ -71,14 +71,17 @@ export default async function CasesPage() {
     cases = []
   }
 
-  const caseCards = buildCaseListing(cases).map((caseItem) => localizeCaseRecord(caseItem, locale))
+  const caseCards = buildCaseListing(cases)
+    .map((caseItem) => localizeCaseRecord(caseItem, locale))
+    .filter((caseItem) => (locale === 'en' ? !hasRussianCaseContent(caseItem) : true))
+  const localizedPage = locale === 'ru' ? page : null
 
   return (
     <div className="page-shell">
       <section className="surface-grid surface-pad">
         <span className="warm-chip">{copy.caseLabel}</span>
-        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{page?.h1 || copy.title}</h1>
-        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{page?.description || copy.description}</p>
+        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{localizedPage?.description || copy.description}</p>
       </section>
 
       {caseCards.length > 0 ? (
@@ -115,8 +118,8 @@ export default async function CasesPage() {
       ) : null}
 
       <RichContent
-        content={page?.content}
-        title={page?.h1 || page?.title || copy.caseLabel}
+        content={localizedPage?.content}
+        title={localizedPage?.h1 || localizedPage?.title || copy.caseLabel}
         className="reading-shell editorial-prose mt-8 max-w-none"
       />
     </div>
@@ -134,9 +137,10 @@ export async function generateMetadata() {
     page = null
   }
 
+  const localizedPage = locale === 'ru' ? page : null
   const alternates = getLocaleAlternates('/cases')
-  const title = normalizeMetaTitle(page?.title, copy.metaTitle)
-  const description = normalizeMetaDescription(page?.description, copy.metaDescription)
+  const title = normalizeMetaTitle(localizedPage?.title, copy.metaTitle)
+  const description = normalizeMetaDescription(localizedPage?.description, copy.metaDescription)
 
   return {
     title,

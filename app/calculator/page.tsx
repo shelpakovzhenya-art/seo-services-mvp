@@ -6,6 +6,7 @@ import { type Locale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
+import { localizeServicePricingList } from '@/lib/service-pricing-localization'
 import { getLocaleAlternates } from '@/lib/site-url'
 import { getMergedServicePricingList } from '@/lib/service-pricing-overrides'
 
@@ -86,7 +87,7 @@ export default async function CalculatorPage() {
   const locale = await getRequestLocale()
   const copy = calculatorCopy[locale]
   let page: any = null
-  const pricing = await getMergedServicePricingList()
+  const pricing = localizeServicePricingList(await getMergedServicePricingList(), locale)
 
   try {
     page = await prisma.page.findUnique({ where: { slug: 'calculator' } })
@@ -94,7 +95,8 @@ export default async function CalculatorPage() {
     console.error('Error loading calculator page:', error)
   }
 
-  const pageContent = stripLeadingMarkdownH1(page?.content, page?.h1 || page?.title || copy.title)
+  const localizedPage = locale === 'ru' ? page : null
+  const pageContent = stripLeadingMarkdownH1(localizedPage?.content, localizedPage?.h1 || localizedPage?.title || copy.title)
 
   return (
     <div className="page-shell">
@@ -103,8 +105,8 @@ export default async function CalculatorPage() {
           <div className="flex flex-col gap-8 xl:self-stretch xl:justify-between xl:pr-6">
             <div>
               <span className="warm-chip">{copy.title}</span>
-              <h1 className="mt-5 max-w-5xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{page?.h1 || copy.heroTitle}</h1>
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{page?.description || copy.heroDescription}</p>
+              <h1 className="mt-5 max-w-5xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.heroTitle}</h1>
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{localizedPage?.description || copy.heroDescription}</p>
             </div>
             <div className="flex flex-wrap gap-3 text-sm text-slate-600">
               {copy.highlights.map((item: string) => (
@@ -140,6 +142,7 @@ export default async function CalculatorPage() {
         </div>
 
         <LazyCalculator
+          locale={locale}
           services={pricing.map((service) => ({
             id: service.slug,
             slug: service.slug,
@@ -214,9 +217,10 @@ export async function generateMetadata() {
     page = null
   }
 
+  const localizedPage = locale === 'ru' ? page : null
   const alternates = getLocaleAlternates('/calculator')
-  const title = normalizeMetaTitle(page?.title, `${copy.title} | Shelpakov Digital`)
-  const description = normalizeMetaDescription(page?.description, copy.description)
+  const title = normalizeMetaTitle(localizedPage?.title, `${copy.title} | Shelpakov Digital`)
+  const description = normalizeMetaDescription(localizedPage?.description, copy.description)
 
   return {
     title,

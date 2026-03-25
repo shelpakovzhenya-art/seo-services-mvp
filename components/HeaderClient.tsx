@@ -8,6 +8,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher'
 import MobileMenu from '@/components/MobileMenu'
 import { getDictionary } from '@/lib/dictionaries'
 import { getLocaleFromPathname, type Locale, prefixPathWithLocale } from '@/lib/i18n'
+import { containsCyrillic } from '@/lib/text-detection'
 import { getWorkStatus } from '@/lib/work-status'
 
 type HeaderMenuItem = {
@@ -89,7 +90,11 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
   const locale = getLocaleFromPathname(pathname) || 'ru'
   const dictionary = getDictionary(locale)
   const normalizedMenuItems = normalizeMenuItems(menuItems, locale)
-  const workStatus = getWorkStatus(settings?.workSchedule)
+  const workSchedule =
+    locale === 'en' && containsCyrillic(settings?.workSchedule)
+      ? 'Mon-Fri 09:00-17:00'
+      : settings?.workSchedule || 'Mon-Fri 09:00-17:00'
+  const workStatus = getWorkStatus(workSchedule)
   const socialLinks = [
     { href: settings?.telegramUrl, label: 'Telegram', type: 'telegram' as const },
     { href: settings?.whatsappUrl, label: 'WhatsApp', type: 'whatsapp' as const },
@@ -105,7 +110,7 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
             <div className="flex w-full min-w-0 flex-wrap items-center gap-2.5 md:gap-3">
               <span className="warm-chip">Shelpakov Digital</span>
               <span className="inline-flex items-center rounded-full border border-white/12 bg-[#0c1727]/90 px-3 py-1.5 font-semibold text-slate-50 shadow-[0_10px_24px_rgba(2,8,23,0.22)] md:px-3.5">
-                {settings?.workSchedule || 'Mon-Fri 09:00-17:00'}
+                {workSchedule}
               </span>
               <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold ${workStatus.badgeClass}`}>
                 <span className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
@@ -190,7 +195,7 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
                 url: item.url,
               }))}
               email={settings?.email || 'shelpakovzhenya@gmail.com'}
-              workSchedule={settings?.workSchedule || 'Mon-Fri 09:00-17:00'}
+              workSchedule={workSchedule}
               workStatus={workStatus}
               socialLinks={socialLinks.map((item) => ({
                 href: item.href,

@@ -12,10 +12,12 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { buildCaseListing } from '@/lib/case-listing'
+import { buildLocalizedBlogListing } from '@/lib/blog-localization'
+import { hasRussianCaseContent, localizeCaseRecord } from '@/lib/case-localization'
 import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
-import { buildReviewListing } from '@/lib/review-listing'
+import { buildLocalizedReviewListing } from '@/lib/review-listing'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
 import { Button } from '@/components/ui/button'
@@ -239,9 +241,13 @@ export default async function HomePage() {
     console.error('Error loading homepage data:', error)
   }
 
-  reviews = buildReviewListing(reviews)
+  reviews = buildLocalizedReviewListing(reviews, locale)
+  posts = buildLocalizedBlogListing(posts, locale).slice(0, 3)
 
-  const featuredCases = buildCaseListing(cases).slice(0, 2)
+  const featuredCases = buildCaseListing(cases)
+    .slice(0, 2)
+    .map((caseItem) => localizeCaseRecord(caseItem, locale))
+    .filter((caseItem) => (locale === 'en' ? !hasRussianCaseContent(caseItem) : true))
 
   return (
     <div className="overflow-hidden pb-16 md:pb-20">
@@ -605,14 +611,15 @@ export async function generateMetadata() {
     page = null
   }
 
+  const localizedPage = locale === 'ru' ? page : null
   const alternates = getLocaleAlternates('/')
-  const title = normalizeMetaTitle(page?.title, copy.metadata.title)
-  const description = normalizeMetaDescription(page?.description, copy.metadata.description)
+  const title = normalizeMetaTitle(localizedPage?.title, copy.metadata.title)
+  const description = normalizeMetaDescription(localizedPage?.description, copy.metadata.description)
 
   return {
     title,
     description,
-    keywords: page?.keywords || copy.metadata.keywords,
+    keywords: localizedPage?.keywords || copy.metadata.keywords,
     alternates,
     openGraph: {
       title,

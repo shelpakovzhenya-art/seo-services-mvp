@@ -7,6 +7,7 @@ import { MessageCircle, MessagesSquare, Wrench } from 'lucide-react'
 import { getDictionary } from '@/lib/dictionaries'
 import { getLocaleFromPathname, type Locale, prefixPathWithLocale } from '@/lib/i18n'
 import { getFeaturedReads } from '@/lib/public-copy'
+import { containsCyrillic } from '@/lib/text-detection'
 
 type FooterClientProps = {
   menuItems: Array<{ id: string; label: string; url: string; order: number; isActive: boolean }>
@@ -42,6 +43,14 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
   const dictionary = getDictionary(locale)
   const featuredReads = getFeaturedReads(locale)
   const currentYear = new Date().getFullYear()
+  const footerText =
+    locale === 'en' && containsCyrillic(settings?.footerText)
+      ? dictionary.footer.description
+      : settings?.footerText || dictionary.footer.description
+  const workSchedule =
+    locale === 'en' && containsCyrillic(settings?.workSchedule)
+      ? 'Mon-Fri 09:00-17:00'
+      : settings?.workSchedule || 'Mon-Fri 09:00-17:00'
   const socialLinks = [
     { href: settings?.telegramUrl, label: 'Telegram', type: 'telegram' as const },
     { href: settings?.whatsappUrl, label: 'WhatsApp', type: 'whatsapp' as const },
@@ -57,7 +66,7 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
           <div className="space-y-5">
             <span className="warm-chip">Shelpakov Digital</span>
             <h3 className="max-w-xl text-3xl font-semibold text-white">{dictionary.footer.heading}</h3>
-            <p className="max-w-xl text-sm leading-7 text-slate-400">{settings?.footerText || dictionary.footer.description}</p>
+            <p className="max-w-xl text-sm leading-7 text-slate-400">{footerText}</p>
 
             {socialLinks.length > 0 ? (
               <div className="flex flex-wrap gap-3 pt-2">
@@ -101,7 +110,7 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
             <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">{dictionary.footer.contacts}</h3>
             <div className="text-sm">
               <div className="space-y-3">
-                <p>{settings?.workSchedule || 'Mon-Fri 09:00-17:00'}</p>
+                <p>{workSchedule}</p>
                 <a href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`} className="break-all transition hover:text-white">
                   {settings?.email || 'shelpakovzhenya@gmail.com'}
                 </a>

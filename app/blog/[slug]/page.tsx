@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import JsonLd from '@/components/JsonLd'
 import RichContent from '@/components/RichContent'
 import { getBuiltInBlogPostBySlug, hydrateBlogPostRecord, isPlaceholderBlogPost } from '@/lib/built-in-blog-posts'
+import { hasRussianBlogContent, localizeBlogPostRecord } from '@/lib/blog-localization'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
@@ -126,27 +127,33 @@ function getRelatedServices(slug: string, locale: Locale): RelatedService[] {
   })
 }
 
-async function getBlogPostBySlug(slug: string): Promise<BlogPostRecord | null> {
+async function getBlogPostBySlug(slug: string, locale: Locale): Promise<BlogPostRecord | null> {
   try {
     const dbPost = await prisma.blogPost.findFirst({
       where: { slug, published: true },
     })
 
     if (dbPost && !isPlaceholderBlogPost(dbPost)) {
-      return hydrateBlogPostRecord(dbPost)
+      const localizedPost = localizeBlogPostRecord(hydrateBlogPostRecord(dbPost), locale)
+      return locale === 'en' && hasRussianBlogContent(localizedPost) ? null : localizedPost
     }
   } catch (error) {
     console.error('Error loading blog post:', error)
   }
 
   const builtInPost = getBuiltInBlogPostBySlug(slug)
-  return builtInPost && !isPlaceholderBlogPost(builtInPost) ? builtInPost : null
+  if (!builtInPost || isPlaceholderBlogPost(builtInPost)) {
+    return null
+  }
+
+  const localizedPost = localizeBlogPostRecord(builtInPost, locale)
+  return locale === 'en' && hasRussianBlogContent(localizedPost) ? null : localizedPost
 }
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const locale = await getRequestLocale()
   const copy = blogPostCopy[locale]
-  const post = await getBlogPostBySlug(params.slug)
+  const post = await getBlogPostBySlug(params.slug, locale)
 
   if (!post || !post.title || !post.content || !post.slug) {
     notFound()
@@ -264,7 +271,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const locale = await getRequestLocale()
   const copy = blogPostCopy[locale]
-  const post = await getBlogPostBySlug(params.slug)
+  const post = await getBlogPostBySlug(params.slug, locale)
 
   if (!post || !post.title || !post.slug) {
     return {

@@ -3,7 +3,7 @@ import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { type Locale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
-import { buildReviewListing } from '@/lib/review-listing'
+import { buildLocalizedReviewListing } from '@/lib/review-listing'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
 
@@ -45,19 +45,19 @@ export default async function ReviewsPage() {
     console.error('Error loading reviews page:', error)
   }
 
-  reviews = buildReviewListing(reviews)
-
-  const pageContent = stripLeadingMarkdownH1(page?.content, page?.h1 || page?.title || copy.chip)
+  reviews = buildLocalizedReviewListing(reviews, locale)
+  const localizedPage = locale === 'ru' ? page : null
+  const pageContent = stripLeadingMarkdownH1(localizedPage?.content, localizedPage?.h1 || localizedPage?.title || copy.chip)
 
   return (
     <div className="page-shell">
       <section className="surface-grid surface-pad">
         <span className="warm-chip">{copy.chip}</span>
-        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{page?.h1 || copy.title}</h1>
-        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{page?.description || copy.description}</p>
+        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{localizedPage?.description || copy.description}</p>
       </section>
 
-      {settings?.yandexReviewsEmbed ? (
+      {locale === 'ru' && settings?.yandexReviewsEmbed ? (
         <div
           className="reading-shell mt-8 overflow-hidden [&_div]:max-w-full [&_iframe]:max-w-full [&_iframe]:!w-full [&_img]:max-w-full"
           dangerouslySetInnerHTML={{ __html: settings.yandexReviewsEmbed }}
@@ -109,9 +109,10 @@ export async function generateMetadata() {
     page = null
   }
 
+  const localizedPage = locale === 'ru' ? page : null
   const alternates = getLocaleAlternates('/reviews')
-  const title = normalizeMetaTitle(page?.title, copy.metaTitle)
-  const description = normalizeMetaDescription(page?.description, copy.metaDescription)
+  const title = normalizeMetaTitle(localizedPage?.title, copy.metaTitle)
+  const description = normalizeMetaDescription(localizedPage?.description, copy.metaDescription)
 
   return {
     title,
