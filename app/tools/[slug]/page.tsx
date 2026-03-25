@@ -138,11 +138,11 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
             <Link
               key={item.slug}
               href={`/tools/${item.slug}`}
-              className="rounded-[28px] border border-orange-100 bg-[#fffaf5] p-5 transition hover:-translate-y-1 hover:border-cyan-200 hover:bg-white"
+              className="uniform-card rounded-[28px] border border-orange-100 bg-[#fffaf5] p-5 transition hover:-translate-y-1 hover:border-cyan-200 hover:bg-white"
             >
               <div className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-700">{item.category}</div>
               <div className="mt-3 text-2xl font-semibold text-slate-950">{item.title}</div>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{item.summary}</p>
+              <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.summary}</p>
             </Link>
           ))}
         </div>

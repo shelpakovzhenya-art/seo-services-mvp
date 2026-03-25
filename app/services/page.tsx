@@ -252,9 +252,9 @@ export default async function ServicesIndexPage() {
 
           <div className="uniform-grid-3 mt-6 gap-4">
             {copy.comparisonCards.map((item: any) => (
-              <div key={item.title} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+              <div key={item.title} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
                 <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.text}</p>
               </div>
             ))}
           </div>
@@ -271,9 +271,9 @@ export default async function ServicesIndexPage() {
 
           <div className="uniform-grid-2 mt-6 gap-4">
             {copy.faq.map((item: any) => (
-              <div key={item.question} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+              <div key={item.question} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
                 <h3 className="text-lg font-semibold text-slate-950">{item.question}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{item.answer}</p>
+                <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.answer}</p>
               </div>
             ))}
           </div>

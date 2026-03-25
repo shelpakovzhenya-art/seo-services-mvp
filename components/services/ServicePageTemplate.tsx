@@ -29,7 +29,7 @@ function VisualCard({
     <div className="glass-panel relative overflow-hidden rounded-[30px] p-6">
       <div className="pointer-events-none absolute -right-10 top-0 h-32 w-32 rounded-full bg-orange-200/40 blur-2xl" />
       <div className="pointer-events-none absolute bottom-0 left-0 h-28 w-28 rounded-full bg-cyan-200/40 blur-2xl" />
-      <div className="relative flex min-h-[220px] flex-col justify-end rounded-[22px] border border-white/70 bg-gradient-to-br from-white via-orange-50 to-cyan-50 p-6">
+      <div className="relative flex min-h-[220px] flex-1 flex-col justify-end rounded-[22px] border border-white/70 bg-gradient-to-br from-white via-orange-50 to-cyan-50 p-6">
         <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{eyebrow}</div>
         <div className="mt-3 text-2xl font-semibold text-slate-950">{title}</div>
         <p className="mt-3 max-w-md text-sm leading-7 text-slate-600">{description}</p>
@@ -185,7 +185,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
                     className="flex min-h-[260px] flex-col rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 md:min-h-[220px]"
                   >
                     <h3 className="text-2xl font-semibold leading-tight text-slate-950">{item.title}</h3>
-                    <p className="mt-3 text-base leading-8 text-slate-600">{item.text}</p>
+                    <p className="mt-3 flex-1 text-base leading-8 text-slate-600">{item.text}</p>
                   </div>
                 ))}
               </div>
@@ -283,7 +283,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           {service.benefits.map((item) => (
             <div key={item.title} className="uniform-card glass-panel interactive-card p-6">
               <h2 className="text-2xl font-semibold text-slate-950">{item.title}</h2>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+              <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.text}</p>
             </div>
           ))}
         </section>
@@ -310,9 +310,9 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
                 >
                   <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{format.price}</div>
                   <h3 className="mt-4 text-2xl font-semibold text-slate-950">{format.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">{format.description}</p>
+                  <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{format.description}</p>
                   {format.note ? (
-                    <div className="mt-4 rounded-2xl border border-cyan-100 bg-cyan-50/60 px-4 py-3 text-sm leading-6 text-slate-700">
+                    <div className="mt-6 rounded-2xl border border-cyan-100 bg-cyan-50/60 px-4 py-3 text-sm leading-6 text-slate-700">
                       {format.note}
                     </div>
                   ) : null}
@@ -416,9 +416,9 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
             <h2 className="mt-3 text-3xl font-semibold text-slate-950">Как обычно строится работа</h2>
             <div className="mt-6 space-y-4">
               {service.steps.map((step, index) => (
-                <div key={step.title} className="flex gap-5 rounded-[24px] border border-orange-100 bg-white/70 p-5">
+                <div key={step.title} className="flex flex-col gap-4 rounded-[24px] border border-orange-100 bg-white/70 p-5 sm:flex-row sm:gap-5">
                   <div className="text-3xl font-semibold text-cyan-700">{`0${index + 1}`}</div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="text-xl font-semibold text-slate-950">{step.title}</h3>
                     <p className="mt-2 text-sm leading-7 text-slate-600">{step.text}</p>
                   </div>

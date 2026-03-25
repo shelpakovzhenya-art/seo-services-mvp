@@ -259,7 +259,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             'Сверяйте тезисы со своим этапом проекта: старт, переезд, усиление посадочных, контент или системный рост.',
             'Если после чтения нужен не контент, а действие, переходите к связанным услугам ниже и выбирайте формат по симптому задачи.',
           ].map((item) => (
-            <div key={item} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+            <div key={item} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
               {item}
             </div>
           ))}
@@ -287,7 +287,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 <p className="text-lg font-semibold text-slate-950 transition-colors duration-200 group-hover:text-sky-700">
                   {service.label}
                 </p>
-                <p className="mt-2 text-sm leading-7 text-slate-600">{service.description}</p>
+                <p className="mt-2 flex-1 text-sm leading-7 text-slate-600">{service.description}</p>
                 <span className="mt-3 inline-flex items-center text-sm font-semibold text-sky-700">Перейти к услуге</span>
               </Link>
             ))}

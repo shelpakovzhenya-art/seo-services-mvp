@@ -75,10 +75,12 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
                   <div className="mt-4 rounded-2xl border border-cyan-100 bg-cyan-50/60 px-4 py-3 text-sm leading-6 text-slate-700">
                     {strategy.catalogTrigger}
                   </div>
-                  {pricing ? <div className="mt-4 text-sm font-semibold text-slate-900">{pricing.priceLabel}</div> : null}
-                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
-                    {copy.openService}
-                    <ArrowRight className="h-4 w-4" />
+                  <div className="mt-auto pt-4">
+                    {pricing ? <div className="text-sm font-semibold text-slate-900">{pricing.priceLabel}</div> : null}
+                    <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
+                      {copy.openService}
+                      <ArrowRight className="h-4 w-4" />
+                    </div>
                   </div>
                 </Link>
               )

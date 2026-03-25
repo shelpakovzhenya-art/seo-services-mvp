@@ -165,7 +165,7 @@ export default async function BlogPage() {
             {copy.routes.map((route: any) => (
               <Link key={route.title} href={prefixPathWithLocale(route.href, locale)} className="uniform-card glass-panel interactive-card p-6">
                 <h3 className="text-2xl font-semibold text-slate-950">{route.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-slate-600">{route.text}</p>
+                <p className="mt-4 flex-1 text-sm leading-7 text-slate-600">{route.text}</p>
                 <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
                   {copy.open}
                 </span>

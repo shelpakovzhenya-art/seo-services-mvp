@@ -105,7 +105,7 @@ export default async function CasesPage() {
         </div>
         <div className="uniform-grid-3 mt-6 gap-4">
           {copy.readingCards.map((item: string) => (
-            <div key={item} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+            <div key={item} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
               {item}
             </div>
           ))}

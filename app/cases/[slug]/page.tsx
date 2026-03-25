@@ -105,7 +105,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
             'Потом смотрите на приоритет: что команда исправила первым и почему не трогала всё подряд.',
             'И только затем оценивайте эффект: какие изменения в сайте сделали рост управляемым, а не случайным.',
           ].map((item) => (
-            <div key={item} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+            <div key={item} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
               {item}
             </div>
           ))}

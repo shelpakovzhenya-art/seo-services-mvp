@@ -73,7 +73,7 @@ export default async function ReviewsPage() {
         </div>
         <div className="uniform-grid-3 mt-6 gap-4">
           {copy.proofCards.map((item: string) => (
-            <div key={item} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+            <div key={item} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
               {item}
             </div>
           ))}
@@ -81,7 +81,10 @@ export default async function ReviewsPage() {
       </section>
 
       {settings?.yandexReviewsEmbed ? (
-        <div className="reading-shell mt-8" dangerouslySetInnerHTML={{ __html: settings.yandexReviewsEmbed }} />
+        <div
+          className="reading-shell mt-8 overflow-hidden [&_div]:max-w-full [&_iframe]:max-w-full [&_iframe]:!w-full [&_img]:max-w-full"
+          dangerouslySetInnerHTML={{ __html: settings.yandexReviewsEmbed }}
+        />
       ) : (
         <div className="reading-shell mt-8">
           <p className="text-slate-600">{copy.emptyEmbed}</p>
@@ -97,7 +100,7 @@ export default async function ReviewsPage() {
                   <span key={i}>★</span>
                 ))}
               </div>
-              <p className="text-slate-700">{review.text}</p>
+              <p className="flex-1 text-sm leading-7 text-slate-700">{review.text}</p>
               <p className="mt-4 text-sm font-semibold text-slate-500">— {review.author}</p>
             </div>
           ))}

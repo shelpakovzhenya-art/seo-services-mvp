@@ -103,6 +103,12 @@
   h6 {
     font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
     letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
   }
 
   ::selection {
@@ -485,6 +491,8 @@
 
   .glass-panel {
     position: relative;
+    display: flex;
+    flex-direction: column;
     min-width: 0;
     max-width: 100%;
     overflow: hidden;
@@ -604,6 +612,8 @@
 
   .page-card {
     position: relative;
+    display: flex;
+    flex-direction: column;
     min-width: 0;
     max-width: 100%;
     overflow: hidden;
@@ -1580,6 +1590,22 @@
 }
 
 @media (max-width: 640px) {
+  .surface-grid,
+  .surface-signal,
+  .surface-dawn,
+  .surface-cosmos,
+  .soft-section,
+  .reading-shell,
+  .glass-panel,
+  .page-card,
+  .hero-panel {
+    border-radius: 28px;
+  }
+
+  .surface-pad {
+    padding: 1.25rem;
+  }
+
   .language-switcher {
     gap: 0.22rem;
     padding: 0.18rem;

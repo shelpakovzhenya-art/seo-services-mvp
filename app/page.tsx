@@ -325,7 +325,7 @@ export default async function HomePage() {
                 <div key={item.title} className="uniform-card glass-panel interactive-card p-7">
                   <Icon className="h-8 w-8 text-cyan-700" />
                   <h3 className="mt-5 text-2xl font-semibold text-slate-950">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                  <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.text}</p>
                 </div>
               )
             })}
@@ -347,7 +347,7 @@ export default async function HomePage() {
             {copy.decisionCards.map((item: any) => (
               <Link key={item.title} href={prefixPathWithLocale(item.href, locale)} className="uniform-card glass-panel interactive-card p-7">
                 <h3 className="text-2xl font-semibold text-slate-950">{item.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-slate-600">{item.text}</p>
+                <p className="mt-4 flex-1 text-sm leading-7 text-slate-600">{item.text}</p>
                 <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
                   {item.cta}
                   <ArrowRight className="h-4 w-4" />
@@ -425,9 +425,9 @@ export default async function HomePage() {
 
             <div className="space-y-4">
               {copy.processBlocks.map((item: any) => (
-                <div key={item.step} className="glass-panel interactive-card flex gap-5 p-6">
+                <div key={item.step} className="glass-panel interactive-card flex flex-col gap-4 p-6 sm:flex-row sm:gap-5">
                   <div className="text-3xl font-semibold text-cyan-700">{item.step}</div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="text-2xl font-semibold text-slate-950">{item.title}</h3>
                     <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
                   </div>
@@ -461,7 +461,7 @@ export default async function HomePage() {
                       <Building2 className="h-5 w-5 text-cyan-700" />
                     </div>
                     <h3 className="mt-6 text-3xl font-semibold text-slate-950">{item.title}</h3>
-                    <p className="mt-4 text-sm leading-7 text-slate-600">{item.description || item.content || copy.caseFallback}</p>
+                    <p className="mt-4 flex-1 text-sm leading-7 text-slate-600">{item.description || item.content || copy.caseFallback}</p>
                     {item.slug ? (
                       <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700 transition group-hover:text-slate-950">
                         {copy.openCase}
@@ -510,7 +510,7 @@ export default async function HomePage() {
                 <Link key={post.id} href={prefixPathWithLocale(`/blog/${post.slug}`, locale)} className="uniform-card glass-panel interactive-card group p-7 transition hover:border-cyan-200">
                   <div className="text-xs uppercase tracking-[0.24em] text-slate-400">{copy.blogCardKicker}</div>
                   <h3 className="mt-4 text-2xl font-semibold text-slate-950">{post.title}</h3>
-                  <p className="mt-4 text-sm leading-7 text-slate-600">{post.excerpt || copy.blogFallback}</p>
+                  <p className="mt-4 flex-1 text-sm leading-7 text-slate-600">{post.excerpt || copy.blogFallback}</p>
                 </Link>
               ))
             ) : (
@@ -537,7 +537,7 @@ export default async function HomePage() {
               reviews.map((review) => (
                 <div key={review.id} className="uniform-card glass-panel interactive-card p-7">
                   <div className="text-sm uppercase tracking-[0.24em] text-orange-700">{review.author}</div>
-                  <p className="mt-5 text-sm leading-7 text-slate-600">{review.text}</p>
+                  <p className="mt-5 flex-1 text-sm leading-7 text-slate-600">{review.text}</p>
                   {(review.company || review.position) && (
                     <div className="mt-6 text-sm text-slate-400">{[review.company, review.position].filter(Boolean).join(', ')}</div>
                   )}
