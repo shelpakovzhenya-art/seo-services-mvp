@@ -76,34 +76,34 @@ const servicesCatalogCopy: LocaleRecord<{
 }> = {
   ru: {
     kicker: 'Услуги',
-    title: 'Услуги под реальные задачи сайта',
+    title: 'Услуги под конкретную задачу сайта',
     description:
-      'Здесь удобнее выбирать не “что купить”, а какой формат решает текущий узкий момент: индексацию, слабые посадочные, просадку заявок или устаревшую платформу.',
+      'Здесь проще выбрать не “пакет”, а первый рабочий шаг: аудит, техработы, переработку страниц или новый сайт.',
     scenarios: [
-      'Сайт получает показы, но не дожимает пользователя до обращения.',
-      'Команда правит SEO по кускам и не понимает, где реальный приоритет.',
-      'Трафик упирается в структуру, шаблоны, региональные страницы или слабые посадочные.',
-      'Текущая площадка настолько устарела, что уже мешает и SEO, и конверсии, и дальнейшему развитию.',
+      'Сайт получает показы, но не доводит человека до обращения.',
+      'Команда что-то правит, но неясно, какая проблема реально главная.',
+      'Рост упирается в структуру, шаблоны, региональные страницы или слабые посадочные.',
+      'Текущая площадка мешает и SEO, и конверсии, и дальнейшим доработкам.',
     ],
     compactCta: 'Получить ориентир по формату работ',
     compactNote:
-      'Стартовая стоимость зависит не столько от числа страниц, сколько от шаблонов, глубины структуры, срочности внедрения, контента и запаса под масштабирование.',
+      'Стартовая стоимость зависит не от голого количества страниц, а от шаблонов, объёма правок, срочности и того, сколько нужно делать руками.',
     openService: 'Перейти к услуге',
   },
   en: {
     kicker: 'Services',
-    title: 'Services built around real website bottlenecks',
+    title: 'Services built around the actual site problem',
     description:
-      'This section is meant to help choose the right first move: fixing indexation, rebuilding weak landing pages, recovering lead flow, or replacing an outdated platform.',
+      'This section is meant to help choose the first practical move: an audit, technical work, page rewrites, or a new site.',
     scenarios: [
-      'The site gets impressions, but fails to convert visitors into conversations.',
-      'The team keeps making piecemeal SEO changes without a clear priority order.',
-      'Growth is blocked by structure, templates, regional landing pages, or weak key pages.',
-      'The current platform is so outdated that it now limits SEO, conversion, and future expansion at once.',
+      'The site gets impressions, but fails to turn visitors into inquiries.',
+      'The team keeps making changes without knowing which issue matters most.',
+      'Growth is blocked by structure, templates, regional pages, or weak key pages.',
+      'The current platform now limits SEO, conversion, and future development at once.',
     ],
     compactCta: 'Get a recommendation on the right work format',
     compactNote:
-      'Starting prices depend less on raw page count and more on template complexity, structural depth, implementation urgency, content scope, and room for future scale.',
+      'Starting prices depend less on raw page count and more on template complexity, scope of fixes, urgency, and how much has to be done manually.',
     openService: 'Open service',
   },
 }

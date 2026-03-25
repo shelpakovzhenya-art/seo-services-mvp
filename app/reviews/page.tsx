@@ -1,7 +1,6 @@
-import Link from 'next/link'
 import RichContent from '@/components/RichContent'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
-import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
+import { type Locale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
 import { buildReviewListing } from '@/lib/review-listing'
@@ -11,63 +10,23 @@ import { getLocaleAlternates } from '@/lib/site-url'
 const reviewsCopy: Record<Locale, any> = {
   ru: {
     chip: 'Отзывы',
-    title: 'Отзывы и подтверждение работы',
+    title: 'Отзывы клиентов',
     description:
-      'Отзывы полезны, когда по ним видно не только эмоцию, но и задачу, ход проекта и качество обратной связи во время работы.',
-    emptyEmbed:
-      'Здесь можно показать отзывы клиентов. Лучше всего этот раздел работает в связке с кейсами и понятными страницами услуг.',
-    nextKicker: 'Куда смотреть дальше',
-    nextTitle: 'Отзывы работают сильнее вместе с кейсами и страницами услуг',
-    nextSteps: [
-      {
-        href: '/cases',
-        title: 'Посмотреть кейсы',
-        text: 'Если важнее увидеть исходную ситуацию, приоритеты, внедрение и эффект по проекту.',
-      },
-      {
-        href: '/services',
-        title: 'Сравнить форматы работ',
-        text: 'Если нужно понять, с чего разумнее начинать: аудит, техбаза, разработка или системное SEO.',
-      },
-      {
-        href: '/contacts',
-        title: 'Написать по проекту',
-        text: 'Если задача уже понятна и нужен быстрый ориентир по следующему шагу.',
-      },
-    ],
+      'Здесь собраны отзывы по реальным проектам: как шла работа, что было удобно в процессе и чем всё закончилось для клиента.',
+    emptyEmbed: 'Внешний блок с отзывами пока не подключён.',
     metaTitle: 'Отзывы клиентов | Shelpakov Digital',
     metaDescription:
-      'Отзывы клиентов о работе над SEO и сайтом помогают понять не только итог, но и стиль коммуникации, ход проекта и качество обратной связи.',
+      'Отзывы клиентов о работе над SEO и сайтом: что делали, как шла коммуникация и что получилось в итоге.',
   },
   en: {
     chip: 'Reviews',
-    title: 'Client feedback and proof of work',
+    title: 'Client reviews',
     description:
-      'Reviews matter when they show the task, the project flow, and the quality of communication, not praise alone.',
-    emptyEmbed:
-      'Client feedback can be shown here. This section works best together with case studies and clear service pages.',
-    nextKicker: 'Where to go next',
-    nextTitle: 'Reviews are more useful when paired with case studies and service pages',
-    nextSteps: [
-      {
-        href: '/cases',
-        title: 'See case studies',
-        text: 'If you want to understand the starting point, the implementation priorities, and the result.',
-      },
-      {
-        href: '/services',
-        title: 'Compare service formats',
-        text: 'If you need to decide whether the first step is an audit, technical work, development, or ongoing SEO.',
-      },
-      {
-        href: '/contacts',
-        title: 'Reach out',
-        text: 'If the task is already clear and you only need a quick recommendation on what to do next.',
-      },
-    ],
+      'These reviews show real projects: what the task was, how the work felt in practice, and what the client saw in the end.',
+    emptyEmbed: 'The external review widget is not connected yet.',
     metaTitle: 'Client reviews | Shelpakov Digital',
     metaDescription:
-      'Client reviews on SEO and website work help a new lead understand the task, the project rhythm, and the quality of feedback.',
+      'Client reviews about SEO and website work: the task, the communication style, and the practical result.',
   },
 }
 
@@ -127,28 +86,6 @@ export default async function ReviewsPage() {
           ))}
         </div>
       ) : null}
-
-      <section className="reading-shell mt-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.nextKicker}</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.nextTitle}</h2>
-          </div>
-        </div>
-
-        <div className="uniform-grid-3 mt-6 gap-4">
-          {copy.nextSteps.map((item: any) => (
-            <Link
-              key={item.href}
-              href={prefixPathWithLocale(item.href, locale)}
-              className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 transition hover:border-cyan-200 hover:bg-white"
-            >
-              <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
 
       {pageContent ? (
         <div className="reading-shell mt-8">

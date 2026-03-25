@@ -42,7 +42,7 @@ function VisualCard({
 const seoAuditDeliverables = [
   {
     title: 'Где сайт теряет спрос',
-    text: 'В начале отчёта видно, какие типы страниц, шаблоны и служебные зоны режут рост сильнее всего прямо сейчас.',
+    text: 'В начале отчёта видно, какие типы страниц, шаблоны и служебные зоны больше всего мешают росту прямо сейчас.',
   },
   {
     title: 'Приоритеты на 30-60 дней',
@@ -142,7 +142,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
               <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-600">
                 <span className="rounded-full border border-orange-200 bg-white px-4 py-2">Ответим в течение дня</span>
                 <span className="rounded-full border border-orange-200 bg-white px-4 py-2">Без обязательств</span>
-                <span className="rounded-full border border-orange-200 bg-white px-4 py-2">Покажем точки роста</span>
+                <span className="rounded-full border border-orange-200 bg-white px-4 py-2">Скажем, с чего начинать</span>
               </div>
             </div>
 
@@ -163,7 +163,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
               <VisualCard
                 eyebrow="Фокус услуги"
                 title={service.images.heroAlt}
-                description="Основной смысл услуги, ее роль в проекте и тот результат, к которому она должна привести сайт."
+                description="Коротко о роли этой услуги в проекте и о том, какую задачу она закрывает."
               />
             </div>
           </div>
@@ -248,7 +248,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
           <div className="page-card">
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Диагностика выбора</p>
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Как понять, подходит ли услуга</p>
             <h2 className="mt-3 text-3xl font-semibold text-slate-950">{strategy.diagnosticTitle}</h2>
             <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-600">{strategy.diagnosticIntro}</p>
             <div className="mt-6 space-y-4">
@@ -256,10 +256,10 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
                 <div key={item.signal} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
                   <h3 className="text-lg font-semibold text-slate-950">{item.signal}</h3>
                   <p className="mt-3 text-sm leading-7 text-slate-600">
-                    <span className="font-medium text-slate-900">Почему так:</span> {item.cause}
+                    <span className="font-medium text-slate-900">Из-за чего это происходит:</span> {item.cause}
                   </p>
                   <p className="mt-3 text-sm leading-7 text-slate-600">
-                    <span className="font-medium text-slate-900">Почему подходит:</span> {item.fit}
+                    <span className="font-medium text-slate-900">Почему здесь подходит именно эта услуга:</span> {item.fit}
                   </p>
                 </div>
               ))}
@@ -279,15 +279,6 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
               ))}
             </div>
           </div>
-        </section>
-
-        <section className="uniform-grid-4 mt-8">
-          {service.benefits.map((item) => (
-            <div key={item.title} className="uniform-card glass-panel interactive-card p-6">
-              <h2 className="text-2xl font-semibold text-slate-950">{item.title}</h2>
-              <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.text}</p>
-            </div>
-          ))}
         </section>
 
         {service.formats?.length ? (
@@ -399,11 +390,10 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[1.02fr_0.98fr] lg:items-start">
           <div className="page-card">
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Доказательства и контекст</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-950">Что посмотреть до заявки, чтобы проверить формат</h2>
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Что посмотреть до старта</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950">Материалы по теме услуги</h2>
             <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-600">
-              По логике SEO Monster коммерческая страница должна вести не только в форму, но и к доказательствам. Ниже материалы,
-              которые помогают проверить подход до старта: кейсы, статьи и соседние страницы с рабочим контекстом.
+              Ниже кейсы, статьи и соседние услуги, по которым можно быстро понять подход, глубину работ и соседние форматы.
             </p>
             <div className="mt-6 space-y-4">
               {proofLinks.map((item) => (
@@ -425,10 +415,10 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </div>
 
           <div className="page-card">
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Стартовый чеклист</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-950">Что лучше прислать сразу, чтобы не тратить круги согласования</h2>
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Первое сообщение</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950">Что прислать сразу, чтобы быстрее получить ответ</h2>
             <p className="mt-5 text-sm leading-7 text-slate-600">
-              Эти данные нужны, чтобы быстро понять объём, первый приоритет и вообще подходит ли проекту именно эта услуга, а не соседний формат.
+              Этого достаточно, чтобы быстро понять объём задачи, первый приоритет и нужен ли здесь именно этот формат работ.
             </p>
             <div className="mt-6 space-y-3">
               {startChecklist.map((item, index) => (
@@ -439,8 +429,8 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
               ))}
             </div>
             <div className="mt-6 rounded-[24px] border border-cyan-100 bg-cyan-50/60 p-5 text-sm leading-7 text-slate-700">
-              Если доступа, цифр или материалов пока нет, достаточно домена и короткого описания симптома. Этого уже хватает, чтобы понять,
-              нужен аудит, внедрение, перезапуск или другой маршрут.
+              Если доступов, цифр или материалов пока нет, хватит домена и короткого описания симптома. Этого уже достаточно,
+              чтобы понять, нужен аудит, техработы, переработка страниц или новый сайт.
             </div>
           </div>
         </section>
@@ -448,15 +438,15 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
         <section className="mt-8 rounded-[32px] border border-orange-100 bg-gradient-to-r from-orange-50 via-white to-cyan-50 surface-pad">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Быстрый вход</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950">Нужно быстро понять первый шаг без длинного созвона?</h2>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Без длинного созвона</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">Можно начать с домена и короткого описания задачи</h2>
             </div>
             <a href="#contact-form">
               <Button className="rounded-full">{service.ctas.soft}</Button>
             </a>
           </div>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600">
-            Достаточно прислать домен, задачу и 2-3 фразы про текущий симптом. В ответ можно быстро понять, какой формат уместен сейчас и где лежит первый приоритет по сайту.
+            Достаточно прислать домен, задачу и 2-3 фразы про текущий симптом. В ответ будет понятно, какой формат уместен сейчас и где лежит первый приоритет.
           </p>
         </section>
 
@@ -481,11 +471,11 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
             <VisualCard
               eyebrow="Процесс работы"
               title={service.images.processAlt}
-              description="Этапы реализации, по которым услуга переходит от анализа к внедрению и контролю результата."
+              description="Как обычно идёт работа: от разбора задачи до внедрения и контроля результата."
             />
             <div className="page-card">
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Что получает клиент</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950">Результат на уровне процесса и сайта</h2>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Что будет на выходе</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">Что меняется в процессе и на сайте</h2>
               <div className="mt-6 space-y-3">
                 {service.outcomes.map((item) => (
                   <div key={item} className="flex gap-3 rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4">
@@ -547,7 +537,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
             <VisualCard
               eyebrow="Ожидаемый эффект"
               title={service.images.resultsAlt}
-              description="Итоговое усиление структуры, индексации, подачи и тех зон сайта, которые помогают проекту расти стабильнее."
+              description="Что обычно меняется после внедрения основных правок по услуге."
             />
             <div className="rounded-[30px] border border-orange-100 bg-gradient-to-r from-white via-orange-50 to-white p-6">
               <div className="flex items-center gap-3 text-slate-900">
@@ -561,18 +551,6 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
                 <Button className="rounded-full">Обсудить проект сегодня</Button>
               </a>
             </div>
-          </div>
-        </section>
-
-        <section className="mt-8 reading-shell">
-          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Практические ориентиры</p>
-          <h2 className="mt-3 text-3xl font-semibold text-slate-950">{service.seoBlockTitle}</h2>
-          <div className="mt-6 grid gap-4 lg:grid-cols-3">
-            {service.seoParagraphs.map((paragraph) => (
-              <p key={paragraph} className="rounded-[24px] border border-orange-100 bg-white/70 p-5 text-sm leading-8 text-slate-600">
-                {paragraph}
-              </p>
-            ))}
           </div>
         </section>
 
@@ -606,14 +584,14 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
                 <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Консультация</p>
                 <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{service.ctas.rational}</h2>
                 <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">
-                  Опишите сайт, задачу и текущую ситуацию. Я помогу понять, какой формат работ подойдет, покажу точки роста и скажу, с чего логичнее начать.
+                  Опишите сайт, задачу и текущую ситуацию. Я скажу, нужен ли здесь аудит, техработы, переработка страниц или новый сайт.
                 </p>
                 <div className="mt-8 space-y-4">
                   <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
-                    Ответим в течение дня и подскажем, нужен ли проекту аудит, сопровождение, разработка или точечная задача.
+                    Ответим в течение дня и сразу подскажем, какой формат работ здесь уместен.
                   </div>
                   <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
-                    Без лишних обязательств: сначала разбираем задачу, потом предлагаем уместный формат работы.
+                    Если задача точечная, так и скажем. Если нужен большой объём, тоже обозначим это сразу.
                   </div>
                 </div>
               </div>
