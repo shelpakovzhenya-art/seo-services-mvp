@@ -2232,7 +2232,11 @@ def dynamic_build_roadmap(audit: dict) -> list[tuple[str, list[str]]]:
 def build_executive_summary_dynamic(audit: dict) -> list[str]:
     profile = infer_project_profile(audit)
     top_issues = audit.get("issues", [])[:3]
-    top_issue_titles = "; ".join(issue.title for issue in top_issues) if top_issues else "технические и шаблонные ограничения"
+    top_issue_titles = (
+        "; ".join(normalize_output_text(issue.title) for issue in top_issues)
+        if top_issues
+        else "технические и шаблонные ограничения"
+    )
     priority_pages = select_priority_pages(audit["sample_pages"])
     commercial_gap_ratio = coverage_ratio(priority_pages, lambda snapshot: not snapshot.has_commercial_block)
     support_gap_ratio = coverage_ratio(
@@ -3614,7 +3618,7 @@ def build_audit(url: str, company_name: str | None, sample_size: int, competitor
         "redirect_checks": redirect_checks,
         "requested_competitors": competitor_urls or [],
     }
-    issues = dynamic_build_issue_list(audit)
+    issues = normalize_structure(dynamic_build_issue_list(audit))
     audit["issues"] = issues
     audit["executive_summary"] = build_executive_summary_dynamic(audit)
     audit["strengths"] = []
@@ -4218,14 +4222,6 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             "Порядок выстроен так, чтобы сначала снять технические ограничения, потом усилить шаблоны и только после этого масштабировать рост.",
         )
         add_roadmap_table(doc, audit["roadmap"])
-
-    add_section_heading(
-        doc,
-        "Приложение",
-        "Какие страницы легли в основу разбора",
-        "В приложении собраны главная, коммерческие, контактные и служебные URL, по которым видно качество шаблонов и SEO-оформления сайта.",
-    )
-    add_snapshot_table(doc, audit.get("appendix_pages") or audit["sample_pages"])
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(output_path))

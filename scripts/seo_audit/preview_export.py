@@ -1309,7 +1309,6 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             styles,
         )
         _append_roadmap(story, audit_payload.get("roadmap", []), styles)
-        _append_appendix_v3(story, audit_payload.get("appendix_pages") or audit_payload.get("sample_pages", []), styles)
 
         doc.build(
             story,
