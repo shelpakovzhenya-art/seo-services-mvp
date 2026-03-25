@@ -98,6 +98,20 @@ export default async function CasePage({ params }: { params: { slug: string } })
         ) : null}
       </section>
 
+      <section className="reading-shell mt-8">
+        <div className="uniform-grid-3 gap-4">
+          {[
+            'Сначала смотрите, в чём был реальный стартовый блокер: техника, структура, посадочные, доверие или путь к заявке.',
+            'Потом смотрите на приоритет: что команда исправила первым и почему не трогала всё подряд.',
+            'И только затем оценивайте эффект: какие изменения в сайте сделали рост управляемым, а не случайным.',
+          ].map((item) => (
+            <div key={item} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
       <RichContent
         content={caseItem.content}
         title={caseItem.title}

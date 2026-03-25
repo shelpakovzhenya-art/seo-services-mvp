@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getServicesCatalogCopy } from '@/lib/public-copy'
+import { getServicePageStrategy } from '@/lib/service-page-strategy'
 import { getMergedServicePricingMap } from '@/lib/service-pricing-overrides'
 import { getMergedServicePages } from '@/lib/service-overrides'
 import { getRouteLocale, prefixPathWithLocale } from '@/lib/i18n'
@@ -60,6 +61,7 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
           <div className="uniform-grid-3 gap-5">
             {services.map((service) => {
               const pricing = pricingMap.get(service.slug)
+              const strategy = getServicePageStrategy(service.slug)
 
               return (
                 <Link
@@ -70,6 +72,9 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
                   <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{service.label}</div>
                   <h3 className="mt-4 text-2xl font-semibold text-slate-950">{service.shortName}</h3>
                   <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{service.description || service.cardDescription}</p>
+                  <div className="mt-4 rounded-2xl border border-cyan-100 bg-cyan-50/60 px-4 py-3 text-sm leading-6 text-slate-700">
+                    {strategy.catalogTrigger}
+                  </div>
                   {pricing ? <div className="mt-4 text-sm font-semibold text-slate-900">{pricing.priceLabel}</div> : null}
                   <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
                     {copy.openService}

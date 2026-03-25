@@ -253,6 +253,18 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       </header>
 
       <section className="mt-8 reading-shell">
+        <div className="uniform-grid-3 gap-4">
+          {[
+            'Читайте материал как разбор решений, а не как список абстрактных советов для всех сайтов подряд.',
+            'Сверяйте тезисы со своим этапом проекта: старт, переезд, усиление посадочных, контент или системный рост.',
+            'Если после чтения нужен не контент, а действие, переходите к связанным услугам ниже и выбирайте формат по симптому задачи.',
+          ].map((item) => (
+            <div key={item} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+              {item}
+            </div>
+          ))}
+        </div>
+
         <div className="editorial-prose max-w-none">
           <RichContent content={content} />
         </div>

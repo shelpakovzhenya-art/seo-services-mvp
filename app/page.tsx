@@ -53,13 +53,37 @@ const homeCopy: Record<Locale, any> = {
       { icon: LineChart, title: 'Фокус на результате', text: 'Работа строится вокруг органики, доверия и конверсии, а не вокруг формального списка SEO-действий.' },
       { icon: BarChart3, title: 'Системный подход', text: 'Структура, контент, техническая база и подача сайта собираются в одну рабочую систему роста.' },
     ],
-    packageKicker: 'Тарифы',
-    packageTitle: 'Форматы работ под разную задачу',
-    packageText: 'От быстрого разбора до более глубокого сопровождения проекта с усилением структуры, подачи и SEO-основы.',
+    decisionKicker: 'С чего начинать',
+    decisionTitle: 'Три частые развилки, на которых бизнес обычно теряет время и бюджет',
+    decisionText:
+      'На практике главная ошибка не в том, что проект покупает “не ту услугу”, а в том, что он начинает слишком широко или слишком поздно трогает корневую проблему.',
+    decisionCards: [
+      {
+        title: 'Сначала аудит, а не месячное сопровождение',
+        text: 'Если непонятно, где именно сайт теряет рост, логичнее сначала получить карту проблем и приоритетов, а не сразу подписываться на широкий пул задач.',
+        href: '/services/seo-audit',
+        cta: 'Смотреть SEO-аудит',
+      },
+      {
+        title: 'Сначала техбаза, а не ещё один текстовый слой',
+        text: 'Если индекс ломается, шаблоны шумят, а после редизайна сайт ведёт себя нестабильно, технический слой даст больше эффекта, чем новая пачка контента.',
+        href: '/services/technical-seo',
+        cta: 'Смотреть technical SEO',
+      },
+      {
+        title: 'Сначала перезапуск сайта, а не бесконечные косметические правки',
+        text: 'Если площадка слабо упаковывает услугу, не ведёт к заявке и тяжело масштабируется, правильнее пересобрать базу, чем латать её ещё полгода.',
+        href: '/services/website-development',
+        cta: 'Смотреть разработку',
+      },
+    ],
+    packageKicker: 'Рабочие форматы',
+    packageTitle: 'Не “тарифы ради тарифа”, а логичные сценарии старта',
+    packageText: 'Каждый формат отвечает на разный уровень зрелости проекта: от диагностики до системного роста без лишнего объёма в первый месяц.',
     packages: [
-      { name: 'Старт', price: '15 000 ₽', accent: 'Когда нужно быстро понять слабые места сайта и получить понятный список первых шагов.', icon: Rocket, items: ['Базовый SEO-аудит сайта', 'Проверка индексации, метаданных и структуры', 'Список быстрых правок с приоритетами', 'Короткий разбор дальнейших шагов'] },
-      { name: 'Оптимальный', price: '30 000 ₽', accent: 'Когда проекту уже нужен рабочий план усиления ключевых страниц, спроса и коммерческой подачи.', icon: Gem, items: ['Всё из тарифа «Старт»', 'Сбор и кластеризация приоритетной семантики', 'Доработка ключевых страниц услуг', 'Усиление коммерческих факторов и CTA'] },
-      { name: 'Про', price: '50 000 ₽', accent: 'Когда нужен более глубокий контур роста: структура, контентные гипотезы и сопровождение проекта.', icon: BarChart3, items: ['Всё из тарифа «Оптимальный»', 'Расширение структуры и новых посадочных', 'Глубокая работа с оффером и упаковкой', 'Приоритетное сопровождение проекта'] },
+      { name: 'Диагностика и приоритеты', price: '15 000 ₽', accent: 'Когда сначала нужно увидеть узкие места сайта, а не покупать широкое сопровождение вслепую.', icon: Rocket, items: ['SEO-аудит с приоритетами внедрения', 'Проверка индексации, структуры и ключевых страниц', 'Список быстрых правок без фонового шума', 'Решение: что делать следующим этапом, а что не делать'] },
+      { name: 'Усиление ключевых страниц', price: '30 000 ₽', accent: 'Когда сайт уже живой, но упирается в слабую упаковку услуг, сценарии заявки и недоработанные посадочные.', icon: Gem, items: ['Всё из сценария диагностики', 'Сбор приоритетной семантики и кластеров', 'Доработка ключевых страниц услуг', 'Усиление коммерческих факторов, CTA и структуры доверия'] },
+      { name: 'Системный рост', price: '50 000 ₽', accent: 'Когда нужен не разовый разбор, а постоянная связка из структуры, контента, SEO и внедрения под органический канал.', icon: BarChart3, items: ['Всё из сценария усиления', 'Расширение структуры и новых посадочных', 'Контентные и продуктовые гипотезы', 'Приоритетное сопровождение и контроль внедрения'] },
     ],
     packageButton: 'Выбрать тариф',
     industryKicker: 'Кому особенно полезно',
@@ -124,13 +148,37 @@ const homeCopy: Record<Locale, any> = {
       { icon: LineChart, title: 'Outcome-driven work', text: 'The process is built around organic growth, trust, and conversion, not a checklist of formal SEO tasks.' },
       { icon: BarChart3, title: 'System thinking', text: 'Structure, content, technical foundations, and presentation are assembled into one working growth system.' },
     ],
-    packageKicker: 'Formats',
-    packageTitle: 'Work formats for different stages of growth',
-    packageText: 'From a fast expert review to deeper ongoing support with stronger structure, positioning, and SEO foundations.',
+    decisionKicker: 'Where to start',
+    decisionTitle: 'Three common forks where teams usually lose time and budget',
+    decisionText:
+      'The most expensive mistake is rarely choosing the wrong service entirely. It is starting too wide or touching the visible symptom instead of the real bottleneck.',
+    decisionCards: [
+      {
+        title: 'Start with an audit, not a broad monthly retainer',
+        text: 'If it is still unclear where the website is losing momentum, a diagnostic map with priorities is stronger than jumping into a wide support plan blindly.',
+        href: '/services/seo-audit',
+        cta: 'View SEO audit',
+      },
+      {
+        title: 'Start with technical foundations, not another layer of copy',
+        text: 'If indexation is unstable, templates create noise, or the site became fragile after a redesign, technical work will outperform another round of generic content.',
+        href: '/services/technical-seo',
+        cta: 'View technical SEO',
+      },
+      {
+        title: 'Start with a relaunch, not endless cosmetic fixes',
+        text: 'If the platform no longer presents the offer well, fails to guide users to inquiry, and resists expansion, rebuilding the base is the more rational move.',
+        href: '/services/website-development',
+        cta: 'View development',
+      },
+    ],
+    packageKicker: 'Working formats',
+    packageTitle: 'Not “packages for the sake of packages”, but practical entry scenarios',
+    packageText: 'Each format matches a different stage of project maturity: from diagnosis to ongoing growth without unnecessary scope inflation on month one.',
     packages: [
-      { name: 'Start', price: 'from ₽15,000', accent: 'When you need to quickly identify weak points and get a clear list of first actions.', icon: Rocket, items: ['Core SEO audit', 'Indexation, metadata, and structure review', 'Quick-win fixes with priorities', 'Short expert breakdown of next steps'] },
-      { name: 'Optimal', price: 'from ₽30,000', accent: 'When the project already needs a working plan to strengthen key pages, demand capture, and commercial presentation.', icon: Gem, items: ['Everything from Start', 'Priority keyword research and clustering', 'Improvement of key service pages', 'Stronger commercial signals and CTA logic'] },
-      { name: 'Pro', price: 'from ₽50,000', accent: 'When you need a deeper growth contour: structure, content hypotheses, and closer strategic support.', icon: BarChart3, items: ['Everything from Optimal', 'Structure expansion and new landing pages', 'Deeper work on positioning and offer packaging', 'Priority project support'] },
+      { name: 'Diagnosis and priorities', price: 'from ₽15,000', accent: 'When the first need is to see the real bottlenecks instead of buying broad support blindly.', icon: Rocket, items: ['SEO audit with implementation priorities', 'Indexation, structure, and key-page review', 'Quick wins without background noise', 'Decision on the most rational next step'] },
+      { name: 'Key-page strengthening', price: 'from ₽30,000', accent: 'When the site is live, but its service pages, demand capture, and commercial presentation are underperforming.', icon: Gem, items: ['Everything from the diagnostic scenario', 'Priority keyword clustering', 'Improvement of core service pages', 'Stronger commercial signals and CTA structure'] },
+      { name: 'System growth', price: 'from ₽50,000', accent: 'When the project needs a recurring growth loop across structure, content, SEO, and implementation.', icon: BarChart3, items: ['Everything from the key-page scenario', 'Structure expansion and new landing pages', 'Content and positioning hypotheses', 'Priority support and implementation control'] },
     ],
     packageButton: 'Choose a package',
     industryKicker: 'Best fit',
@@ -281,6 +329,31 @@ export default async function HomePage() {
                 </div>
               )
             })}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-shell">
+        <div className="surface-grid surface-pad">
+          <div className="section-heading">
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.decisionKicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.decisionTitle}</h2>
+            </div>
+            <p className="max-w-2xl text-sm leading-7 text-slate-600">{copy.decisionText}</p>
+          </div>
+
+          <div className="uniform-grid-3">
+            {copy.decisionCards.map((item: any) => (
+              <Link key={item.title} href={prefixPathWithLocale(item.href, locale)} className="uniform-card glass-panel interactive-card p-7">
+                <h3 className="text-2xl font-semibold text-slate-950">{item.title}</h3>
+                <p className="mt-4 text-sm leading-7 text-slate-600">{item.text}</p>
+                <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
+                  {item.cta}
+                  <ArrowRight className="h-4 w-4" />
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

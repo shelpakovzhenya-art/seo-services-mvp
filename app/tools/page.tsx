@@ -32,6 +32,12 @@ export const metadata: Metadata = {
 }
 
 export default function ToolsIndexPage() {
+  const fitCards = [
+    'Хаб полезен, когда нужно быстро собрать slug, UTM, мета-теги или robots без запуска отдельного софта.',
+    'Инструменты закрывают рутинные микро-задачи и помогают ускорить публикацию, но не заменяют аудит, стратегию и переработку страниц.',
+    'Если проблема лежит в структуре сайта, слабом оффере, миграции или шаблонных ошибках, правильнее идти в услуги, а не надеяться на утилиту.',
+  ]
+
   return (
     <div className="page-shell">
       <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-400">
@@ -86,6 +92,23 @@ export default function ToolsIndexPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="mt-8 surface-grid surface-pad">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Когда этот раздел полезен</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-4xl">Инструменты экономят время на рутине, но не маскируют большие проблемы сайта</h2>
+          </div>
+        </div>
+
+        <div className="uniform-grid-3 mt-6 gap-4">
+          {fitCards.map((item) => (
+            <div key={item} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+              {item}
+            </div>
+          ))}
         </div>
       </section>
 

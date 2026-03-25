@@ -22,9 +22,27 @@ const servicesIndexCopy: Record<Locale, any> = {
     back: 'Вернуться на главную',
     chooseKicker: 'Как выбрать формат',
     chooseCards: [
-      'Если нужно понять текущее состояние сайта и ограничения роста, логично начинать с SEO-аудита или консультационного разбора.',
-      'Если площадка устарела или не дает нормальных обращений, лучше смотреть в сторону разработки или перезапуска сайта с новой структурой и логикой.',
-      'Если сайт уже есть и ему нужен системный рост, дальше подключаются SEO-продвижение, техническая база, контент и усиление ключевых посадочных.',
+      'Если непонятно, где проект теряет потенциал, логично начинать с SEO-аудита или консультационного разбора, а не покупать большой пул работ вслепую.',
+      'Если площадка устарела, слабо презентует услуги и мешает расширению, лучше смотреть в сторону разработки или перезапуска, а не в косметические правки.',
+      'Если база живая, а проекту нужен системный рост, тогда уже подключаются SEO-продвижение, технический слой, контент и усиление ключевых посадочных.',
+    ],
+    comparisonKicker: 'Что чаще всего путают',
+    comparisonTitle: 'Три развилки, на которых коммерческие сайты обычно тратят лишний бюджет',
+    comparisonText:
+      'Эта страница должна помогать выбрать правильный первый шаг. Поэтому ниже не “список преимуществ”, а развилки между соседними форматами работ.',
+    comparisonCards: [
+      {
+        title: 'Аудит vs системное SEO',
+        text: 'Если пока непонятно, где именно лежит корневая проблема, разумнее брать аудит. Системное SEO сильнее работает тогда, когда приоритеты уже видны и нужен регулярный контур роста.',
+      },
+      {
+        title: 'Technical SEO vs разработка',
+        text: 'Если базу сайта можно вылечить без полной пересборки, техоптимизация окупится быстрее. Если же каждая доработка ломает архитектуру и мешает расширению, нужен новый каркас сайта.',
+      },
+      {
+        title: 'Контент vs консалтинг',
+        text: 'SEO-контент нужен, когда слабы сами страницы. Консалтинг полезнее, когда сильная команда уже есть, но ей нужен стратегический слой и приоритет решений.',
+      },
     ],
     faqKicker: 'FAQ',
     faqTitle: 'Частые вопросы по услугам',
@@ -70,9 +88,27 @@ const servicesIndexCopy: Record<Locale, any> = {
     back: 'Back to home',
     chooseKicker: 'How to choose the format',
     chooseCards: [
-      'If you need to understand the site’s current condition and its growth constraints, it makes sense to start with an SEO audit or a strategic review.',
-      'If the platform is outdated or fails to generate solid inquiries, development or a relaunch with new structure and logic is usually the stronger move.',
-      'If the site already exists and needs systematic growth, the next step is ongoing SEO, technical foundations, content, and stronger key landing pages.',
+      'If it is still unclear where the project is losing momentum, it makes more sense to start with an SEO audit or strategic review than to buy a broad scope blindly.',
+      'If the platform is outdated, presents services weakly, and resists expansion, development or a relaunch is usually stronger than cosmetic fixes.',
+      'If the base is healthy and the site needs systematic growth, that is when ongoing SEO, technical work, content, and stronger key pages become the right next step.',
+    ],
+    comparisonKicker: 'What gets confused most often',
+    comparisonTitle: 'Three forks where commercial websites usually waste unnecessary budget',
+    comparisonText:
+      'This page should help select the right first move. So below is not a benefits list, but a set of decision forks between adjacent service formats.',
+    comparisonCards: [
+      {
+        title: 'Audit vs ongoing SEO',
+        text: 'If the core bottleneck is still unclear, an audit is the stronger start. Ongoing SEO makes more sense once priorities are visible and the project needs a recurring growth loop.',
+      },
+      {
+        title: 'Technical SEO vs development',
+        text: 'If the current platform can be healed without a full rebuild, technical optimization usually pays back faster. If every change keeps breaking architecture and expansion, the base itself needs to be rebuilt.',
+      },
+      {
+        title: 'Content vs consulting',
+        text: 'SEO content is the right move when the pages themselves are weak. Consulting is stronger when the team already has execution capacity but needs a strategic decision layer.',
+      },
     ],
     faqKicker: 'FAQ',
     faqTitle: 'Frequently asked questions about services',
@@ -204,6 +240,25 @@ export default async function ServicesIndexPage() {
         </section>
 
         <ServicesCatalogSection />
+
+        <section className="reading-shell">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.comparisonKicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.comparisonTitle}</h2>
+            </div>
+            <p className="max-w-2xl text-sm leading-7 text-slate-600">{copy.comparisonText}</p>
+          </div>
+
+          <div className="uniform-grid-3 mt-6 gap-4">
+            {copy.comparisonCards.map((item: any) => (
+              <div key={item.title} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+                <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <section className="reading-shell">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

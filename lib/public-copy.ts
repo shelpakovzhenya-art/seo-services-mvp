@@ -78,32 +78,32 @@ const servicesCatalogCopy: LocaleRecord<{
     kicker: 'Услуги',
     title: 'SEO и разработка, собранные в понятную систему роста',
     description:
-      'Здесь собраны форматы работы под разные задачи бизнеса: от аудита и технической базы до системного SEO, контента, разработки нового сайта и перезапуска текущей площадки под заявки.',
+      'Здесь собраны не просто услуги по списку, а маршруты входа в задачу: когда сначала нужен аудит, когда техбаза, когда системное SEO, а когда уже пора пересобирать сам сайт под заявки и рост.',
     scenarios: [
-      'Нужно понять, почему сайт не растет и где теряется потенциал.',
-      'Нужно исправить технические и структурные ошибки, которые тормозят органику.',
-      'Нужно системное SEO-продвижение под рост трафика и обращений.',
-      'Нужен новый сайт или перезапуск текущей площадки под заявки, SEO и доверие.',
+      'Сайт получает показы, но не дожимает пользователя до обращения.',
+      'Команда правит SEO по кускам и не понимает, где реальный приоритет.',
+      'Трафик упирается в структуру, шаблоны, региональные страницы или слабые посадочные.',
+      'Текущая площадка настолько устарела, что уже мешает и SEO, и конверсии, и дальнейшему развитию.',
     ],
     compactCta: 'Получить ориентир по формату работ',
     compactNote:
-      'У каждой услуги есть стартовая стоимость, но точный объем работ зависит от структуры сайта, сложности проекта, интеграций, контента и текущего состояния площадки.',
+      'У каждой услуги есть стартовая стоимость, но точный объем зависит не только от количества страниц. На бюджет сильнее всего влияют архитектура сайта, срочность внедрения, число шаблонных зон, контент и запас под дальнейший рост.',
     openService: 'Перейти к услуге',
   },
   en: {
     kicker: 'Services',
     title: 'SEO and development assembled into a clear growth system',
     description:
-      'This section brings together work formats for different business tasks: from audits and technical foundations to ongoing SEO, content, new website development, and relaunching an existing platform for stronger lead flow.',
+      'This section is not just a list of services. It is a set of entry routes into the problem: when you need an audit first, when the site needs a technical reset, when ongoing SEO makes sense, and when the website itself has to be rebuilt for leads and growth.',
     scenarios: [
-      'You need to understand why the website is underperforming and where growth potential is being lost.',
-      'You need to fix technical and structural issues that are holding back organic performance.',
-      'You need ongoing SEO built around traffic growth and qualified inquiries.',
-      'You need a new website or a relaunch of the current one with leads, SEO, and trust in mind.',
+      'The site gets impressions, but fails to convert visitors into conversations.',
+      'The team keeps making piecemeal SEO changes without a clear priority order.',
+      'Growth is blocked by structure, templates, regional landing pages, or weak key pages.',
+      'The current platform is so outdated that it now limits SEO, conversion, and future expansion at once.',
     ],
     compactCta: 'Get a recommendation on the right work format',
     compactNote:
-      'Every service has a starting price, but the final scope depends on the site structure, project complexity, integrations, content volume, and the current state of the platform.',
+      'Every service has a starting price, but the final scope depends less on page count alone and more on architecture, implementation urgency, reusable templates, content depth, integrations, and how much room for future growth the platform needs.',
     openService: 'Open service',
   },
 }

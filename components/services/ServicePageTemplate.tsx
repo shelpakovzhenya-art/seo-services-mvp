@@ -3,11 +3,12 @@ import { ArrowRight, Check, ChevronRight, Clock3 } from 'lucide-react'
 import JsonLd from '@/components/JsonLd'
 import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
+import { getServicePageStrategy } from '@/lib/service-page-strategy'
 import LazyContactForm from '@/components/LazyContactForm'
 import { getFullUrl } from '@/lib/site-url'
 import { createBreadcrumbSchema, createFaqSchema, createServiceSchema } from '@/lib/structured-data'
 import { formatServiceBillingUnit, formatServicePrice, type ServicePricing } from '@/lib/service-pricing'
-import { getRelatedServices, type ServicePageContent } from '@/lib/service-pages'
+import { getServicePage, type ServicePageContent } from '@/lib/service-pages'
 
 type ServicePageTemplateProps = {
   service: ServicePageContent
@@ -63,7 +64,21 @@ const seoAuditSignals = [
 ]
 
 export default function ServicePageTemplate({ service, pricing, customContent }: ServicePageTemplateProps) {
-  const relatedServices = getRelatedServices(service.related)
+  const strategy = getServicePageStrategy(service.slug)
+  const decisionServices = strategy.decisions
+    .map((item) => {
+      const relatedService = getServicePage(item.slug)
+
+      if (!relatedService) {
+        return null
+      }
+
+      return {
+        ...item,
+        service: relatedService,
+      }
+    })
+    .filter((item): item is { slug: string; reason: string; service: ServicePageContent } => Boolean(item))
   const pageUrl = getFullUrl(`/services/${service.slug}`)
   const faqSchema = createFaqSchema(service.faq)
   const serviceSchema = createServiceSchema(service, pricing)
@@ -229,6 +244,41 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </section>
         ) : null}
 
+        <section className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+          <div className="page-card">
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Диагностика выбора</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950">{strategy.diagnosticTitle}</h2>
+            <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-600">{strategy.diagnosticIntro}</p>
+            <div className="mt-6 space-y-4">
+              {strategy.diagnostics.map((item) => (
+                <div key={item.signal} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+                  <h3 className="text-lg font-semibold text-slate-950">{item.signal}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    <span className="font-medium text-slate-900">Почему так:</span> {item.cause}
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    <span className="font-medium text-slate-900">Почему это fit:</span> {item.fit}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="page-card">
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Когда не подходит</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950">{strategy.misfitTitle}</h2>
+            <p className="mt-5 text-sm leading-7 text-slate-600">{strategy.misfitIntro}</p>
+            <div className="mt-6 space-y-3">
+              {strategy.misfits.map((item) => (
+                <div key={item.title} className="rounded-2xl border border-cyan-100 bg-cyan-50/60 px-5 py-4">
+                  <h3 className="text-base font-semibold text-slate-950">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-slate-600">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="uniform-grid-4 mt-8">
           {service.benefits.map((item) => (
             <div key={item.title} className="uniform-card glass-panel interactive-card p-6">
@@ -301,6 +351,45 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
                   <Check className="mt-1 h-4 w-4 shrink-0 text-cyan-700" />
                   <span className="text-sm leading-7 text-slate-700">{item}</span>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+          <div className="page-card">
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Friction и trade-offs</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950">{strategy.frictionTitle}</h2>
+            <p className="mt-5 text-sm leading-7 text-slate-600">{strategy.frictionIntro}</p>
+            <div className="mt-6 space-y-4">
+              {strategy.frictions.map((item) => (
+                <div key={item.title} className="rounded-[24px] border border-orange-100 bg-white/80 p-5">
+                  <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="page-card">
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Матрица выбора</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950">{strategy.decisionTitle}</h2>
+            <p className="mt-5 text-sm leading-7 text-slate-600">{strategy.decisionIntro}</p>
+            <div className="mt-6 space-y-4">
+              {decisionServices.map((item) => (
+                <Link
+                  key={item.service.slug}
+                  href={`/services/${item.service.slug}`}
+                  className="block rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5 transition hover:border-cyan-200 hover:bg-cyan-50/70"
+                >
+                  <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{item.service.label}</div>
+                  <h3 className="mt-3 text-xl font-semibold text-slate-950">{item.service.shortName}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{item.reason}</p>
+                  <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
+                    Перейти к услуге
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -440,8 +529,8 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
         <section className="mt-8 reading-shell">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">FAQ</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950">Частые вопросы по услуге</h2>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Вопросы перед стартом</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">Что обычно уточняют до запуска работ</h2>
             </div>
             <a href="#contact-form" className="inline-flex">
               <Button variant="outline" className="rounded-full border-slate-300 bg-white">
@@ -449,30 +538,13 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
               </Button>
             </a>
           </div>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600">{strategy.faqLead}</p>
           <div className="mt-6 space-y-4">
             {service.faq.map((item) => (
               <div key={item.question} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
                 <h3 className="text-lg font-semibold text-slate-950">{item.question}</h3>
                 <p className="mt-3 text-sm leading-7 text-slate-600">{item.answer}</p>
               </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-8 reading-shell">
-          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Смежные услуги</p>
-          <h2 className="mt-3 text-3xl font-semibold text-slate-950">Что усилит результат</h2>
-          <div className="uniform-grid-4 mt-6 gap-5">
-            {relatedServices.map((item) => (
-              <Link key={item.slug} href={`/services/${item.slug}`} className="uniform-card interactive-card rounded-[24px] border border-orange-100 bg-white/80 p-5">
-                <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{item.label}</div>
-                <div className="mt-3 text-xl font-semibold text-slate-950">{item.shortName}</div>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{item.cardDescription}</p>
-                <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
-                  Перейти к услуге
-                  <ArrowRight className="h-4 w-4" />
-                </div>
-              </Link>
             ))}
           </div>
         </section>

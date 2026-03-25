@@ -34,6 +34,13 @@ const calculatorCopy: Record<Locale, any> = {
       'Для eCommerce, B2B и геозависимых проектов обычно требуется более глубокая структура и отдельная работа с коммерческими страницами.',
       'Если часть базы уже сделана, можно начать с точечной услуги и не брать полное сопровождение с первого шага.',
     ],
+    cautionKicker: 'Где калькулятор упрощает реальность',
+    cautionTitle: 'Предварительная сумма полезна как ориентир, но три фактора почти всегда сильнее всего двигают бюджет',
+    cautionCards: [
+      'Старый сайт с хаотичной архитектурой почти всегда требует больше работ, чем кажется по числу страниц.',
+      'Срочные внедрения, переезд, фильтры, шаблонные доработки и нестандартные интеграции резко поднимают стоимость сильнее, чем “ещё один текст”.',
+      'Если проекту нужен запас под будущий рост, бюджет надо считать не только на запуск, но и на то, чтобы сайт не пришлось пересобирать через несколько месяцев.',
+    ],
     contactKicker: 'Обсудить задачу',
     contactTitle: 'Оставьте заявку, если нужен точный расчёт',
     contactText: 'Напишите сайт, текущую задачу и что уже делали. В ответ покажу, какой формат работ подойдёт именно сейчас и где можно не переплачивать.',
@@ -61,6 +68,13 @@ const calculatorCopy: Record<Locale, any> = {
       'The more templates, sections, and demand entry points a website has, the more analysis, content, and implementation effort it needs.',
       'eCommerce, B2B, and geo-dependent projects usually require deeper structure and separate work on commercial pages.',
       'If part of the foundation is already in place, it is often possible to start with a narrower service instead of full support from day one.',
+    ],
+    cautionKicker: 'Where the calculator simplifies reality',
+    cautionTitle: 'The estimate is useful as a benchmark, but three factors almost always move the budget the most',
+    cautionCards: [
+      'An old website with chaotic architecture almost always needs more work than its page count suggests.',
+      'Urgent implementation, migrations, filters, template-level changes, and custom integrations usually raise cost more than “one more text”.',
+      'If the project needs room for future growth, the budget should cover not only launch, but also the ability to expand without rebuilding the site a few months later.',
     ],
     contactKicker: 'Discuss the task',
     contactTitle: 'Send a request if you need a precise estimate',
@@ -150,6 +164,20 @@ export default async function CalculatorPage() {
           </div>
         </div>
 
+        <div className="page-card h-full">
+          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.cautionKicker}</p>
+          <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.cautionTitle}</h2>
+          <div className="mt-6 space-y-3">
+            {copy.cautionCards.map((item: string) => (
+              <div key={item} className="rounded-2xl border border-cyan-100 bg-cyan-50/60 px-5 py-4 text-sm leading-7 text-slate-700">
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-8">
         <div id="contact-form" className="soft-section h-full scroll-mt-32 overflow-hidden md:scroll-mt-36">
           <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
             <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">

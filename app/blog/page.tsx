@@ -15,6 +15,25 @@ const blogCopy: Record<Locale, any> = {
     description:
       'Публикую разборы по SEO, структуре сайта, коммерческим факторам и контенту, которые помогают принимать взвешенные решения по проекту.',
     badges: ['Разборы ошибок и точек роста', 'Материалы для владельца сайта', 'SEO + упаковка + конверсия'],
+    routesKicker: 'Маршруты чтения',
+    routesTitle: 'Не весь блог нужен всем подряд. Вот с чего логичнее начать под разную задачу.',
+    routes: [
+      {
+        title: 'Если сайт устарел и плохо конвертирует',
+        text: 'Начните с материала про требования к современному сайту для SEO и заявок. Он помогает увидеть, где слабость именно в конструкции сайта, а не в количестве трафика.',
+        href: '/blog/trebovaniya-k-sovremennomu-saitu-dlya-seo-i-konversii',
+      },
+      {
+        title: 'Если планируете переезд или большой редизайн',
+        text: 'Сначала посмотрите материал про переезд на новый домен без потери трафика. Это лучший анти-commodity сценарий для тех, кто не хочет терять видимость из-за миграции.',
+        href: '/blog/pereezd-na-novyy-domen-bez-poteri-trafika',
+      },
+      {
+        title: 'Если хотите понять новый слой GEO и AI-выдачи',
+        text: 'Откройте материалы про GEO и AI search. Они полезны тем, кто уже думает не только про классическую органику, но и про новый формат ответа в выдаче.',
+        href: '/blog/geo-i-ii-vydacha-kak-poluchat-trafik-v-2026',
+      },
+    ],
     cardKicker: 'Статья',
     open: 'Открыть',
     noDate: 'Без даты',
@@ -34,6 +53,25 @@ const blogCopy: Record<Locale, any> = {
     description:
       'I publish practical breakdowns on SEO, website structure, commercial signals, and content that help teams make better decisions about growth.',
     badges: ['Breakdowns of mistakes and growth levers', 'Materials for website owners and teams', 'SEO + positioning + conversion'],
+    routesKicker: 'Reading paths',
+    routesTitle: 'Not every article is relevant to every visitor. Here is the fastest starting point for different situations.',
+    routes: [
+      {
+        title: 'If the website feels outdated and under-converts',
+        text: 'Start with the article on what a modern site needs for SEO and lead generation. It helps separate weak architecture from weak traffic.',
+        href: '/blog/trebovaniya-k-sovremennomu-saitu-dlya-seo-i-konversii',
+      },
+      {
+        title: 'If a migration or major redesign is coming',
+        text: 'Open the domain migration article first. It is the most useful anti-commodity route for teams that do not want to lose visibility during a move.',
+        href: '/blog/pereezd-na-novyy-domen-bez-poteri-trafika',
+      },
+      {
+        title: 'If you want to understand GEO and AI search',
+        text: 'Read the GEO and AI-search pieces. They are useful when the team is already thinking beyond classic blue-link SEO.',
+        href: '/blog/geo-i-ii-vydacha-kak-poluchat-trafik-v-2026',
+      },
+    ],
     cardKicker: 'Article',
     open: 'Open',
     noDate: 'No date',
@@ -115,6 +153,27 @@ export default async function BlogPage() {
       </section>
 
       <section className="mt-8 surface-grid surface-pad">
+        <div className="mb-8">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.routesKicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.routesTitle}</h2>
+            </div>
+          </div>
+
+          <div className="uniform-grid-3 mt-6 gap-4">
+            {copy.routes.map((route: any) => (
+              <Link key={route.title} href={prefixPathWithLocale(route.href, locale)} className="uniform-card glass-panel interactive-card p-6">
+                <h3 className="text-2xl font-semibold text-slate-950">{route.title}</h3>
+                <p className="mt-4 text-sm leading-7 text-slate-600">{route.text}</p>
+                <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
+                  {copy.open}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {posts.length > 0 ? (
           <div className="uniform-grid-3">
             {posts.map((post) => {

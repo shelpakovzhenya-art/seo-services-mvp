@@ -12,6 +12,14 @@ const casesCopy = {
     title: 'Кейсы и примеры работ',
     description:
       'Здесь собраны кейсы по SEO, структуре сайта и усилению коммерческих факторов: от диагностики проекта до роста видимости, трафика и заявок.',
+    readingKicker: 'Как читать кейс',
+    readingTitle: 'Сильный кейс полезен не красивыми словами, а логикой: проблема, развилка, внедрение, эффект',
+    readingCards: [
+      'Смотрите, с какой исходной проблемой стартовал проект: индексация, структура, посадочные, коммерческая подача или слабая лидогенерация.',
+      'Смотрите не только на список действий, а на выбор приоритета: что сделали первым и почему не трогали всё подряд.',
+      'Смотрите, как изменился сам сайт: появились ли новые страницы, логика спроса, доказательства, путь к заявке и управляемость проекта.',
+    ],
+    caseHint: 'Что смотреть внутри: стартовая проблема, первые приоритеты и изменения, которые реально сдвинули проект.',
     openCase: 'Открыть кейс',
     caseLabel: 'Кейс',
     previewFallback:
@@ -24,6 +32,14 @@ const casesCopy = {
     title: 'Case studies and selected project examples',
     description:
       'A curated set of case studies on SEO, site structure, and stronger commercial signals: from early diagnostics to visibility, traffic, and lead growth.',
+    readingKicker: 'How to read a case study',
+    readingTitle: 'A strong case study is useful not because it sounds impressive, but because it shows the logic: problem, fork, implementation, outcome',
+    readingCards: [
+      'Look at the starting constraint first: indexation, structure, key pages, commercial presentation, or weak lead generation.',
+      'Look not only at the action list, but at prioritization: what was done first and why the team did not touch everything at once.',
+      'Look at how the website itself changed: stronger pages, better demand mapping, more proof, clearer paths to inquiry, and more control over growth.',
+    ],
+    caseHint: 'What to look for inside: the starting problem, the first priorities, and the changes that actually moved the project.',
     openCase: 'Open case study',
     caseLabel: 'Case study',
     previewFallback:
@@ -80,6 +96,22 @@ export default async function CasesPage() {
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{page?.description || copy.description}</p>
       </section>
 
+      <section className="reading-shell">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.readingKicker}</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.readingTitle}</h2>
+          </div>
+        </div>
+        <div className="uniform-grid-3 mt-6 gap-4">
+          {copy.readingCards.map((item: string) => (
+            <div key={item} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
       {caseCards.length > 0 ? (
         <div className="uniform-grid-2 mt-8">
           {caseCards.map((caseItem) => {
@@ -87,7 +119,8 @@ export default async function CasesPage() {
               <div className="flex h-full flex-col p-6 md:p-8">
                 <span className="warm-chip w-fit">{copy.caseLabel}</span>
                 <h2 className="mt-5 text-2xl font-semibold text-slate-950">{caseItem.title}</h2>
-                    <p className="mt-4 flex-1 text-base leading-7 text-slate-600">{getCasePreview(caseItem, copy.previewFallback)}</p>
+                <p className="mt-4 flex-1 text-base leading-7 text-slate-600">{getCasePreview(caseItem, copy.previewFallback)}</p>
+                <div className="mt-4 rounded-2xl border border-cyan-100 bg-cyan-50/60 px-4 py-3 text-sm leading-6 text-slate-700">{copy.caseHint}</div>
                 {caseItem.slug ? (
                   <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
                     {copy.openCase}
