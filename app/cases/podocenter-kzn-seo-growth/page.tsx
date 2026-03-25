@@ -71,7 +71,9 @@ export default async function PodocenterCasePage() {
       ) ||
       null
 
-    uploadedImages = parseResultImages(gallerySource?.resultImages)
+    if (gallerySource) {
+      uploadedImages = parseResultImages(gallerySource.resultImages)
+    }
   } catch (error) {
     console.error('Error loading podocenter case assets:', error)
   }
