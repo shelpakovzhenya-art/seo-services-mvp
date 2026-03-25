@@ -4,6 +4,7 @@ import JsonLd from '@/components/JsonLd'
 import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { buildBlogListing } from '@/lib/built-in-blog-posts'
 import { prisma } from '@/lib/prisma'
+import { getReadingTimeLabel } from '@/lib/reading-time'
 import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
@@ -19,6 +20,7 @@ const blogCopy: Record<Locale, any> = {
     cardKicker: 'Статья',
     open: 'Открыть',
     noDate: 'Без даты',
+    readingTimeFallback: '1 мин чтения',
     empty: 'Пока опубликованных статей нет.',
     collectionName: 'Блог о SEO и развитии сайта',
     collectionDescription:
@@ -38,6 +40,7 @@ const blogCopy: Record<Locale, any> = {
     cardKicker: 'Article',
     open: 'Open',
     noDate: 'No date',
+    readingTimeFallback: '1 min read',
     empty: 'No published articles yet.',
     collectionName: 'Blog on SEO and website growth',
     collectionDescription:
@@ -122,6 +125,7 @@ export default async function BlogPage() {
           <div className="uniform-grid-3">
             {posts.map((post) => {
               const cover = getPostCover(post)
+              const readingTimeLabel = getReadingTimeLabel(post.content || post.excerpt || post.title, locale) || copy.readingTimeFallback
 
               return (
                 <Link key={post.id} href={prefixPathWithLocale(`/blog/${post.slug}`, locale)} className="group block h-full">
@@ -143,9 +147,11 @@ export default async function BlogPage() {
                         <div className="flex-1" />
                       )}
                       <div className="mt-5 flex items-center justify-between gap-4">
-                        <p className="text-sm text-slate-400">
-                          {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString(copy.dateLocale) : copy.noDate}
-                        </p>
+                        <div className="flex flex-wrap items-center gap-2 text-sm text-slate-400">
+                          <p>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString(copy.dateLocale) : copy.noDate}</p>
+                          <span aria-hidden="true">•</span>
+                          <p>{readingTimeLabel}</p>
+                        </div>
                         <span className="text-sm font-semibold text-sky-700 transition group-hover:text-sky-600">{copy.open}</span>
                       </div>
                     </div>

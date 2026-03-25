@@ -6,6 +6,8 @@ import RichContent from '@/components/RichContent'
 import { getBuiltInBlogPostBySlug, hydrateBlogPostRecord, isPlaceholderBlogPost } from '@/lib/built-in-blog-posts'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
+import { getReadingTimeLabel } from '@/lib/reading-time'
+import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getFullUrl } from '@/lib/site-url'
 import { createBlogPostingSchema, createBreadcrumbSchema } from '@/lib/structured-data'
@@ -194,6 +196,7 @@ async function getBlogPostBySlug(slug: string): Promise<BlogPostRecord | null> {
 }
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const locale = await getRequestLocale()
   const post = await getBlogPostBySlug(params.slug)
 
   if (!post || !post.title || !post.content || !post.slug) {
@@ -202,6 +205,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
   const coverImage = post.coverImage || getFallbackCover(post.slug)
   const content = stripLeadingMarkdownH1(post.content, post.title)
+  const readingTimeLabel = getReadingTimeLabel(post.content, locale)
   const relatedServices = getRelatedServices(post.slug)
   const articleDescription = normalizeMetaDescription(
     post.excerpt,
@@ -239,15 +243,19 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             </Link>
           </nav>
 
-          {post.publishedAt ? (
-            <p className="mt-4 text-sm text-slate-400">
-              {new Date(post.publishedAt).toLocaleDateString('ru-RU', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </p>
-          ) : null}
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-slate-400">
+            {post.publishedAt ? (
+              <p>
+                {new Date(post.publishedAt).toLocaleDateString('ru-RU', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            ) : null}
+            {post.publishedAt ? <span aria-hidden="true">•</span> : null}
+            <p>{readingTimeLabel}</p>
+          </div>
 
           <h1 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-6xl">{post.title}</h1>
           {post.excerpt ? <p className="mt-5 text-lg leading-8 text-slate-300">{post.excerpt}</p> : null}
