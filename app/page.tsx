@@ -15,6 +15,7 @@ import { buildCaseListing } from '@/lib/case-listing'
 import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
+import { buildReviewListing } from '@/lib/review-listing'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
 import { Button } from '@/components/ui/button'
@@ -237,6 +238,8 @@ export default async function HomePage() {
   } catch (error) {
     console.error('Error loading homepage data:', error)
   }
+
+  reviews = buildReviewListing(reviews)
 
   const featuredCases = buildCaseListing(cases).slice(0, 2)
 

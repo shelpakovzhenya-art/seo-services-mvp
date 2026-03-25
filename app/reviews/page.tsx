@@ -4,6 +4,7 @@ import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
+import { buildReviewListing } from '@/lib/review-listing'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
 
@@ -11,20 +12,22 @@ const reviewsCopy: Record<Locale, any> = {
   ru: {
     chip: 'Отзывы',
     title: 'Отзывы и подтверждение работы',
-    description: 'Отзывы полезны, когда по ним видно не только похвалу, но и задачу, ход работы и качество коммуникации.',
-    emptyEmbed: 'Здесь публикуются отзывы клиентов. Лучше всего они работают в связке с кейсами и страницами услуг.',
+    description:
+      'Отзывы полезны, когда по ним видно не только эмоцию, но и задачу, ход проекта и качество обратной связи во время работы.',
+    emptyEmbed:
+      'Здесь можно показать отзывы клиентов. Лучше всего этот раздел работает в связке с кейсами и понятными страницами услуг.',
     nextKicker: 'Куда смотреть дальше',
-    nextTitle: 'Отзывы дают больше пользы вместе с кейсами и страницами услуг',
+    nextTitle: 'Отзывы работают сильнее вместе с кейсами и страницами услуг',
     nextSteps: [
       {
         href: '/cases',
-        title: 'Сначала посмотреть кейсы',
-        text: 'Если важнее увидеть исходную ситуацию, список изменений и эффект по проекту.',
+        title: 'Посмотреть кейсы',
+        text: 'Если важнее увидеть исходную ситуацию, приоритеты, внедрение и эффект по проекту.',
       },
       {
         href: '/services',
         title: 'Сравнить форматы работ',
-        text: 'Если нужно понять, с чего логичнее начинать: аудит, техоптимизация, разработка или системное SEO.',
+        text: 'Если нужно понять, с чего разумнее начинать: аудит, техбаза, разработка или системное SEO.',
       },
       {
         href: '/contacts',
@@ -34,35 +37,37 @@ const reviewsCopy: Record<Locale, any> = {
     ],
     metaTitle: 'Отзывы клиентов | Shelpakov Digital',
     metaDescription:
-      'Отзывы клиентов о работе над SEO и сайтом: по ним проще понять задачу, стиль коммуникации, ход проекта и качество обратной связи.',
+      'Отзывы клиентов о работе над SEO и сайтом помогают понять не только итог, но и стиль коммуникации, ход проекта и качество обратной связи.',
   },
   en: {
     chip: 'Reviews',
     title: 'Client feedback and proof of work',
-    description: 'Reviews matter when they show the task, the working process, and the quality of communication, not praise alone.',
-    emptyEmbed: 'This page publishes client feedback. It works best together with case studies and service pages.',
+    description:
+      'Reviews matter when they show the task, the project flow, and the quality of communication, not praise alone.',
+    emptyEmbed:
+      'Client feedback can be shown here. This section works best together with case studies and clear service pages.',
     nextKicker: 'Where to go next',
     nextTitle: 'Reviews are more useful when paired with case studies and service pages',
     nextSteps: [
       {
         href: '/cases',
-        title: 'Start with case studies',
-        text: 'If you want to see the starting point, the changes made, and the effect on the project.',
+        title: 'See case studies',
+        text: 'If you want to understand the starting point, the implementation priorities, and the result.',
       },
       {
         href: '/services',
         title: 'Compare service formats',
-        text: 'If you need to understand whether the right first move is an audit, technical work, development, or ongoing SEO.',
+        text: 'If you need to decide whether the first step is an audit, technical work, development, or ongoing SEO.',
       },
       {
         href: '/contacts',
-        title: 'Reach out about your project',
-        text: 'If the task is already clear and you only need a fast recommendation on the next step.',
+        title: 'Reach out',
+        text: 'If the task is already clear and you only need a quick recommendation on what to do next.',
       },
     ],
     metaTitle: 'Client reviews | Shelpakov Digital',
     metaDescription:
-      'Client feedback on SEO and website work helps a new lead understand the task, communication style, project rhythm, and quality of feedback.',
+      'Client reviews on SEO and website work help a new lead understand the task, the project rhythm, and the quality of feedback.',
   },
 }
 
@@ -80,6 +85,8 @@ export default async function ReviewsPage() {
   } catch (error) {
     console.error('Error loading reviews page:', error)
   }
+
+  reviews = buildReviewListing(reviews)
 
   const pageContent = stripLeadingMarkdownH1(page?.content, page?.h1 || page?.title || copy.chip)
 
@@ -102,21 +109,24 @@ export default async function ReviewsPage() {
         </div>
       )}
 
-      {reviews.length > 0 && (
+      {reviews.length > 0 ? (
         <div className="uniform-grid-3 mt-8">
           {reviews.map((review) => (
             <div key={review.id} className="uniform-card glass-panel interactive-card p-7">
               <div className="mb-3 flex items-center gap-1 text-xl text-orange-400">
-                {[...Array(review.rating)].map((_, i) => (
-                  <span key={i}>★</span>
+                {[...Array(review.rating)].map((_, index) => (
+                  <span key={index}>★</span>
                 ))}
               </div>
               <p className="flex-1 text-sm leading-7 text-slate-700">{review.text}</p>
               <p className="mt-4 text-sm font-semibold text-slate-500">— {review.author}</p>
+              {(review.company || review.position) && (
+                <p className="mt-2 text-sm text-slate-400">{[review.company, review.position].filter(Boolean).join(', ')}</p>
+              )}
             </div>
           ))}
         </div>
-      )}
+      ) : null}
 
       <section className="reading-shell mt-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -140,13 +150,13 @@ export default async function ReviewsPage() {
         </div>
       </section>
 
-      {pageContent && (
+      {pageContent ? (
         <div className="reading-shell mt-8">
           <div className="editorial-prose max-w-none">
             <RichContent content={pageContent} />
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }

@@ -62,11 +62,14 @@ export default async function CasePage({ params }: { params: { slug: string } })
     title: caseItem.title,
     description:
       caseItem.description ||
-      'Кейс по SEO-аудиту, структуре сайта и поэтапному усилению ключевых страниц под рост видимости и заявок.',
+      'Кейс Shelpakov Digital по SEO, структуре сайта и поэтапному усилению ключевых страниц под рост видимости и заявок.',
     image: caseItem.image,
     publishedAt: isBuiltIn && params.slug === botiqCase.slug ? botiqCase.publishedAt : caseItem.createdAt,
     updatedAt: isBuiltIn && params.slug === botiqCase.slug ? botiqCase.updatedAt : caseItem.updatedAt,
-    about: isBuiltIn && params.slug === botiqCase.slug ? botiqCase.about : ['SEO-аудит', 'Структура сайта', 'Техническое SEO'],
+    about:
+      isBuiltIn && params.slug === botiqCase.slug
+        ? botiqCase.about
+        : ['SEO-аудит', 'Структура сайта', 'Техническое SEO'],
   })
 
   return (
@@ -77,9 +80,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
       <section className="soft-section surface-pad overflow-hidden">
         <span className="warm-chip">Кейс</span>
         <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">{caseItem.title}</h1>
-        {caseItem.description ? (
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{caseItem.description}</p>
-        ) : null}
+        {caseItem.description ? <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{caseItem.description}</p> : null}
 
         <div className="mt-8 flex flex-wrap gap-4">
           <a href="#case-contact">
@@ -111,11 +112,11 @@ export default async function CasePage({ params }: { params: { slug: string } })
           <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
             <span className="warm-chip">Обсудить проект</span>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
-              Нужен похожий кейс для вашего сайта?
+              Нужен похожий результат для вашего сайта?
             </h2>
             <p className="mt-5 text-base leading-8 text-slate-600">
-              Разберу задачу, покажу точки роста и подскажу, с чего логично начать, чтобы SEO и структура сайта
-              работали на заявки.
+              Разберу задачу, покажу, где сайт теряет потенциал, и подскажу, с чего разумнее начинать, чтобы SEO и
+              структура сайта работали на заявки, а не только на видимость.
             </p>
           </div>
 
@@ -141,7 +142,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const title = normalizeMetaTitle(caseItem.title, 'SEO-кейс')
   const description = normalizeMetaDescription(
     caseItem.description,
-    'Кейс Shelpakov Digital по SEO, структуре сайта и росту заявок с понятной стратегией, внедрением ключевых правок и акцентом на коммерческий результат.'
+    'Кейс Shelpakov Digital по SEO, структуре сайта и росту заявок с понятной стратегией и поэтапным внедрением.'
   )
 
   return {

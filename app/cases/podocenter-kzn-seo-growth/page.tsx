@@ -22,22 +22,19 @@ const resultCaptions = [
   {
     alt: 'Рост поискового трафика PodoCenter',
     caption:
-      'Рост визитов и пользователей из поиска после усиления структуры и ключевых посадочных страниц.',
+      'Рост визитов из поиска после усиления структуры услуг и ключевых посадочных страниц по локальному спросу.',
   },
   {
     alt: 'Динамика видимости PodoCenter по Казани',
-    caption:
-      'Видимость по Казани выросла и закрепилась в коммерческом сегменте локальной выдачи.',
+    caption: 'Локальная видимость по Казани стала сильнее именно по тем направлениям, которые ближе к записи.',
   },
   {
-    alt: 'Динамика заявок и CPL по проекту',
-    caption:
-      'При том же бюджете трафик и количество заявок росли, а CPL снижался месяц к месяцу.',
+    alt: 'Динамика обращений по проекту',
+    caption: 'Органика стала лучше работать не только на посещаемость, но и на реальные обращения в центр.',
   },
   {
     alt: 'Матрица позиций PodoCenter',
-    caption:
-      'Матрица показывает закрепление значимой части запросов в ТОП-10 и появление точек входа в ТОП-3.',
+    caption: 'Матрица показывает усиление позиций по приоритетным услугам и более уверенное присутствие в локальной выдаче.',
   },
 ]
 
@@ -90,7 +87,7 @@ export default async function PodocenterCasePage() {
     alt: resultCaptions[index]?.alt || `Скрин результата PodoCenter ${index + 1}`,
     caption:
       resultCaptions[index]?.caption ||
-      'Скриншот из проекта с динамикой роста по поиску, видимости и обращениям.',
+      'Скриншот из проекта с динамикой поискового трафика, локальной видимости и обращений.',
   }))
 
   const breadcrumbSchema = createBreadcrumbSchema([
@@ -115,9 +112,7 @@ export default async function PodocenterCasePage() {
 
       <section className="soft-section surface-pad">
         <span className="warm-chip">SEO-кейс локального проекта</span>
-        <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">
-          {podocenterCase.h1}
-        </h1>
+        <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">{podocenterCase.h1}</h1>
         <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{podocenterCase.excerpt}</p>
 
         <div className="mt-8 flex flex-wrap gap-4">
@@ -143,7 +138,7 @@ export default async function PodocenterCasePage() {
             <div className="text-sm uppercase tracking-[0.22em] text-orange-700">Ниша</div>
             <div className="mt-3 text-2xl font-semibold text-slate-950">Подология и медицина</div>
             <p className="mt-3 text-sm leading-7 text-slate-600">
-              Высокая чувствительность к доверию, локальной релевантности и качеству посадочных страниц.
+              Проект с высокой чувствительностью к доверию, локальной релевантности и качеству посадочных страниц.
             </p>
           </div>
           <div className="page-card">
@@ -153,14 +148,14 @@ export default async function PodocenterCasePage() {
               Казань
             </div>
             <p className="mt-3 text-sm leading-7 text-slate-600">
-              Локальная конкуренция, где важны и видимость в поиске, и понятный сценарий записи.
+              Локальная выдача, где важно не только быть видимым, но и быстро доводить человека до записи.
             </p>
           </div>
           <div className="page-card">
             <div className="text-sm uppercase tracking-[0.22em] text-orange-700">Итог</div>
-            <div className="mt-3 text-2xl font-semibold text-slate-950">Рост по SEO и заявкам</div>
+            <div className="mt-3 text-2xl font-semibold text-slate-950">Более сильный маршрут из поиска к обращению</div>
             <p className="mt-3 text-sm leading-7 text-slate-600">
-              Проект усилил видимость, получил больше целевого трафика и превратил поиск в рабочий канал обращений.
+              Сайт усилил локальную видимость, получил более точные посадочные под спрос и стал лучше конвертировать органику в обращения.
             </p>
           </div>
         </div>
@@ -193,7 +188,7 @@ export default async function PodocenterCasePage() {
               </ul>
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-slate-950">Что нужно было получить</h2>
+              <h2 className="text-2xl font-semibold text-slate-950">Что хотели получить</h2>
               <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-600">
                 {podocenterCase.goals.map((item) => (
                   <li key={item} className="rounded-2xl border border-cyan-100 bg-cyan-50/70 px-4 py-3">
@@ -209,12 +204,10 @@ export default async function PodocenterCasePage() {
       <section className="mt-8 page-card">
         <span className="warm-chip">Что сделали</span>
         <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
-          Не набор правок, а система роста для локального медицинского проекта
+          Не набор мелких правок, а пересборка сайта под локальный спрос
         </h2>
         <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">
-          В проекте нельзя было ограничиться только метатегами или точечными техническими задачами. Чтобы получить рост по
-          органике и обращениям, мы выстроили связку из структуры, услуг, контента, коммерческих факторов и базовой
-          SEO-оптимизации.
+          В этом проекте нельзя было ограничиться только метатегами или одним контентным слоем. Рост по органике и обращениям появился потому, что структура, посадочные, доверие и техбаза начали работать вместе.
         </p>
 
         <div className="mt-10 space-y-6">
@@ -235,11 +228,10 @@ export default async function PodocenterCasePage() {
         <section className="mt-8 page-card">
           <span className="warm-chip">Результаты</span>
           <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
-            Скриншоты роста по трафику, видимости и заявкам
+            Скриншоты роста по трафику, локальной видимости и обращениям
           </h2>
           <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">
-            Ниже идут реальные скриншоты из проекта. Каждый экран показывает отдельный срез: трафик, видимость,
-            обращения и позиции.
+            Ниже реальные скриншоты по проекту. Они показывают не декоративную картинку, а то, как менялся поисковый слой после пересборки структуры и посадочных.
           </p>
 
           <div className="mt-8 space-y-6">
@@ -271,8 +263,8 @@ export default async function PodocenterCasePage() {
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
         <div className="page-card">
-          <span className="warm-chip">Что дало результат</span>
-          <h2 className="mt-4 text-3xl font-semibold text-slate-950">Почему стратегия сработала</h2>
+          <span className="warm-chip">Почему это сработало</span>
+          <h2 className="mt-4 text-3xl font-semibold text-slate-950">Что дало результат в этом проекте</h2>
           <div className="mt-6 space-y-4">
             {podocenterCase.whyItWorked.map((item) => (
               <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-slate-700">
@@ -285,15 +277,13 @@ export default async function PodocenterCasePage() {
 
         <div className="page-card">
           <span className="warm-chip">Вывод</span>
-          <h2 className="mt-4 text-3xl font-semibold text-slate-950">Что важно для похожих проектов</h2>
+          <h2 className="mt-4 text-3xl font-semibold text-slate-950">Что полезно взять похожим локальным проектам</h2>
           <p className="mt-5 text-base leading-8 text-slate-600">
-            Для локального сервиса недостаточно просто получить трафик. Нужны правильные страницы услуг, понятная логика
-            записи, сильные коммерческие сигналы и техническая база, которая помогает поиску правильно понимать сайт.
-            Если у вас похожая задача, чаще всего стоит начинать с{' '}
+            Для локального сервиса мало просто собирать трафик. Нужны отдельные услуги под спрос, понятный путь к записи, доверительные сигналы и техбаза, которая не мешает поиску и пользователю. Если у вас похожая задача, чаще всего разумно начинать с{' '}
             <Link href="/services/seo-audit" className="font-medium text-cyan-700 transition hover:text-slate-950">
               SEO-аудита
             </Link>{' '}
-            или сразу собирать полноценный план{' '}
+            или сразу собирать план{' '}
             <Link href="/services/local-seo" className="font-medium text-cyan-700 transition hover:text-slate-950">
               локального SEO-продвижения
             </Link>
@@ -302,20 +292,16 @@ export default async function PodocenterCasePage() {
 
           <div className="mt-8 rounded-[24px] border border-slate-200 bg-slate-950 p-6 text-white">
             <div className="text-sm uppercase tracking-[0.22em] text-cyan-300">CTA</div>
-            <h3 className="mt-3 text-2xl font-semibold">Нужен похожий результат для локального проекта?</h3>
+            <h3 className="mt-3 text-2xl font-semibold">Нужен похожий разбор для локального проекта?</h3>
             <p className="mt-3 text-sm leading-7 text-slate-300">
-              Разберу, где сайт теряет поисковый потенциал, какие страницы нужно усиливать в первую очередь и как связать
-              SEO с обращениями, а не только с позициями.
+              Покажу, где сайт теряет поисковый потенциал, какие страницы стоит усиливать первыми и как связать SEO с обращениями, а не только с позициями.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <a href="#case-contact">
                 <Button className="rounded-full">Заказать SEO-разбор проекта</Button>
               </a>
               <Link href="/calculator">
-                <Button
-                  variant="outline"
-                  className="rounded-full border-white/25 bg-transparent text-white hover:bg-white/10"
-                >
+                <Button variant="outline" className="rounded-full border-white/25 bg-transparent text-white hover:bg-white/10">
                   Оценить формат работ
                 </Button>
               </Link>
@@ -339,7 +325,7 @@ export default async function PodocenterCasePage() {
 
       <section className="mt-8 page-card">
         <span className="warm-chip">Связанные услуги</span>
-        <h2 className="mt-4 text-3xl font-semibold text-slate-950">Что может усилить такой же проект</h2>
+        <h2 className="mt-4 text-3xl font-semibold text-slate-950">Что может усилить похожий проект</h2>
         <div className="uniform-grid-4 mt-8 gap-4">
           {serviceLinks.map((item) => (
             <Link
@@ -368,8 +354,7 @@ export default async function PodocenterCasePage() {
               Нужен не отчёт, а рост по поиску и обращениям?
             </h2>
             <p className="mt-5 text-base leading-8 text-slate-600">
-              Разберу сайт, покажу слабые места в структуре, контенте и коммерческих факторах, а затем соберу понятный
-              план продвижения под ваш регион и спрос.
+              Разберу сайт, покажу слабые места в структуре, контенте и коммерческих блоках, а затем соберу понятный план под ваш регион и спрос.
             </p>
             <div className="mt-8 space-y-3 text-sm leading-7 text-slate-600">
               <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">Ответ в течение дня</div>
@@ -377,7 +362,7 @@ export default async function PodocenterCasePage() {
                 Без обязательств и навязчивых продаж
               </div>
               <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">
-                Покажу точки роста по SEO, структуре и заявкам
+                Сразу покажу точки роста по SEO, структуре и заявкам
               </div>
             </div>
           </div>
@@ -396,7 +381,7 @@ export function generateMetadata() {
   const title = normalizeMetaTitle(podocenterCase.title, 'SEO-кейс PodoCenter')
   const description = normalizeMetaDescription(
     podocenterCase.description,
-    'Кейс по SEO-продвижению PodoCenter в Казани: усиление структуры сайта, рост видимости, поискового трафика и обращений по приоритетным запросам.'
+    'Кейс по SEO-продвижению PodoCenter в Казани: структура сайта, локальная выдача, органический трафик и заявки.'
   )
 
   return {

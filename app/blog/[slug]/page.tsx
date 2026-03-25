@@ -3,10 +3,22 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import JsonLd from '@/components/JsonLd'
 import RichContent from '@/components/RichContent'
+import { getBuiltInBlogPostBySlug, hydrateBlogPostRecord, isPlaceholderBlogPost } from '@/lib/built-in-blog-posts'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
+import { getFullUrl } from '@/lib/site-url'
 import { createBlogPostingSchema, createBreadcrumbSchema } from '@/lib/structured-data'
+
+type BlogPostRecord = {
+  slug?: string | null
+  title?: string | null
+  excerpt?: string | null
+  content?: string | null
+  coverImage?: string | null
+  publishedAt?: Date | string | null
+  updatedAt?: Date | string | null
+}
 
 function getFallbackCover(slug: string) {
   const coverMap: Record<string, string> = {
@@ -26,119 +38,119 @@ function getRelatedServices(slug: string) {
       {
         href: '/services/seo-audit',
         label: 'SEO-аудит',
-        description: 'Быстро выявляет слабые места структуры, контента и технической базы сайта.',
+        description: 'Подходит, если сначала нужно увидеть, какие шаблоны и страницы уже режут рост сайта.',
       },
       {
         href: '/services/technical-seo',
         label: 'Техническое SEO',
-        description: 'Подходит, если после аудита нужно сразу исправить индексацию, скорость и архитектуру.',
+        description: 'Нужно, когда проблема уже упирается в индексацию, дубли, шаблоны и мобильную стабильность.',
       },
       {
-        href: '/services/seo-content',
-        label: 'SEO-контент',
-        description: 'Помогает упаковать страницы и статьи так, чтобы они работали и на поиск, и на заявки.',
+        href: '/services/website-development',
+        label: 'Разработка сайтов',
+        description: 'Полезно, если сайт надо не латать, а пересобирать под более сильную структуру и путь к заявке.',
       },
     ],
     'kak-podgotovit-sait-k-geo-i-ii-vydache': [
       {
         href: '/services/seo',
         label: 'SEO-продвижение',
-        description: 'Системная работа над структурой, спросом и конверсией сайта, а не только над видимостью.',
-      },
-      {
-        href: '/services/seo-audit',
-        label: 'SEO-аудит',
-        description: 'Показывает, что мешает сайту быть заметным в поиске и ИИ-ответах уже сейчас.',
+        description: 'Нужно, если сайт уже пора перестраивать под новую выдачу системно, а не точечно по статьям.',
       },
       {
         href: '/services/seo-content',
         label: 'SEO-контент',
-        description: 'Нужен, чтобы перестроить ключевые страницы и экспертные материалы под новый тип выдачи.',
+        description: 'Подходит, когда надо перепаковать сильные темы, убрать шум и связать статьи с услугами.',
+      },
+      {
+        href: '/services/seo-audit',
+        label: 'SEO-аудит',
+        description: 'Полезен, если сначала важно понять, какие страницы брать в работу первыми.',
       },
     ],
     'seo-dlya-brand-media-kak-izmerit-polzu': [
       {
         href: '/services/seo-content',
         label: 'SEO-контент',
-        description: 'Подходит, если нужно собрать бренд-медиа как систему полезных страниц, а не набор публикаций.',
+        description: 'Нужен, когда блог должен работать как система тем, а не как архив отдельных публикаций.',
       },
       {
         href: '/services/seo-consulting',
         label: 'SEO-консалтинг',
-        description: 'Помогает увязать редакционную стратегию, семантику и бизнес-цели сайта.',
+        description: 'Помогает увязать редакционный план, кластерную логику и бизнес-задачи сайта.',
       },
       {
         href: '/services/b2b-seo',
         label: 'B2B SEO',
-        description: 'Хороший формат для экспертных ниш, где длинный цикл сделки и важна глубина материалов.',
+        description: 'Подходит экспертным проектам, где контент должен поддерживать длинный цикл сделки.',
       },
     ],
     'pereezd-na-novyy-domen-bez-poteri-trafika': [
       {
         href: '/services/technical-seo',
         label: 'Техническое SEO',
-        description: 'Контролирует редиректы, индексацию и всю техническую базу после переезда.',
+        description: 'Нужно, если при переезде надо контролировать редиректы, индексацию и шаблоны страниц.',
       },
       {
         href: '/services/seo-audit',
         label: 'SEO-аудит',
-        description: 'Подходит, если нужно заранее проверить риски переноса и не потерять сильные страницы.',
+        description: 'Подходит, когда важно заранее найти рискованные URL и слабые зоны до миграции.',
       },
       {
-        href: '/services/seo',
-        label: 'SEO-продвижение',
-        description: 'Помогает стабилизировать рост после изменений в структуре, контенте и логике сайта.',
+        href: '/services/website-development',
+        label: 'Разработка сайтов',
+        description: 'Полезно, если перенос совпадает с редизайном, новой CMS или пересборкой структуры.',
       },
     ],
     'geo-i-ii-vydacha-kak-poluchat-trafik-v-2026': [
       {
         href: '/services/seo',
         label: 'SEO-продвижение',
-        description: 'Подходит, если нужно перестроить сайт под новый формат поиска, а не просто поднять отдельные страницы.',
+        description: 'Подходит, когда надо перестраивать сайт под новый формат выдачи и защищать заявки.',
       },
       {
         href: '/services/seo-content',
         label: 'SEO-контент',
-        description: 'Помогает собрать материалы, хабы и внутренние связи под GEO и ИИ-выдачу.',
+        description: 'Полезен, если нужно обновить статьи, хабы и связи между ними без шаблонных текстов.',
       },
       {
-        href: '/services/website-development',
-        label: 'Разработка сайтов',
-        description: 'Нужна, когда для новой выдачи нужно усиливать не только тексты, но и саму структуру сайта.',
+        href: '/services/seo-audit',
+        label: 'SEO-аудит',
+        description: 'Показывает, какие страницы уже сейчас проигрывают из-за структуры, шума и слабых сниппетов.',
       },
     ],
     'seo-trendy-2026-chto-rabotaet-segodnya': [
       {
         href: '/services/seo',
         label: 'SEO-продвижение',
-        description: 'Собирает техническую базу, структуру страниц и стратегию роста в одну рабочую систему.',
-      },
-      {
-        href: '/services/technical-seo',
-        label: 'Техническое SEO',
-        description: 'Полезно, если тренды уже упираются в индексацию, шаблоны, скорость и архитектуру сайта.',
+        description: 'Нужно, если проекту пора перейти от разрозненных действий к одной рабочей системе роста.',
       },
       {
         href: '/services/b2b-seo',
         label: 'B2B SEO',
-        description: 'Подходит проектам со сложным спросом, длинным циклом сделки и высокой ценой ошибки.',
+        description: 'Подходит сложным услугам, где важно усиливать не только трафик, но и доверие к решению.',
+      },
+      {
+        href: '/services/technical-seo',
+        label: 'Техническое SEO',
+        description: 'Полезно, когда рост уже упирается в индексацию, шаблоны и качество техбазы.',
       },
     ],
     'kak-izmerit-effektivnost-seo-i-ai-trafika': [
       {
         href: '/services/seo-consulting',
         label: 'SEO-консалтинг',
-        description: 'Помогает собрать зрелую модель аналитики и связать SEO-данные с бизнес-решениями.',
+        description: 'Помогает собрать рабочую модель отчётности и связать SEO с решениями бизнеса.',
       },
       {
         href: '/services/seo-audit',
         label: 'SEO-аудит',
-        description: 'Нужен, если важно понять, какие страницы реально мешают росту и где теряется эффект от органики.',
+        description: 'Нужен, если важно понять, какие страницы реально мешают росту и что делать первым.',
       },
       {
         href: '/services/b2b-seo',
         label: 'B2B SEO',
-        description: 'Актуально для экспертных и сложных проектов, где важна не посещаемость сама по себе, а качественные обращения.',
+        description: 'Актуально, когда проекту важны не визиты сами по себе, а качественные обращения из органики.',
       },
     ],
   }
@@ -148,35 +160,43 @@ function getRelatedServices(slug: string) {
       {
         href: '/services/seo',
         label: 'SEO-продвижение',
-        description: 'Основной формат для роста органики, структуры сайта и заявок без хаотичных правок.',
+        description: 'Основной формат для системного роста органики, структуры сайта и заявок.',
       },
       {
         href: '/services/seo-audit',
         label: 'SEO-аудит',
-        description: 'Удобная стартовая точка, если сначала нужно понять реальные проблемы проекта.',
+        description: 'Стартовая точка, если сначала нужно увидеть реальные ограничения проекта и приоритеты.',
       },
       {
         href: '/services/seo-content',
         label: 'SEO-контент',
-        description: 'Нужен, когда статья должна переходить в рабочие посадочные и усиливать коммерческие страницы.',
+        description: 'Нужен, когда статья должна вести в рабочие посадочные и усиливать коммерческие страницы.',
       },
     ]
   )
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  let post: any = null
-
+async function getBlogPostBySlug(slug: string): Promise<BlogPostRecord | null> {
   try {
-    post = await prisma.blogPost.findUnique({
-      where: { slug: params.slug, published: true },
+    const dbPost = await prisma.blogPost.findFirst({
+      where: { slug, published: true },
     })
+
+    if (dbPost && !isPlaceholderBlogPost(dbPost)) {
+      return hydrateBlogPostRecord(dbPost)
+    }
   } catch (error) {
     console.error('Error loading blog post:', error)
-    notFound()
   }
 
-  if (!post) {
+  const builtInPost = getBuiltInBlogPostBySlug(slug)
+  return builtInPost && !isPlaceholderBlogPost(builtInPost) ? builtInPost : null
+}
+
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = await getBlogPostBySlug(params.slug)
+
+  if (!post || !post.title || !post.content || !post.slug) {
     notFound()
   }
 
@@ -185,7 +205,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const relatedServices = getRelatedServices(post.slug)
   const articleDescription = normalizeMetaDescription(
     post.excerpt,
-    'Экспертный материал Shelpakov Digital о SEO, структуре сайта, контенте и росте заявок с практическими выводами для бизнеса.'
+    'Материал Shelpakov Digital о SEO, структуре сайта, коммерческих страницах и росте заявок.'
   )
   const articleSchema = createBlogPostingSchema({
     slug: post.slug,
@@ -219,7 +239,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             </Link>
           </nav>
 
-          {post.publishedAt && (
+          {post.publishedAt ? (
             <p className="mt-4 text-sm text-slate-400">
               {new Date(post.publishedAt).toLocaleDateString('ru-RU', {
                 year: 'numeric',
@@ -227,13 +247,16 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 day: 'numeric',
               })}
             </p>
-          )}
+          ) : null}
 
           <h1 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-6xl">{post.title}</h1>
-          {post.excerpt && <p className="mt-5 text-lg leading-8 text-slate-300">{post.excerpt}</p>}
+          {post.excerpt ? <p className="mt-5 text-lg leading-8 text-slate-300">{post.excerpt}</p> : null}
+
           <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-200">
             <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">Автор: Shelpakov Digital</span>
-            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">Тема: SEO, структура сайта и заявки</span>
+            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">
+              Тема: SEO, структура сайта и коммерческие страницы
+            </span>
             <Link
               href="/services"
               className="rounded-full border border-cyan-300/24 bg-cyan-400/10 px-4 py-2 transition hover:border-cyan-200/50 hover:text-white"
@@ -243,13 +266,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           </div>
         </div>
 
-        {coverImage && (
+        {coverImage ? (
           <div className="relative mt-8 overflow-hidden rounded-[30px] border border-white/12 bg-white/8 shadow-[0_24px_60px_rgba(2,8,23,0.28)]">
             <div className="relative aspect-[16/9] w-full">
               <Image src={coverImage} alt={post.title} fill className="object-cover" unoptimized={isInlineImage(coverImage)} />
             </div>
           </div>
-        )}
+        ) : null}
       </header>
 
       <section className="mt-8 reading-shell">
@@ -259,10 +282,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
         <div className="mt-10 rounded-[28px] border border-orange-100 bg-[linear-gradient(180deg,#fffaf5,#f7fbff)] p-6 shadow-[0_18px_42px_rgba(15,23,42,0.08)] md:p-7">
           <p className="text-xs font-semibold uppercase tracking-[0.32em] text-orange-700">Связанные услуги</p>
-          <h2 className="mt-3 text-2xl font-semibold text-slate-950 md:text-3xl">Что открыть дальше по теме статьи</h2>
+          <h2 className="mt-3 text-2xl font-semibold text-slate-950 md:text-3xl">Что логично открыть после этой статьи</h2>
           <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">
-            Если хотите перейти от чтения к внедрению, начните с этих страниц услуг. Они напрямую продолжают тему
-            материала и помогают превратить выводы в рабочий план.
+            Если хотите перейти от чтения к внедрению, начните с этих страниц. Они продолжают тему статьи уже в формате конкретной работы по сайту.
           </p>
 
           <div className="uniform-grid-3 mt-6 gap-3">
@@ -287,29 +309,20 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  let post: any = null
+  const post = await getBlogPostBySlug(params.slug)
 
-  try {
-    post = await prisma.blogPost.findUnique({
-      where: { slug: params.slug, published: true },
-    })
-  } catch (error) {
-    post = null
-  }
-
-  if (!post) {
+  if (!post || !post.title || !post.slug) {
     return {
       title: 'Статья не найдена | Shelpakov Digital',
     }
   }
 
-  const { getFullUrl } = await import('@/lib/site-url')
   const postUrl = getFullUrl(`/blog/${params.slug}`)
   const coverImage = post.coverImage || getFallbackCover(post.slug)
   const metaTitle = normalizeMetaTitle(post.title, 'Статья Shelpakov Digital')
   const metaDescription = normalizeMetaDescription(
     post.excerpt,
-    'Экспертный материал Shelpakov Digital о SEO, структуре сайта, контенте и росте заявок с практическими выводами для бизнеса.'
+    'Материал Shelpakov Digital о SEO, структуре сайта, коммерческих страницах и росте заявок.'
   )
 
   return {

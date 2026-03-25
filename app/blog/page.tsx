@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import JsonLd from '@/components/JsonLd'
 import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
+import { buildBlogListing } from '@/lib/built-in-blog-posts'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription } from '@/lib/seo-meta'
@@ -78,6 +79,8 @@ export default async function BlogPage() {
   } catch (error) {
     console.error('Error loading blog page:', error)
   }
+
+  posts = buildBlogListing(posts)
 
   const collectionSchema = createCollectionPageSchema({
     path: '/blog',
