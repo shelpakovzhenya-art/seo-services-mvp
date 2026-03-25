@@ -5,11 +5,13 @@ import JsonLd from '@/components/JsonLd'
 import RichContent from '@/components/RichContent'
 import { getBuiltInBlogPostBySlug, hydrateBlogPostRecord, isPlaceholderBlogPost } from '@/lib/built-in-blog-posts'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
+import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getReadingTimeLabel } from '@/lib/reading-time'
 import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
-import { getFullUrl } from '@/lib/site-url'
+import { getServicePageForLocale } from '@/lib/service-page-localization'
+import { getFullUrl, getLocaleAlternates } from '@/lib/site-url'
 import { createBlogPostingSchema, createBreadcrumbSchema } from '@/lib/structured-data'
 
 type BlogPostRecord = {
@@ -21,6 +23,81 @@ type BlogPostRecord = {
   publishedAt?: Date | string | null
   updatedAt?: Date | string | null
 }
+
+type RelatedService = {
+  href: string
+  label: string
+  description: string
+}
+
+const blogPostCopy: Record<
+  Locale,
+  {
+    home: string
+    blog: string
+    author: string
+    topic: string
+    servicesLink: string
+    relatedServicesKicker: string
+    relatedServicesTitle: string
+    relatedServicesDescription: string
+    openService: string
+    metaNotFound: string
+    metaTitleSuffix: string
+    metaDescriptionFallback: string
+    dateLocale: string
+    relatedServiceFallback: string
+  }
+> = {
+  ru: {
+    home: 'Главная',
+    blog: 'Блог',
+    author: 'Автор: Shelpakov Digital',
+    topic: 'Тема: SEO, структура сайта и коммерческие страницы',
+    servicesLink: 'Перейти к услугам',
+    relatedServicesKicker: 'Связанные услуги',
+    relatedServicesTitle: 'Что логично открыть после этой статьи',
+    relatedServicesDescription:
+      'Если хотите перейти от чтения к внедрению, начните с этих страниц. Они продолжают тему статьи уже в формате конкретной работы по сайту.',
+    openService: 'Перейти к услуге',
+    metaNotFound: 'Статья не найдена | Shelpakov Digital',
+    metaTitleSuffix: 'Статья Shelpakov Digital',
+    metaDescriptionFallback:
+      'Материал Shelpakov Digital о SEO, структуре сайта, коммерческих страницах и росте заявок.',
+    dateLocale: 'ru-RU',
+    relatedServiceFallback: 'Откройте страницу услуги, чтобы перейти от чтения к внедрению.',
+  },
+  en: {
+    home: 'Home',
+    blog: 'Blog',
+    author: 'Author: Shelpakov Digital',
+    topic: 'Topic: SEO, site structure, and commercial pages',
+    servicesLink: 'Browse services',
+    relatedServicesKicker: 'Related services',
+    relatedServicesTitle: 'What to open after this article',
+    relatedServicesDescription:
+      'If you want to move from reading to implementation, start with these pages. They continue the topic in a more concrete, service-oriented format.',
+    openService: 'Open service',
+    metaNotFound: 'Article not found | Shelpakov Digital',
+    metaTitleSuffix: 'Shelpakov Digital article',
+    metaDescriptionFallback:
+      'A Shelpakov Digital article on SEO, site structure, commercial pages, and lead growth.',
+    dateLocale: 'en-US',
+    relatedServiceFallback: 'Open the service page to move from reading to implementation.',
+  },
+}
+
+const relatedServiceMap: Record<string, string[]> = {
+  'trebovaniya-k-sovremennomu-saitu-dlya-seo-i-konversii': ['seo-audit', 'technical-seo', 'website-development'],
+  'kak-podgotovit-sait-k-geo-i-ii-vydache': ['seo', 'seo-content', 'seo-audit'],
+  'seo-dlya-brand-media-kak-izmerit-polzu': ['seo-content', 'seo-consulting', 'b2b-seo'],
+  'pereezd-na-novyy-domen-bez-poteri-trafika': ['technical-seo', 'seo-audit', 'website-development'],
+  'geo-i-ii-vydacha-kak-poluchat-trafik-v-2026': ['seo', 'seo-content', 'seo-audit'],
+  'seo-trendy-2026-chto-rabotaet-segodnya': ['seo', 'b2b-seo', 'technical-seo'],
+  'kak-izmerit-effektivnost-seo-i-ai-trafika': ['seo-consulting', 'seo-audit', 'b2b-seo'],
+}
+
+const defaultRelatedServiceSlugs = ['seo', 'seo-audit', 'seo-content']
 
 function getFallbackCover(slug: string) {
   const coverMap: Record<string, string> = {
@@ -34,148 +111,19 @@ function isInlineImage(src: string) {
   return src.startsWith('data:')
 }
 
-function getRelatedServices(slug: string) {
-  const relatedMap: Record<string, Array<{ href: string; label: string; description: string }>> = {
-    'trebovaniya-k-sovremennomu-saitu-dlya-seo-i-konversii': [
-      {
-        href: '/services/seo-audit',
-        label: 'SEO-аудит',
-        description: 'Подходит, если сначала нужно увидеть, какие шаблоны и страницы уже режут рост сайта.',
-      },
-      {
-        href: '/services/technical-seo',
-        label: 'Техническое SEO',
-        description: 'Нужно, когда проблема уже упирается в индексацию, дубли, шаблоны и мобильную стабильность.',
-      },
-      {
-        href: '/services/website-development',
-        label: 'Разработка сайтов',
-        description: 'Полезно, если сайт надо не латать, а пересобирать под более сильную структуру и путь к заявке.',
-      },
-    ],
-    'kak-podgotovit-sait-k-geo-i-ii-vydache': [
-      {
-        href: '/services/seo',
-        label: 'SEO-продвижение',
-        description: 'Нужно, если сайт уже пора перестраивать под новую выдачу системно, а не точечно по статьям.',
-      },
-      {
-        href: '/services/seo-content',
-        label: 'SEO-контент',
-        description: 'Подходит, когда надо перепаковать сильные темы, убрать шум и связать статьи с услугами.',
-      },
-      {
-        href: '/services/seo-audit',
-        label: 'SEO-аудит',
-        description: 'Полезен, если сначала важно понять, какие страницы брать в работу первыми.',
-      },
-    ],
-    'seo-dlya-brand-media-kak-izmerit-polzu': [
-      {
-        href: '/services/seo-content',
-        label: 'SEO-контент',
-        description: 'Нужен, когда блог должен работать как система тем, а не как архив отдельных публикаций.',
-      },
-      {
-        href: '/services/seo-consulting',
-        label: 'SEO-консалтинг',
-        description: 'Помогает увязать редакционный план, кластерную логику и бизнес-задачи сайта.',
-      },
-      {
-        href: '/services/b2b-seo',
-        label: 'B2B SEO',
-        description: 'Подходит экспертным проектам, где контент должен поддерживать длинный цикл сделки.',
-      },
-    ],
-    'pereezd-na-novyy-domen-bez-poteri-trafika': [
-      {
-        href: '/services/technical-seo',
-        label: 'Техническое SEO',
-        description: 'Нужно, если при переезде надо контролировать редиректы, индексацию и шаблоны страниц.',
-      },
-      {
-        href: '/services/seo-audit',
-        label: 'SEO-аудит',
-        description: 'Подходит, когда важно заранее найти рискованные URL и слабые зоны до миграции.',
-      },
-      {
-        href: '/services/website-development',
-        label: 'Разработка сайтов',
-        description: 'Полезно, если перенос совпадает с редизайном, новой CMS или пересборкой структуры.',
-      },
-    ],
-    'geo-i-ii-vydacha-kak-poluchat-trafik-v-2026': [
-      {
-        href: '/services/seo',
-        label: 'SEO-продвижение',
-        description: 'Подходит, когда надо перестраивать сайт под новый формат выдачи и защищать заявки.',
-      },
-      {
-        href: '/services/seo-content',
-        label: 'SEO-контент',
-        description: 'Полезен, если нужно обновить статьи, хабы и связи между ними без шаблонных текстов.',
-      },
-      {
-        href: '/services/seo-audit',
-        label: 'SEO-аудит',
-        description: 'Показывает, какие страницы уже сейчас проигрывают из-за структуры, шума и слабых сниппетов.',
-      },
-    ],
-    'seo-trendy-2026-chto-rabotaet-segodnya': [
-      {
-        href: '/services/seo',
-        label: 'SEO-продвижение',
-        description: 'Нужно, если проекту пора перейти от разрозненных действий к одной рабочей системе роста.',
-      },
-      {
-        href: '/services/b2b-seo',
-        label: 'B2B SEO',
-        description: 'Подходит сложным услугам, где важно усиливать не только трафик, но и доверие к решению.',
-      },
-      {
-        href: '/services/technical-seo',
-        label: 'Техническое SEO',
-        description: 'Полезно, когда рост уже упирается в индексацию, шаблоны и качество техбазы.',
-      },
-    ],
-    'kak-izmerit-effektivnost-seo-i-ai-trafika': [
-      {
-        href: '/services/seo-consulting',
-        label: 'SEO-консалтинг',
-        description: 'Помогает собрать рабочую модель отчётности и связать SEO с решениями бизнеса.',
-      },
-      {
-        href: '/services/seo-audit',
-        label: 'SEO-аудит',
-        description: 'Нужен, если важно понять, какие страницы реально мешают росту и что делать первым.',
-      },
-      {
-        href: '/services/b2b-seo',
-        label: 'B2B SEO',
-        description: 'Актуально, когда проекту важны не визиты сами по себе, а качественные обращения из органики.',
-      },
-    ],
-  }
+function getRelatedServices(slug: string, locale: Locale): RelatedService[] {
+  const serviceSlugs = relatedServiceMap[slug] || defaultRelatedServiceSlugs
+  const copy = blogPostCopy[locale]
 
-  return (
-    relatedMap[slug] || [
-      {
-        href: '/services/seo',
-        label: 'SEO-продвижение',
-        description: 'Основной формат для системного роста органики, структуры сайта и заявок.',
-      },
-      {
-        href: '/services/seo-audit',
-        label: 'SEO-аудит',
-        description: 'Стартовая точка, если сначала нужно увидеть реальные ограничения проекта и приоритеты.',
-      },
-      {
-        href: '/services/seo-content',
-        label: 'SEO-контент',
-        description: 'Нужен, когда статья должна вести в рабочие посадочные и усиливать коммерческие страницы.',
-      },
-    ]
-  )
+  return serviceSlugs.map((serviceSlug) => {
+    const service = getServicePageForLocale(serviceSlug, locale)
+
+    return {
+      href: prefixPathWithLocale(`/services/${serviceSlug}`, locale),
+      label: service?.shortName || service?.h1 || serviceSlug,
+      description: service?.intro || copy.relatedServiceFallback,
+    }
+  })
 }
 
 async function getBlogPostBySlug(slug: string): Promise<BlogPostRecord | null> {
@@ -197,6 +145,7 @@ async function getBlogPostBySlug(slug: string): Promise<BlogPostRecord | null> {
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const locale = await getRequestLocale()
+  const copy = blogPostCopy[locale]
   const post = await getBlogPostBySlug(params.slug)
 
   if (!post || !post.title || !post.content || !post.slug) {
@@ -206,13 +155,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const coverImage = post.coverImage || getFallbackCover(post.slug)
   const content = stripLeadingMarkdownH1(post.content, post.title)
   const readingTimeLabel = getReadingTimeLabel(post.content, locale)
-  const relatedServices = getRelatedServices(post.slug)
-  const articleDescription = normalizeMetaDescription(
-    post.excerpt,
-    'Материал Shelpakov Digital о SEO, структуре сайта, коммерческих страницах и росте заявок.'
-  )
+  const relatedServices = getRelatedServices(post.slug, locale)
+  const localizedPostPath = prefixPathWithLocale(`/blog/${post.slug}`, locale)
+  const articleDescription = normalizeMetaDescription(post.excerpt, copy.metaDescriptionFallback)
   const articleSchema = createBlogPostingSchema({
     slug: post.slug,
+    path: localizedPostPath,
+    locale,
     title: post.title,
     description: articleDescription,
     coverImage,
@@ -221,9 +170,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     relatedServices,
   })
   const breadcrumbSchema = createBreadcrumbSchema([
-    { name: 'Главная', path: '/' },
-    { name: 'Блог', path: '/blog' },
-    { name: post.title, path: `/blog/${post.slug}` },
+    { name: copy.home, path: prefixPathWithLocale('/', locale) },
+    { name: copy.blog, path: prefixPathWithLocale('/blog', locale) },
+    { name: post.title, path: localizedPostPath },
   ])
 
   return (
@@ -234,19 +183,19 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       <header className="surface-cosmos surface-pad overflow-hidden">
         <div className="max-w-3xl">
           <nav className="flex flex-wrap items-center gap-2 text-sm text-slate-300/85">
-            <Link href="/" className="transition hover:text-white">
-              Главная
+            <Link href={prefixPathWithLocale('/', locale)} className="transition hover:text-white">
+              {copy.home}
             </Link>
             <span>/</span>
-            <Link href="/blog" className="transition hover:text-white">
-              Блог
+            <Link href={prefixPathWithLocale('/blog', locale)} className="transition hover:text-white">
+              {copy.blog}
             </Link>
           </nav>
 
           <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-slate-400">
             {post.publishedAt ? (
               <p>
-                {new Date(post.publishedAt).toLocaleDateString('ru-RU', {
+                {new Date(post.publishedAt).toLocaleDateString(copy.dateLocale, {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
@@ -261,15 +210,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           {post.excerpt ? <p className="mt-5 text-lg leading-8 text-slate-300">{post.excerpt}</p> : null}
 
           <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-200">
-            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">Автор: Shelpakov Digital</span>
-            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">
-              Тема: SEO, структура сайта и коммерческие страницы
-            </span>
+            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">{copy.author}</span>
+            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">{copy.topic}</span>
             <Link
-              href="/services"
+              href={prefixPathWithLocale('/services', locale)}
               className="rounded-full border border-cyan-300/24 bg-cyan-400/10 px-4 py-2 transition hover:border-cyan-200/50 hover:text-white"
             >
-              Перейти к услугам
+              {copy.servicesLink}
             </Link>
           </div>
         </div>
@@ -289,11 +236,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         </div>
 
         <div className="mt-10 rounded-[28px] border border-orange-100 bg-[linear-gradient(180deg,#fffaf5,#f7fbff)] p-6 shadow-[0_18px_42px_rgba(15,23,42,0.08)] md:p-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-orange-700">Связанные услуги</p>
-          <h2 className="mt-3 text-2xl font-semibold text-slate-950 md:text-3xl">Что логично открыть после этой статьи</h2>
-          <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">
-            Если хотите перейти от чтения к внедрению, начните с этих страниц. Они продолжают тему статьи уже в формате конкретной работы по сайту.
-          </p>
+          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-orange-700">{copy.relatedServicesKicker}</p>
+          <h2 className="mt-3 text-2xl font-semibold text-slate-950 md:text-3xl">{copy.relatedServicesTitle}</h2>
+          <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">{copy.relatedServicesDescription}</p>
 
           <div className="uniform-grid-3 mt-6 gap-3">
             {relatedServices.map((service) => (
@@ -306,7 +251,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   {service.label}
                 </p>
                 <p className="mt-2 flex-1 text-sm leading-7 text-slate-600">{service.description}</p>
-                <span className="mt-3 inline-flex items-center text-sm font-semibold text-sky-700">Перейти к услуге</span>
+                <span className="mt-3 inline-flex items-center text-sm font-semibold text-sky-700">{copy.openService}</span>
               </Link>
             ))}
           </div>
@@ -317,26 +262,27 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const locale = await getRequestLocale()
+  const copy = blogPostCopy[locale]
   const post = await getBlogPostBySlug(params.slug)
 
   if (!post || !post.title || !post.slug) {
     return {
-      title: 'Статья не найдена | Shelpakov Digital',
+      title: copy.metaNotFound,
     }
   }
 
-  const postUrl = getFullUrl(`/blog/${params.slug}`)
+  const alternates = getLocaleAlternates(`/blog/${params.slug}`)
+  const postUrl = getFullUrl(prefixPathWithLocale(`/blog/${params.slug}`, locale))
   const coverImage = post.coverImage || getFallbackCover(post.slug)
-  const metaTitle = normalizeMetaTitle(post.title, 'Статья Shelpakov Digital')
-  const metaDescription = normalizeMetaDescription(
-    post.excerpt,
-    'Материал Shelpakov Digital о SEO, структуре сайта, коммерческих страницах и росте заявок.'
-  )
+  const metaTitle = normalizeMetaTitle(post.title, copy.metaTitleSuffix)
+  const metaDescription = normalizeMetaDescription(post.excerpt, copy.metaDescriptionFallback)
 
   return {
     title: metaTitle,
     description: metaDescription,
     alternates: {
+      ...alternates,
       canonical: postUrl,
     },
     openGraph: {

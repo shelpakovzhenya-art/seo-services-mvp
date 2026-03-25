@@ -7,9 +7,12 @@ import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
 import { botiqCase, getBuiltInCaseBySlug, hydrateBotiqCaseRecord } from '@/lib/botiq-case'
 import { parseCaseGallery } from '@/lib/case-gallery'
-import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
+import { localizeCaseRecord } from '@/lib/case-localization'
+import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
-import { getFullUrl } from '@/lib/site-url'
+import { getRequestLocale } from '@/lib/request-locale'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
+import { getFullUrl, getLocaleAlternates } from '@/lib/site-url'
 import { createBreadcrumbSchema, createCaseArticleSchema } from '@/lib/structured-data'
 
 type CaseRecord = {
@@ -21,6 +24,48 @@ type CaseRecord = {
   resultImages?: string | null
   createdAt?: Date | string | null
   updatedAt?: Date | string | null
+}
+
+const casePageCopy: Record<
+  Locale,
+  {
+    home: string
+    cases: string
+    chip: string
+    cta: string
+    contactChip: string
+    contactTitle: string
+    contactDescription: string
+    metaTitleSuffix: string
+    metaDescriptionFallback: string
+  }
+> = {
+  ru: {
+    home: 'Главная',
+    cases: 'Кейсы',
+    chip: 'Кейс',
+    cta: 'Обсудить похожий проект',
+    contactChip: 'Обсудить проект',
+    contactTitle: 'Нужен похожий результат для вашего сайта?',
+    contactDescription:
+      'Разберу задачу, покажу, где сайт теряет потенциал, и подскажу, с чего разумнее начинать, чтобы SEO и структура сайта работали на заявки, а не только на видимость.',
+    metaTitleSuffix: 'SEO-кейс',
+    metaDescriptionFallback:
+      'Кейс Shelpakov Digital по SEO, структуре сайта и поэтапному усилению ключевых страниц под рост видимости и заявок.',
+  },
+  en: {
+    home: 'Home',
+    cases: 'Case studies',
+    chip: 'Case study',
+    cta: 'Discuss a similar project',
+    contactChip: 'Discuss your project',
+    contactTitle: 'Need a similar result for your website?',
+    contactDescription:
+      'I will break the task down, show where the site is losing potential, and outline the most sensible starting point so SEO and site structure support leads, not just visibility.',
+    metaTitleSuffix: 'Case study',
+    metaDescriptionFallback:
+      'A Shelpakov Digital case study on SEO, site structure, and staged improvements to key pages for stronger visibility and lead flow.',
+  },
 }
 
 async function getCaseBySlug(slug: string): Promise<{ caseItem: CaseRecord | null; isBuiltIn: boolean }> {
@@ -44,32 +89,38 @@ async function getCaseBySlug(slug: string): Promise<{ caseItem: CaseRecord | nul
 }
 
 export default async function CasePage({ params }: { params: { slug: string } }) {
-  const { caseItem, isBuiltIn } = await getCaseBySlug(params.slug)
+  const locale = await getRequestLocale()
+  const copy = casePageCopy[locale]
+  const result = await getCaseBySlug(params.slug)
+  const caseItem = result.caseItem ? localizeCaseRecord(result.caseItem, locale) : null
+  const { isBuiltIn } = result
 
   if (!caseItem) {
     notFound()
   }
 
   const galleryImages = parseCaseGallery(caseItem.resultImages)
-  const casePath = isBuiltIn && params.slug === botiqCase.slug ? botiqCase.url : `/cases/${params.slug}`
+  const baseCasePath = isBuiltIn && params.slug === botiqCase.slug ? botiqCase.url : `/cases/${params.slug}`
+  const localizedCasePath = prefixPathWithLocale(baseCasePath, locale)
   const breadcrumbSchema = createBreadcrumbSchema([
-    { name: 'Главная', path: '/' },
-    { name: 'Кейсы', path: '/cases' },
-    { name: caseItem.title, path: casePath },
+    { name: copy.home, path: prefixPathWithLocale('/', locale) },
+    { name: copy.cases, path: prefixPathWithLocale('/cases', locale) },
+    { name: caseItem.title, path: localizedCasePath },
   ])
   const caseArticleSchema = createCaseArticleSchema({
-    path: casePath,
+    path: localizedCasePath,
     title: caseItem.title,
-    description:
-      caseItem.description ||
-      'Кейс Shelpakov Digital по SEO, структуре сайта и поэтапному усилению ключевых страниц под рост видимости и заявок.',
+    description: caseItem.description || copy.metaDescriptionFallback,
     image: caseItem.image,
     publishedAt: isBuiltIn && params.slug === botiqCase.slug ? botiqCase.publishedAt : caseItem.createdAt,
     updatedAt: isBuiltIn && params.slug === botiqCase.slug ? botiqCase.updatedAt : caseItem.updatedAt,
     about:
       isBuiltIn && params.slug === botiqCase.slug
         ? botiqCase.about
-        : ['SEO-аудит', 'Структура сайта', 'Техническое SEO'],
+        : locale === 'en'
+          ? ['SEO audit', 'Site structure', 'Technical SEO']
+          : ['SEO-аудит', 'Структура сайта', 'Техническое SEO'],
+    locale,
   })
 
   return (
@@ -78,14 +129,14 @@ export default async function CasePage({ params }: { params: { slug: string } })
       <JsonLd id={`case-article-${params.slug}`} data={caseArticleSchema} />
 
       <section className="soft-section surface-pad overflow-hidden">
-        <span className="warm-chip">Кейс</span>
+        <span className="warm-chip">{copy.chip}</span>
         <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">{caseItem.title}</h1>
         {caseItem.description ? <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{caseItem.description}</p> : null}
 
         <div className="mt-8 flex flex-wrap gap-4">
           <a href="#case-contact">
             <Button size="lg" className="rounded-full px-7">
-              Обсудить похожий проект
+              {copy.cta}
             </Button>
           </a>
         </div>
@@ -105,19 +156,14 @@ export default async function CasePage({ params }: { params: { slug: string } })
         className="reading-shell editorial-prose mt-8 max-w-none"
       />
 
-      {galleryImages.length > 0 ? <CaseGallery images={galleryImages} title={caseItem.title} /> : null}
+      {galleryImages.length > 0 ? <CaseGallery images={galleryImages} title={caseItem.title} locale={locale} /> : null}
 
       <section id="case-contact" className="mt-8 soft-section overflow-hidden">
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
-            <span className="warm-chip">Обсудить проект</span>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
-              Нужен похожий результат для вашего сайта?
-            </h2>
-            <p className="mt-5 text-base leading-8 text-slate-600">
-              Разберу задачу, покажу, где сайт теряет потенциал, и подскажу, с чего разумнее начинать, чтобы SEO и
-              структура сайта работали на заявки, а не только на видимость.
-            </p>
+            <span className="warm-chip">{copy.contactChip}</span>
+            <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
+            <p className="mt-5 text-base leading-8 text-slate-600">{copy.contactDescription}</p>
           </div>
 
           <div className="p-5 sm:p-8">
@@ -130,31 +176,35 @@ export default async function CasePage({ params }: { params: { slug: string } })
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const { caseItem, isBuiltIn } = await getCaseBySlug(params.slug)
+  const locale = await getRequestLocale()
+  const copy = casePageCopy[locale]
+  const result = await getCaseBySlug(params.slug)
+  const caseItem = result.caseItem ? localizeCaseRecord(result.caseItem, locale) : null
+  const { isBuiltIn } = result
 
   if (!caseItem) {
     return {}
   }
 
-  const url = getFullUrl(isBuiltIn && params.slug === botiqCase.slug ? botiqCase.url : `/cases/${params.slug}`)
+  const baseCasePath = isBuiltIn && params.slug === botiqCase.slug ? botiqCase.url : `/cases/${params.slug}`
+  const alternates = getLocaleAlternates(baseCasePath)
+  const canonical = getFullUrl(prefixPathWithLocale(baseCasePath, locale))
   const ogImage =
     caseItem.image && !caseItem.image.startsWith('http') ? getFullUrl(caseItem.image) : caseItem.image || undefined
-  const title = normalizeMetaTitle(caseItem.title, 'SEO-кейс')
-  const description = normalizeMetaDescription(
-    caseItem.description,
-    'Кейс Shelpakov Digital по SEO, структуре сайта и росту заявок с понятной стратегией и поэтапным внедрением.'
-  )
+  const title = normalizeMetaTitle(caseItem.title, copy.metaTitleSuffix)
+  const description = normalizeMetaDescription(caseItem.description, copy.metaDescriptionFallback)
 
   return {
     title,
     description,
     alternates: {
-      canonical: url,
+      ...alternates,
+      canonical,
     },
     openGraph: {
       title,
       description,
-      url,
+      url: canonical,
       type: 'article',
       images: ogImage ? [{ url: ogImage }] : undefined,
     },

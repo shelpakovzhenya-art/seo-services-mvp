@@ -5,71 +5,243 @@ import JsonLd from '@/components/JsonLd'
 import LazyContactForm from '@/components/LazyContactForm'
 import { Button } from '@/components/ui/button'
 import { parseCaseGallery } from '@/lib/case-gallery'
-import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
+import { isPodocenterCase } from '@/lib/case-listing'
+import { localizeCaseRecord } from '@/lib/case-localization'
+import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
-import { getFullUrl } from '@/lib/site-url'
+import { getRequestLocale } from '@/lib/request-locale'
+import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
+import { getServicePageForLocale } from '@/lib/service-page-localization'
+import { getFullUrl, getLocaleAlternates } from '@/lib/site-url'
 import { createBreadcrumbSchema, createCaseArticleSchema, createFaqSchema } from '@/lib/structured-data'
 import { podocenterCase } from '@/lib/podocenter-case'
 
-const serviceLinks = [
-  { href: '/services/seo', label: 'SEO-продвижение' },
-  { href: '/services/technical-seo', label: 'Техническое SEO' },
-  { href: '/services/local-seo', label: 'Local SEO' },
-  { href: '/services/seo-content', label: 'SEO-контент' },
-]
+const serviceLinkSlugs = ['seo', 'technical-seo', 'local-seo', 'seo-content'] as const
 
-const resultCaptions = [
+const resultCaptions: Record<Locale, Array<{ alt: string; caption: string }>> = {
+  ru: [
+    {
+      alt: 'Рост поискового трафика PodoCenter',
+      caption:
+        'Рост визитов из поиска после усиления структуры услуг и ключевых посадочных страниц под локальный спрос.',
+    },
+    {
+      alt: 'Динамика видимости PodoCenter по Казани',
+      caption: 'Локальная видимость по Казани стала сильнее именно по тем направлениям, которые ближе к записи.',
+    },
+    {
+      alt: 'Динамика обращений по проекту',
+      caption: 'Органика стала лучше работать не только на посещаемость, но и на реальные обращения в центр.',
+    },
+    {
+      alt: 'Матрица позиций PodoCenter',
+      caption:
+        'Матрица показывает усиление позиций по приоритетным услугам и более уверенное присутствие в локальной выдаче.',
+    },
+  ],
+  en: [
+    {
+      alt: 'PodoCenter search traffic growth',
+      caption: 'Search visits grew after the service structure and priority landing pages were strengthened for local demand.',
+    },
+    {
+      alt: 'PodoCenter visibility growth in Kazan',
+      caption: 'Local visibility in Kazan improved most strongly for service clusters that are closest to an appointment.',
+    },
+    {
+      alt: 'Lead dynamics for the project',
+      caption: 'Organic traffic started to convert not only into visits, but into real inquiries for the clinic.',
+    },
+    {
+      alt: 'PodoCenter ranking heatmap',
+      caption: 'The ranking matrix shows stronger positions for priority services and a more stable local presence.',
+    },
+  ],
+}
+
+const podocenterCopy: Record<
+  Locale,
   {
-    alt: 'Рост поискового трафика PodoCenter',
-    caption:
-      'Рост визитов из поиска после усиления структуры услуг и ключевых посадочных страниц по локальному спросу.',
+    home: string
+    cases: string
+    chip: string
+    heroCta: string
+    heroSecondary: string
+    nicheLabel: string
+    nicheTitle: string
+    nicheDescription: string
+    regionLabel: string
+    regionDescription: string
+    outcomeLabel: string
+    outcomeTitle: string
+    outcomeDescription: string
+    aboutChip: string
+    pointAChip: string
+    problemsTitle: string
+    goalsTitle: string
+    workChip: string
+    workTitle: string
+    workIntro: string
+    galleryChip: string
+    galleryTitle: string
+    galleryIntro: string
+    whyChip: string
+    whyTitle: string
+    conclusionChip: string
+    conclusionTitle: string
+    faqTitle: string
+    relatedChip: string
+    relatedTitle: string
+    relatedDescription: string
+    serviceLabel: string
+    contactChip: string
+    contactTitle: string
+    contactDescription: string
+    contactBullets: string[]
+    metaTitleSuffix: string
+    metaDescriptionFallback: string
+    schemaAbout: string[]
+  }
+> = {
+  ru: {
+    home: 'Главная',
+    cases: 'Кейсы',
+    chip: 'SEO-кейс локального проекта',
+    heroCta: 'Обсудить продвижение проекта',
+    heroSecondary: 'Посмотреть услугу SEO-продвижения',
+    nicheLabel: 'Ниша',
+    nicheTitle: 'Подология и медицина',
+    nicheDescription:
+      'Проект с высокой чувствительностью к доверию, локальной релевантности и качеству посадочных страниц.',
+    regionLabel: 'Регион',
+    regionDescription: 'Локальная выдача, где важно не только быть видимым, но и быстро доводить человека до записи.',
+    outcomeLabel: 'Итог',
+    outcomeTitle: 'Более сильный маршрут от поиска к обращению',
+    outcomeDescription:
+      'Сайт усилил локальную видимость, получил более точные посадочные под спрос и стал лучше конвертировать органику в обращения.',
+    aboutChip: 'О проекте',
+    pointAChip: 'Точка А и цели',
+    problemsTitle: 'С какими проблемами пришли',
+    goalsTitle: 'Что хотели получить',
+    workChip: 'Что сделали',
+    workTitle: 'Не набор мелких правок, а пересборка сайта под локальный спрос',
+    workIntro:
+      'Рост появился потому, что структура, посадочные страницы, доверительные блоки и техбаза начали работать вместе, а не отдельно.',
+    galleryChip: 'Результаты',
+    galleryTitle: 'Скриншоты роста по трафику, локальной видимости и обращениям',
+    galleryIntro:
+      'Ниже реальные скриншоты по проекту. Они показывают не декоративную картинку, а динамику после пересборки структуры и посадочных.',
+    whyChip: 'Почему это сработало',
+    whyTitle: 'Что дало результат в этом проекте',
+    conclusionChip: 'Вывод',
+    conclusionTitle: 'Что полезно взять похожим локальным проектам',
+    faqTitle: 'Частые вопросы по кейсу и стратегии',
+    relatedChip: 'Связанные услуги',
+    relatedTitle: 'Что может усилить похожий проект',
+    relatedDescription: 'Следующие шаги после диагностики и точек роста.',
+    serviceLabel: 'Услуга',
+    contactChip: 'Обсудить проект',
+    contactTitle: 'Нужен не отчет, а рост по поиску и обращениям?',
+    contactDescription:
+      'Разберу сайт, покажу слабые места в структуре, контенте и коммерческих блоках, а затем соберу понятный план под ваш регион и спрос.',
+    contactBullets: ['Ответ в течение дня', 'Без обязательств и навязчивых продаж', 'Сразу покажу точки роста по SEO, структуре и заявкам'],
+    metaTitleSuffix: 'SEO-кейс PodoCenter',
+    metaDescriptionFallback:
+      'Кейс по SEO-продвижению PodoCenter в Казани: структура сайта, локальная выдача, органический трафик и заявки.',
+    schemaAbout: ['SEO-продвижение', 'Локальное SEO', 'Структура сайта', 'Рост заявок'],
   },
-  {
-    alt: 'Динамика видимости PodoCenter по Казани',
-    caption: 'Локальная видимость по Казани стала сильнее именно по тем направлениям, которые ближе к записи.',
+  en: {
+    home: 'Home',
+    cases: 'Case studies',
+    chip: 'Local SEO case study',
+    heroCta: 'Discuss this type of growth',
+    heroSecondary: 'View SEO service',
+    nicheLabel: 'Niche',
+    nicheTitle: 'Podiatry and medical services',
+    nicheDescription:
+      'A project where trust, local relevance, and the quality of landing pages directly affect lead flow.',
+    regionLabel: 'Region',
+    regionDescription:
+      'A local SERP where it is not enough to be visible. The site has to move a visitor to an appointment quickly.',
+    outcomeLabel: 'Outcome',
+    outcomeTitle: 'A stronger path from search to inquiry',
+    outcomeDescription:
+      'The site gained stronger local visibility, more precise demand-focused landing pages, and a better path from organic traffic to inquiries.',
+    aboutChip: 'About the project',
+    pointAChip: 'Starting point and goals',
+    problemsTitle: 'What was holding the project back',
+    goalsTitle: 'What the project needed',
+    workChip: 'What was done',
+    workTitle: 'Not a set of micro-fixes, but a rebuild around local demand',
+    workIntro:
+      'Growth appeared because structure, landing pages, trust signals, and the technical layer started working together instead of in isolation.',
+    galleryChip: 'Results',
+    galleryTitle: 'Screenshots of traffic, visibility, and inquiry growth',
+    galleryIntro:
+      'These are real screenshots from the project. They show how performance changed after the site structure and landing pages were rebuilt.',
+    whyChip: 'Why it worked',
+    whyTitle: 'What created the result in this case',
+    conclusionChip: 'Takeaway',
+    conclusionTitle: 'What similar local projects can borrow from this case',
+    faqTitle: 'Common questions about the case and the strategy',
+    relatedChip: 'Related services',
+    relatedTitle: 'What can strengthen a similar project',
+    relatedDescription: 'Useful next steps after the diagnosis and growth opportunities are clear.',
+    serviceLabel: 'Service',
+    contactChip: 'Discuss your project',
+    contactTitle: 'Need growth in search and inquiries, not just a report?',
+    contactDescription:
+      'I will review the site, show weak points in structure, content, and commercial blocks, and turn that into a clear plan for your region and demand.',
+    contactBullets: ['Reply within one business day', 'No pressure and no hard sell', 'Immediate growth points for SEO, structure, and leads'],
+    metaTitleSuffix: 'PodoCenter SEO case study',
+    metaDescriptionFallback:
+      'A PodoCenter SEO case study in Kazan: site structure, local visibility, organic traffic, and lead flow.',
+    schemaAbout: ['SEO', 'Local SEO', 'Site structure', 'Lead growth'],
   },
-  {
-    alt: 'Динамика обращений по проекту',
-    caption: 'Органика стала лучше работать не только на посещаемость, но и на реальные обращения в центр.',
-  },
-  {
-    alt: 'Матрица позиций PodoCenter',
-    caption: 'Матрица показывает усиление позиций по приоритетным услугам и более уверенное присутствие в локальной выдаче.',
-  },
-]
+}
 
 function parseResultImages(value?: string | null) {
   return parseCaseGallery(value).map((item) => item.src)
 }
 
 export default async function PodocenterCasePage() {
+  const locale = await getRequestLocale()
+  const copy = podocenterCopy[locale]
+  const caseData = localizeCaseRecord({ ...podocenterCase }, locale)
+  const localizedCasePath = prefixPathWithLocale(podocenterCase.url, locale)
+  const serviceLinks = serviceLinkSlugs.map((slug) => {
+    const service = getServicePageForLocale(slug, locale)
+
+    return {
+      href: prefixPathWithLocale(`/services/${slug}`, locale),
+      label: service?.shortName || service?.h1 || slug,
+      description: service?.intro || copy.relatedDescription,
+    }
+  })
+
   let uploadedImages = parseResultImages(podocenterCase.resultImages)
 
   try {
     const caseItems = await prisma.case.findMany({
       where: {
-        OR: [
-          { slug: podocenterCase.slug },
-          { title: { contains: 'PodoCenter', mode: 'insensitive' } },
-          { title: { contains: 'подолог', mode: 'insensitive' } },
-        ],
+        resultImages: {
+          not: null,
+        },
       },
       select: {
         slug: true,
         title: true,
+        description: true,
+        content: true,
         resultImages: true,
         updatedAt: true,
       },
       orderBy: { updatedAt: 'desc' },
+      take: 50,
     })
 
     const gallerySource =
-      caseItems.find((item) => item.slug === podocenterCase.slug && parseResultImages(item.resultImages).length > 0) ||
-      caseItems.find(
-        (item) =>
-          (item.title || '').toLowerCase().includes('podocenter') && parseResultImages(item.resultImages).length > 0
-      ) ||
-      null
+      caseItems.find((item) => isPodocenterCase(item) && parseResultImages(item.resultImages).length > 0) || null
 
     if (gallerySource) {
       uploadedImages = parseResultImages(gallerySource.resultImages)
@@ -80,24 +252,23 @@ export default async function PodocenterCasePage() {
 
   const galleryImages = uploadedImages.map((src, index) => ({
     src,
-    alt: resultCaptions[index]?.alt || `Скрин результата PodoCenter ${index + 1}`,
-    caption:
-      resultCaptions[index]?.caption ||
-      'Скриншот из проекта с динамикой поискового трафика, локальной видимости и обращений.',
+    alt: resultCaptions[locale][index]?.alt || `${caseData.title} ${index + 1}`,
+    caption: resultCaptions[locale][index]?.caption || copy.galleryIntro,
   }))
 
   const breadcrumbSchema = createBreadcrumbSchema([
-    { name: 'Главная', path: '/' },
-    { name: 'Кейсы', path: '/cases' },
-    { name: podocenterCase.h1, path: podocenterCase.url },
+    { name: copy.home, path: prefixPathWithLocale('/', locale) },
+    { name: copy.cases, path: prefixPathWithLocale('/cases', locale) },
+    { name: caseData.h1 || caseData.title || podocenterCase.h1, path: localizedCasePath },
   ])
   const faqSchema = createFaqSchema(podocenterCase.faq)
   const caseArticleSchema = createCaseArticleSchema({
-    path: podocenterCase.url,
-    title: podocenterCase.title,
-    description: podocenterCase.description,
+    path: localizedCasePath,
+    title: caseData.title || podocenterCase.title,
+    description: caseData.description || copy.metaDescriptionFallback,
     image: galleryImages[0]?.src,
-    about: ['SEO-продвижение', 'Локальное SEO', 'Структура сайта', 'Рост заявок'],
+    about: copy.schemaAbout,
+    locale,
   })
 
   return (
@@ -107,59 +278,55 @@ export default async function PodocenterCasePage() {
       <JsonLd id="podocenter-case-schema" data={caseArticleSchema} />
 
       <section className="soft-section surface-pad">
-        <span className="warm-chip">SEO-кейс локального проекта</span>
-        <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">{podocenterCase.h1}</h1>
-        <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{podocenterCase.excerpt}</p>
+        <span className="warm-chip">{copy.chip}</span>
+        <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">
+          {caseData.h1 || caseData.title || podocenterCase.h1}
+        </h1>
+        <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{caseData.excerpt || podocenterCase.excerpt}</p>
 
         <div className="mt-8 flex flex-wrap gap-4">
           <a href="#case-contact">
             <Button size="lg" className="rounded-full px-7">
-              Обсудить продвижение проекта
+              {copy.heroCta}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </a>
-          <Link href="/services/seo" className="inline-flex">
+          <Link href={prefixPathWithLocale('/services/seo', locale)} className="inline-flex">
             <Button
               size="lg"
               variant="outline"
               className="rounded-full border-slate-300 bg-white px-7 text-slate-900 hover:bg-slate-50"
             >
-              Посмотреть услугу SEO-продвижения
+              {copy.heroSecondary}
             </Button>
           </Link>
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <div className="page-card">
-            <div className="text-sm uppercase tracking-[0.22em] text-orange-700">Ниша</div>
-            <div className="mt-3 text-2xl font-semibold text-slate-950">Подология и медицина</div>
-            <p className="mt-3 text-sm leading-7 text-slate-600">
-              Проект с высокой чувствительностью к доверию, локальной релевантности и качеству посадочных страниц.
-            </p>
+            <div className="text-sm uppercase tracking-[0.22em] text-orange-700">{copy.nicheLabel}</div>
+            <div className="mt-3 text-2xl font-semibold text-slate-950">{copy.nicheTitle}</div>
+            <p className="mt-3 text-sm leading-7 text-slate-600">{copy.nicheDescription}</p>
           </div>
           <div className="page-card">
-            <div className="text-sm uppercase tracking-[0.22em] text-orange-700">Регион</div>
+            <div className="text-sm uppercase tracking-[0.22em] text-orange-700">{copy.regionLabel}</div>
             <div className="mt-3 flex items-center gap-3 text-2xl font-semibold text-slate-950">
               <MapPin className="h-6 w-6 text-cyan-700" />
               Казань
             </div>
-            <p className="mt-3 text-sm leading-7 text-slate-600">
-              Локальная выдача, где важно не только быть видимым, но и быстро доводить человека до записи.
-            </p>
+            <p className="mt-3 text-sm leading-7 text-slate-600">{copy.regionDescription}</p>
           </div>
           <div className="page-card">
-            <div className="text-sm uppercase tracking-[0.22em] text-orange-700">Итог</div>
-            <div className="mt-3 text-2xl font-semibold text-slate-950">Более сильный маршрут из поиска к обращению</div>
-            <p className="mt-3 text-sm leading-7 text-slate-600">
-              Сайт усилил локальную видимость, получил более точные посадочные под спрос и стал лучше конвертировать органику в обращения.
-            </p>
+            <div className="text-sm uppercase tracking-[0.22em] text-orange-700">{copy.outcomeLabel}</div>
+            <div className="mt-3 text-2xl font-semibold text-slate-950">{copy.outcomeTitle}</div>
+            <p className="mt-3 text-sm leading-7 text-slate-600">{copy.outcomeDescription}</p>
           </div>
         </div>
       </section>
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
         <div className="page-card">
-          <span className="warm-chip">О проекте</span>
+          <span className="warm-chip">{copy.aboutChip}</span>
           <ul className="mt-6 space-y-4 text-base leading-7 text-slate-700">
             {podocenterCase.about.map((item) => (
               <li key={item} className="flex gap-3">
@@ -171,10 +338,10 @@ export default async function PodocenterCasePage() {
         </div>
 
         <div className="page-card">
-          <span className="warm-chip">Точка А и цели</span>
+          <span className="warm-chip">{copy.pointAChip}</span>
           <div className="mt-6 grid gap-6 md:grid-cols-2">
             <div>
-              <h2 className="text-2xl font-semibold text-slate-950">С какими проблемами пришли</h2>
+              <h2 className="text-2xl font-semibold text-slate-950">{copy.problemsTitle}</h2>
               <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-600">
                 {podocenterCase.pointA.map((item) => (
                   <li key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">
@@ -184,7 +351,7 @@ export default async function PodocenterCasePage() {
               </ul>
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-slate-950">Что хотели получить</h2>
+              <h2 className="text-2xl font-semibold text-slate-950">{copy.goalsTitle}</h2>
               <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-600">
                 {podocenterCase.goals.map((item) => (
                   <li key={item} className="rounded-2xl border border-cyan-100 bg-cyan-50/70 px-4 py-3">
@@ -198,13 +365,9 @@ export default async function PodocenterCasePage() {
       </section>
 
       <section className="mt-8 page-card">
-        <span className="warm-chip">Что сделали</span>
-        <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
-          Не набор мелких правок, а пересборка сайта под локальный спрос
-        </h2>
-        <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">
-          В этом проекте нельзя было ограничиться только метатегами или одним контентным слоем. Рост по органике и обращениям появился потому, что структура, посадочные, доверие и техбаза начали работать вместе.
-        </p>
+        <span className="warm-chip">{copy.workChip}</span>
+        <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.workTitle}</h2>
+        <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">{copy.workIntro}</p>
 
         <div className="mt-10 space-y-6">
           {podocenterCase.work.map((section) => (
@@ -222,13 +385,9 @@ export default async function PodocenterCasePage() {
 
       {galleryImages.length > 0 ? (
         <section className="mt-8 page-card">
-          <span className="warm-chip">Результаты</span>
-          <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
-            Скриншоты роста по трафику, локальной видимости и обращениям
-          </h2>
-          <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">
-            Ниже реальные скриншоты по проекту. Они показывают не декоративную картинку, а то, как менялся поисковый слой после пересборки структуры и посадочных.
-          </p>
+          <span className="warm-chip">{copy.galleryChip}</span>
+          <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.galleryTitle}</h2>
+          <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">{copy.galleryIntro}</p>
 
           <div className="mt-8 space-y-6">
             {galleryImages.map((item, index) => (
@@ -259,8 +418,8 @@ export default async function PodocenterCasePage() {
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
         <div className="page-card">
-          <span className="warm-chip">Почему это сработало</span>
-          <h2 className="mt-4 text-3xl font-semibold text-slate-950">Что дало результат в этом проекте</h2>
+          <span className="warm-chip">{copy.whyChip}</span>
+          <h2 className="mt-4 text-3xl font-semibold text-slate-950">{copy.whyTitle}</h2>
           <div className="mt-6 space-y-4">
             {podocenterCase.whyItWorked.map((item) => (
               <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-slate-700">
@@ -268,47 +427,18 @@ export default async function PodocenterCasePage() {
               </div>
             ))}
           </div>
-          <p className="mt-6 text-base leading-8 text-slate-600">{podocenterCase.conclusion}</p>
         </div>
 
         <div className="page-card">
-          <span className="warm-chip">Вывод</span>
-          <h2 className="mt-4 text-3xl font-semibold text-slate-950">Что полезно взять похожим локальным проектам</h2>
-          <p className="mt-5 text-base leading-8 text-slate-600">
-            Для локального сервиса мало просто собирать трафик. Нужны отдельные услуги под спрос, понятный путь к записи, доверительные сигналы и техбаза, которая не мешает поиску и пользователю. Если у вас похожая задача, чаще всего разумно начинать с{' '}
-            <Link href="/services/seo-audit" className="font-medium text-cyan-700 transition hover:text-slate-950">
-              SEO-аудита
-            </Link>{' '}
-            или сразу собирать план{' '}
-            <Link href="/services/local-seo" className="font-medium text-cyan-700 transition hover:text-slate-950">
-              локального SEO-продвижения
-            </Link>
-            .
-          </p>
-
-          <div className="mt-8 rounded-[24px] border border-slate-200 bg-slate-950 p-6 text-white">
-            <div className="text-sm uppercase tracking-[0.22em] text-cyan-300">CTA</div>
-            <h3 className="mt-3 text-2xl font-semibold">Нужен похожий разбор для локального проекта?</h3>
-            <p className="mt-3 text-sm leading-7 text-slate-300">
-              Покажу, где сайт теряет поисковый потенциал, какие страницы стоит усиливать первыми и как связать SEO с обращениями, а не только с позициями.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#case-contact">
-                <Button className="rounded-full">Заказать SEO-разбор проекта</Button>
-              </a>
-              <Link href="/calculator">
-                <Button variant="outline" className="rounded-full border-white/25 bg-transparent text-white hover:bg-white/10">
-                  Оценить формат работ
-                </Button>
-              </Link>
-            </div>
-          </div>
+          <span className="warm-chip">{copy.conclusionChip}</span>
+          <h2 className="mt-4 text-3xl font-semibold text-slate-950">{copy.conclusionTitle}</h2>
+          <p className="mt-5 text-base leading-8 text-slate-600">{podocenterCase.conclusion}</p>
         </div>
       </section>
 
       <section className="mt-8 page-card">
         <span className="warm-chip">FAQ</span>
-        <h2 className="mt-4 text-3xl font-semibold text-slate-950">Частые вопросы по кейсу и стратегии</h2>
+        <h2 className="mt-4 text-3xl font-semibold text-slate-950">{copy.faqTitle}</h2>
         <div className="mt-8 grid gap-4">
           {podocenterCase.faq.map((item) => (
             <details key={item.question} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-6">
@@ -320,8 +450,9 @@ export default async function PodocenterCasePage() {
       </section>
 
       <section className="mt-8 page-card">
-        <span className="warm-chip">Связанные услуги</span>
-        <h2 className="mt-4 text-3xl font-semibold text-slate-950">Что может усилить похожий проект</h2>
+        <span className="warm-chip">{copy.relatedChip}</span>
+        <h2 className="mt-4 text-3xl font-semibold text-slate-950">{copy.relatedTitle}</h2>
+        <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">{copy.relatedDescription}</p>
         <div className="uniform-grid-4 mt-8 gap-4">
           {serviceLinks.map((item) => (
             <Link
@@ -331,12 +462,10 @@ export default async function PodocenterCasePage() {
             >
               <div className="flex items-center gap-3 text-cyan-700">
                 <Search className="h-5 w-5" />
-                <span className="text-sm uppercase tracking-[0.22em]">Услуга</span>
+                <span className="text-sm uppercase tracking-[0.22em]">{copy.serviceLabel}</span>
               </div>
               <h3 className="mt-4 text-xl font-semibold text-slate-950">{item.label}</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-600">
-                Подходит, если проекту нужен следующий шаг после диагностики или системный рост поискового канала.
-              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
             </Link>
           ))}
         </div>
@@ -345,21 +474,15 @@ export default async function PodocenterCasePage() {
       <section id="case-contact" className="mt-8 soft-section overflow-hidden">
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
-            <span className="warm-chip">Обсудить проект</span>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
-              Нужен не отчёт, а рост по поиску и обращениям?
-            </h2>
-            <p className="mt-5 text-base leading-8 text-slate-600">
-              Разберу сайт, покажу слабые места в структуре, контенте и коммерческих блоках, а затем соберу понятный план под ваш регион и спрос.
-            </p>
+            <span className="warm-chip">{copy.contactChip}</span>
+            <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
+            <p className="mt-5 text-base leading-8 text-slate-600">{copy.contactDescription}</p>
             <div className="mt-8 space-y-3 text-sm leading-7 text-slate-600">
-              <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">Ответ в течение дня</div>
-              <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">
-                Без обязательств и навязчивых продаж
-              </div>
-              <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">
-                Сразу покажу точки роста по SEO, структуре и заявкам
-              </div>
+              {copy.contactBullets.map((item) => (
+                <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">
+                  {item}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -372,18 +495,20 @@ export default async function PodocenterCasePage() {
   )
 }
 
-export function generateMetadata() {
-  const url = getFullUrl(podocenterCase.url)
-  const title = normalizeMetaTitle(podocenterCase.title, 'SEO-кейс PodoCenter')
-  const description = normalizeMetaDescription(
-    podocenterCase.description,
-    'Кейс по SEO-продвижению PodoCenter в Казани: структура сайта, локальная выдача, органический трафик и заявки.'
-  )
+export async function generateMetadata() {
+  const locale = await getRequestLocale()
+  const copy = podocenterCopy[locale]
+  const caseData = localizeCaseRecord({ ...podocenterCase }, locale)
+  const alternates = getLocaleAlternates(podocenterCase.url)
+  const url = getFullUrl(prefixPathWithLocale(podocenterCase.url, locale))
+  const title = normalizeMetaTitle(caseData.title || podocenterCase.title, copy.metaTitleSuffix)
+  const description = normalizeMetaDescription(caseData.description, copy.metaDescriptionFallback)
 
   return {
     title,
     description,
     alternates: {
+      ...alternates,
       canonical: url,
     },
     openGraph: {

@@ -18,6 +18,17 @@ function normalizeText(value?: string | null) {
   return (value || '').trim().toLowerCase()
 }
 
+function matchesCaseText(caseItem: CaseListItem, needles: string[]) {
+  const fields = [
+    normalizeText(caseItem.slug),
+    normalizeText(caseItem.title),
+    normalizeText(caseItem.description),
+    normalizeText(caseItem.content),
+  ]
+
+  return needles.some((needle) => fields.some((field) => field.includes(needle)))
+}
+
 export function isPlaceholderCase(caseItem: CaseListItem) {
   const title = normalizeText(caseItem.title)
   const description = normalizeText(caseItem.description)
@@ -26,16 +37,11 @@ export function isPlaceholderCase(caseItem: CaseListItem) {
 }
 
 export function isPodocenterCase(caseItem: CaseListItem) {
-  const title = normalizeText(caseItem.title)
-
-  return caseItem.slug === podocenterCase.slug || title.includes('podocenter')
+  return matchesCaseText(caseItem, [podocenterCase.slug, 'podocenter', 'подоцентр', 'подоцентра', 'подолог'])
 }
 
 export function isBotiqCase(caseItem: CaseListItem) {
-  const title = normalizeText(caseItem.title)
-  const description = normalizeText(caseItem.description)
-
-  return caseItem.slug === botiqCase.slug || title.includes('botiq') || description.includes('botiq')
+  return matchesCaseText(caseItem, [botiqCase.slug, 'botiq'])
 }
 
 export function buildCaseListing<T extends CaseListItem>(cases: T[]) {

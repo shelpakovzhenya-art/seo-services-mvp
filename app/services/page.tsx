@@ -9,7 +9,7 @@ import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
 import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
-import { servicePages } from '@/lib/service-pages'
+import { getServicePagesForLocale } from '@/lib/service-page-localization'
 import { createBreadcrumbSchema, createCollectionPageSchema, createFaqSchema, createItemListSchema } from '@/lib/structured-data'
 
 const servicesIndexCopy: Record<Locale, any> = {
@@ -168,6 +168,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ServicesIndexPage() {
   const locale = await getRequestLocale()
   const copy = servicesIndexCopy[locale]
+  const services = getServicePagesForLocale(locale)
 
   const faqSchema = createFaqSchema(copy.faq)
   const breadcrumbsSchema = createBreadcrumbSchema([
@@ -182,7 +183,7 @@ export default async function ServicesIndexPage() {
   const itemListSchema = createItemListSchema({
     path: '/services',
     name: copy.pageTitle,
-    items: servicePages.map((service) => ({
+    items: services.map((service) => ({
       name: service.shortName,
       path: `/services/${service.slug}`,
       description: service.description,
@@ -266,7 +267,7 @@ export default async function ServicesIndexPage() {
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.faqKicker}</p>
               <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.faqTitle}</h2>
             </div>
-            <div className="text-sm text-slate-500">{copy.faqCount}: {servicePages.length}</div>
+            <div className="text-sm text-slate-500">{copy.faqCount}: {services.length}</div>
           </div>
 
           <div className="uniform-grid-2 mt-6 gap-4">

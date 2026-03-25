@@ -19,6 +19,10 @@ type LinkedService = {
   label: string
 }
 
+function getSchemaLanguage(locale?: string) {
+  return locale?.toLowerCase().startsWith('en') ? 'en-US' : 'ru-RU'
+}
+
 function toAbsoluteUrl(value: string) {
   return /^https?:\/\//i.test(value) ? value : getFullUrl(value)
 }
@@ -183,12 +187,14 @@ export function createBlogPostingSchema(input: {
   slug: string
   title: string
   description: string
+  path?: string
+  locale?: string
   coverImage?: string | null
   publishedAt?: Date | string | null
   updatedAt?: Date | string | null
   relatedServices?: LinkedService[]
 }) {
-  const url = getFullUrl(`/blog/${input.slug}`)
+  const url = getFullUrl(input.path || `/blog/${input.slug}`)
 
   return {
     '@context': 'https://schema.org',
@@ -207,7 +213,7 @@ export function createBlogPostingSchema(input: {
     dateModified: input.updatedAt ? new Date(input.updatedAt).toISOString() : undefined,
     mainEntityOfPage: url,
     isAccessibleForFree: true,
-    inLanguage: 'ru-RU',
+    inLanguage: getSchemaLanguage(input.locale),
     about: input.relatedServices?.length
       ? input.relatedServices.map((service) => ({
           '@type': 'Service',
@@ -222,6 +228,7 @@ export function createCaseArticleSchema(input: {
   path: string
   title: string
   description: string
+  locale?: string
   image?: string | null
   publishedAt?: Date | string | null
   updatedAt?: Date | string | null
@@ -246,7 +253,7 @@ export function createCaseArticleSchema(input: {
     datePublished: input.publishedAt ? new Date(input.publishedAt).toISOString() : undefined,
     dateModified: input.updatedAt ? new Date(input.updatedAt).toISOString() : undefined,
     mainEntityOfPage: url,
-    inLanguage: 'ru-RU',
+    inLanguage: getSchemaLanguage(input.locale),
     about: input.about,
   }
 }

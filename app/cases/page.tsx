@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import RichContent from '@/components/RichContent'
 import { buildCaseListing } from '@/lib/case-listing'
+import { localizeCaseRecord } from '@/lib/case-localization'
 import { prefixPathWithLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
@@ -70,7 +71,7 @@ export default async function CasesPage() {
     cases = []
   }
 
-  const caseCards = buildCaseListing(cases)
+  const caseCards = buildCaseListing(cases).map((caseItem) => localizeCaseRecord(caseItem, locale))
 
   return (
     <div className="page-shell">

@@ -1,11 +1,14 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import EnglishServicePageTemplate from '@/components/services/EnglishServicePageTemplate'
 import ServicePageTemplate from '@/components/services/ServicePageTemplate'
+import { getServicePageForLocale } from '@/lib/service-page-localization'
+import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getServicePage, servicePages } from '@/lib/service-pages'
 import { getMergedServicePricing } from '@/lib/service-pricing-overrides'
 import { getServiceOverrideMap, mergeServiceWithOverride } from '@/lib/service-overrides'
-import { getFullUrl } from '@/lib/site-url'
+import { getLocaleAlternates, getLocalizedUrl } from '@/lib/site-url'
 
 type ServicePageProps = {
   params: Promise<{ slug: string }>
@@ -65,6 +68,32 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
   const { slug } = await params
+  const locale = await getRequestLocale()
+  const alternates = getLocaleAlternates(`/services/${slug}`)
+
+  if (locale === 'en') {
+    const service = getServicePageForLocale(slug, locale)
+
+    if (!service) {
+      return {}
+    }
+
+    const title = normalizeMetaTitle(service.title, service.shortName)
+    const description = normalizeMetaDescription(service.description, service.heroValue)
+
+    return {
+      title,
+      description,
+      alternates,
+      openGraph: {
+        title,
+        description,
+        url: getLocalizedUrl(`/services/${slug}`, 'en'),
+        type: 'article',
+      },
+    }
+  }
+
   const service = getServicePage(slug)
   const overrideMap = await getServiceOverrideMap([slug])
   const override = overrideMap.get(slug)
@@ -74,7 +103,6 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
   }
 
   const mergedService = mergeServiceWithOverride(service, 0, override)
-  const canonical = getFullUrl(`/services/${mergedService.slug}`)
   const fallbackMeta = serviceMetadata[mergedService.slug]
   const metaTitle = normalizeMetaTitle(
     override?.title || fallbackMeta?.title || mergedService.title,
@@ -91,13 +119,11 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
     keywords: mergedService.overrideKeywords
       ? mergedService.overrideKeywords.split(',').map((item) => item.trim()).filter(Boolean)
       : undefined,
-    alternates: {
-      canonical,
-    },
+    alternates,
     openGraph: {
       title: metaTitle,
       description: metaDescription,
-      url: canonical,
+      url: getLocalizedUrl(`/services/${slug}`, 'ru'),
       type: 'article',
     },
   }
@@ -105,6 +131,19 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 
 export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = await params
+  const locale = await getRequestLocale()
+
+  if (locale === 'en') {
+    const service = getServicePageForLocale(slug, locale)
+    const pricing = await getMergedServicePricing(slug)
+
+    if (!service) {
+      notFound()
+    }
+
+    return <EnglishServicePageTemplate service={service} pricing={pricing} />
+  }
+
   const service = getServicePage(slug)
   const overrideMap = await getServiceOverrideMap([slug])
   const pricing = await getMergedServicePricing(slug)

@@ -3,10 +3,12 @@ import { headers } from 'next/headers'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getServicesCatalogCopy } from '@/lib/public-copy'
+import { getServicePagesForLocale } from '@/lib/service-page-localization'
 import { getServicePageStrategy } from '@/lib/service-page-strategy'
 import { getMergedServicePricingMap } from '@/lib/service-pricing-overrides'
 import { getMergedServicePages } from '@/lib/service-overrides'
 import { getRouteLocale, prefixPathWithLocale } from '@/lib/i18n'
+import type { ServicePricing } from '@/lib/service-pricing'
 
 type ServicesCatalogSectionProps = {
   compact?: boolean
@@ -16,8 +18,21 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
   const headersList = await headers()
   const locale = getRouteLocale(headersList.get('x-locale'))
   const copy = getServicesCatalogCopy(locale)
-  const services = await getMergedServicePages()
+  const services = locale === 'en' ? getServicePagesForLocale(locale) : await getMergedServicePages()
   const pricingMap = await getMergedServicePricingMap(services.map((service) => service.slug))
+
+  function formatPricing(pricing?: ServicePricing | null) {
+    if (!pricing) {
+      return null
+    }
+
+    if (locale === 'ru') {
+      return pricing.priceLabel
+    }
+
+    const amount = new Intl.NumberFormat('en-US').format(pricing.priceFrom)
+    return `from ₽${amount} / ${pricing.unit === 'month' ? 'month' : 'project'}`
+  }
 
   return (
     <section className={compact ? 'section-shell' : 'page-shell'}>
@@ -61,7 +76,8 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
           <div className="uniform-grid-3 gap-5">
             {services.map((service) => {
               const pricing = pricingMap.get(service.slug)
-              const strategy = getServicePageStrategy(service.slug)
+              const strategy = locale === 'ru' ? getServicePageStrategy(service.slug) : null
+              const cardSignal = locale === 'en' ? service.intro : strategy?.catalogTrigger
 
               return (
                 <Link
@@ -82,10 +98,10 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
 
                     <div className="mt-auto space-y-4">
                       <div className="rounded-2xl border border-cyan-100 bg-cyan-50/60 px-4 py-3 text-sm leading-6 text-slate-700 md:flex md:min-h-[8.5rem] md:items-start">
-                        {strategy.catalogTrigger}
+                        {cardSignal}
                       </div>
                       <div className="border-t border-slate-200/70 pt-4">
-                        {pricing ? <div className="text-sm font-semibold text-slate-900">{pricing.priceLabel}</div> : null}
+                        {pricing ? <div className="text-sm font-semibold text-slate-900">{formatPricing(pricing)}</div> : null}
                         <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
                           {copy.openService}
                           <ArrowRight className="h-4 w-4" />
