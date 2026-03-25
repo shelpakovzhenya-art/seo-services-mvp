@@ -4,7 +4,7 @@ export const META_DESCRIPTION_MAX = 160
 
 const BRAND_NAME = 'Shelpakov Digital'
 const BRAND_SUFFIX = ` | ${BRAND_NAME}`
-const DESCRIPTION_EXTENSION = ' Подходит для сайта услуг, B2B-проектов и роста заявок.'
+const DESCRIPTION_EXTENSION = ' Практические детали и связанные материалы — на странице.'
 
 function cleanMetaText(value: string | null | undefined) {
   return (value || '').replace(/\s+/g, ' ').trim()
@@ -55,7 +55,9 @@ function fitDescription(value: string) {
   }
 
   while (normalized.length < META_DESCRIPTION_MIN) {
-    const addition = normalized.includes(DESCRIPTION_EXTENSION) ? ' SEO, структура и заявки без лишней воды.' : DESCRIPTION_EXTENSION
+    const addition = normalized.includes(DESCRIPTION_EXTENSION)
+      ? ' Формат работы, примеры и следующий шаг — на странице.'
+      : DESCRIPTION_EXTENSION
     normalized = cleanMetaText(`${normalized}${addition}`)
     if (normalized.length > META_DESCRIPTION_MAX) {
       break

@@ -16,20 +16,20 @@ const servicesIndexCopy: Record<Locale, any> = {
   ru: {
     pageTitle: 'SEO и разработка сайтов под заявки',
     pageDescription:
-      'SEO-услуги и разработка сайтов под заявки: аудит, техническая база, структура, контент, разработка новых страниц и запуск площадки с основой под рост.',
+      'SEO-услуги и разработка сайтов под заявки: аудит, техбаза, переработка ключевых страниц, запуск новой площадки и рост структуры без хаоса.',
     chip: 'SEO и разработка',
     cta: 'Получить ориентир по услуге',
     back: 'Вернуться на главную',
     chooseKicker: 'Как выбрать формат',
     chooseCards: [
-      'Если непонятно, где проект теряет потенциал, логично начинать с SEO-аудита или консультационного разбора, а не покупать большой пул работ вслепую.',
-      'Если площадка устарела, слабо презентует услуги и мешает расширению, лучше смотреть в сторону разработки или перезапуска, а не в косметические правки.',
-      'Если база живая, а проекту нужен системный рост, тогда уже подключаются SEO-продвижение, технический слой, контент и усиление ключевых посадочных.',
+      'Если трафик уже есть, но непонятно, на каких шаблонах и страницах теряются заявки, разумнее начинать с аудита, а не с широкого ежемесячного пула работ.',
+      'Если сайт устарел на уровне структуры, плохо презентует услуги и мешает расширению, сильнее сработает разработка или перезапуск, а не косметические правки.',
+      'Если база уже собрана и проекту нужен предсказуемый рост, тогда подключаются SEO-продвижение, техоптимизация, контент и усиление ключевых посадочных.',
     ],
     comparisonKicker: 'Что чаще всего путают',
     comparisonTitle: 'Три развилки, на которых коммерческие сайты обычно тратят лишний бюджет',
     comparisonText:
-      'Эта страница должна помогать выбрать правильный первый шаг. Поэтому ниже не “список преимуществ”, а развилки между соседними форматами работ.',
+      'Ниже не рекламные обещания, а три частые развилки между соседними форматами работ. Это помогает выбрать правильный первый шаг без лишнего шума.',
     comparisonCards: [
       {
         title: 'Аудит vs системное SEO',
@@ -50,9 +50,9 @@ const servicesIndexCopy: Record<Locale, any> = {
     contactKicker: 'Консультация',
     contactTitle: 'Получить консультацию по выбору услуги',
     contactText:
-      'Коротко опишите задачу, и я подскажу, с какого формата работ логичнее начать именно в вашем проекте: с аудита, разработки, доработки сайта или системного продвижения.',
+      'Опишите домен, задачу и последние изменения на сайте. Так быстрее понять, нужен аудит, перезапуск, техоптимизация или системное SEO.',
     contactNoteA: 'Ответим в течение дня.',
-    contactNoteB: 'Покажем точки роста и следующий шаг без лишних обязательств.',
+    contactNoteB: 'В ответе будет гипотеза по первому шагу и объёму работ, а не общая консультация.',
     metaTitle: 'SEO и разработка сайтов | Shelpakov Digital',
     metaDescription:
       'SEO-услуги и разработка сайтов под заявки: аудит, техническая база, контент, перезапуск текущего сайта и создание новой площадки с основой под рост и обращения.',
@@ -82,20 +82,20 @@ const servicesIndexCopy: Record<Locale, any> = {
   en: {
     pageTitle: 'SEO and website development built for lead generation',
     pageDescription:
-      'SEO services and website development for lead growth: audits, technical foundations, structure, content, new landing pages, and launching a platform prepared for scale.',
+      'SEO services and website development for lead generation: audits, technical foundations, key-page rebuilds, new websites, and structured growth without chaos.',
     chip: 'SEO and development',
     cta: 'Get guidance on the right service',
     back: 'Back to home',
     chooseKicker: 'How to choose the format',
     chooseCards: [
-      'If it is still unclear where the project is losing momentum, it makes more sense to start with an SEO audit or strategic review than to buy a broad scope blindly.',
-      'If the platform is outdated, presents services weakly, and resists expansion, development or a relaunch is usually stronger than cosmetic fixes.',
-      'If the base is healthy and the site needs systematic growth, that is when ongoing SEO, technical work, content, and stronger key pages become the right next step.',
+      'If traffic already exists but the weak templates or pages are still unclear, an audit is usually a stronger start than a broad monthly scope.',
+      'If the platform is outdated, presents services weakly, and blocks expansion, development or a relaunch is usually stronger than cosmetic fixes.',
+      'If the base is already in place and the site needs steady growth, ongoing SEO, technical work, content, and stronger key pages become the right next step.',
     ],
     comparisonKicker: 'What gets confused most often',
     comparisonTitle: 'Three forks where commercial websites usually waste unnecessary budget',
     comparisonText:
-      'Below is a simple comparison of neighboring service formats so it is easier to choose the right first move.',
+      'This is not a promise block. It is a practical comparison of neighboring service formats so the right first move is easier to choose.',
     comparisonCards: [
       {
         title: 'Audit vs ongoing SEO',
@@ -116,9 +116,9 @@ const servicesIndexCopy: Record<Locale, any> = {
     contactKicker: 'Consultation',
     contactTitle: 'Get guidance on the right service mix',
     contactText:
-      'Briefly describe the task, and I will suggest which format makes the most sense for your project right now: audit, development, refinement, or ongoing SEO.',
+      'Send the domain, the task, and the latest site changes. That makes it much faster to understand whether the project needs an audit, a relaunch, technical work, or ongoing SEO.',
     contactNoteA: 'Reply within one business day.',
-    contactNoteB: 'Clear growth points and a sensible next step without pressure.',
+    contactNoteB: 'The reply will include a first-step hypothesis and likely work scope, not a generic consultation.',
     metaTitle: 'SEO and website development | Shelpakov Digital',
     metaDescription:
       'SEO services and website development for lead growth: audits, technical foundations, content, relaunching an existing website, and building a stronger platform for scale.',

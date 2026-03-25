@@ -33,7 +33,7 @@ const featuredReads: LocaleRecord<
       kicker: 'Блог',
       title: 'Все статьи по SEO и развитию сайта',
       description:
-        'Подборка экспертных материалов по SEO, структуре сайта, конверсии и точкам роста без лишней воды.',
+        'Подборка статей по структуре сайта, миграциям, GEO, коммерческим страницам и контентным сценариям.',
       cta: 'Перейти в блог',
     },
   ],
@@ -59,7 +59,7 @@ const featuredReads: LocaleRecord<
       kicker: 'Blog',
       title: 'All articles on SEO and website growth',
       description:
-        'A curated collection of expert articles on SEO, site structure, conversion, and growth levers without the fluff.',
+        'A practical collection of articles on structure, migrations, GEO, commercial pages, and content strategy.',
       cta: 'Go to blog',
     },
   ],
@@ -76,9 +76,9 @@ const servicesCatalogCopy: LocaleRecord<{
 }> = {
   ru: {
     kicker: 'Услуги',
-    title: 'SEO и разработка, собранные в понятную систему роста',
+    title: 'Услуги под реальные задачи сайта',
     description:
-      'Здесь собраны не просто услуги по списку, а маршруты входа в задачу: когда сначала нужен аудит, когда техбаза, когда системное SEO, а когда уже пора пересобирать сам сайт под заявки и рост.',
+      'Здесь удобнее выбирать не “что купить”, а какой формат решает текущий узкий момент: индексацию, слабые посадочные, просадку заявок или устаревшую платформу.',
     scenarios: [
       'Сайт получает показы, но не дожимает пользователя до обращения.',
       'Команда правит SEO по кускам и не понимает, где реальный приоритет.',
@@ -87,14 +87,14 @@ const servicesCatalogCopy: LocaleRecord<{
     ],
     compactCta: 'Получить ориентир по формату работ',
     compactNote:
-      'У каждой услуги есть стартовая стоимость, но точный объем зависит не только от количества страниц. На бюджет сильнее всего влияют архитектура сайта, срочность внедрения, число шаблонных зон, контент и запас под дальнейший рост.',
+      'Стартовая стоимость зависит не столько от числа страниц, сколько от шаблонов, глубины структуры, срочности внедрения, контента и запаса под масштабирование.',
     openService: 'Перейти к услуге',
   },
   en: {
     kicker: 'Services',
-    title: 'SEO and development assembled into a clear growth system',
+    title: 'Services built around real website bottlenecks',
     description:
-      'This section is not just a list of services. It is a set of entry routes into the problem: when you need an audit first, when the site needs a technical reset, when ongoing SEO makes sense, and when the website itself has to be rebuilt for leads and growth.',
+      'This section is meant to help choose the right first move: fixing indexation, rebuilding weak landing pages, recovering lead flow, or replacing an outdated platform.',
     scenarios: [
       'The site gets impressions, but fails to convert visitors into conversations.',
       'The team keeps making piecemeal SEO changes without a clear priority order.',
@@ -103,7 +103,7 @@ const servicesCatalogCopy: LocaleRecord<{
     ],
     compactCta: 'Get a recommendation on the right work format',
     compactNote:
-      'Every service has a starting price, but the final scope depends less on page count alone and more on architecture, implementation urgency, reusable templates, content depth, integrations, and how much room for future growth the platform needs.',
+      'Starting prices depend less on raw page count and more on template complexity, structural depth, implementation urgency, content scope, and room for future scale.',
     openService: 'Open service',
   },
 }

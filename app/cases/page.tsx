@@ -11,26 +11,26 @@ const casesCopy = {
   ru: {
     title: 'Кейсы и примеры работ',
     description:
-      'Здесь собраны кейсы по SEO, структуре сайта и усилению коммерческих факторов: от диагностики проекта до роста видимости, трафика и заявок.',
+      'В кейсах показываю стартовую проблему, что менялось на сайте и какой эффект это дало по видимости, обращениям или управляемости проекта.',
     openCase: 'Открыть кейс',
     caseLabel: 'Кейс',
     previewFallback:
-      'Короткий разбор проекта: что было на старте, какие изменения пошли в приоритет и к каким результатам это привело.',
+      'Короткий разбор проекта: исходная точка, приоритетные правки, внедрение и результат.',
     metaTitle: 'Кейсы по SEO и структуре сайта | Shelpakov Digital',
     metaDescription:
-      'Кейсы по SEO, структуре сайта и коммерческим факторам: как меняется проект после доработки страниц, логики спроса, конверсии и пути клиента к заявке.',
+      'Кейсы по SEO и структуре сайта: стартовая проблема, принятые решения, внедрение правок и эффект для видимости, обращений или логики сайта.',
   },
   en: {
     title: 'Case studies and selected project examples',
     description:
-      'A curated set of case studies on SEO, site structure, and stronger commercial signals: from early diagnostics to visibility, traffic, and lead growth.',
+      'Each case shows the starting problem, the changes made on the site, and the effect on visibility, lead flow, or project manageability.',
     openCase: 'Open case study',
     caseLabel: 'Case study',
     previewFallback:
-      'A concise project breakdown covering the starting point, the priorities chosen first, and the business result those changes produced.',
+      'A concise breakdown of the starting point, the priority fixes, the implementation, and the result.',
     metaTitle: 'SEO and website structure case studies | Shelpakov Digital',
     metaDescription:
-      'Case studies on SEO, website structure, and commercial signals: how a project changes after refining key pages, demand logic, conversion paths, and the user journey to a lead.',
+      'Case studies on SEO and site structure: the starting problem, the decisions taken, the implementation, and the effect on visibility, leads, or site logic.',
   },
 } as const
 

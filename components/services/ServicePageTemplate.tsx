@@ -5,6 +5,7 @@ import RichContent from '@/components/RichContent'
 import { Button } from '@/components/ui/button'
 import { getServicePageStrategy } from '@/lib/service-page-strategy'
 import LazyContactForm from '@/components/LazyContactForm'
+import { getServiceProofLinks, getServiceStartChecklist } from '@/lib/service-proof-data'
 import { getFullUrl } from '@/lib/site-url'
 import { createBreadcrumbSchema, createFaqSchema, createServiceSchema } from '@/lib/structured-data'
 import { formatServiceBillingUnit, formatServicePrice, type ServicePricing } from '@/lib/service-pricing'
@@ -40,31 +41,33 @@ function VisualCard({
 
 const seoAuditDeliverables = [
   {
-    title: 'Executive summary',
-    text: 'Сразу показываю, где сайт уже силён, где теряет рост и какие ограничения влияют на индексацию, трафик и заявки сильнее всего.',
+    title: 'Где сайт теряет спрос',
+    text: 'В начале отчёта видно, какие типы страниц, шаблоны и служебные зоны режут рост сильнее всего прямо сейчас.',
   },
   {
-    title: 'Таблица приоритетов',
-    text: 'Внутри отчёта задачи разделяются по важности: critical, high, medium и quick wins, чтобы команда не тонула в хаотичном backlog.',
+    title: 'Приоритеты на 30-60 дней',
+    text: 'Замечания раскладываются по очередности внедрения: что чинить сразу, что брать следующей волной и что пока не стоит трогать.',
   },
   {
-    title: 'Автоскриншоты страниц',
-    text: 'К ключевым выводам добавляются живые скриншоты, чтобы документ было проще обсуждать с бизнесом, маркетингом и разработкой.',
+    title: 'Примеры URL и скриншоты',
+    text: 'Каждый крупный вывод опирается на конкретные страницы и живые примеры, чтобы разработке и маркетингу не пришлось додумывать проблему.',
   },
   {
-    title: 'Roadmap внедрения',
-    text: 'На выходе есть не только замечания, но и понятный план действий на ближайшие недели: что делать сейчас, что дальше и зачем это нужно.',
+    title: 'Пакет для внедрения',
+    text: 'Отчёт остаётся рабочим документом после созвона: его можно передать команде, подрядчику или использовать как основу следующего этапа.',
   },
 ]
 
 const seoAuditSignals = [
-  'Подходит как старт перед SEO-продвижением, редизайном или разработкой нового сайта.',
-  'Помогает быстро понять, где проект теряет спрос: в индексации, сниппетах, структуре или коммерческой подаче.',
-  'Документ можно использовать и как коммерческий продукт, и как рабочее ТЗ для внедрения.',
+  'Когда после редизайна, миграции или потока правок стало непонятно, что именно режет видимость и заявки.',
+  'Когда у сайта есть трафик, но коммерческие страницы не дожимают пользователя до обращения.',
+  'Когда нужен не список советов, а документ, по которому можно реально ставить задачи в работу.',
 ]
 
 export default function ServicePageTemplate({ service, pricing, customContent }: ServicePageTemplateProps) {
   const strategy = getServicePageStrategy(service.slug)
+  const proofLinks = getServiceProofLinks(service.slug)
+  const startChecklist = getServiceStartChecklist(service.slug)
   const decisionServices = strategy.decisions
     .map((item) => {
       const relatedService = getServicePage(item.slug)
@@ -171,12 +174,11 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
             <div className="page-card">
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Формат аудита</p>
               <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-4xl">
-                Аудит собирается как сильный документ, а не как таблица с замечаниями
+                Аудит собирается как рабочий документ для внедрения
               </h2>
               <p className="mt-5 text-base leading-8 text-slate-600">
-                Внутри важна не только глубина проверки, но и подача результата. Поэтому аудит строится как growth map: с понятной
-                обложкой, выжимкой для бизнеса, приоритетами, примерами страниц, визуальными доказательствами и дорожной картой
-                внедрения.
+                Важна не только глубина проверки, но и то, как выводы переходят в работу. Поэтому внутри не просто crawl и список ошибок,
+                а приоритетные страницы, примеры URL, бизнес-эффект замечаний и порядок внедрения на ближайшие недели.
               </p>
               <div className="mt-6 grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
                 {seoAuditDeliverables.map((item) => (
@@ -195,11 +197,11 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
               <div className="glass-panel p-6">
                 <div className="text-sm uppercase tracking-[0.24em] text-orange-700">Что получает клиент</div>
                 <div className="mt-4 rounded-[26px] border border-white/70 bg-gradient-to-br from-white via-orange-50 to-cyan-50 p-6">
-                  <div className="text-xs uppercase tracking-[0.24em] text-slate-500">Итоговый пакет</div>
-                  <div className="mt-3 text-2xl font-semibold text-slate-950">Branded PDF + DOCX + HTML preview</div>
+                  <div className="text-xs uppercase tracking-[0.24em] text-slate-500">Формат выдачи</div>
+                  <div className="mt-3 text-2xl font-semibold text-slate-950">PDF, DOCX и HTML-версия отчёта</div>
                   <p className="mt-4 text-sm leading-7 text-slate-600">
-                    Такой формат удобно и показывать клиенту, и передавать в работу команде. Документ не теряет ценность после выдачи,
-                    а становится основой следующего шага.
+                    Такой комплект удобно обсуждать на созвоне, пересылать в команду и использовать как рабочее ТЗ без ручной
+                    перепаковки и пересказов.
                   </p>
                 </div>
               </div>
@@ -257,7 +259,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
                     <span className="font-medium text-slate-900">Почему так:</span> {item.cause}
                   </p>
                   <p className="mt-3 text-sm leading-7 text-slate-600">
-                    <span className="font-medium text-slate-900">Почему это fit:</span> {item.fit}
+                    <span className="font-medium text-slate-900">Почему подходит:</span> {item.fit}
                   </p>
                 </div>
               ))}
@@ -358,7 +360,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="page-card">
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Friction и trade-offs</p>
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Ограничения и компромиссы</p>
             <h2 className="mt-3 text-3xl font-semibold text-slate-950">{strategy.frictionTitle}</h2>
             <p className="mt-5 text-sm leading-7 text-slate-600">{strategy.frictionIntro}</p>
             <div className="mt-6 space-y-4">
@@ -395,18 +397,66 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
           </div>
         </section>
 
+        <section className="mt-8 grid gap-6 lg:grid-cols-[1.02fr_0.98fr] lg:items-start">
+          <div className="page-card">
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Доказательства и контекст</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950">Что посмотреть до заявки, чтобы проверить формат</h2>
+            <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-600">
+              По логике SEO Monster коммерческая страница должна вести не только в форму, но и к доказательствам. Ниже материалы,
+              которые помогают проверить подход до старта: кейсы, статьи и соседние страницы с рабочим контекстом.
+            </p>
+            <div className="mt-6 space-y-4">
+              {proofLinks.map((item) => (
+                <Link
+                  key={`${service.slug}-${item.href}-${item.title}`}
+                  href={item.href}
+                  className="block rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5 transition hover:border-cyan-200 hover:bg-cyan-50/70"
+                >
+                  <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{item.kicker}</div>
+                  <h3 className="mt-3 text-xl font-semibold text-slate-950">{item.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
+                  <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
+                    Открыть материал
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="page-card">
+            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Стартовый чеклист</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950">Что лучше прислать сразу, чтобы не тратить круги согласования</h2>
+            <p className="mt-5 text-sm leading-7 text-slate-600">
+              Эти данные нужны, чтобы быстро понять объём, первый приоритет и вообще подходит ли проекту именно эта услуга, а не соседний формат.
+            </p>
+            <div className="mt-6 space-y-3">
+              {startChecklist.map((item, index) => (
+                <div key={`${service.slug}-start-${index}`} className="flex items-start gap-4 rounded-[24px] border border-orange-100 bg-[#fffaf5] px-5 py-4">
+                  <div className="rounded-full bg-orange-50 px-3 py-1 text-sm font-semibold text-orange-700">{`0${index + 1}`}</div>
+                  <p className="text-sm leading-7 text-slate-700">{item}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 rounded-[24px] border border-cyan-100 bg-cyan-50/60 p-5 text-sm leading-7 text-slate-700">
+              Если доступа, цифр или материалов пока нет, достаточно домена и короткого описания симптома. Этого уже хватает, чтобы понять,
+              нужен аудит, внедрение, перезапуск или другой маршрут.
+            </div>
+          </div>
+        </section>
+
         <section className="mt-8 rounded-[32px] border border-orange-100 bg-gradient-to-r from-orange-50 via-white to-cyan-50 surface-pad">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Быстрый вход</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950">Нужен понятный ориентир без долгого созвона?</h2>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">Нужно быстро понять первый шаг без длинного созвона?</h2>
             </div>
             <a href="#contact-form">
               <Button className="rounded-full">{service.ctas.soft}</Button>
             </a>
           </div>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600">
-            Достаточно коротко описать задачу, сайт и текущую ситуацию. В ответ покажу, где у проекта основной потенциал и какой формат работы будет уместен именно сейчас.
+            Достаточно прислать домен, задачу и 2-3 фразы про текущий симптом. В ответ можно быстро понять, какой формат уместен сейчас и где лежит первый приоритет по сайту.
           </p>
         </section>
 
@@ -515,7 +565,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
         </section>
 
         <section className="mt-8 reading-shell">
-          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Экспертный блок</p>
+          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Практические ориентиры</p>
           <h2 className="mt-3 text-3xl font-semibold text-slate-950">{service.seoBlockTitle}</h2>
           <div className="mt-6 grid gap-4 lg:grid-cols-3">
             {service.seoParagraphs.map((paragraph) => (

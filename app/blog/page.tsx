@@ -13,38 +13,38 @@ const blogCopy: Record<Locale, any> = {
     chip: 'Блог',
     title: 'Материалы по SEO и развитию сайта',
     description:
-      'Публикую разборы по SEO, структуре сайта, коммерческим факторам и контенту, которые помогают принимать взвешенные решения по проекту.',
-    badges: ['Разборы ошибок и точек роста', 'Материалы для владельца сайта', 'SEO + упаковка + конверсия'],
+      'Здесь материалы по миграциям, структуре услуг, GEO и AI-выдаче, коммерческим факторам и контентным решениям для сайта.',
+    badges: ['Миграции, GEO и структура услуг', 'Разборы страниц, а не общая теория', 'Материалы, которые можно использовать в работе'],
     cardKicker: 'Статья',
     open: 'Открыть',
     noDate: 'Без даты',
     empty: 'Пока опубликованных статей нет.',
     collectionName: 'Блог о SEO и развитии сайта',
     collectionDescription:
-      'Экспертные статьи о SEO, структуре сайта, контенте, коммерческих факторах и росте заявок с понятными выводами для бизнеса.',
+      'Статьи о структуре сайта, миграциях, контенте, GEO, коммерческих страницах и SEO-решениях, которые можно применять в работе.',
     itemListName: 'Статьи блога Shelpakov Digital',
     metaTitle: 'Блог о SEO и развитии сайта | Shelpakov Digital',
     metaDescription:
-      'Экспертные статьи о SEO, структуре сайта, коммерческих факторах и контенте: с практическими выводами для бизнеса, маркетинга и роста заявок.',
+      'Статьи о структуре сайта, миграциях, GEO, коммерческих факторах и контенте: с практическими выводами для бизнеса и команды сайта.',
     dateLocale: 'ru-RU',
   },
   en: {
     chip: 'Blog',
     title: 'Insights on SEO and website growth',
     description:
-      'I publish practical breakdowns on SEO, website structure, commercial signals, and content that help teams make better decisions about growth.',
-    badges: ['Breakdowns of mistakes and growth levers', 'Materials for website owners and teams', 'SEO + positioning + conversion'],
+      'Articles on migrations, service-page structure, GEO and AI search, commercial signals, and content decisions for real websites.',
+    badges: ['Migrations, GEO, and service-page structure', 'Page-level breakdowns, not generic theory', 'Materials a team can use in practice'],
     cardKicker: 'Article',
     open: 'Open',
     noDate: 'No date',
     empty: 'No published articles yet.',
     collectionName: 'Blog on SEO and website growth',
     collectionDescription:
-      'Expert articles on SEO, site structure, content, commercial signals, and lead growth with practical business takeaways.',
+      'Articles on structure, migrations, content, GEO, commercial pages, and SEO decisions with practical takeaways for real teams.',
     itemListName: 'Shelpakov Digital blog articles',
     metaTitle: 'Blog on SEO and website growth | Shelpakov Digital',
     metaDescription:
-      'Expert articles on SEO, site structure, commercial signals, and content with practical takeaways for growth, marketing, and lead generation.',
+      'Articles on site structure, migrations, GEO, commercial signals, and content with practical takeaways for growth and website teams.',
     dateLocale: 'en-US',
   },
 }
