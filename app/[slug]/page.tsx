@@ -61,17 +61,17 @@ export default async function DynamicPage({ params }: PageProps) {
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
       <div className="mx-auto max-w-4xl">
-        <h1 className="text-4xl font-semibold text-white md:text-6xl">
+        <h1 className="break-words text-4xl font-semibold text-white md:text-6xl">
           {page.h1 || page.title}
         </h1>
         {page.description && (
-          <p className="mt-6 text-lg leading-8 text-slate-300">
+          <p className="mt-6 break-words text-lg leading-8 text-slate-300">
             {page.description}
           </p>
         )}
         {pageContent && (
           <article
-            className="prose prose-invert mt-10 max-w-none prose-headings:text-white prose-p:text-slate-300 prose-li:text-slate-300"
+            className="prose prose-invert mt-10 max-w-none break-words prose-headings:text-white prose-p:text-slate-300 prose-li:text-slate-300"
             dangerouslySetInnerHTML={{ __html: pageContent }}
           />
         )}

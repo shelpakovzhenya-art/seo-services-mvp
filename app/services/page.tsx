@@ -227,7 +227,7 @@ export default async function ServicesIndexPage() {
         <section id="contact-form" className="mt-8 scroll-mt-32 surface-grid p-4 md:p-6">
           <div className="soft-section overflow-hidden">
             <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-              <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
+              <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
                 <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.contactKicker}</p>
                 <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
                 <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">{copy.contactText}</p>
@@ -236,7 +236,7 @@ export default async function ServicesIndexPage() {
                   <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">{copy.contactNoteB}</div>
                 </div>
               </div>
-              <div className="p-8">
+              <div className="p-5 sm:p-8">
                 <LazyContactForm />
               </div>
             </div>

@@ -101,8 +101,8 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
     <>
       <div className="relative z-40 border-b border-white/10 bg-[#07101d]/88 backdrop-blur-xl">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between gap-3 py-2.5 text-[11px] font-medium text-slate-200/88 md:gap-4 md:py-3 md:text-xs">
-            <div className="flex flex-wrap items-center gap-2.5 md:gap-3">
+          <div className="flex flex-col items-start gap-2 py-2.5 text-[11px] font-medium text-slate-200/88 sm:flex-row sm:items-center sm:justify-between sm:gap-3 md:gap-4 md:py-3 md:text-xs">
+            <div className="flex w-full min-w-0 flex-wrap items-center gap-2.5 md:gap-3">
               <span className="warm-chip">Shelpakov Digital</span>
               <span className="inline-flex items-center rounded-full border border-white/12 bg-[#0c1727]/90 px-3 py-1.5 font-semibold text-slate-50 shadow-[0_10px_24px_rgba(2,8,23,0.22)] md:px-3.5">
                 {settings?.workSchedule || 'Mon-Fri 09:00-17:00'}
@@ -116,15 +116,15 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
               </span>
               <a
                 href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`}
-                className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-[#0c1727]/90 px-3 py-1.5 font-medium text-slate-50 shadow-[0_10px_24px_rgba(2,8,23,0.22)] transition hover:border-cyan-300/30 hover:text-white md:px-3.5"
+                className="inline-flex min-w-0 max-w-full items-center gap-2 rounded-full border border-white/12 bg-[#0c1727]/90 px-3 py-1.5 font-medium text-slate-50 shadow-[0_10px_24px_rgba(2,8,23,0.22)] transition hover:border-cyan-300/30 hover:text-white sm:w-auto sm:break-normal md:px-3.5"
               >
                 <Mail className="h-3.5 w-3.5" />
-                {settings?.email || 'shelpakovzhenya@gmail.com'}
+                <span className="min-w-0 break-all">{settings?.email || 'shelpakovzhenya@gmail.com'}</span>
               </a>
             </div>
 
             {socialLinks.length > 0 ? (
-              <div className="hidden items-center gap-2 md:flex">
+              <div className="hidden shrink-0 items-center gap-2 md:flex">
                 {socialLinks.map((item) => (
                   <a
                     key={item.label}
@@ -152,14 +152,14 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
 
       <div className="sticky top-0 z-50 bg-[#07101d]/80 shadow-[0_18px_40px_rgba(2,8,23,0.26)] backdrop-blur-2xl">
         <div className="container mx-auto px-4">
-          <nav className="my-2 flex items-center justify-between gap-3 rounded-[26px] border border-white/14 bg-[linear-gradient(145deg,rgba(11,20,37,0.9),rgba(15,28,48,0.84))] px-3.5 py-3 shadow-[0_22px_52px_rgba(2,8,23,0.28)] md:my-3 md:mb-4 md:gap-4 md:rounded-[32px] md:px-4 md:py-4">
-            <Link href={prefixPathWithLocale('/', locale)} className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+          <nav className="my-2 flex items-center justify-between gap-2.5 rounded-[24px] border border-white/14 bg-[linear-gradient(145deg,rgba(11,20,37,0.9),rgba(15,28,48,0.84))] px-3 py-2.5 shadow-[0_22px_52px_rgba(2,8,23,0.28)] md:my-3 md:mb-4 md:gap-4 md:rounded-[32px] md:px-4 md:py-4">
+            <Link href={prefixPathWithLocale('/', locale)} className="flex min-w-0 flex-1 items-center gap-2.5 pr-2 sm:gap-3 lg:flex-none">
               <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/14 bg-white/95 shadow-[0_12px_30px_rgba(2,8,23,0.22)] sm:h-11 sm:w-11 md:h-12 md:w-12">
                 <Image src="/favicon-48.png" alt="Shelpakov Digital" width={40} height={40} className="h-[78%] w-[78%] object-contain" priority />
               </span>
               <span className="flex min-w-0 flex-col">
-                <span className="truncate text-[0.92rem] font-semibold uppercase tracking-[0.12em] text-white sm:text-[1rem] md:text-lg md:tracking-[0.16em]">Shelpakov Digital</span>
-                <span className="hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-300/86 sm:block md:text-xs md:tracking-[0.2em]">
+                <span className="truncate text-[0.82rem] font-semibold uppercase tracking-[0.08em] text-white sm:text-[0.95rem] md:text-lg md:tracking-[0.16em]">Shelpakov Digital</span>
+                <span className="hidden max-w-full truncate text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-300/86 md:block md:text-xs md:tracking-[0.2em]">
                   {dictionary.header.brandSubtitle}
                 </span>
               </span>

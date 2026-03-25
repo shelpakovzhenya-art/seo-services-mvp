@@ -102,7 +102,7 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
             <div className="text-sm">
               <div className="space-y-3">
                 <p>{settings?.workSchedule || 'Mon-Fri 09:00-17:00'}</p>
-                <a href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`} className="transition hover:text-white">
+                <a href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`} className="break-all transition hover:text-white">
                   {settings?.email || 'shelpakovzhenya@gmail.com'}
                 </a>
                 <p className="text-slate-400">{dictionary.footer.toolsTitle}</p>
@@ -111,12 +111,12 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
               <div className="pt-6">
                 <Link
                   href={prefixPathWithLocale('/tools', locale)}
-                  className="inline-flex w-fit items-center gap-3 border border-white/14 bg-[#09111d]/88 px-5 py-4 text-sm font-medium uppercase tracking-[0.22em] text-slate-200 transition hover:border-cyan-300/34 hover:bg-[#0d1624] hover:text-white"
+                  className="inline-flex w-fit max-w-full items-center gap-3 border border-white/14 bg-[#09111d]/88 px-5 py-4 text-sm font-medium uppercase tracking-[0.22em] text-slate-200 transition hover:border-cyan-300/34 hover:bg-[#0d1624] hover:text-white"
                 >
                   <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/5 text-slate-100">
                     <Wrench className="h-4 w-4" />
                   </span>
-                  <span>{dictionary.footer.tools}</span>
+                  <span className="break-words">{dictionary.footer.tools}</span>
                 </Link>
               </div>
             </div>

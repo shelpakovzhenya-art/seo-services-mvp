@@ -484,7 +484,7 @@ export default async function HomePage() {
         <div className="section-shell">
           <div className="surface-grid p-4 md:p-6">
             <div className="soft-section grid gap-8 overflow-hidden lg:grid-cols-[0.9fr_1.1fr]">
-              <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
+              <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
                 <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.contactKicker}</p>
                 <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
                 <p className="mt-6 max-w-xl text-sm leading-7 text-slate-600">{copy.contactText}</p>
@@ -507,7 +507,7 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              <div className="p-8">
+              <div className="p-5 sm:p-8">
                 <LazyContactForm />
               </div>
             </div>

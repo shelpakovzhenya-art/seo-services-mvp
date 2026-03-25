@@ -78,17 +78,17 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
         />
 
         <div
-          className={`absolute inset-0 h-[100dvh] w-screen overflow-y-auto bg-[radial-gradient(circle_at_18%_16%,rgba(255,182,140,0.2),transparent_24%),radial-gradient(circle_at_82%_14%,rgba(96,227,255,0.18),transparent_22%),linear-gradient(180deg,rgba(6,12,24,0.985),rgba(10,18,33,1))] transition-transform duration-300 ease-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
+          className={`absolute inset-0 h-[100dvh] w-full overflow-x-hidden overflow-y-auto bg-[radial-gradient(circle_at_18%_16%,rgba(255,182,140,0.2),transparent_24%),radial-gradient(circle_at_82%_14%,rgba(96,227,255,0.18),transparent_22%),linear-gradient(180deg,rgba(6,12,24,0.985),rgba(10,18,33,1))] transition-transform duration-300 ease-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
         >
-          <div className="sticky top-0 z-10 border-b border-white/10 bg-[#09111f]/88 px-6 py-5 backdrop-blur-2xl">
+          <div className="sticky top-0 z-10 border-b border-white/10 bg-[#09111f]/88 px-4 py-4 backdrop-blur-2xl sm:px-6 sm:py-5">
             <div className="flex items-center justify-between gap-4">
-              <div>
+              <div className="min-w-0">
                 <div className="text-xs uppercase tracking-[0.24em] text-orange-300">{dictionary.mobileMenu.menuTitle}</div>
-                <div className="mt-1 flex items-center gap-3">
+                <div className="mt-1 flex min-w-0 items-center gap-3">
                   <span className="grid h-11 w-11 place-items-center overflow-hidden rounded-2xl border border-white/12 bg-white/95 shadow-[0_10px_24px_rgba(2,8,23,0.22)]">
                     <Image src="/favicon-48.png" alt="Shelpakov Digital" width={36} height={36} className="h-[78%] w-[78%] object-contain" />
                   </span>
-                  <span className="text-2xl font-semibold text-white">Shelpakov Digital</span>
+                  <span className="truncate text-xl font-semibold text-white sm:text-2xl">Shelpakov Digital</span>
                 </div>
               </div>
               <button
@@ -102,7 +102,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
             </div>
           </div>
 
-          <div className="flex min-h-[calc(100dvh-89px)] flex-col px-6 py-6 pb-8">
+          <div className="flex min-h-[calc(100dvh-89px)] flex-col px-4 py-5 pb-8 sm:px-6 sm:py-6">
             <div className="rounded-[30px] border border-white/12 bg-white/[0.07] p-5 shadow-[0_20px_40px_rgba(2,8,23,0.24)] backdrop-blur-xl">
               <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-slate-200/88">
                 <span className="font-semibold text-slate-50/92">{workSchedule}</span>
@@ -114,9 +114,9 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
                   {workStatus.text}
                 </span>
               </div>
-              <a href={`mailto:${email}`} className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-slate-100 transition hover:text-cyan-100">
+              <a href={`mailto:${email}`} className="mt-4 inline-flex min-w-0 max-w-full items-center gap-2 text-sm font-medium text-slate-100 transition hover:text-cyan-100">
                 <Mail className="h-4 w-4 text-cyan-300" />
-                {email}
+                <span className="min-w-0 break-all">{email}</span>
               </a>
             </div>
 
@@ -126,9 +126,9 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
                   key={item.id}
                   href={prefixPathWithLocale(item.url, locale)}
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between rounded-[30px] border border-white/12 bg-white/[0.08] px-5 py-5 text-[clamp(1.2rem,4.4vw,1.56rem)] font-bold tracking-[0.01em] text-white shadow-[0_18px_36px_rgba(2,8,23,0.2)] backdrop-blur-xl transition hover:border-cyan-300/40 hover:bg-white/[0.12]"
+                  className="flex min-w-0 items-center justify-between rounded-[30px] border border-white/12 bg-white/[0.08] px-5 py-5 text-[clamp(1.08rem,4.2vw,1.56rem)] font-bold tracking-[0.01em] text-white shadow-[0_18px_36px_rgba(2,8,23,0.2)] backdrop-blur-xl transition hover:border-cyan-300/40 hover:bg-white/[0.12]"
                 >
-                  <span>{item.label}</span>
+                  <span className="min-w-0 break-words pr-3">{item.label}</span>
                   <ArrowUpRight className="h-5 w-5 text-cyan-300" />
                 </Link>
               ))}

@@ -108,7 +108,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
 
       <section id="case-contact" className="mt-8 soft-section overflow-hidden">
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-          <div className="border-b border-orange-100 p-8 lg:border-b-0 lg:border-r">
+          <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
             <span className="warm-chip">Обсудить проект</span>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">
               Нужен похожий кейс для вашего сайта?
@@ -119,7 +119,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
             </p>
           </div>
 
-          <div className="p-8">
+          <div className="p-5 sm:p-8">
             <LazyContactForm />
           </div>
         </div>

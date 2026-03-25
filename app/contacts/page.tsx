@@ -60,9 +60,9 @@ export default async function ContactsPage() {
         <div className="reading-shell h-full">
           <h2 className="text-2xl font-semibold text-slate-950">{copy.howToReach}</h2>
           <div className="mt-6 space-y-4">
-            <div className="flex items-center gap-3 text-slate-700">
-              <Mail className="h-5 w-5 text-cyan-700" />
-              <a href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`} className="hover:text-slate-950">
+            <div className="flex min-w-0 items-start gap-3 text-slate-700">
+              <Mail className="h-5 w-5 shrink-0 text-cyan-700" />
+              <a href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`} className="min-w-0 break-all hover:text-slate-950">
                 {settings?.email || 'shelpakovzhenya@gmail.com'}
               </a>
             </div>
