@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle2, MapPin, Search } from 'lucide-react'
 import JsonLd from '@/components/JsonLd'
 import LazyContactForm from '@/components/LazyContactForm'
 import { Button } from '@/components/ui/button'
-import { isPlaceholderCase } from '@/lib/case-listing'
+import { parseCaseGallery } from '@/lib/case-gallery'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { prisma } from '@/lib/prisma'
 import { getFullUrl } from '@/lib/site-url'
@@ -39,14 +39,11 @@ const resultCaptions = [
 ]
 
 function parseResultImages(value?: string | null) {
-  return (value || '')
-    .split('\n')
-    .map((item) => item.trim())
-    .filter(Boolean)
+  return parseCaseGallery(value).map((item) => item.src)
 }
 
 export default async function PodocenterCasePage() {
-  let uploadedImages: string[] = []
+  let uploadedImages = parseResultImages(podocenterCase.resultImages)
 
   try {
     const caseItems = await prisma.case.findMany({
@@ -55,7 +52,6 @@ export default async function PodocenterCasePage() {
           { slug: podocenterCase.slug },
           { title: { contains: 'PodoCenter', mode: 'insensitive' } },
           { title: { contains: 'подолог', mode: 'insensitive' } },
-          { resultImages: { not: null } },
         ],
       },
       select: {
@@ -73,8 +69,6 @@ export default async function PodocenterCasePage() {
         (item) =>
           (item.title || '').toLowerCase().includes('podocenter') && parseResultImages(item.resultImages).length > 0
       ) ||
-      caseItems.find((item) => !isPlaceholderCase(item) && parseResultImages(item.resultImages).length > 0) ||
-      caseItems.find((item) => parseResultImages(item.resultImages).length > 0) ||
       null
 
     uploadedImages = parseResultImages(gallerySource?.resultImages)

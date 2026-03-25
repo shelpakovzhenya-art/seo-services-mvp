@@ -1,3 +1,24 @@
+import { serializeCaseGallery } from '@/lib/case-gallery'
+
+const galleryItems = [
+  {
+    src: '/cases/podocenter/traffic-growth.svg',
+    caption: 'Рост визитов из поиска после усиления структуры услуг и ключевых посадочных страниц по локальному спросу.',
+  },
+  {
+    src: '/cases/podocenter/visibility-growth.svg',
+    caption: 'Локальная видимость по Казани стала сильнее именно по тем направлениям, которые ближе к записи.',
+  },
+  {
+    src: '/cases/podocenter/cpl-dynamics.svg',
+    caption: 'Органика стала лучше работать не только на посещаемость, но и на реальные обращения в центр.',
+  },
+  {
+    src: '/cases/podocenter/positions-heatmap.svg',
+    caption: 'Матрица показывает усиление позиций по приоритетным услугам и более уверенное присутствие в локальной выдаче.',
+  },
+]
+
 export const podocenterCase = {
   slug: 'podocenter-kzn-seo-growth',
   url: '/cases/podocenter-kzn-seo-growth',
@@ -7,6 +28,7 @@ export const podocenterCase = {
     'Кейс локального медицинского проекта: как через структуру услуг, контент, коммерческие блоки и техбазу сайт PodoCenter стал лучше забирать поисковый спрос по Казани.',
   excerpt:
     'Не история про "волшебный SEO-рост", а кейс про пересборку сайта под локальный медицинский спрос: отдельные услуги, связка со статьями, путь к записи и более сильная видимость по Казани.',
+  resultImages: serializeCaseGallery(galleryItems),
   about: [
     'Клиент: подологический центр PodoCenter.',
     'Ниша: подология и сопутствующие медицинские услуги.',
