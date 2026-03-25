@@ -95,7 +95,7 @@ const servicesIndexCopy: Record<Locale, any> = {
     comparisonKicker: 'What gets confused most often',
     comparisonTitle: 'Three forks where commercial websites usually waste unnecessary budget',
     comparisonText:
-      'This page should help select the right first move. So below is not a benefits list, but a set of decision forks between adjacent service formats.',
+      'Below is a simple comparison of neighboring service formats so it is easier to choose the right first move.',
     comparisonCards: [
       {
         title: 'Audit vs ongoing SEO',

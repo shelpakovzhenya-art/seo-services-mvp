@@ -11,13 +11,6 @@ const reviewsCopy: Record<Locale, any> = {
     chip: 'Отзывы',
     title: 'Отзывы и подтверждение работы',
     description: 'Отзывы полезны тогда, когда помогают понять подход, формат работы и качество коммуникации.',
-    proofKicker: 'Что важно в отзыве',
-    proofTitle: 'Перед стартом проекта полезно смотреть не только на похвалу, но и на рабочие сигналы',
-    proofCards: [
-      'Как быстро и понятно исполнитель возвращает конкретные выводы, а не общие обещания.',
-      'Есть ли ощущение управляемости: понятные приоритеты, логика шагов и контроль внедрения.',
-      'Помогает ли отзыв понять формат коммуникации, а не только эмоциональную оценку “всё понравилось”.',
-    ],
     emptyEmbed: 'На этой странице публикуются отзывы клиентов и дополнительные сигналы доверия.',
     metaTitle: 'Отзывы клиентов | Shelpakov Digital',
     metaDescription:
@@ -27,13 +20,6 @@ const reviewsCopy: Record<Locale, any> = {
     chip: 'Reviews',
     title: 'Client feedback and proof of work',
     description: 'Reviews matter when they help a new client understand the approach, delivery style, and quality of communication.',
-    proofKicker: 'What matters in a review',
-    proofTitle: 'Before hiring, it is useful to look not only for praise, but for working signals',
-    proofCards: [
-      'How quickly and concretely the specialist returns findings instead of vague promises.',
-      'Whether the work feels manageable: clear priorities, a logic of steps, and implementation control.',
-      'Whether the review helps you understand the communication style, not only the emotional verdict.',
-    ],
     emptyEmbed: 'This page publishes client feedback and additional trust signals.',
     metaTitle: 'Client reviews | Shelpakov Digital',
     metaDescription:
@@ -64,20 +50,6 @@ export default async function ReviewsPage() {
         <span className="warm-chip">{copy.chip}</span>
         <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{page?.h1 || copy.title}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{page?.description || copy.description}</p>
-      </section>
-
-      <section className="reading-shell">
-        <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.proofKicker}</p>
-          <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.proofTitle}</h2>
-        </div>
-        <div className="uniform-grid-3 mt-6 gap-4">
-          {copy.proofCards.map((item: string) => (
-            <div key={item} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
-              {item}
-            </div>
-          ))}
-        </div>
       </section>
 
       {settings?.yandexReviewsEmbed ? (

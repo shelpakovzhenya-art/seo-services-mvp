@@ -70,16 +70,27 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
                   className="uniform-card glass-panel interactive-card p-6"
                 >
                   <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{service.label}</div>
-                  <h3 className="mt-4 text-2xl font-semibold text-slate-950">{service.shortName}</h3>
-                  <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{service.description || service.cardDescription}</p>
-                  <div className="mt-4 rounded-2xl border border-cyan-100 bg-cyan-50/60 px-4 py-3 text-sm leading-6 text-slate-700">
-                    {strategy.catalogTrigger}
-                  </div>
-                  <div className="mt-auto pt-4">
-                    {pricing ? <div className="text-sm font-semibold text-slate-900">{pricing.priceLabel}</div> : null}
-                    <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
-                      {copy.openService}
-                      <ArrowRight className="h-4 w-4" />
+                  <div className="mt-4 flex flex-1 flex-col gap-5">
+                    <div className="space-y-3">
+                      <div className="md:min-h-[6rem]">
+                        <h3 className="text-2xl font-semibold text-slate-950">{service.shortName}</h3>
+                      </div>
+                      <p className="text-sm leading-7 text-slate-600 md:min-h-[13.5rem] xl:min-h-[12rem]">
+                        {service.description || service.cardDescription}
+                      </p>
+                    </div>
+
+                    <div className="mt-auto space-y-4">
+                      <div className="rounded-2xl border border-cyan-100 bg-cyan-50/60 px-4 py-3 text-sm leading-6 text-slate-700 md:flex md:min-h-[8.5rem] md:items-start">
+                        {strategy.catalogTrigger}
+                      </div>
+                      <div className="border-t border-slate-200/70 pt-4">
+                        {pricing ? <div className="text-sm font-semibold text-slate-900">{pricing.priceLabel}</div> : null}
+                        <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
+                          {copy.openService}
+                          <ArrowRight className="h-4 w-4" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </Link>
