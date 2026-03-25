@@ -1749,6 +1749,27 @@ def build_competitor_comparison(audit: dict, competitor_urls: list[str]) -> dict
     }
 
 
+ISSUE_TITLE_COMMERCIAL_GAPS = "Коммерческие страницы не закрывают условия выбора и доверие"
+ISSUE_TITLE_CONTENT_PROOF = "Приоритетные страницы не подтверждают оффер фактами и ответами на вопросы"
+ISSUE_TITLE_INTERNAL_LINKING = "Внутренняя перелинковка не поддерживает приоритетные страницы"
+MONSTER_SUPPORT_FIELDS = ("has_faq_block", "has_reviews_block", "has_comparison_table")
+MONSTER_PROOF_FIELDS = ("has_trust_block", "has_reviews_block", "has_comparison_table", "has_faq_block")
+
+
+def select_priority_pages(sample_pages: list[PageSnapshot]) -> list[PageSnapshot]:
+    return [snapshot for snapshot in sample_pages if get_template_bucket(snapshot) in {"home", "category", "product", "service", "contact"}]
+
+
+def coverage_ratio(pages: list[PageSnapshot], predicate) -> float:
+    if not pages:
+        return 0.0
+    return len([page for page in pages if predicate(page)]) / len(pages)
+
+
+def collect_page_examples(pages: list[PageSnapshot], limit: int = 3) -> list[str]:
+    return [human_path(page.url) for page in pages[:limit]]
+
+
 def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
     issues: list[AuditIssue] = []
     robots_lines = audit["robots_lines"]
@@ -1761,6 +1782,31 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
     redirect_chains = [item for item in audit["redirect_checks"] if len(item["chain"]) > 1]
     contact_pages = get_contact_related_pages(sample_pages)
     indexable_query_pages = get_indexable_query_pages(sample_pages)
+    priority_pages = select_priority_pages(sample_pages)
+    weak_support_pages = [
+        snapshot
+        for snapshot in priority_pages
+        if not any(bool(getattr(snapshot, field, False)) for field in MONSTER_SUPPORT_FIELDS)
+    ]
+    weak_proof_pages = [
+        snapshot
+        for snapshot in priority_pages
+        if not any(bool(getattr(snapshot, field, False)) for field in MONSTER_PROOF_FIELDS)
+    ]
+    commercial_gap_pages = [snapshot for snapshot in priority_pages if not snapshot.has_commercial_block]
+    trust_gap_pages = [snapshot for snapshot in priority_pages if not snapshot.has_trust_block]
+    thin_priority_pages = [snapshot for snapshot in priority_pages if 0 < snapshot.word_count < 250]
+    breadcrumb_gap_pages = [
+        snapshot
+        for snapshot in priority_pages
+        if get_template_bucket(snapshot) in {"category", "product", "service", "contact"} and not snapshot.has_breadcrumbs
+    ]
+    low_link_priority_pages = sorted(
+        [snapshot for snapshot in priority_pages if get_template_bucket(snapshot) != "home"],
+        key=lambda snapshot: snapshot.internal_links,
+    )[:3]
+    average_priority_links = round(statistics.mean([snapshot.internal_links for snapshot in priority_pages]), 1) if priority_pages else 0
+    profile = infer_project_profile(audit)
 
     disallow_sitemap_lines = [line for line in robots_lines if "sitemap.xml" in line.lower() and "disallow" in line.lower()]
     sitemap_directive = next((line for line in robots_lines if line.lower().startswith("sitemap:")), "")
@@ -1843,6 +1889,118 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
                 recommendation=(
                     "Либо закрыть такие URL от индексации и убрать прямые ссылки на них, либо перевести их на нормальные страницы для поиска "
                     "с полноценным мета-оформлением."
+                ),
+            )
+        )
+
+    commercial_gap_ratio = coverage_ratio(priority_pages, lambda snapshot: not snapshot.has_commercial_block)
+    trust_gap_ratio = coverage_ratio(priority_pages, lambda snapshot: not snapshot.has_trust_block)
+    if priority_pages and (commercial_gap_ratio >= 0.45 or trust_gap_ratio >= 0.55):
+        page_scope = (
+            "категорий, карточек и страниц заявок"
+            if profile["is_catalog"]
+            else "страниц услуг, внутренних коммерческих страниц и контактов"
+        )
+        evidence = [
+            (
+                f"На {len(commercial_gap_pages)} из {len(priority_pages)} приоритетных страниц не найден явный блок условий: "
+                "цена, сроки, порядок работы, доставка, оплата или гарантия."
+            ),
+            f"На {len(trust_gap_pages)} из {len(priority_pages)} приоритетных страниц не хватает доверительных сигналов.",
+        ]
+        examples = collect_page_examples(commercial_gap_pages or trust_gap_pages)
+        if examples:
+            evidence.append(f"Примеры URL: {', '.join(examples)}.")
+        issues.append(
+            AuditIssue(
+                severity="High",
+                title=ISSUE_TITLE_COMMERCIAL_GAPS,
+                why_it_matters=(
+                    "По SEO Монстр коммерческий интент закрывается не общим SEO-текстом, а условиями выбора: "
+                    "цена или диапазон, сроки, гарантия, доставка/оплата, поддержка, контакты и понятный следующий шаг. "
+                    f"Если этот слой отсутствует на {page_scope}, страница хуже отвечает на запрос и слабее конвертирует."
+                ),
+                evidence=evidence,
+                recommendation=(
+                    "Пересобрать приоритетные шаблоны по коммерческому каркасу: оффер, цена или диапазон, сроки, "
+                    "условия сделки, гарантия/поддержка, контакты, CTA и отдельные служебные страницы "
+                    "доставки, оплаты, гарантий или порядка работ."
+                ),
+            )
+        )
+
+    support_gap_ratio = coverage_ratio(
+        priority_pages,
+        lambda snapshot: not any(bool(getattr(snapshot, field, False)) for field in MONSTER_SUPPORT_FIELDS),
+    )
+    thin_priority_ratio = coverage_ratio(priority_pages, lambda snapshot: 0 < snapshot.word_count < 250)
+    if priority_pages and (support_gap_ratio >= 0.5 or thin_priority_ratio >= 0.35):
+        evidence = [
+            (
+                f"На {len(weak_support_pages)} из {len(priority_pages)} приоритетных страниц нет FAQ, отзывов/кейсов "
+                "или сравнительных блоков."
+            ),
+            f"Тонких страниц с объёмом до 250 слов: {len(thin_priority_pages)} из {len(priority_pages)}.",
+        ]
+        examples = collect_page_examples(weak_support_pages or thin_priority_pages)
+        if examples:
+            evidence.append(f"Примеры URL: {', '.join(examples)}.")
+        if weak_proof_pages:
+            evidence.append(
+                f"На {len(weak_proof_pages)} из {len(priority_pages)} страниц не видно доказательств: доверия, отзывов, сравнений или FAQ."
+            )
+        issues.append(
+            AuditIssue(
+                severity="High" if thin_priority_ratio >= 0.45 else "Medium",
+                title=ISSUE_TITLE_CONTENT_PROOF,
+                why_it_matters=(
+                    "SEO Монстр рекомендует усиливать приоритетные страницы не водой, а новыми абзацами под потерянные запросы, "
+                    "доказательствами, списками, H2/H3, фото, кейсами, таблицами и ответами на возражения. "
+                    "Когда на странице нет этого слоя, она слабо закрывает выбор пользователя и хуже растёт после индексации."
+                ),
+                evidence=evidence,
+                recommendation=(
+                    "Доработать ключевые страницы по схеме повторной оптимизации: собрать потерянные запросы, добавить новые H2/H3, "
+                    "вынести в контент факты, сравнения, кейсы, скрины, списки и FAQ, затем обновить title/description и заново усилить перелинковку."
+                ),
+            )
+        )
+
+    structure_gap_ratio = coverage_ratio(priority_pages, lambda snapshot: snapshot.internal_links <= 5)
+    breadcrumb_gap_ratio = coverage_ratio(
+        priority_pages,
+        lambda snapshot: get_template_bucket(snapshot) in {"category", "product", "service", "contact"} and not snapshot.has_breadcrumbs,
+    )
+    if priority_pages and (structure_gap_ratio >= 0.35 or breadcrumb_gap_ratio >= 0.45):
+        evidence = [
+            f"Среднее число внутренних ссылок на приоритетную страницу: {average_priority_links}.",
+            (
+                "Слабее всего по внутренним ссылкам выглядят: "
+                + ", ".join(f"{human_path(snapshot.url)} ({snapshot.internal_links})" for snapshot in low_link_priority_pages)
+                + "."
+                if low_link_priority_pages
+                else "Слабые по внутренним ссылкам страницы не выделяются."
+            ),
+            (
+                f"На {len(breadcrumb_gap_pages)} из {len(priority_pages)} приоритетных страниц не обнаружены хлебные крошки."
+                if breadcrumb_gap_pages
+                else "Критичной просадки по хлебным крошкам в выборке не видно."
+            ),
+        ]
+        issues.append(
+            AuditIssue(
+                severity="Medium",
+                title=ISSUE_TITLE_INTERNAL_LINKING,
+                why_it_matters=(
+                    "По SEO Монстр внутренняя перелинковка должна распределять вес не хаотично, а тематически: "
+                    "вести пользователя и робота от сильных страниц к целевым кластерам, держать важные URL в нескольких кликах "
+                    "и использовать осмысленные анкоры вместо навигационного шума."
+                ),
+                evidence=evidence,
+                recommendation=(
+                    "Собрать тематические связки между приоритетными страницами: главная -> раздел -> подраздел/услуга -> заявка, "
+                    "добавить хлебные крошки, блоки \"по теме\", релевантные анкорные ссылки из текста и сократить бессмысленные ссылки вида "
+                    "\"читать далее\" или дубли ссылок на один и тот же URL."
                 ),
             )
         )
@@ -2052,19 +2210,20 @@ def dynamic_build_roadmap(audit: dict) -> list[tuple[str, list[str]]]:
         "Навести порядок в изображениях: alt, lazy loading, размеры и сжатие.",
         "Разделить sitemap по типам страниц и заново отправить карты сайта в панели вебмастеров.",
         "Обновить шаблоны сниппетов на приоритетных страницах и проверить рост CTR.",
+        "Разобрать ключевые страницы по модели SEO Монстр: какие оставить, какие переписать, какие объединить, а какие увести в архив.",
     ]
 
     if profile["is_catalog"]:
         sprint_3 = [
-            "Усилить категории и подкатегории: добавить полезный текст, FAQ, блоки доверия и перелинковку.",
-            "Пересобрать карточки и листинги так, чтобы они лучше отвечали на вопросы клиента и вели к заявке.",
-            "Добавить понятные ответы на частые вопросы по главным кластерам спроса.",
+            "Усилить категории и подкатегории коммерческим слоем: условия, гарантии, FAQ, блоки доверия и сценарии выбора.",
+            "Пересобрать карточки и листинги так, чтобы они содержали доказательства, сравнения, отзывы и вели к заявке.",
+            "Собрать тематическую перелинковку по кластерам спроса и поддержать её хлебными крошками и блоками \"по теме\".",
         ]
     else:
         sprint_3 = [
-            "Усилить страницы услуг и контактов: добавить доказательства, FAQ и сильный призыв к действию.",
-            "Развести ключевые направления по отдельным страницам и связать их между собой.",
-            "Добавить короткие экспертные блоки, которые помогают принять решение.",
+            "Усилить страницы услуг и контактов: добавить доказательства, FAQ, условия выбора и сильный призыв к действию.",
+            "Развести ключевые направления по отдельным страницам и связать их тематической перелинковкой.",
+            "Запустить повторную оптимизацию страниц с потерянными запросами: новые H2/H3, факты, кейсы, изображения и обновлённые сниппеты.",
         ]
 
     return [("0-14 дней", sprint_1[:4]), ("15-30 дней", sprint_2), ("31-60 дней", sprint_3)]
@@ -2074,23 +2233,28 @@ def build_executive_summary_dynamic(audit: dict) -> list[str]:
     profile = infer_project_profile(audit)
     top_issues = audit.get("issues", [])[:3]
     top_issue_titles = "; ".join(issue.title for issue in top_issues) if top_issues else "технические и шаблонные ограничения"
-    project_shape = "каталога и кластерной структуры URL" if profile["is_catalog"] else "посадочных и лид-страниц"
-    growth_target = (
-        "лучше раскрывать спрос через категории, карточки и связанные кластеры"
-        if profile["is_catalog"]
-        else "лучше забирать спрос через отдельные посадочные страницы и экспертные блоки"
+    priority_pages = select_priority_pages(audit["sample_pages"])
+    commercial_gap_ratio = coverage_ratio(priority_pages, lambda snapshot: not snapshot.has_commercial_block)
+    support_gap_ratio = coverage_ratio(
+        priority_pages,
+        lambda snapshot: not any(bool(getattr(snapshot, field, False)) for field in MONSTER_SUPPORT_FIELDS),
     )
+    structure_gap_ratio = coverage_ratio(priority_pages, lambda snapshot: snapshot.internal_links <= 5)
+    project_shape = "категории, карточки и связанные посадочные" if profile["is_catalog"] else "страницы услуг, внутренние коммерческие разделы и лид-страницы"
 
     return [
         (
-            f"У {audit['company_name']} уже есть рабочий фундамент: сайт открывается по HTTPS, H1 есть на {math.floor(audit['h1_coverage_ratio'] * 100)}% страниц, "
-            f"schema - на {math.floor(audit['schema_coverage_ratio'] * 100)}%, а структура похожа на набор {project_shape}. Это можно усиливать без полной переделки сайта."
+            f"Аудит собран по слоям из SEO Монстр: индексация, сниппеты, внутренняя структура, коммерческие факторы и качество контента. "
+            f"В выборке {len(audit['sample_pages'])} HTML-страниц, основной фокус — на шаблонах типа {project_shape}."
         ),
         (
-            f"Сильнее всего рост сейчас тормозят {top_issue_titles}. Эти проблемы мешают индексации, снижают кликабельность сниппетов и делают приоритетные страницы слабее, чем они могли бы быть."
+            f"Сильнее всего рост сейчас тормозят {top_issue_titles}. Это не косметические замечания: они режут индексацию, ухудшают читаемость сниппетов и оставляют приоритетные страницы слабее конкурентов."
         ),
         (
-            f"Если сначала убрать технические ограничения, а потом привести в порядок шаблоны и ключевые страницы, проект сможет {growth_target} и получать больше заявок из поиска."
+            "Главный резерв лежит в переработке приоритетных шаблонов, а не в добавлении ещё одного общего SEO-текста: "
+            f"без условий и доверия остаются {round(commercial_gap_ratio * 100)}% ключевых страниц, "
+            f"без ответов на возражения и сравнительных блоков — {round(support_gap_ratio * 100)}%, "
+            f"а со слабой перелинковкой — {round(structure_gap_ratio * 100)}%."
         ),
     ]
 
@@ -2418,6 +2582,36 @@ def build_quick_wins(audit: dict) -> list[dict]:
             }
         )
 
+    if ISSUE_TITLE_COMMERCIAL_GAPS in issue_titles:
+        quick_wins.append(
+            {
+                "title": "Вынести условия и гарантии на приоритетные страницы",
+                "effort": "1-3 часа",
+                "impact": "Снимет часть возражений и усилит коммерческий интент",
+                "action": "Добавить на 5-10 ключевых страниц блоки с ценой/диапазоном, сроками, гарантией, оплатой/доставкой или порядком работ и явным CTA.",
+            }
+        )
+
+    if ISSUE_TITLE_CONTENT_PROOF in issue_titles:
+        quick_wins.append(
+            {
+                "title": "Добавить доказательства на ключевые страницы",
+                "effort": "2-4 часа",
+                "impact": "Сделает контент полезнее без раздувания текста",
+                "action": "Вставить в приоритетные шаблоны FAQ, таблицы, сравнения, кейсы, отзывы, фото или скрины вместо общего SEO-текста.",
+            }
+        )
+
+    if ISSUE_TITLE_INTERNAL_LINKING in issue_titles:
+        quick_wins.append(
+            {
+                "title": "Проставить тематические внутренние ссылки",
+                "effort": "1-2 часа",
+                "impact": "Подтянет важные страницы и снизит навигационный шум",
+                "action": "Добавить хлебные крошки, блоки \"по теме\" и осмысленные анкоры с приоритетных страниц на соседние кластеры и страницы заявки.",
+            }
+        )
+
     return quick_wins[:6]
 
 
@@ -2441,6 +2635,18 @@ def build_strategic_moves(audit: dict) -> list[dict]:
             "impact": "Среднее / высокое",
             "effort": "2-5 дней",
             "details": "Покрыть ключевые страницы валидной schema-разметкой и следить, чтобы она соответствовала реальному типу страницы и данным на сайте.",
+        },
+        {
+            "title": "Запустить контент-аудит по модели оставить / переписать / объединить / архивировать",
+            "impact": "Высокое",
+            "effort": "5-10 дней",
+            "details": "Периодически пересматривать старые страницы: оставлять сильные, объединять пересекающиеся, обновлять доказательства и убирать балласт, который не приносит трафик и не закрывает интент.",
+        },
+        {
+            "title": "Собрать кластеры спроса и тематическую перелинковку",
+            "impact": "Высокое",
+            "effort": "1-3 недели",
+            "details": "Развести приоритетные темы по кластерам, связать их релевантными анкорами, хлебными крошками и блоками \"по теме\", чтобы вес и интент не расползались по сайту.",
         },
     ]
     if profile["is_catalog"]:
@@ -3061,53 +3267,46 @@ def shorten_path(url: str, max_length=48) -> str:
 
 
 def dynamic_build_strengths(audit: dict) -> list[str]:
-    strengths: list[str] = []
-    profile = infer_project_profile(audit)
-
-    if audit["home_page"].status_code == 200:
-        strengths.append("Главная страница стабильно открывается по HTTPS и не выглядит сломанной для базового обхода.")
-    if audit.get("average_response_ms", 0) and audit["average_response_ms"] < 1200:
-        strengths.append(f"Средний ответ по выборке {audit['average_response_ms']} ms. Серверная часть не выглядит перегруженной.")
-    if audit["sitemap_url_count"]:
-        strengths.append(f"У сайта уже есть карта сайта с {audit['sitemap_url_count']} уникальными URL. Это хорошая база для управляемой индексации.")
-    if audit.get("canonical_coverage_ratio", 0) >= 0.6:
-        strengths.append(f"На {math.floor(audit['canonical_coverage_ratio'] * 100)}% страниц в выборке уже есть canonical. Это хороший фундамент для чистой индексации.")
-    if audit["schema_coverage_ratio"] >= 0.4:
-        strengths.append(f"Schema-разметка уже используется на {math.floor(audit['schema_coverage_ratio'] * 100)}% страниц выборки.")
-    if audit["h1_coverage_ratio"] >= 0.8:
-        strengths.append(f"На {math.floor(audit['h1_coverage_ratio'] * 100)}% проверенных страниц есть H1. Структура документов уже не выглядит хаотичной.")
-    if profile["is_catalog"]:
-        strengths.append("У проекта уже есть каталог или кластерная структура URL, которую можно усиливать без полной смены архитектуры.")
-    else:
-        strengths.append("У проекта уже есть базовый набор посадочных страниц, который можно докручивать точечно, а не пересобирать с нуля.")
-
-    unique_strengths: list[str] = []
-    for point in strengths:
-        if point not in unique_strengths:
-            unique_strengths.append(point)
-    return unique_strengths[:6]
+    return []
 
 
 def dynamic_build_growth_points(audit: dict) -> list[str]:
     profile = infer_project_profile(audit)
+    issue_titles = {issue.title for issue in audit.get("issues", [])}
+    priority_pages = select_priority_pages(audit["sample_pages"])
     points: list[str] = []
 
-    if profile["is_catalog"]:
-        points.append("Усилить категории и подкатегории: добавить вводные блоки, FAQ, условия покупки, блоки доверия и перелинковку на карточки.")
-        points.append("Пересобрать шаблоны карточек и листингов: короткие title, понятные description, canonical, alt, schema и заметный CTA.")
+    if ISSUE_TITLE_COMMERCIAL_GAPS in issue_titles:
+        points.append(
+            "Пересобрать приоритетные шаблоны под коммерческий интент: вынести на видимое место условия, сроки, оплату/доставку или порядок работ, гарантию, контакты и понятный CTA."
+        )
+    elif profile["is_catalog"]:
+        points.append(
+            "Усилить категории и карточки не SEO-текстом ради объёма, а условиями выбора: наличие, доставка, оплата, гарантия, фильтры, FAQ и блоки доверия."
+        )
     else:
-        points.append("Развести ключевые направления по отдельным посадочным страницам, а не держать несколько тем внутри одного документа.")
-        points.append("Усилить страницы услуг и лид-страницы кейсами, FAQ, блоками доверия и понятным CTA.")
+        points.append(
+            "Развести ключевые услуги по отдельным посадочным и дать на каждой странице сценарий выбора: стоимость, сроки, этапы, гарантии, кейсы и следующий шаг."
+        )
 
-    points.append("Собрать единые шаблоны для title, description, H1 и canonical по всем типам страниц.")
+    if ISSUE_TITLE_CONTENT_PROOF in issue_titles:
+        points.append(
+            "Запустить повторную оптимизацию ключевых страниц: потерянные запросы -> новые H2/H3 -> доказательства, списки, сравнения, кейсы, фото/скрины -> обновление сниппета."
+        )
+    elif priority_pages:
+        points.append(
+            "Доработать самые важные страницы фактами и подтверждениями: таблицы, FAQ, отзывы, кейсы, документы, сравнения и короткие answer-first блоки."
+        )
+
+    points.append("Собрать единые шаблоны для title, description, H1 и canonical по всем ключевым типам страниц.")
 
     if audit["total_missing_alt"] > 0:
-        points.append("Навести порядок в изображениях: alt, подписи, lazy loading и связь визуала с содержанием страницы.")
+        points.append("Обновить медиаслой: alt, подписи, размеры, lazy loading и новые изображения там, где контенту не хватает доказательств.")
 
-    if get_contact_related_pages(audit["sample_pages"]):
-        points.append("Доработать контактные и заявочные страницы, чтобы они выглядели как полноценные SEO-страницы, а не как технические формы.")
-
-    points.append("Добавить понятные ответы на частые вопросы и связать важные разделы внутренней перелинковкой.")
+    if ISSUE_TITLE_INTERNAL_LINKING in issue_titles:
+        points.append("Собрать тематическую перелинковку по кластерам спроса: хлебные крошки, блоки \"по теме\", осмысленные анкоры и несколько кликов до ключевой страницы.")
+    else:
+        points.append("Проверить, что важные разделы связаны между собой внутренними ссылками и не остаются без поддержки со стороны главной и соседних кластеров.")
 
     if audit["sitemap_url_count"] > 2000 or audit.get("sitemap_total_entries", 0) > audit["sitemap_url_count"] * 1.2:
         points.append("Разделить sitemap по типам страниц и держать под контролем служебные URL.")
@@ -3179,6 +3378,162 @@ def polish_phase_sections(phase_sections: list[dict]) -> list[dict]:
     return polished_sections
 
 
+def build_monster_phase_sections(audit: dict, phase_sections: list[dict]) -> list[dict]:
+    if not phase_sections:
+        return phase_sections
+
+    updated_sections = [dict(section) for section in phase_sections]
+    sample_pages: list[PageSnapshot] = audit["sample_pages"]
+    priority_pages = select_priority_pages(sample_pages)
+    weak_support_pages = [
+        snapshot
+        for snapshot in priority_pages
+        if not any(bool(getattr(snapshot, field, False)) for field in MONSTER_SUPPORT_FIELDS)
+    ]
+    weak_proof_pages = [
+        snapshot
+        for snapshot in priority_pages
+        if not any(bool(getattr(snapshot, field, False)) for field in MONSTER_PROOF_FIELDS)
+    ]
+    commercial_gap_pages = [snapshot for snapshot in priority_pages if not snapshot.has_commercial_block]
+    trust_gap_pages = [snapshot for snapshot in priority_pages if not snapshot.has_trust_block]
+    thin_priority_pages = [snapshot for snapshot in priority_pages if 0 < snapshot.word_count < 250]
+    low_link_priority_pages = sorted(
+        [snapshot for snapshot in priority_pages if get_template_bucket(snapshot) != "home"],
+        key=lambda snapshot: snapshot.internal_links,
+    )[:3]
+    breadcrumb_gap_pages = [
+        snapshot
+        for snapshot in priority_pages
+        if get_template_bucket(snapshot) in {"category", "product", "service", "contact"} and not snapshot.has_breadcrumbs
+    ]
+    average_priority_links = round(statistics.mean([snapshot.internal_links for snapshot in priority_pages]), 1) if priority_pages else 0
+    average_priority_words = round(statistics.mean([snapshot.word_count for snapshot in priority_pages if snapshot.word_count]), 1) if priority_pages else 0
+    long_path_pages = [snapshot for snapshot in sample_pages if len(urlparse(snapshot.url).path) > 75]
+    query_pages = get_indexable_query_pages(sample_pages)
+    profile = infer_project_profile(audit)
+
+    if len(updated_sections) > 1:
+        updated_sections[1] = {
+            "title": "Этап 2 — Структура и внутренняя перелинковка",
+            "intro": "По SEO Монстр внутренняя структура должна не просто существовать, а направлять вес и пользователя к нужным кластерам спроса. Здесь смотрим тематические связи, глубину доступа и навигационный шум.",
+            "checks": [
+                {
+                    "name": "Тематическая перелинковка приоритетных страниц",
+                    "checked": "Сколько внутренних ссылок получают ключевые шаблоны и есть ли у них навигационная поддержка.",
+                    "method": "Подсчет внутренних ссылок, хлебных крошек и слабых по связности страниц в репрезентативной выборке.",
+                    "metrics": [
+                        ("Приоритетных страниц", str(len(priority_pages))),
+                        ("Среднее число внутренних ссылок", str(average_priority_links)),
+                        ("Страниц со слабой связностью", str(len([snapshot for snapshot in priority_pages if snapshot.internal_links <= 5]))),
+                        ("Страниц без хлебных крошек", str(len(breadcrumb_gap_pages))),
+                    ],
+                    "findings": [
+                        (
+                            "Слабее всего по внутренним ссылкам выглядят: "
+                            + ", ".join(f"{human_path(snapshot.url)} ({snapshot.internal_links})" for snapshot in low_link_priority_pages)
+                            + "."
+                            if low_link_priority_pages
+                            else "Слабые по внутренним ссылкам страницы в выборке не выделяются."
+                        ),
+                        (
+                            f"На {len(breadcrumb_gap_pages)} страницах не обнаружены хлебные крошки, хотя они должны поддерживать иерархию."
+                            if breadcrumb_gap_pages
+                            else "Критичной просадки по хлебным крошкам в выборке не видно."
+                        ),
+                        "Приоритетные страницы должны получать тематические ссылки из основной области контента, а не жить только за счёт меню и футера.",
+                    ],
+                    "priority": "HIGH" if any(issue.title == ISSUE_TITLE_INTERNAL_LINKING for issue in audit.get("issues", [])) else "MEDIUM",
+                    "owner": "SEO / Frontend / Content",
+                    "recommendation": "Собрать кластеры и связки главная -> раздел -> подраздел/услуга -> заявка, добавить хлебные крошки, блоки \"по теме\" и осмысленные анкоры вместо повторяющихся служебных ссылок.",
+                },
+                {
+                    "name": "Навигационный шум и глубина доступа",
+                    "checked": "Есть ли на сайте длинные URL, indexable query-страницы и архитектурные хвосты, которые мешают чистой структуре.",
+                    "method": "Проверка query-URL, длинных путей и шаблонов, которые смешивают коммерческую и служебную логику.",
+                    "metrics": [
+                        ("Indexable query-URL", str(len(query_pages))),
+                        ("Длинных URL", str(len(long_path_pages))),
+                        ("Категорий / карточек", str(len(profile["category_pages"]) + len(profile["product_pages"]))),
+                        ("Страниц с формами", str(len(profile["form_pages"]))),
+                    ],
+                    "findings": [
+                        "Служебные query-URL не должны конкурировать с посадочными страницами за обход и индекс." if query_pages else "Критичного шума от индексируемых query-URL в выборке немного.",
+                        f"Длинных путей в выборке: {len(long_path_pages)}." if long_path_pages else "Сильного перекоса в сторону чрезмерно длинных URL в выборке не видно.",
+                        "Важные страницы должны находиться в нескольких кликах от главной и быть встроены в понятную иерархию, а не выпадать из цепочки переходов.",
+                    ],
+                    "priority": "HIGH" if query_pages else "MEDIUM",
+                    "owner": "SEO / Backend",
+                    "recommendation": "Очистить служебные маршруты из индекса, укоротить длинные пути, держать структуру URL человекочитаемой и не смешивать кластер спроса со служебными параметрами.",
+                },
+            ],
+        }
+
+    if len(updated_sections) > 5:
+        updated_sections[5] = {
+            "title": "Этап 6 — Коммерческие факторы и качество контента",
+            "intro": "Здесь применяем логику SEO Монстр: для коммерческого ранжирования мало текста. Нужны условия сделки, доверие, поддержка, ответы на возражения и доказательства, что страница реально помогает выбрать.",
+            "checks": [
+                {
+                    "name": "Коммерческий слой на приоритетных шаблонах",
+                    "checked": "Есть ли на важных страницах условия выбора: цена, сроки, оплата, доставка, гарантия, поддержка и контактные точки.",
+                    "method": "Поиск коммерческих и доверительных блоков на ключевых шаблонах: главная, категории, карточки, услуги, контакты и страницы заявок.",
+                    "metrics": [
+                        ("Приоритетных страниц", str(len(priority_pages))),
+                        ("Без коммерческого блока", str(len(commercial_gap_pages))),
+                        ("Без доверительных блоков", str(len(trust_gap_pages))),
+                        ("Контактных / lead-страниц", str(len(get_contact_related_pages(sample_pages)))),
+                    ],
+                    "findings": [
+                        (
+                            f"На {len(commercial_gap_pages)} из {len(priority_pages)} страниц не видно явных условий выбора: цены, сроков, оплаты/доставки или порядка работ."
+                            if priority_pages
+                            else "Приоритетных страниц в выборке недостаточно для выводов."
+                        ),
+                        (
+                            f"На {len(trust_gap_pages)} из {len(priority_pages)} страниц не хватает доверительных сигналов: гарантий, кейсов, сертификатов, отзывов или поддержки."
+                            if trust_gap_pages
+                            else "Критичного провала по доверию в выборке не видно."
+                        ),
+                        "По книге такие сигналы лучше выносить в видимую часть шаблона и поддерживать отдельными служебными страницами с условиями и гарантиями.",
+                    ],
+                    "priority": "HIGH" if any(issue.title == ISSUE_TITLE_COMMERCIAL_GAPS for issue in audit.get("issues", [])) else "MEDIUM",
+                    "owner": "SEO / Marketing / Content",
+                    "recommendation": "Вынести на ключевые страницы цену или диапазон, сроки, условия оплаты/доставки или работ, гарантии, поддержку, контакты и понятный следующий шаг; не прятать этот слой только в футер или одну служебную страницу.",
+                },
+                {
+                    "name": "Качество контента и доказательства",
+                    "checked": "Помогает ли контент выбрать решение, подтверждает ли оффер фактами и закрывает ли вопросы до звонка.",
+                    "method": "Подсчет тонких страниц, страниц без FAQ/отзывов/сравнений и проверка наличия доказательного слоя на приоритетных шаблонах.",
+                    "metrics": [
+                        ("Средний объём текста", str(average_priority_words)),
+                        ("Тонких страниц", str(len(thin_priority_pages))),
+                        ("Без FAQ/отзывов/таблиц", str(len(weak_support_pages))),
+                        ("Без доказательного слоя", str(len(weak_proof_pages))),
+                    ],
+                    "findings": [
+                        (
+                            f"На {len(weak_support_pages)} из {len(priority_pages)} страниц не видно FAQ, отзывов/кейсов или сравнительных блоков."
+                            if weak_support_pages
+                            else "Критичной просадки по FAQ и поддерживающим блокам в выборке не видно."
+                        ),
+                        (
+                            f"Тонких страниц с объёмом до 250 слов: {len(thin_priority_pages)}."
+                            if thin_priority_pages
+                            else "Совсем пустых приоритетных страниц в выборке немного."
+                        ),
+                        "По SEO Монстр прирост даёт не наращивание воды, а повторная оптимизация: новые абзацы под потерянные запросы, доказательства, таблицы, кейсы, фото и повторная перелинковка.",
+                    ],
+                    "priority": "HIGH" if any(issue.title == ISSUE_TITLE_CONTENT_PROOF for issue in audit.get("issues", [])) else "MEDIUM",
+                    "owner": "SEO / Content / Marketing",
+                    "recommendation": "Пересобрать ключевые страницы по схеме: потерянные запросы -> новые H2/H3 -> факты, сравнения, кейсы, FAQ, изображения и обновлённый сниппет; слабые или устаревшие материалы отправлять на перепись, объединение или в архив.",
+                },
+            ],
+        }
+
+    return updated_sections
+
+
 def build_audit(url: str, company_name: str | None, sample_size: int, competitor_urls: list[str] | None = None) -> dict:
     base_url = normalize_base_url(url)
     parsed = urlparse(base_url)
@@ -3224,7 +3579,7 @@ def build_audit(url: str, company_name: str | None, sample_size: int, competitor
     company = company_name or re.sub(r"^www\.", "", base_domain)
 
     audit = {
-        "generator_version": 3,
+        "generator_version": 4,
         "base_url": base_url,
         "domain": base_domain,
         "company_name": company,
@@ -3261,12 +3616,13 @@ def build_audit(url: str, company_name: str | None, sample_size: int, competitor
     }
     issues = dynamic_build_issue_list(audit)
     audit["issues"] = issues
-    audit["strengths"] = dynamic_build_strengths(audit)
+    audit["executive_summary"] = build_executive_summary_dynamic(audit)
+    audit["strengths"] = []
     audit["growth_points"] = dynamic_build_growth_points(audit)
     audit["roadmap"] = dynamic_build_roadmap(audit)
     audit["priority_matrix"] = build_priority_matrix(audit)
     audit["critical_errors"] = build_critical_errors(audit)
-    audit["phase_sections"] = polish_phase_sections(build_phase_sections(audit))
+    audit["phase_sections"] = build_monster_phase_sections(audit, polish_phase_sections(build_phase_sections(audit)))
     audit["quick_wins"] = build_quick_wins(audit)
     audit["strategic_moves"] = build_strategic_moves(audit)
     audit["competitor_comparison"] = build_competitor_comparison(audit, competitor_urls or [])
@@ -3778,16 +4134,12 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
     add_section_heading(
         doc,
         "Краткий вывод",
-        "Где сайт уже в порядке и что сейчас мешает росту",
-        "Ниже краткий вывод по основным зонам сайта: что уже работает, где есть потери и с чего лучше начать.",
+        "Что тормозит рост и где лежит резерв",
+        "Ниже только диагностический вывод: где сайт теряет потенциал, какие шаблоны проседают и что даст самый быстрый прирост.",
     )
-    for paragraph in build_executive_summary_dynamic(audit):
+    for paragraph in audit.get("executive_summary", []) or build_executive_summary_dynamic(audit):
         add_text_paragraph(doc, paragraph, size=11.4, color=BRAND_TEXT, space_after=6)
     add_metric_grid(doc, audit)
-
-    if audit.get("strengths"):
-        add_section_heading(doc, "Сильные стороны", "Что уже работает в плюс проекту")
-        add_bullet_list(doc, audit["strengths"], size=11.1)
 
     if audit.get("priority_matrix"):
         add_section_heading(
@@ -3850,7 +4202,12 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
         add_action_cards_doc(doc, audit.get("strategic_moves", []), "impact", "effort")
 
     if audit.get("growth_points"):
-        add_section_heading(doc, "Точки роста", "Куда масштабировать проект после исправлений")
+        add_section_heading(
+            doc,
+            "Вектор роста",
+            "Что нужно переработать после технички",
+            "Здесь не абстрактные пожелания, а направления, которые усиливают структуру, коммерческий интент и качество контента после базовых исправлений.",
+        )
         add_bullet_list(doc, audit["growth_points"], size=11.1)
 
     if audit.get("roadmap"):

@@ -1221,8 +1221,8 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
         _section_header(
             story,
             "Краткий вывод",
-            "Где сайт уже в порядке и что сейчас мешает росту",
-            "Ниже краткий вывод по основным зонам сайта: что уже работает, где есть потери и с чего лучше начать.",
+            "Что тормозит рост и где лежит резерв",
+            "Ниже только диагностический вывод: где сайт теряет потенциал, какие шаблоны проседают и что даст самый быстрый прирост.",
             styles,
         )
         story.extend(_paragraph_list(audit_payload.get("executive_summary", []), styles))
@@ -1230,14 +1230,11 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
 
         _section_header(
             story,
-            "Сильные стороны",
-            "На что уже можно опираться",
-            "Это база, которую не нужно переделывать с нуля. На ней проще строить рост.",
+            "Вектор роста",
+            "Что нужно переработать после технички",
+            "Здесь не абстрактные пожелания, а направления, которые усиливают структуру, коммерческий интент и качество контента после базовых исправлений.",
             styles,
         )
-        story.extend(_paragraph_list(audit_payload.get("strengths", []), styles))
-        story.append(Spacer(1, 6))
-        story.append(Paragraph("Точки роста", styles["cardTitle"]))
         story.extend(_paragraph_list(audit_payload.get("growth_points", []), styles))
         story.append(Spacer(1, 14))
 
@@ -1790,7 +1787,6 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     audit_payload = normalize_structure(audit_payload)
     critical_source = audit_payload.get("critical_errors") or audit_payload.get("issues", [])
     issues_html = "".join(_issue_card(issue) for issue in critical_source)
-    strengths_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in audit_payload.get("strengths", []))
     growth_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in audit_payload.get("growth_points", []))
     priority_html = _priority_table(audit_payload.get("priority_matrix", []))
     phases_html = _phase_checks_html(audit_payload.get("phase_sections", []))
@@ -2208,16 +2204,11 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       </section>
 
       <section>
-        <div class="section-kicker">Сильные стороны</div>
-        <h2>На что уже можно опираться</h2>
-        <div class="two-col">
-          <div class="list-card">
-            <ul>{strengths_html}</ul>
-          </div>
-          <div class="list-card">
-            <div class="section-kicker" style="margin-bottom:8px;">Точки роста</div>
-            <ul>{growth_html}</ul>
-          </div>
+        <div class="section-kicker">Вектор роста</div>
+        <h2>Что нужно переработать после технички</h2>
+        <p class="lead">Здесь только направления, которые усиливают структуру, коммерческий интент и качество контента после базовых исправлений.</p>
+        <div class="list-card">
+          <ul>{growth_html}</ul>
         </div>
       </section>
     </div>
