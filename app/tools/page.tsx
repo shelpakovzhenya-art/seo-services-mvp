@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react'
+import JsonLd from '@/components/JsonLd'
 import ToolCardIcon from '@/components/tools/ToolCardIcon'
 import { Button } from '@/components/ui/button'
 import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
@@ -8,6 +9,7 @@ import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getSeoTools } from '@/lib/seo-tools'
 import { getFullUrl, getLocaleAlternates } from '@/lib/site-url'
+import { createBreadcrumbSchema } from '@/lib/structured-data'
 
 const toolsIndexCopy: Record<
   Locale,
@@ -91,9 +93,15 @@ export default async function ToolsIndexPage() {
   const locale = await getRequestLocale()
   const copy = toolsIndexCopy[locale]
   const tools = getSeoTools(locale)
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: copy.home, path: '/' },
+    { name: copy.tools, path: '/tools' },
+  ], { locale })
 
   return (
     <div className="page-shell">
+      <JsonLd id="tools-breadcrumbs-schema" data={breadcrumbSchema} />
+
       <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-400">
         <Link href={prefixPathWithLocale('/', locale)} className="transition hover:text-white">
           {copy.home}

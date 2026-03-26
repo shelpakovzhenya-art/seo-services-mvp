@@ -110,7 +110,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
     { name: copy.home, path: prefixPathWithLocale('/', locale) },
     { name: copy.cases, path: prefixPathWithLocale('/cases', locale) },
     { name: caseItem.title, path: localizedCasePath },
-  ])
+  ], { locale })
   const caseArticleSchema = createCaseArticleSchema({
     path: localizedCasePath,
     title: caseItem.title,

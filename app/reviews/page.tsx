@@ -1,3 +1,4 @@
+import JsonLd from '@/components/JsonLd'
 import RichContent from '@/components/RichContent'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { type Locale } from '@/lib/i18n'
@@ -6,6 +7,7 @@ import { getRequestLocale } from '@/lib/request-locale'
 import { buildLocalizedReviewListing } from '@/lib/review-listing'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
+import { createBreadcrumbSchema } from '@/lib/structured-data'
 
 const reviewsCopy: Record<Locale, any> = {
   ru: {
@@ -48,9 +50,15 @@ export default async function ReviewsPage() {
   reviews = buildLocalizedReviewListing(reviews, locale)
   const localizedPage = locale === 'ru' ? page : null
   const pageContent = stripLeadingMarkdownH1(localizedPage?.content, localizedPage?.h1 || localizedPage?.title || copy.chip)
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: locale === 'ru' ? 'Р“Р»Р°РІРЅР°СЏ' : 'Home', path: '/' },
+    { name: copy.chip, path: '/reviews' },
+  ], { locale })
 
   return (
     <div className="page-shell">
+      <JsonLd id="reviews-breadcrumbs-schema" data={breadcrumbSchema} />
+
       <section className="surface-grid surface-pad">
         <span className="warm-chip">{copy.chip}</span>
         <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>

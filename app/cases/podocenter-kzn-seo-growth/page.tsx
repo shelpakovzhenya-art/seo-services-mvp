@@ -263,7 +263,7 @@ export default async function PodocenterCasePage() {
     { name: copy.home, path: prefixPathWithLocale('/', locale) },
     { name: copy.cases, path: prefixPathWithLocale('/cases', locale) },
     { name: caseData.h1 || caseData.title || podocenterCase.h1, path: localizedCasePath },
-  ])
+  ], { locale })
   const faqSchema = createFaqSchema(caseData.faq || [])
   const caseArticleSchema = createCaseArticleSchema({
     path: localizedCasePath,

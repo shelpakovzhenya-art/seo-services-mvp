@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, ChevronRight } from 'lucide-react'
 import { notFound } from 'next/navigation'
+import JsonLd from '@/components/JsonLd'
 import SeoToolWorkspace from '@/components/tools/SeoToolWorkspace'
 import ToolCardIcon from '@/components/tools/ToolCardIcon'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,7 @@ import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getSeoToolBySlug, getSeoTools, seoTools } from '@/lib/seo-tools'
 import { getFullUrl, getLocaleAlternates } from '@/lib/site-url'
+import { createBreadcrumbSchema } from '@/lib/structured-data'
 
 type ToolPageProps = {
   params: Promise<{ slug: string }>
@@ -114,9 +116,16 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
   const relatedTools = getSeoTools(locale)
     .filter((item) => item.slug !== tool.slug)
     .slice(0, 3)
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: copy.home, path: '/' },
+    { name: copy.tools, path: '/tools' },
+    { name: tool.title, path: `/tools/${tool.slug}` },
+  ], { locale })
 
   return (
     <div className="page-shell">
+      <JsonLd id={`tool-breadcrumbs-schema-${tool.slug}`} data={breadcrumbSchema} />
+
       <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-400">
         <Link href={prefixPathWithLocale('/', locale)} className="transition hover:text-white">
           {copy.home}

@@ -174,12 +174,12 @@ export default async function ServicesIndexPage() {
   const breadcrumbsSchema = createBreadcrumbSchema([
     { name: locale === 'ru' ? 'Главная' : 'Home', path: '/' },
     { name: locale === 'ru' ? 'Услуги' : 'Services', path: '/services' },
-  ])
+  ], { locale })
   const collectionSchema = createCollectionPageSchema({
     path: '/services',
     name: copy.pageTitle,
     description: copy.pageDescription,
-  })
+  }, { locale })
   const itemListSchema = createItemListSchema({
     path: '/services',
     name: copy.pageTitle,
@@ -188,7 +188,7 @@ export default async function ServicesIndexPage() {
       path: `/services/${service.slug}`,
       description: service.description,
     })),
-  })
+  }, { locale })
 
   return (
     <>

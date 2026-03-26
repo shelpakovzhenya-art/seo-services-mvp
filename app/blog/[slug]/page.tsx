@@ -180,7 +180,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     { name: copy.home, path: prefixPathWithLocale('/', locale) },
     { name: copy.blog, path: prefixPathWithLocale('/blog', locale) },
     { name: post.title, path: localizedPostPath },
-  ])
+  ], { locale })
 
   return (
     <article className="page-shell max-w-5xl">

@@ -1,3 +1,4 @@
+import JsonLd from '@/components/JsonLd'
 import LazyCalculator from '@/components/LazyCalculator'
 import LazyContactForm from '@/components/LazyContactForm'
 import RichContent from '@/components/RichContent'
@@ -8,6 +9,7 @@ import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { localizeServicePricingList } from '@/lib/service-pricing-localization'
 import { getLocaleAlternates } from '@/lib/site-url'
+import { createBreadcrumbSchema } from '@/lib/structured-data'
 import { getMergedServicePricingList } from '@/lib/service-pricing-overrides'
 
 const calculatorCopy: Record<Locale, any> = {
@@ -97,9 +99,15 @@ export default async function CalculatorPage() {
 
   const localizedPage = locale === 'ru' ? page : null
   const pageContent = stripLeadingMarkdownH1(localizedPage?.content, localizedPage?.h1 || localizedPage?.title || copy.title)
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: locale === 'ru' ? 'Р“Р»Р°РІРЅР°СЏ' : 'Home', path: '/' },
+    { name: copy.title, path: '/calculator' },
+  ], { locale })
 
   return (
     <div className="page-shell">
+      <JsonLd id="calculator-breadcrumbs-schema" data={breadcrumbSchema} />
+
       <section className="surface-grid surface-pad">
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1.04fr)_minmax(320px,0.96fr)] xl:items-start">
           <div className="flex flex-col gap-8 xl:self-stretch xl:justify-between xl:pr-6">

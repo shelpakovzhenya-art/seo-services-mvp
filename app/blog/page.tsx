@@ -8,7 +8,7 @@ import { getReadingTimeLabel } from '@/lib/reading-time'
 import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
-import { createCollectionPageSchema, createItemListSchema } from '@/lib/structured-data'
+import { createBreadcrumbSchema, createCollectionPageSchema, createItemListSchema } from '@/lib/structured-data'
 
 const blogCopy: Record<Locale, any> = {
   ru: {
@@ -85,11 +85,15 @@ export default async function BlogPage() {
 
   posts = buildLocalizedBlogListing(posts, locale)
 
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: locale === 'ru' ? 'Р“Р»Р°РІРЅР°СЏ' : 'Home', path: '/' },
+    { name: copy.chip, path: '/blog' },
+  ], { locale })
   const collectionSchema = createCollectionPageSchema({
     path: '/blog',
     name: copy.collectionName,
     description: copy.collectionDescription,
-  })
+  }, { locale })
   const itemListSchema = createItemListSchema({
     path: '/blog',
     name: copy.itemListName,
@@ -98,10 +102,11 @@ export default async function BlogPage() {
       path: `/blog/${post.slug}`,
       description: post.excerpt || undefined,
     })),
-  })
+  }, { locale })
 
   return (
     <div className="page-shell">
+      <JsonLd id="blog-breadcrumbs-schema" data={breadcrumbSchema} />
       <JsonLd id="blog-collection-schema" data={collectionSchema} />
       <JsonLd id="blog-item-list-schema" data={itemListSchema} />
 

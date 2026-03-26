@@ -1,3 +1,4 @@
+import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { getFullUrl, getSiteUrl } from '@/lib/site-url'
 import type { ServiceFaqItem, ServicePageContent } from '@/lib/service-pages'
 import type { ServicePricing } from '@/lib/service-pricing'
@@ -19,12 +20,25 @@ type LinkedService = {
   label: string
 }
 
+type StructuredDataLocaleOptions = {
+  locale?: Locale
+}
+
 function getSchemaLanguage(locale?: string) {
   return locale?.toLowerCase().startsWith('en') ? 'en-US' : 'ru-RU'
 }
 
 function toAbsoluteUrl(value: string) {
   return /^https?:\/\//i.test(value) ? value : getFullUrl(value)
+}
+
+function getOfferDescription(pricing: ServicePricing, locale?: Locale) {
+  if (locale === 'en') {
+    const amount = new Intl.NumberFormat('en-US').format(pricing.priceFrom)
+    return `from ₽${amount} / ${pricing.unit === 'month' ? 'month' : 'project'}`
+  }
+
+  return pricing.priceLabel
 }
 
 function normalizeImage(value?: string | null) {
@@ -35,49 +49,71 @@ function normalizeImage(value?: string | null) {
   return toAbsoluteUrl(value)
 }
 
-export function createOrganizationSchema(options?: { email?: string | null; telegramUrl?: string | null }) {
-  const email = options?.email || DEFAULT_EMAIL
-  const telegramUrl = options?.telegramUrl || DEFAULT_TELEGRAM_URL
+function toLocalizedAbsoluteUrl(path: string, locale?: Locale) {
+  const cleanPath = path.startsWith('/') ? path : `/${path}`
+  return locale ? getFullUrl(prefixPathWithLocale(cleanPath, locale)) : getFullUrl(cleanPath)
+}
+
+function normalizeSameAs(values: Array<string | null | undefined>) {
+  return values.map((value) => value?.trim()).filter((value): value is string => Boolean(value))
+}
+
+export function createOrganizationSchema(
+  options?: StructuredDataLocaleOptions & {
+    email?: string | null
+    telegramUrl?: string | null
+    vkUrl?: string | null
+    whatsappUrl?: string | null
+    maxUrl?: string | null
+  }
+) {
+  const email = options?.email?.trim() || DEFAULT_EMAIL
+  const sameAs = normalizeSameAs([
+    options?.telegramUrl || DEFAULT_TELEGRAM_URL,
+    options?.vkUrl,
+    options?.whatsappUrl,
+    options?.maxUrl,
+  ])
 
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': ORGANIZATION_ID,
     name: 'Shelpakov Digital',
-    url: getFullUrl('/'),
+    url: getSiteUrl(),
     logo: {
       '@type': 'ImageObject',
       url: getFullUrl(DEFAULT_LOGO_PATH),
     },
-    email: `mailto:${email}`,
+    email,
     contactPoint: [
       {
         '@type': 'ContactPoint',
         contactType: 'customer support',
         email,
-        availableLanguage: ['ru'],
+        availableLanguage: options?.locale === 'en' ? ['en', 'ru'] : ['ru', 'en'],
         areaServed: 'RU',
       },
     ],
-    sameAs: telegramUrl ? [telegramUrl] : undefined,
+    sameAs: sameAs.length > 0 ? sameAs : undefined,
   }
 }
 
-export function createWebsiteSchema() {
+export function createWebsiteSchema(options?: StructuredDataLocaleOptions) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     '@id': WEBSITE_ID,
-    url: getFullUrl('/'),
+    url: getSiteUrl(),
     name: 'Shelpakov Digital',
-    inLanguage: 'ru-RU',
+    inLanguage: getSchemaLanguage(options?.locale),
     publisher: {
       '@id': ORGANIZATION_ID,
     },
   }
 }
 
-export function createBreadcrumbSchema(items: BreadcrumbItem[]) {
+export function createBreadcrumbSchema(items: BreadcrumbItem[], options?: StructuredDataLocaleOptions) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -85,7 +121,7 @@ export function createBreadcrumbSchema(items: BreadcrumbItem[]) {
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: item.url || (item.path ? toAbsoluteUrl(item.path) : undefined),
+      item: item.url || (item.path ? toLocalizedAbsoluteUrl(item.path, options?.locale) : undefined),
     })),
   }
 }
@@ -105,8 +141,8 @@ export function createFaqSchema(items: ServiceFaqItem[]) {
   }
 }
 
-export function createServiceSchema(service: ServicePageContent, pricing?: ServicePricing | null) {
-  const pageUrl = getFullUrl(`/services/${service.slug}`)
+export function createServiceSchema(service: ServicePageContent, pricing?: ServicePricing | null, locale?: Locale) {
+  const pageUrl = toLocalizedAbsoluteUrl(`/services/${service.slug}`, locale)
 
   return {
     '@context': 'https://schema.org',
@@ -124,6 +160,7 @@ export function createServiceSchema(service: ServicePageContent, pricing?: Servi
     brand: {
       '@id': ORGANIZATION_ID,
     },
+    inLanguage: getSchemaLanguage(locale),
     offers: pricing
       ? {
           '@type': 'Offer',
@@ -131,7 +168,7 @@ export function createServiceSchema(service: ServicePageContent, pricing?: Servi
           availability: 'https://schema.org/InStock',
           priceCurrency: 'RUB',
           price: String(pricing.priceFrom),
-          description: pricing.priceLabel,
+          description: getOfferDescription(pricing, locale),
         }
       : undefined,
   }
@@ -141,8 +178,8 @@ export function createCollectionPageSchema(input: {
   path: string
   name: string
   description: string
-}) {
-  const url = toAbsoluteUrl(input.path)
+}, options?: StructuredDataLocaleOptions) {
+  const url = toLocalizedAbsoluteUrl(input.path, options?.locale)
 
   return {
     '@context': 'https://schema.org',
@@ -157,7 +194,7 @@ export function createCollectionPageSchema(input: {
     about: {
       '@id': ORGANIZATION_ID,
     },
-    inLanguage: 'ru-RU',
+    inLanguage: getSchemaLanguage(options?.locale),
   }
 }
 
@@ -165,18 +202,21 @@ export function createItemListSchema(input: {
   path: string
   name: string
   items: Array<{ name: string; path?: string; url?: string; description?: string }>
-}) {
-  const url = toAbsoluteUrl(input.path)
+}, options?: StructuredDataLocaleOptions) {
+  const url = toLocalizedAbsoluteUrl(input.path, options?.locale)
 
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     '@id': `${url}#itemlist`,
+    url,
     name: input.name,
+    numberOfItems: input.items.length,
+    itemListOrder: 'https://schema.org/ItemListUnordered',
     itemListElement: input.items.map((item, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      url: item.url || (item.path ? toAbsoluteUrl(item.path) : undefined),
+      url: item.url || (item.path ? toLocalizedAbsoluteUrl(item.path, options?.locale) : undefined),
       name: item.name,
       description: item.description,
     })),

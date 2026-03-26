@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import JsonLd from '@/components/JsonLd'
 import { demoteHtmlHeadings } from '@/lib/content-headings'
 import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getFullUrl, getLocaleAlternates } from '@/lib/site-url'
+import { createBreadcrumbSchema } from '@/lib/structured-data'
 import { containsCyrillic } from '@/lib/text-detection'
 
 type PageProps = {
@@ -17,16 +19,19 @@ type PageProps = {
 const dynamicPageCopy: Record<
   Locale,
   {
+    home: string
     fallbackTitle: string
     fallbackDescription: string
   }
 > = {
   ru: {
+    home: 'Р“Р»Р°РІРЅР°СЏ',
     fallbackTitle: 'Страница Shelpakov Digital',
     fallbackDescription:
       'Страница Shelpakov Digital о SEO, структуре сайта и усилении проекта под рост органического трафика, доверия и заявок.',
   },
   en: {
+    home: 'Home',
     fallbackTitle: 'Shelpakov Digital page',
     fallbackDescription:
       'A Shelpakov Digital page about SEO, site structure, and practical website improvements for organic growth and leads.',
@@ -82,6 +87,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DynamicPage({ params }: PageProps) {
   const locale = await getRequestLocale()
+  const copy = dynamicPageCopy[locale]
   const page = await getPageBySlug(params.slug)
 
   if (!page || page.slug === 'home' || (locale === 'en' && pageHasRussianContent(page))) {
@@ -89,9 +95,15 @@ export default async function DynamicPage({ params }: PageProps) {
   }
 
   const pageContent = demoteHtmlHeadings(page.content)
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: copy.home, path: '/' },
+    { name: page.h1 || page.title, path: `/${page.slug}` },
+  ], { locale })
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
+      <JsonLd id={`page-breadcrumbs-schema-${page.slug}`} data={breadcrumbSchema} />
+
       <div className="mx-auto max-w-4xl">
         <h1 className="break-words text-4xl font-semibold text-white md:text-6xl">{page.h1 || page.title}</h1>
         {page.description && <p className="mt-6 break-words text-lg leading-8 text-slate-300">{page.description}</p>}

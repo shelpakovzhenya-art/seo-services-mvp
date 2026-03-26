@@ -8,6 +8,7 @@ import LocaleHtmlSync from '@/components/LocaleHtmlSync'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import SiteAtmosphere from '@/components/SiteAtmosphere'
 import { getRouteLocale } from '@/lib/i18n'
+import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getSiteUrl } from '@/lib/site-url'
 import { createOrganizationSchema, createWebsiteSchema } from '@/lib/structured-data'
@@ -83,8 +84,25 @@ export default async function RootLayout({
   const pathname = headersList.get('x-pathname') || ''
   const locale = getRouteLocale(headersList.get('x-locale'))
   const isAdmin = pathname.startsWith('/admin')
-  const organizationSchema = createOrganizationSchema()
-  const websiteSchema = createWebsiteSchema()
+  let settings: Awaited<ReturnType<typeof prisma.siteSettings.findFirst>> = null
+
+  if (!isAdmin) {
+    try {
+      settings = await prisma.siteSettings.findFirst()
+    } catch (error) {
+      console.error('Error loading site settings for structured data:', error)
+    }
+  }
+
+  const organizationSchema = createOrganizationSchema({
+    locale,
+    email: settings?.email,
+    telegramUrl: settings?.telegramUrl,
+    vkUrl: settings?.vkUrl,
+    whatsappUrl: settings?.whatsappUrl,
+    maxUrl: settings?.maxUrl,
+  })
+  const websiteSchema = createWebsiteSchema({ locale })
 
   return (
     <html lang={locale}>

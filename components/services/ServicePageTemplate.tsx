@@ -6,13 +6,14 @@ import { Button } from '@/components/ui/button'
 import { getServicePageStrategy } from '@/lib/service-page-strategy'
 import LazyContactForm from '@/components/LazyContactForm'
 import { getServiceProofLinks, getServiceStartChecklist } from '@/lib/service-proof-data'
-import { getFullUrl } from '@/lib/site-url'
+import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { createBreadcrumbSchema, createFaqSchema, createServiceSchema } from '@/lib/structured-data'
 import { formatServiceBillingUnit, formatServicePrice, type ServicePricing } from '@/lib/service-pricing'
 import { getServicePage, type ServicePageContent } from '@/lib/service-pages'
 
 type ServicePageTemplateProps = {
   service: ServicePageContent
+  locale: Locale
   pricing?: ServicePricing | null
   customContent?: string | null
 }
@@ -64,10 +65,11 @@ const seoAuditSignals = [
   'Когда нужен не список советов, а документ, по которому можно реально ставить задачи в работу.',
 ]
 
-export default function ServicePageTemplate({ service, pricing, customContent }: ServicePageTemplateProps) {
+export default function ServicePageTemplate({ service, locale, pricing, customContent }: ServicePageTemplateProps) {
   const strategy = getServicePageStrategy(service.slug)
   const proofLinks = getServiceProofLinks(service.slug)
   const startChecklist = getServiceStartChecklist(service.slug)
+  const localizeHref = (href: string) => (href.startsWith('/') ? prefixPathWithLocale(href, locale) : href)
   const decisionServices = strategy.decisions
     .map((item) => {
       const relatedService = getServicePage(item.slug)
@@ -82,14 +84,13 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
       }
     })
     .filter((item): item is { slug: string; reason: string; service: ServicePageContent } => Boolean(item))
-  const pageUrl = getFullUrl(`/services/${service.slug}`)
   const faqSchema = createFaqSchema(service.faq)
-  const serviceSchema = createServiceSchema(service, pricing)
+  const serviceSchema = createServiceSchema(service, pricing, locale)
   const breadcrumbsSchema = createBreadcrumbSchema([
     { name: 'Главная', path: '/' },
     { name: 'Услуги', path: '/services' },
-    { name: service.shortName, url: pageUrl },
-  ])
+    { name: service.shortName, path: `/services/${service.slug}` },
+  ], { locale })
 
   return (
     <>
@@ -99,11 +100,11 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
 
       <div className="page-shell pb-28 md:pb-16">
         <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500">
-          <Link href="/" className="transition hover:text-slate-900">
+          <Link href={localizeHref('/')} className="transition hover:text-slate-900">
             Главная
           </Link>
           <ChevronRight className="h-4 w-4" />
-          <Link href="/services" className="transition hover:text-slate-900">
+          <Link href={localizeHref('/services')} className="transition hover:text-slate-900">
             Услуги
           </Link>
           <ChevronRight className="h-4 w-4" />
@@ -125,13 +126,13 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </a>
-                <Link href="/services">
+                <Link href={localizeHref('/services')}>
                   <Button size="lg" variant="outline" className="rounded-full border-slate-300 bg-white px-7 text-slate-900 hover:bg-slate-50">
                     Все услуги
                   </Button>
                 </Link>
                 {pricing ? (
-                  <Link href="/calculator">
+                  <Link href={localizeHref('/calculator')}>
                     <Button size="lg" variant="outline" className="rounded-full border-orange-200 bg-[#fffaf5] px-7 text-slate-900 hover:bg-orange-50">
                       {pricing.priceLabel}
                     </Button>
@@ -372,7 +373,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
               {decisionServices.map((item) => (
                 <Link
                   key={item.service.slug}
-                  href={`/services/${item.service.slug}`}
+                  href={localizeHref(`/services/${item.service.slug}`)}
                   className="block rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5 transition hover:border-cyan-200 hover:bg-cyan-50/70"
                 >
                   <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{item.service.label}</div>
@@ -399,7 +400,7 @@ export default function ServicePageTemplate({ service, pricing, customContent }:
               {proofLinks.map((item) => (
                 <Link
                   key={`${service.slug}-${item.href}-${item.title}`}
-                  href={item.href}
+                  href={localizeHref(item.href)}
                   className="block rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5 transition hover:border-cyan-200 hover:bg-cyan-50/70"
                 >
                   <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{item.kicker}</div>

@@ -155,5 +155,5 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
   const mergedService = mergeServiceWithOverride(service, 0, override)
 
-  return <ServicePageTemplate service={mergedService} pricing={pricing} customContent={mergedService.overrideContent} />
+  return <ServicePageTemplate service={mergedService} locale={locale} pricing={pricing} customContent={mergedService.overrideContent} />
 }

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import JsonLd from '@/components/JsonLd'
 import RichContent from '@/components/RichContent'
 import { buildCaseListing } from '@/lib/case-listing'
 import { hasRussianCaseContent, localizeCaseRecord } from '@/lib/case-localization'
@@ -7,6 +8,7 @@ import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
+import { createBreadcrumbSchema } from '@/lib/structured-data'
 
 const casesCopy = {
   ru: {
@@ -75,9 +77,15 @@ export default async function CasesPage() {
     .map((caseItem) => localizeCaseRecord(caseItem, locale))
     .filter((caseItem) => (locale === 'en' ? !hasRussianCaseContent(caseItem) : true))
   const localizedPage = locale === 'ru' ? page : null
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: locale === 'ru' ? 'Р“Р»Р°РІРЅР°СЏ' : 'Home', path: '/' },
+    { name: copy.caseLabel, path: '/cases' },
+  ], { locale })
 
   return (
     <div className="page-shell">
+      <JsonLd id="cases-breadcrumbs-schema" data={breadcrumbSchema} />
+
       <section className="surface-grid surface-pad">
         <span className="warm-chip">{copy.caseLabel}</span>
         <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>

@@ -5,8 +5,7 @@ import LazyContactForm from '@/components/LazyContactForm'
 import { Button } from '@/components/ui/button'
 import { getServicePageForLocale } from '@/lib/service-page-localization'
 import { prefixPathWithLocale } from '@/lib/i18n'
-import { getFullUrl, getLocalizedPath } from '@/lib/site-url'
-import { createBreadcrumbSchema, createFaqSchema } from '@/lib/structured-data'
+import { createBreadcrumbSchema, createFaqSchema, createServiceSchema } from '@/lib/structured-data'
 import type { ServicePageContent } from '@/lib/service-pages'
 import type { ServicePricing } from '@/lib/service-pricing'
 
@@ -25,43 +24,17 @@ function formatEnglishPrice(pricing?: ServicePricing | null) {
 }
 
 export default function EnglishServicePageTemplate({ service, pricing }: EnglishServicePageTemplateProps) {
-  const pagePath = getLocalizedPath(`/services/${service.slug}`, 'en')
-  const pageUrl = getFullUrl(pagePath)
   const relatedServices = service.related
     .map((slug) => getServicePageForLocale(slug, 'en'))
     .filter((item): item is ServicePageContent => Boolean(item))
   const priceLabel = formatEnglishPrice(pricing)
   const faqSchema = createFaqSchema(service.faq)
   const breadcrumbsSchema = createBreadcrumbSchema([
-    { name: 'Home', path: '/en' },
-    { name: 'Services', path: '/en/services' },
-    { name: service.shortName, url: pageUrl },
-  ])
-  const serviceSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Service',
-    '@id': `${pageUrl}#service`,
-    url: pageUrl,
-    mainEntityOfPage: pageUrl,
-    name: service.h1,
-    serviceType: service.shortName,
-    description: service.description,
-    provider: {
-      '@type': 'Organization',
-      name: 'Shelpakov Digital',
-      url: getFullUrl('/en'),
-    },
-    offers: pricing
-      ? {
-          '@type': 'Offer',
-          url: pageUrl,
-          availability: 'https://schema.org/InStock',
-          priceCurrency: 'RUB',
-          price: String(pricing.priceFrom),
-          description: priceLabel,
-        }
-      : undefined,
-  }
+    { name: 'Home', path: '/' },
+    { name: 'Services', path: '/services' },
+    { name: service.shortName, path: `/services/${service.slug}` },
+  ], { locale: 'en' })
+  const serviceSchema = createServiceSchema(service, pricing, 'en')
 
   return (
     <>
