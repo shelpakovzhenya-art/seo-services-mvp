@@ -3,13 +3,10 @@ import {
   ArrowRight,
   BarChart3,
   Building2,
-  Check,
-  Clock3,
   FileText,
   Gem,
   LineChart,
   Rocket,
-  ShieldCheck,
 } from 'lucide-react'
 import { buildCaseListing } from '@/lib/case-listing'
 import { buildLocalizedBlogListing } from '@/lib/blog-localization'
@@ -305,23 +302,6 @@ export default async function HomePage() {
                   </Button>
                 </Link>
               </div>
-
-              <div className="mt-5 flex flex-wrap gap-2 text-[12px] text-slate-600 md:text-[13px]">
-                {copy.heroBadges.map((badge: string) => (
-                  <span key={badge} className="rounded-full border border-orange-200 bg-white/90 px-3.5 py-1.5 shadow-sm">
-                    {badge}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-4 grid max-w-[980px] gap-2.5 md:grid-cols-3">
-                {copy.trustMetrics.map((metric: any) => (
-                  <div key={metric.value} className="rounded-[20px] border border-orange-100 bg-white/82 p-3.5 shadow-[0_18px_35px_rgba(138,103,63,0.06)] backdrop-blur-sm">
-                    <div className="text-base font-semibold text-slate-950 md:text-lg">{metric.value}</div>
-                    <div className="mt-1 text-[12px] leading-5 text-slate-600 md:text-[13px] md:leading-5">{metric.label}</div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -329,15 +309,11 @@ export default async function HomePage() {
 
       <section className="section-shell-tight !pb-10 !pt-4 md:!pb-12 md:!pt-6">
         <div className="surface-signal surface-pad">
-          <div className="section-heading">
-            <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.approachKicker}</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.approachTitle}</h2>
-            </div>
-            <p className="max-w-2xl text-sm leading-7 text-slate-600">{copy.approachText}</p>
-          </div>
+          <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">
+            {locale === 'ru' ? 'Где теряются заявки' : 'Where leads get lost'}
+          </h2>
 
-          <div className="uniform-grid-3">
+          <div className="uniform-grid-3 mt-6">
             {copy.advantageCards.map((item: any) => {
               const Icon = item.icon
               return (
@@ -356,15 +332,9 @@ export default async function HomePage() {
         <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#07101d]/92 px-6 py-8 text-slate-300 shadow-[0_26px_70px_rgba(7,16,29,0.28)] md:px-8 md:py-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,176,128,0.14),transparent_26%),radial-gradient(circle_at_82%_22%,rgba(96,227,255,0.10),transparent_22%)]" />
           <div className="relative">
-            <div className="section-heading">
-              <div>
-                <p className="text-sm uppercase tracking-[0.24em] text-slate-500">{trustLinks.heading}</p>
-                <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">{copy.trustLayerTitle}</h2>
-              </div>
-              <p className="max-w-2xl text-sm leading-7 text-slate-400">{copy.trustLayerText}</p>
-            </div>
+            <h2 className="text-3xl font-semibold text-white md:text-5xl">{trustLinks.heading}</h2>
 
-            <div className="mt-8 grid gap-4 lg:grid-cols-3">
+            <div className="mt-6 grid gap-4 lg:grid-cols-3">
               {trustLinks.links.map((item) => (
                 <Link
                   key={item.href}
@@ -373,10 +343,6 @@ export default async function HomePage() {
                 >
                   <h3 className="text-2xl font-semibold text-white">{item.title}</h3>
                   <p className="mt-4 text-sm leading-7 text-slate-400">{item.description}</p>
-                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
-                    {copy.trustLayerCta}
-                    <ArrowRight className="h-4 w-4" />
-                  </div>
                 </Link>
               ))}
             </div>
@@ -384,118 +350,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section-shell">
-        <div className="surface-grid surface-pad">
-          <div className="section-heading">
-            <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.decisionKicker}</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.decisionTitle}</h2>
-            </div>
-            <p className="max-w-2xl text-sm leading-7 text-slate-600">{copy.decisionText}</p>
-          </div>
-
-          <div className="uniform-grid-3">
-            {copy.decisionCards.map((item: any) => (
-              <Link key={item.title} href={prefixPathWithLocale(item.href, locale)} className="uniform-card glass-panel interactive-card p-7">
-                <h3 className="text-2xl font-semibold text-slate-950">{item.title}</h3>
-                <p className="mt-4 flex-1 text-sm leading-7 text-slate-600">{item.text}</p>
-                <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
-                  {item.cta}
-                  <ArrowRight className="h-4 w-4" />
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section-shell">
-        <div className="surface-dawn surface-pad">
-          <div className="section-heading">
-            <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.packageKicker}</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.packageTitle}</h2>
-            </div>
-            <p className="max-w-2xl text-sm leading-7 text-slate-600">{copy.packageText}</p>
-          </div>
-
-          <div className="uniform-grid-3">
-            {copy.packages.map((pkg: any, index: number) => {
-              const Icon = pkg.icon
-              return (
-                <div
-                  key={pkg.name}
-                  className={`uniform-card interactive-card relative rounded-[30px] border p-7 ${
-                    index === 1
-                      ? 'border-cyan-200 bg-[linear-gradient(180deg,rgba(224,247,255,0.95),rgba(255,250,243,0.95))] shadow-[0_24px_60px_rgba(56,189,248,0.12)]'
-                      : 'border-white/80 bg-white/88'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="text-sm uppercase tracking-[0.24em] text-orange-700">{pkg.name}</div>
-                      <h3 className="mt-3 text-3xl font-semibold text-slate-950">{pkg.price}</h3>
-                    </div>
-                    <Icon className="h-8 w-8 text-cyan-700" />
-                  </div>
-                  <p className="mt-4 text-sm leading-7 text-slate-600">{pkg.accent}</p>
-                  <div className="mt-6 flex-1 space-y-3">
-                    {pkg.items.map((item: string) => (
-                      <div key={item} className="flex items-start gap-3 rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan-700" />
-                        <span className="text-sm leading-6 text-slate-700">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <a href="#contact-form" className="mt-6">
-                    <Button className="w-full rounded-2xl">{copy.packageButton}</Button>
-                  </a>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
       <ServicesCatalogSection compact />
 
       <section className="section-shell">
-        <div className="surface-dawn surface-pad">
-          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-            <div className="glass-panel interactive-card p-8">
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.industryKicker}</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.industryTitle}</h2>
-              <div className="mt-8 space-y-4">
-                {copy.industryBlocks.map((item: string) => (
-                  <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-slate-700">
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {copy.processBlocks.map((item: any) => (
-                <div key={item.step} className="glass-panel interactive-card flex flex-col gap-4 p-6 sm:flex-row sm:gap-5">
-                  <div className="text-3xl font-semibold text-cyan-700">{item.step}</div>
-                  <div className="min-w-0">
-                    <h3 className="text-2xl font-semibold text-slate-950">{item.title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-shell">
         <div className="surface-grid surface-pad">
-          <div className="section-heading">
-            <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.casesKicker}</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.casesTitle}</h2>
-            </div>
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.casesTitle}</h2>
             <Link href={prefixPathWithLocale('/cases', locale)} className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
               {copy.casesLink}
               <ArrowRight className="h-4 w-4" />
@@ -511,14 +371,8 @@ export default async function HomePage() {
                       <span className="text-sm uppercase tracking-[0.24em] text-orange-700">{`${copy.caseLabel} ${index + 1}`}</span>
                       <Building2 className="h-5 w-5 text-cyan-700" />
                     </div>
-                    <h3 className="mt-6 text-3xl font-semibold text-slate-950">{item.title}</h3>
-                    <p className="mt-4 flex-1 text-sm leading-7 text-slate-600">{item.description || item.content || copy.caseFallback}</p>
-                    {item.slug ? (
-                      <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700 transition group-hover:text-slate-950">
-                        {copy.openCase}
-                        <ArrowRight className="h-4 w-4" />
-                      </div>
-                    ) : null}
+                    <h3 className="mt-5 text-3xl font-semibold text-slate-950">{item.title}</h3>
+                    <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.description || item.content || copy.caseFallback}</p>
                   </>
                 )
 
@@ -544,11 +398,8 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-grid surface-pad">
-          <div className="section-heading">
-            <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.blogKicker}</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.blogTitle}</h2>
-            </div>
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.blogTitle}</h2>
             <Link href={prefixPathWithLocale('/blog', locale)} className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
               {copy.blogLink}
               <ArrowRight className="h-4 w-4" />
@@ -559,9 +410,8 @@ export default async function HomePage() {
             {posts.length > 0 ? (
               posts.map((post) => (
                 <Link key={post.id} href={prefixPathWithLocale(`/blog/${post.slug}`, locale)} className="uniform-card glass-panel interactive-card group p-7 transition hover:border-cyan-200">
-                  <div className="text-xs uppercase tracking-[0.24em] text-slate-400">{copy.blogCardKicker}</div>
-                  <h3 className="mt-4 text-2xl font-semibold text-slate-950">{post.title}</h3>
-                  <p className="mt-4 flex-1 text-sm leading-7 text-slate-600">{post.excerpt || copy.blogFallback}</p>
+                  <h3 className="text-2xl font-semibold text-slate-950">{post.title}</h3>
+                  <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{post.excerpt || copy.blogFallback}</p>
                 </Link>
               ))
             ) : (
@@ -576,14 +426,9 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-signal surface-pad">
-          <div className="section-heading">
-            <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.reviewsKicker}</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.reviewsTitle}</h2>
-            </div>
-          </div>
+          <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.reviewsTitle}</h2>
 
-          <div className="uniform-grid-3">
+          <div className="uniform-grid-3 mt-6">
             {reviews.length > 0 ? (
               reviews.map((review) => (
                 <div key={review.id} className="uniform-card glass-panel interactive-card p-7">
@@ -609,26 +454,8 @@ export default async function HomePage() {
           <div className="surface-grid p-4 md:p-6">
             <div className="soft-section grid gap-8 overflow-hidden lg:grid-cols-[0.9fr_1.1fr]">
               <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
-                <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.contactKicker}</p>
-                <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
-                <p className="mt-6 max-w-xl text-sm leading-7 text-slate-600">{copy.contactText}</p>
-
-                <div className="mt-8 space-y-4">
-                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4">
-                    <div className="flex items-center gap-3 text-slate-900">
-                      <Clock3 className="h-5 w-5 text-cyan-700" />
-                      <span className="font-medium">{copy.contactFastTitle}</span>
-                    </div>
-                    <p className="mt-2 text-sm text-slate-600">{copy.contactFastText}</p>
-                  </div>
-                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4">
-                    <div className="flex items-center gap-3 text-slate-900">
-                      <ShieldCheck className="h-5 w-5 text-cyan-700" />
-                      <span className="font-medium">{copy.contactConcreteTitle}</span>
-                    </div>
-                    <p className="mt-2 text-sm text-slate-600">{copy.contactConcreteText}</p>
-                  </div>
-                </div>
+                <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
+                <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">{copy.contactText}</p>
               </div>
 
               <div className="p-5 sm:p-8">
