@@ -3,7 +3,7 @@ import { isPlaceholderCase } from '@/lib/case-listing'
 import { podocenterCase } from '@/lib/podocenter-case'
 import { prisma } from '@/lib/prisma'
 import { seoTools } from '@/lib/seo-tools'
-import { getFullUrl } from '@/lib/site-url'
+import { getLocalizedUrl } from '@/lib/site-url'
 import { servicePages } from '@/lib/service-pages'
 
 type SitemapEntry = {
@@ -42,6 +42,7 @@ ${urls}
 
 export async function generateSitemapEntries(): Promise<SitemapEntry[]> {
   const entries = new Map<string, SitemapEntry>()
+  const getCanonicalUrl = (path: string) => getLocalizedUrl(path)
 
   const addEntry = (entry: SitemapEntry) => {
     const existing = entries.get(entry.url)
@@ -54,73 +55,73 @@ export async function generateSitemapEntries(): Promise<SitemapEntry[]> {
 
   ;[
     {
-      url: getFullUrl('/'),
+      url: getCanonicalUrl('/'),
       lastModified: now,
       changeFrequency: 'weekly' as const,
       priority: 1,
     },
     {
-      url: getFullUrl('/services'),
+      url: getCanonicalUrl('/services'),
       lastModified: now,
       changeFrequency: 'weekly' as const,
       priority: 0.9,
     },
     {
-      url: getFullUrl('/cases'),
+      url: getCanonicalUrl('/cases'),
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     },
     {
-      url: getFullUrl(podocenterCase.url),
+      url: getCanonicalUrl(podocenterCase.url),
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.75,
     },
     {
-      url: getFullUrl(botiqCase.url),
+      url: getCanonicalUrl(botiqCase.url),
       lastModified: new Date(botiqCase.updatedAt),
       changeFrequency: 'monthly' as const,
       priority: 0.75,
     },
     {
-      url: getFullUrl('/reviews'),
+      url: getCanonicalUrl('/reviews'),
       lastModified: now,
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     },
     {
-      url: getFullUrl('/blog'),
+      url: getCanonicalUrl('/blog'),
       lastModified: now,
       changeFrequency: 'daily' as const,
       priority: 0.9,
     },
     {
-      url: getFullUrl('/contacts'),
+      url: getCanonicalUrl('/contacts'),
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
     {
-      url: getFullUrl('/calculator'),
+      url: getCanonicalUrl('/calculator'),
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     },
     {
-      url: getFullUrl('/tools'),
+      url: getCanonicalUrl('/tools'),
       lastModified: now,
       changeFrequency: 'weekly' as const,
       priority: 0.78,
     },
     ...servicePages.map((service) => ({
-      url: getFullUrl(`/services/${service.slug}`),
+      url: getCanonicalUrl(`/services/${service.slug}`),
       lastModified: now,
       changeFrequency: 'weekly' as const,
       priority: 0.85,
     })),
     ...seoTools.map((tool) => ({
-      url: getFullUrl(`/tools/${tool.slug}`),
+      url: getCanonicalUrl(`/tools/${tool.slug}`),
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.68,
@@ -140,7 +141,7 @@ export async function generateSitemapEntries(): Promise<SitemapEntry[]> {
 
     posts.forEach((post) => {
       addEntry({
-        url: getFullUrl(`/blog/${post.slug}`),
+        url: getCanonicalUrl(`/blog/${post.slug}`),
         lastModified: post.updatedAt || post.publishedAt || now,
         changeFrequency: 'monthly',
         priority: 0.7,
@@ -169,7 +170,7 @@ export async function generateSitemapEntries(): Promise<SitemapEntry[]> {
       .filter((item) => item.slug)
       .forEach((item) => {
         addEntry({
-          url: getFullUrl(`/cases/${item.slug}`),
+          url: getCanonicalUrl(`/cases/${item.slug}`),
           lastModified: item.updatedAt || now,
           changeFrequency: 'monthly',
           priority: 0.75,
