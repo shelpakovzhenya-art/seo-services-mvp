@@ -20,6 +20,7 @@ import { getRequestLocale } from '@/lib/request-locale'
 import { buildLocalizedReviewListing } from '@/lib/review-listing'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
+import { getTrustLinks } from '@/lib/trust-content'
 import { Button } from '@/components/ui/button'
 import LazyContactForm from '@/components/LazyContactForm'
 import ServicesCatalogSection from '@/components/services/ServicesCatalogSection'
@@ -56,6 +57,10 @@ const homeCopy: Record<Locale, any> = {
       { icon: LineChart, title: 'Фокус на ключевых страницах', text: 'Работа идёт не по абстрактному чек-листу, а по тем страницам, где формируется обращение.' },
       { icon: BarChart3, title: 'Без хаотичных правок', text: 'Структура, контент и техбаза приводятся в порядок так, чтобы сайт можно было спокойно развивать дальше.' },
     ],
+    trustLayerTitle: 'Что можно посмотреть сразу, чтобы понять подход к работе',
+    trustLayerText:
+      'Это не второстепенные страницы “для галочки”, а ядро trust-layer: кто отвечает за решения, как принимаются SEO-приоритеты и по каким правилам собирается экспертный контент.',
+    trustLayerCta: 'Открыть страницу',
     decisionKicker: 'С чего начинать',
     decisionTitle: 'С какого шага лучше начать',
     decisionText:
@@ -151,6 +156,10 @@ const homeCopy: Record<Locale, any> = {
       { icon: LineChart, title: 'Focused on key pages', text: 'The work is centered on the pages where inquiries are won or lost, not on a generic checklist.' },
       { icon: BarChart3, title: 'No chaotic fixes', text: 'Structure, content, and technical foundations are cleaned up so the site can keep evolving without turning into a mess.' },
     ],
+    trustLayerTitle: 'What to open first if you want to understand how the work is run',
+    trustLayerText:
+      'These are not decorative support pages. They form the trust layer: who is accountable for decisions, how SEO priorities are made, and how expert content is reviewed and updated.',
+    trustLayerCta: 'Open page',
     decisionKicker: 'Where to start',
     decisionTitle: 'What the right first step usually looks like',
     decisionText:
@@ -224,6 +233,7 @@ const homeCopy: Record<Locale, any> = {
 export default async function HomePage() {
   const locale = await getRequestLocale()
   const copy = homeCopy[locale]
+  const trustLinks = getTrustLinks(locale)
 
   let reviews: any[] = []
   let cases: any[] = []
@@ -338,6 +348,38 @@ export default async function HomePage() {
                 </div>
               )
             })}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-shell">
+        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#07101d]/92 px-6 py-8 text-slate-300 shadow-[0_26px_70px_rgba(7,16,29,0.28)] md:px-8 md:py-10">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,176,128,0.14),transparent_26%),radial-gradient(circle_at_82%_22%,rgba(96,227,255,0.10),transparent_22%)]" />
+          <div className="relative">
+            <div className="section-heading">
+              <div>
+                <p className="text-sm uppercase tracking-[0.24em] text-slate-500">{trustLinks.heading}</p>
+                <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">{copy.trustLayerTitle}</h2>
+              </div>
+              <p className="max-w-2xl text-sm leading-7 text-slate-400">{copy.trustLayerText}</p>
+            </div>
+
+            <div className="mt-8 grid gap-4 lg:grid-cols-3">
+              {trustLinks.links.map((item) => (
+                <Link
+                  key={item.href}
+                  href={prefixPathWithLocale(item.href, locale)}
+                  className="rounded-[28px] border border-white/10 bg-white/5 p-6 transition hover:border-cyan-300/40 hover:bg-white/8 hover:text-white"
+                >
+                  <h3 className="text-2xl font-semibold text-white">{item.title}</h3>
+                  <p className="mt-4 text-sm leading-7 text-slate-400">{item.description}</p>
+                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+                    {copy.trustLayerCta}
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
