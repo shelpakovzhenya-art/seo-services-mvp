@@ -81,7 +81,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const headersList = await headers()
-  const pathname = headersList.get('x-pathname') || ''
+  const pathname = headersList.get('x-site-pathname') || ''
   const locale = getRouteLocale(headersList.get('x-locale'))
   const isAdmin = pathname.startsWith('/admin')
   let settings: Awaited<ReturnType<typeof prisma.siteSettings.findFirst>> = null

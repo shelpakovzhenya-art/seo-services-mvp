@@ -100,7 +100,7 @@ export default async function CalculatorPage() {
   const localizedPage = locale === 'ru' ? page : null
   const pageContent = stripLeadingMarkdownH1(localizedPage?.content, localizedPage?.h1 || localizedPage?.title || copy.title)
   const breadcrumbSchema = createBreadcrumbSchema([
-    { name: locale === 'ru' ? 'Р“Р»Р°РІРЅР°СЏ' : 'Home', path: '/' },
+    { name: locale === 'ru' ? 'Главная' : 'Home', path: '/' },
     { name: copy.title, path: '/calculator' },
   ], { locale })
 

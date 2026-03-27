@@ -25,7 +25,7 @@ const dynamicPageCopy: Record<
   }
 > = {
   ru: {
-    home: 'Р“Р»Р°РІРЅР°СЏ',
+    home: 'Главная',
     fallbackTitle: 'Страница Shelpakov Digital',
     fallbackDescription:
       'Страница Shelpakov Digital о SEO, структуре сайта и усилении проекта под рост органического трафика, доверия и заявок.',

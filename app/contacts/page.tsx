@@ -68,7 +68,7 @@ export default async function ContactsPage() {
   const workSchedule =
     locale === 'en' && containsCyrillic(settings?.workSchedule) ? copy.scheduleFallback : settings?.workSchedule || copy.scheduleFallback
   const breadcrumbSchema = createBreadcrumbSchema([
-    { name: locale === 'ru' ? 'Р“Р»Р°РІРЅР°СЏ' : 'Home', path: '/' },
+    { name: locale === 'ru' ? 'Главная' : 'Home', path: '/' },
     { name: copy.chip, path: '/contacts' },
   ], { locale })
 

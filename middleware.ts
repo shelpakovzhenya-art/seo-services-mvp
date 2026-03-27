@@ -18,8 +18,12 @@ export function middleware(request: NextRequest) {
   }
 
   const localeFromPath = getLocaleFromPathname(pathname)
+  const internalLocale = request.nextUrl.searchParams.get('__locale')
   const cookieLocale = request.cookies.get('locale')?.value
-  const locale = localeFromPath || (cookieLocale === 'en' ? 'en' : defaultLocale)
+  const locale =
+    localeFromPath ||
+    (internalLocale === 'en' ? 'en' : internalLocale === 'ru' ? 'ru' : null) ||
+    (cookieLocale === 'en' ? 'en' : defaultLocale)
 
   if (PUBLIC_FILE.test(pathname) || pathname.startsWith('/_next') || pathname.startsWith('/api')) {
     return NextResponse.next()
@@ -27,7 +31,7 @@ export function middleware(request: NextRequest) {
 
   if (pathname.startsWith('/admin')) {
     const requestHeaders = new Headers(request.headers)
-    requestHeaders.set('x-pathname', pathname)
+    requestHeaders.set('x-site-pathname', pathname)
     requestHeaders.set('x-locale', locale)
 
     return NextResponse.next({
@@ -38,6 +42,22 @@ export function middleware(request: NextRequest) {
   }
 
   if (!localeFromPath) {
+    if (internalLocale === 'ru' || internalLocale === 'en') {
+      const requestHeaders = new Headers(request.headers)
+      requestHeaders.set('x-site-pathname', pathname)
+      requestHeaders.set('x-site-original-pathname', prefixPathWithLocale(pathname, internalLocale))
+      requestHeaders.set('x-locale', internalLocale)
+
+      const response = NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      })
+
+      response.cookies.set('locale', internalLocale, { path: '/', sameSite: 'lax' })
+      return response
+    }
+
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = prefixPathWithLocale(pathname, locale)
 
@@ -49,10 +69,11 @@ export function middleware(request: NextRequest) {
   const internalPath = stripLocaleFromPathname(pathname)
   const rewriteUrl = request.nextUrl.clone()
   rewriteUrl.pathname = internalPath
+  rewriteUrl.searchParams.set('__locale', localeFromPath)
 
   const requestHeaders = new Headers(request.headers)
-  requestHeaders.set('x-pathname', internalPath)
-  requestHeaders.set('x-original-pathname', pathname)
+  requestHeaders.set('x-site-pathname', internalPath)
+  requestHeaders.set('x-site-original-pathname', pathname)
   requestHeaders.set('x-locale', localeFromPath)
 
   const response = NextResponse.rewrite(rewriteUrl, {

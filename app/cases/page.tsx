@@ -78,7 +78,7 @@ export default async function CasesPage() {
     .filter((caseItem) => (locale === 'en' ? !hasRussianCaseContent(caseItem) : true))
   const localizedPage = locale === 'ru' ? page : null
   const breadcrumbSchema = createBreadcrumbSchema([
-    { name: locale === 'ru' ? 'Р“Р»Р°РІРЅР°СЏ' : 'Home', path: '/' },
+    { name: locale === 'ru' ? 'Главная' : 'Home', path: '/' },
     { name: copy.caseLabel, path: '/cases' },
   ], { locale })
 

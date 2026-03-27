@@ -86,7 +86,7 @@ export default async function BlogPage() {
   posts = buildLocalizedBlogListing(posts, locale)
 
   const breadcrumbSchema = createBreadcrumbSchema([
-    { name: locale === 'ru' ? 'Р“Р»Р°РІРЅР°СЏ' : 'Home', path: '/' },
+    { name: locale === 'ru' ? 'Главная' : 'Home', path: '/' },
     { name: copy.chip, path: '/blog' },
   ], { locale })
   const collectionSchema = createCollectionPageSchema({
