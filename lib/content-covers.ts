@@ -1,5 +1,3 @@
-import { parseCaseGallery } from '@/lib/case-gallery'
-
 type BlogCoverSource = {
   slug?: string | null
   coverImage?: string | null
@@ -8,10 +6,7 @@ type BlogCoverSource = {
 type CaseCoverSource = {
   slug?: string | null
   image?: string | null
-  resultImages?: string | null
 }
-
-const BLOG_DEFAULT_COVER = '/blog/default-cover.svg'
 
 const blogFallbackCoverMap: Record<string, string> = {
   'geo-i-ii-vydacha-kak-poluchat-trafik-v-2026': '/blog/ai-traffic-geo-cover.svg',
@@ -20,11 +15,9 @@ const blogFallbackCoverMap: Record<string, string> = {
   'trebovaniya-k-sovremennomu-saitu-dlya-seo-i-konversii': '/blog/seo-site-requirements-cover.svg',
   'kak-podgotovit-sait-k-geo-i-ii-vydache': '/blog/ai-traffic-geo-cover.svg',
   'seo-dlya-brand-media-kak-izmerit-polzu': '/blog/seo-effectiveness-ai-cover.svg',
-  'pereezd-na-novyy-domen-bez-poteri-trafika': BLOG_DEFAULT_COVER,
 }
 
 const caseFallbackCoverMap: Record<string, string> = {
-  'podocenter-kzn-seo-growth': '/cases/podocenter/traffic-growth.svg',
   'botiq-seo-audit': '/cases/botiq/audit-cover.png',
 }
 
@@ -40,7 +33,7 @@ export function getBlogCover(post: BlogCoverSource) {
   }
 
   const slug = post.slug?.trim() || ''
-  return blogFallbackCoverMap[slug] || BLOG_DEFAULT_COVER
+  return blogFallbackCoverMap[slug] || ''
 }
 
 export function getCaseCover(caseItem: CaseCoverSource) {
@@ -48,11 +41,6 @@ export function getCaseCover(caseItem: CaseCoverSource) {
 
   if (directCover) {
     return directCover
-  }
-
-  const galleryCover = parseCaseGallery(caseItem.resultImages)[0]?.src?.trim()
-  if (galleryCover) {
-    return galleryCover
   }
 
   const slug = caseItem.slug?.trim() || ''

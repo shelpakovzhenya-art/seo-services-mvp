@@ -3,7 +3,6 @@ import Link from 'next/link'
 import {
   ArrowRight,
   BarChart3,
-  Building2,
   FileText,
   Gem,
   LineChart,
@@ -352,22 +351,23 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-grid surface-pad">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-8">
-            <h2 className="max-w-3xl text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-slate-950">{copy.casesTitle}</h2>
+          <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-8">
+            <h2 className="max-w-[680px] text-[clamp(1.9rem,3.2vw,2.8rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-slate-950">{copy.casesTitle}</h2>
             <Link href={prefixPathWithLocale('/cases', locale)} className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
               {copy.casesLink}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
-          <div className="uniform-grid-2">
+          <div className="mx-auto grid max-w-[1180px] grid-cols-1 gap-5 pt-1 lg:grid-cols-2">
             {featuredCases.length > 0 ? (
               featuredCases.map((item, index) => {
                 const cover = getCaseCover(item)
                 const cardContent = (
                   <>
                     {cover ? (
-                      <div className="relative aspect-[16/10] overflow-hidden border-b border-slate-200/80 bg-slate-100">
+                      <div className="px-5 pt-5 md:px-6 md:pt-6">
+                        <div className="relative h-40 overflow-hidden rounded-[22px] border border-slate-200/80 bg-slate-100 md:h-44">
                         <Image
                           src={cover}
                           alt={item.title || copy.caseLabel}
@@ -375,27 +375,27 @@ export default async function HomePage() {
                           className="object-cover transition duration-500 group-hover:scale-[1.02]"
                           unoptimized={isInlineImageAsset(cover)}
                         />
-                        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
-                          <span className="rounded-full border border-white/80 bg-white/90 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-orange-700">
-                            {`${copy.caseLabel} ${index + 1}`}
-                          </span>
-                          <span className="rounded-full border border-white/80 bg-white/90 p-2 text-cyan-700">
-                            <Building2 className="h-4 w-4" />
-                          </span>
-                        </div>
                       </div>
+                    </div>
                     ) : null}
 
-                    <div className="flex flex-1 flex-col p-6 md:p-7">
-                      <h3 className="text-[1.7rem] font-semibold leading-[1.08] tracking-[-0.04em] text-slate-950 md:text-[1.95rem]">
+                    <div className="flex flex-1 flex-col p-5 md:p-6">
+                      <span className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-orange-700">
+                        {`${copy.caseLabel} ${index + 1}`}
+                      </span>
+                      <h3 className="mt-3 text-[1.4rem] font-semibold leading-[1.1] tracking-[-0.035em] text-slate-950 md:text-[1.65rem]">
                         {item.title}
                       </h3>
                       <p
-                        className="mt-3 flex-1 text-sm leading-7 text-slate-600"
+                        className="mt-3 flex-1 text-[0.96rem] leading-7 text-slate-600"
                         style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
                       >
                         {item.description || item.content || copy.caseFallback}
                       </p>
+                      <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-700">
+                        {copy.openCase}
+                        <ArrowRight className="h-4 w-4" />
+                      </span>
                     </div>
                   </>
                 )
@@ -404,12 +404,12 @@ export default async function HomePage() {
                   <Link
                     key={item.id}
                     href={prefixPathWithLocale(`/cases/${item.slug}`, locale)}
-                    className="uniform-card glass-panel interactive-card group block overflow-hidden p-0 transition hover:border-cyan-200"
+                    className="group block overflow-hidden rounded-[28px] border border-white/80 bg-white/92 shadow-[0_20px_50px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-[0_26px_60px_rgba(15,23,42,0.12)]"
                   >
                     {cardContent}
                   </Link>
                 ) : (
-                  <div key={item.id} className="uniform-card glass-panel interactive-card overflow-hidden p-0">
+                  <div key={item.id} className="overflow-hidden rounded-[28px] border border-white/80 bg-white/92 shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
                     {cardContent}
                   </div>
                 )
@@ -426,15 +426,15 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-grid surface-pad">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-8">
-            <h2 className="max-w-3xl text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-slate-950">{copy.blogTitle}</h2>
+          <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-8">
+            <h2 className="max-w-[680px] text-[clamp(1.9rem,3.2vw,2.8rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-slate-950">{copy.blogTitle}</h2>
             <Link href={prefixPathWithLocale('/blog', locale)} className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
               {copy.blogLink}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
-          <div className="uniform-grid-3">
+          <div className="mx-auto grid max-w-[1180px] grid-cols-1 gap-5 pt-1 md:grid-cols-2 xl:grid-cols-3">
             {posts.length > 0 ? (
               posts.map((post) => {
                 const cover = getBlogCover(post)
@@ -443,10 +443,11 @@ export default async function HomePage() {
                   <Link
                     key={post.id}
                     href={prefixPathWithLocale(`/blog/${post.slug}`, locale)}
-                    className="uniform-card glass-panel interactive-card group overflow-hidden p-0 transition hover:border-cyan-200"
+                    className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-white/80 bg-white/92 shadow-[0_18px_44px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-[0_24px_54px_rgba(15,23,42,0.12)]"
                   >
                     {cover ? (
-                      <div className="relative aspect-[16/10] overflow-hidden border-b border-slate-200/80 bg-slate-100">
+                      <div className="px-5 pt-5 md:px-6 md:pt-6">
+                        <div className="relative h-36 overflow-hidden rounded-[22px] border border-slate-200/80 bg-slate-100 md:h-40">
                         <Image
                           src={cover}
                           alt={post.title || copy.blogCardKicker}
@@ -454,24 +455,27 @@ export default async function HomePage() {
                           className="object-cover transition duration-500 group-hover:scale-[1.02]"
                           unoptimized={isInlineImageAsset(cover)}
                         />
-                        <div className="absolute inset-x-0 top-0 p-4">
-                          <span className="rounded-full border border-white/80 bg-white/90 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-orange-700">
-                            {copy.blogCardKicker}
-                          </span>
-                        </div>
                       </div>
+                    </div>
                     ) : null}
 
-                    <div className="flex flex-1 flex-col p-6 md:p-7">
-                      <h3 className="text-[1.45rem] font-semibold leading-[1.12] tracking-[-0.035em] text-slate-950 md:text-[1.65rem]">
+                    <div className="flex flex-1 flex-col p-5 md:p-6">
+                      <span className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-orange-700">
+                        {copy.blogCardKicker}
+                      </span>
+                      <h3 className="mt-3 text-[1.22rem] font-semibold leading-[1.14] tracking-[-0.03em] text-slate-950 md:text-[1.4rem]">
                         {post.title}
                       </h3>
                       <p
-                        className="mt-3 flex-1 text-sm leading-7 text-slate-600"
+                        className="mt-3 flex-1 text-[0.95rem] leading-7 text-slate-600"
                         style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
                       >
                         {post.excerpt || copy.blogFallback}
                       </p>
+                      <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-700">
+                        {locale === 'ru' ? 'Открыть статью' : 'Open article'}
+                        <ArrowRight className="h-4 w-4" />
+                      </span>
                     </div>
                   </Link>
                 )
