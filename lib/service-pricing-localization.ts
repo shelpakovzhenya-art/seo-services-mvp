@@ -64,6 +64,30 @@ const englishServicePricingOverrides: Record<string, ServicePricingTextOverride>
     calculatorHint: 'Useful for a new service site, a relaunch of the current project, or a new platform with SEO-ready structure.',
     deliverables: ['Structure and prototype', 'Design and frontend', 'Forms and integrations', 'Basic SEO setup'],
   },
+  'google-seo': {
+    name: 'Google SEO',
+    shortDescription: 'SEO growth in Google with a focus on demand clusters, stronger pages, and cleaner visibility.',
+    calculatorHint: 'Fits projects where Google already matters as a growth channel or needs its own search strategy.',
+    deliverables: ['Google-focused demand clusters', 'Priority landing page improvements', 'Visibility growth plan'],
+  },
+  'yandex-seo': {
+    name: 'Yandex SEO',
+    shortDescription: 'SEO growth in Yandex around commercial, regional, and trust-sensitive demand.',
+    calculatorHint: 'Useful for projects where Yandex remains a major source of commercial or geo-dependent traffic.',
+    deliverables: ['Commercial and regional pages', 'Trust-layer improvements', 'Yandex growth priorities'],
+  },
+  'young-site-seo': {
+    name: 'SEO for new websites',
+    shortDescription: 'Launch-focused SEO for new or young websites: structure, indexation, key pages, and demand mapping.',
+    calculatorHint: 'Best for new and young websites that need a cleaner SEO start without stacking avoidable mistakes.',
+    deliverables: ['Launch demand structure', 'Indexation and template review', 'Launch and expansion plan'],
+  },
+  'corporate-site-seo': {
+    name: 'Corporate website SEO',
+    shortDescription: 'SEO growth for corporate and commercial websites through service architecture, trust layers, and qualified demand.',
+    calculatorHint: 'Relevant for corporate, B2B, and expert websites with a complex service structure and a long decision cycle.',
+    deliverables: ['Service and solution architecture', 'Commercial page improvements', 'Corporate SEO growth plan'],
+  },
 }
 
 function formatLocalizedPrice(price: number, locale: Locale) {

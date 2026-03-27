@@ -6,6 +6,7 @@ import { getServicePageForLocale } from '@/lib/service-page-localization'
 import { getRequestLocale } from '@/lib/request-locale'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getServicePage, servicePages } from '@/lib/service-pages'
+import { localizeServicePricing } from '@/lib/service-pricing-localization'
 import { getMergedServicePricing } from '@/lib/service-pricing-overrides'
 import { getServiceOverrideMap, mergeServiceWithOverride } from '@/lib/service-overrides'
 import { getLocaleAlternates, getLocalizedUrl } from '@/lib/site-url'
@@ -135,7 +136,8 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
   if (locale === 'en') {
     const service = getServicePageForLocale(slug, locale)
-    const pricing = await getMergedServicePricing(slug)
+    const basePricing = await getMergedServicePricing(slug)
+    const pricing = basePricing ? localizeServicePricing(basePricing, locale) : basePricing
 
     if (!service) {
       notFound()

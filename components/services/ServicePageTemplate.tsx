@@ -8,6 +8,11 @@ import LazyContactForm from '@/components/LazyContactForm'
 import { getServiceProofLinks, getServiceStartChecklist } from '@/lib/service-proof-data'
 import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { createBreadcrumbSchema, createFaqSchema, createServiceSchema } from '@/lib/structured-data'
+import {
+  getServiceDeliveryModelContent,
+  getServicePricingModelContent,
+  getServiceTimingContent,
+} from '@/lib/service-conversion-content'
 import { formatServiceBillingUnit, formatServicePrice, type ServicePricing } from '@/lib/service-pricing'
 import { getServicePage, type ServicePageContent } from '@/lib/service-pages'
 import { seoIntentLinksRu } from '@/lib/service-market-expansion'
@@ -70,6 +75,9 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
   const strategy = getServicePageStrategy(service.slug)
   const proofLinks = getServiceProofLinks(service.slug)
   const startChecklist = getServiceStartChecklist(service.slug)
+  const timingContent = getServiceTimingContent(service.slug, locale)
+  const pricingModelContent = getServicePricingModelContent(service.slug, pricing, locale)
+  const deliveryModelContent = getServiceDeliveryModelContent(pricing, locale)
   const localizeHref = (href: string) => (href.startsWith('/') ? prefixPathWithLocale(href, locale) : href)
   const decisionServices = strategy.decisions
     .map((item) => {
@@ -270,6 +278,49 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
           </section>
         ) : null}
 
+        <section className="mt-8 reading-shell">
+          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">По теме услуги</p>
+          <h2 className="mt-3 text-3xl font-semibold text-slate-950">{service.seoBlockTitle}</h2>
+          <div className="mt-6 space-y-4">
+            {service.seoParagraphs.map((paragraph) => (
+              <p key={`${service.slug}-${paragraph}`} className="max-w-4xl text-base leading-8 text-slate-600">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </section>
+
+        {timingContent ? (
+          <section className="mt-8 grid gap-6 lg:grid-cols-[1.02fr_0.98fr] lg:items-start">
+            <div className="page-card">
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{timingContent.kicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">{timingContent.title}</h2>
+              <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-600">{timingContent.intro}</p>
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                {timingContent.phases.map((item) => (
+                  <div key={item.title} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+                    <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="page-card">
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Факторы роста</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">{timingContent.factorsTitle}</h2>
+              <div className="mt-6 space-y-4">
+                {timingContent.factors.map((item) => (
+                  <div key={item.title} className="rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5">
+                    <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         <section className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
           <div className="page-card">
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Как понять, подходит ли услуга</p>
@@ -372,6 +423,66 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
             </div>
           </div>
         </section>
+
+        {pricingModelContent ? (
+          <section className="mt-8 grid gap-6 lg:grid-cols-[1.02fr_0.98fr] lg:items-start">
+            <div className="page-card">
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{pricingModelContent.kicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">{pricingModelContent.title}</h2>
+              <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-600">{pricingModelContent.intro}</p>
+
+              <div className="mt-6 rounded-[26px] border border-orange-100 bg-[#fffaf5] p-5">
+                <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{pricingModelContent.includedTitle}</div>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{pricingModelContent.includedLead}</p>
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  {(pricing?.deliverables ?? []).map((item) => (
+                    <div key={`${service.slug}-deliverable-${item}`} className="flex gap-3 rounded-2xl border border-white/80 bg-white/80 px-4 py-3">
+                      <Check className="mt-1 h-4 w-4 shrink-0 text-cyan-700" />
+                      <span className="text-sm leading-6 text-slate-700">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-[26px] border border-cyan-100 bg-cyan-50/50 p-5">
+                <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{pricingModelContent.extraTitle}</div>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{pricingModelContent.extraLead}</p>
+                <div className="mt-4 space-y-3">
+                  {pricingModelContent.extraItems.map((item) => (
+                    <div key={`${service.slug}-extra-${item}`} className="rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-sm leading-7 text-slate-700">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-[26px] border border-orange-100 bg-white/80 p-5">
+                <div className="text-xs uppercase tracking-[0.24em] text-orange-700">{pricingModelContent.factorTitle}</div>
+                <div className="mt-4 space-y-3">
+                  {pricingModelContent.factorItems.map((item) => (
+                    <div key={`${service.slug}-price-factor-${item}`} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3 text-sm leading-7 text-slate-700">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="page-card">
+              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{deliveryModelContent.kicker}</p>
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">{deliveryModelContent.title}</h2>
+              <p className="mt-5 text-sm leading-7 text-slate-600">{deliveryModelContent.intro}</p>
+              <div className="mt-6 space-y-4">
+                {deliveryModelContent.cards.map((item) => (
+                  <div key={`${service.slug}-delivery-${item.title}`} className="rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5">
+                    <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="page-card">
