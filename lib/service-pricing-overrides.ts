@@ -88,14 +88,19 @@ export async function getServicePricingOverridePages(slugs: string[]) {
     return []
   }
 
-  return prisma.page.findMany({
-    where: {
-      slug: {
-        in: slugs.map(getServicePricingOverrideSlug),
+  try {
+    return await prisma.page.findMany({
+      where: {
+        slug: {
+          in: slugs.map(getServicePricingOverrideSlug),
+        },
       },
-    },
-    orderBy: [{ order: 'asc' }, { title: 'asc' }],
-  })
+      orderBy: [{ order: 'asc' }, { title: 'asc' }],
+    })
+  } catch (error) {
+    console.error('Error loading service pricing override pages:', error)
+    return []
+  }
 }
 
 export async function getServicePricingOverrideMap(slugs: string[]) {

@@ -22,14 +22,19 @@ export async function getServiceOverridePages(slugs: string[]) {
     return []
   }
 
-  return prisma.page.findMany({
-    where: {
-      slug: {
-        in: slugs.map(getServiceOverrideSlug),
+  try {
+    return await prisma.page.findMany({
+      where: {
+        slug: {
+          in: slugs.map(getServiceOverrideSlug),
+        },
       },
-    },
-    orderBy: [{ order: 'asc' }, { title: 'asc' }],
-  })
+      orderBy: [{ order: 'asc' }, { title: 'asc' }],
+    })
+  } catch (error) {
+    console.error('Error loading service override pages:', error)
+    return []
+  }
 }
 
 export async function getServiceOverrideMap(slugs: string[]) {
