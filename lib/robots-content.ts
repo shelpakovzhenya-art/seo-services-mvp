@@ -20,5 +20,10 @@ Clean-param: ${YANDEX_CLEAN_PARAMS_PRIMARY} /
 Clean-param: ${YANDEX_CLEAN_PARAMS_SECONDARY} /
 
 Host: ${host}
-Sitemap: ${normalizedSiteUrl}/sitemap.xml`
+Sitemap: ${normalizedSiteUrl}/sitemap.xml
+
+# AI discovery
+LLMS: ${normalizedSiteUrl}/llms.txt
+AI-Policy: ${normalizedSiteUrl}/llms.txt
+AI-Sitemap: ${normalizedSiteUrl}/sitemap.xml`
 }
