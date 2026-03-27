@@ -281,8 +281,7 @@ export default async function PodocenterCasePage() {
       <JsonLd id="podocenter-case-schema" data={caseArticleSchema} />
 
       <section className="soft-section surface-pad">
-        <span className="warm-chip">{copy.chip}</span>
-        <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">
+        <h1 className="max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">
           {caseData.h1 || caseData.title || podocenterCase.h1}
         </h1>
         <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{caseData.excerpt || podocenterCase.excerpt}</p>
@@ -307,21 +306,18 @@ export default async function PodocenterCasePage() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <div className="page-card">
-            <div className="text-sm uppercase tracking-[0.22em] text-orange-700">{copy.nicheLabel}</div>
-            <div className="mt-3 text-2xl font-semibold text-slate-950">{copy.nicheTitle}</div>
+            <div className="text-2xl font-semibold text-slate-950">{copy.nicheTitle}</div>
             <p className="mt-3 text-sm leading-7 text-slate-600">{copy.nicheDescription}</p>
           </div>
           <div className="page-card">
-            <div className="text-sm uppercase tracking-[0.22em] text-orange-700">{copy.regionLabel}</div>
-            <div className="mt-3 flex items-center gap-3 text-2xl font-semibold text-slate-950">
+            <div className="flex items-center gap-3 text-2xl font-semibold text-slate-950">
               <MapPin className="h-6 w-6 text-cyan-700" />
               {copy.regionTitle}
             </div>
             <p className="mt-3 text-sm leading-7 text-slate-600">{copy.regionDescription}</p>
           </div>
           <div className="page-card">
-            <div className="text-sm uppercase tracking-[0.22em] text-orange-700">{copy.outcomeLabel}</div>
-            <div className="mt-3 text-2xl font-semibold text-slate-950">{copy.outcomeTitle}</div>
+            <div className="text-2xl font-semibold text-slate-950">{copy.outcomeTitle}</div>
             <p className="mt-3 text-sm leading-7 text-slate-600">{copy.outcomeDescription}</p>
           </div>
         </div>
@@ -329,7 +325,7 @@ export default async function PodocenterCasePage() {
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
         <div className="page-card">
-          <span className="warm-chip">{copy.aboutChip}</span>
+          <h2 className="text-3xl font-semibold text-slate-950">{copy.aboutChip}</h2>
           <ul className="mt-6 space-y-4 text-base leading-7 text-slate-700">
             {(caseData.about || []).map((item) => (
               <li key={item} className="flex gap-3">
@@ -341,7 +337,7 @@ export default async function PodocenterCasePage() {
         </div>
 
         <div className="page-card">
-          <span className="warm-chip">{copy.pointAChip}</span>
+          <h2 className="text-3xl font-semibold text-slate-950">{copy.pointAChip}</h2>
           <div className="mt-6 grid gap-6 md:grid-cols-2">
             <div>
               <h2 className="text-2xl font-semibold text-slate-950">{copy.problemsTitle}</h2>
@@ -368,8 +364,7 @@ export default async function PodocenterCasePage() {
       </section>
 
       <section className="mt-8 page-card">
-        <span className="warm-chip">{copy.workChip}</span>
-        <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.workTitle}</h2>
+        <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.workTitle}</h2>
         <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">{copy.workIntro}</p>
 
         <div className="mt-10 space-y-6">
@@ -388,8 +383,7 @@ export default async function PodocenterCasePage() {
 
       {galleryImages.length > 0 ? (
         <section className="mt-8 page-card">
-          <span className="warm-chip">{copy.galleryChip}</span>
-          <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.galleryTitle}</h2>
+          <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.galleryTitle}</h2>
           <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">{copy.galleryIntro}</p>
 
           <div className="mt-8 space-y-6">
@@ -421,8 +415,7 @@ export default async function PodocenterCasePage() {
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
         <div className="page-card">
-          <span className="warm-chip">{copy.whyChip}</span>
-          <h2 className="mt-4 text-3xl font-semibold text-slate-950">{copy.whyTitle}</h2>
+          <h2 className="text-3xl font-semibold text-slate-950">{copy.whyTitle}</h2>
           <div className="mt-6 space-y-4">
             {(caseData.whyItWorked || []).map((item) => (
               <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-slate-700">
@@ -433,15 +426,13 @@ export default async function PodocenterCasePage() {
         </div>
 
         <div className="page-card">
-          <span className="warm-chip">{copy.conclusionChip}</span>
-          <h2 className="mt-4 text-3xl font-semibold text-slate-950">{copy.conclusionTitle}</h2>
+          <h2 className="text-3xl font-semibold text-slate-950">{copy.conclusionTitle}</h2>
           <p className="mt-5 text-base leading-8 text-slate-600">{caseData.conclusion}</p>
         </div>
       </section>
 
       <section className="mt-8 page-card">
-        <span className="warm-chip">FAQ</span>
-        <h2 className="mt-4 text-3xl font-semibold text-slate-950">{copy.faqTitle}</h2>
+        <h2 className="text-3xl font-semibold text-slate-950">{copy.faqTitle}</h2>
         <div className="mt-8 grid gap-4">
           {(caseData.faq || []).map((item) => (
             <details key={item.question} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-6">
@@ -453,9 +444,7 @@ export default async function PodocenterCasePage() {
       </section>
 
       <section className="mt-8 page-card">
-        <span className="warm-chip">{copy.relatedChip}</span>
-        <h2 className="mt-4 text-3xl font-semibold text-slate-950">{copy.relatedTitle}</h2>
-        <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">{copy.relatedDescription}</p>
+        <h2 className="text-3xl font-semibold text-slate-950">{copy.relatedTitle}</h2>
         <div className="uniform-grid-4 mt-8 gap-4">
           {serviceLinks.map((item) => (
             <Link
@@ -465,7 +454,6 @@ export default async function PodocenterCasePage() {
             >
               <div className="flex items-center gap-3 text-cyan-700">
                 <Search className="h-5 w-5" />
-                <span className="text-sm uppercase tracking-[0.22em]">{copy.serviceLabel}</span>
               </div>
               <h3 className="mt-4 text-xl font-semibold text-slate-950">{item.label}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
@@ -477,8 +465,7 @@ export default async function PodocenterCasePage() {
       <section id="case-contact" className="mt-8 soft-section overflow-hidden">
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
-            <span className="warm-chip">{copy.contactChip}</span>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
+            <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
             <p className="mt-5 text-base leading-8 text-slate-600">{copy.contactDescription}</p>
             <div className="mt-8 space-y-3 text-sm leading-7 text-slate-600">
               {copy.contactBullets.map((item) => (

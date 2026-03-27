@@ -87,8 +87,7 @@ export default async function CasesPage() {
       <JsonLd id="cases-breadcrumbs-schema" data={breadcrumbSchema} />
 
       <section className="surface-grid surface-pad">
-        <span className="warm-chip">{copy.caseLabel}</span>
-        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>
+        <h1 className="text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{localizedPage?.description || copy.description}</p>
       </section>
 
@@ -97,8 +96,7 @@ export default async function CasesPage() {
           {caseCards.map((caseItem) => {
             const cardContent = (
               <div className="flex h-full flex-col p-6 md:p-8">
-                <span className="warm-chip w-fit">{copy.caseLabel}</span>
-                <h2 className="mt-5 text-2xl font-semibold text-slate-950">{caseItem.title}</h2>
+                <h2 className="text-2xl font-semibold text-slate-950">{caseItem.title}</h2>
                 <p className="mt-4 flex-1 text-base leading-7 text-slate-600">{getCasePreview(caseItem, copy.previewFallback)}</p>
                 {caseItem.slug ? (
                   <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">

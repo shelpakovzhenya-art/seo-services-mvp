@@ -112,20 +112,13 @@ export default async function CalculatorPage() {
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1.04fr)_minmax(320px,0.96fr)] xl:items-start">
           <div className="flex flex-col gap-8 xl:self-stretch xl:justify-between xl:pr-6">
             <div>
-              <span className="warm-chip">{copy.title}</span>
-              <h1 className="mt-5 max-w-5xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.heroTitle}</h1>
+              <h1 className="max-w-5xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.heroTitle}</h1>
               <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{localizedPage?.description || copy.heroDescription}</p>
-            </div>
-            <div className="flex flex-wrap gap-3 text-sm text-slate-600">
-              {copy.highlights.map((item: string) => (
-                <span key={item} className="rounded-full border border-orange-200 bg-white px-4 py-2">{item}</span>
-              ))}
             </div>
           </div>
 
           <div className="glass-panel self-start p-6">
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.howTo}</p>
-            <div className="mt-4 space-y-3">
+            <div className="space-y-3">
               {copy.steps.map((item: any, index: number) => (
                 <div key={item.title} className="rounded-[22px] border border-orange-100 bg-white/75 px-5 py-4">
                   <div className="flex items-center gap-3">
@@ -141,13 +134,7 @@ export default async function CalculatorPage() {
       </section>
 
       <section className="mt-8 surface-grid p-4 md:p-6">
-        <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.estimateKicker}</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-950 md:text-4xl">{copy.estimateTitle}</h2>
-          </div>
-          <p className="max-w-2xl text-sm leading-7 text-slate-600">{copy.estimateText}</p>
-        </div>
+        <h2 className="mb-6 text-3xl font-semibold text-slate-950 md:text-4xl">{copy.estimateTitle}</h2>
 
         <LazyCalculator
           locale={locale}
@@ -166,8 +153,7 @@ export default async function CalculatorPage() {
 
       <section className="mt-8 grid gap-6 xl:grid-cols-[0.92fr_1.08fr] xl:items-start">
         <div className="reading-shell h-full">
-          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.pricingKicker}</p>
-          <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.pricingTitle}</h2>
+          <h2 className="text-3xl font-semibold text-slate-950">{copy.pricingTitle}</h2>
           <div className="mt-6 space-y-3">
             {copy.pricingFactors.map((item: string) => (
               <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">{item}</div>
@@ -176,8 +162,7 @@ export default async function CalculatorPage() {
         </div>
 
         <div className="page-card h-full">
-          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.cautionKicker}</p>
-          <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.cautionTitle}</h2>
+          <h2 className="text-3xl font-semibold text-slate-950">{copy.cautionTitle}</h2>
           <div className="mt-6 space-y-3">
             {copy.cautionCards.map((item: string) => (
               <div key={item} className="rounded-2xl border border-cyan-100 bg-cyan-50/60 px-5 py-4 text-sm leading-7 text-slate-700">
@@ -192,8 +177,7 @@ export default async function CalculatorPage() {
         <div id="contact-form" className="soft-section h-full scroll-mt-32 overflow-hidden md:scroll-mt-36">
           <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
             <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.contactKicker}</p>
-              <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
+              <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
               <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">{copy.contactText}</p>
             </div>
             <div className="p-5 sm:p-8">

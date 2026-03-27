@@ -219,20 +219,16 @@ function ToolLayout({
         <div className="space-y-6">
           <div className="rounded-[32px] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="warm-chip">{tool.category}</span>
               <span className="rounded-full border border-white/12 bg-white/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.24em] text-slate-300">
                 client-side
               </span>
             </div>
-            <h2 className="mt-5 text-3xl font-semibold text-white md:text-4xl">{tool.title}</h2>
+            <h2 className="mt-3 text-3xl font-semibold text-white md:text-4xl">{tool.title}</h2>
             <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300">{tool.intro}</p>
           </div>
 
           <div className="rounded-[32px] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-            <div className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-200">
-              {t(locale, 'Что умеет', 'Capabilities')}
-            </div>
-            <div className="mt-4 space-y-3">
+            <div className="space-y-3">
               {tool.highlights.map((item) => (
                 <div key={item} className="flex items-start gap-3 rounded-[22px] border border-white/10 bg-[#081321]/78 px-4 py-4 text-sm leading-7 text-slate-300">
                   <Sparkles className="mt-1 h-4 w-4 shrink-0 text-orange-300" />
@@ -243,10 +239,7 @@ function ToolLayout({
           </div>
 
           <div className="rounded-[32px] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-            <div className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-200">
-              {t(locale, 'Панель ввода', 'Input panel')}
-            </div>
-            <div className="mt-4 space-y-5">{controls}</div>
+            <div className="space-y-5">{controls}</div>
           </div>
         </div>
 

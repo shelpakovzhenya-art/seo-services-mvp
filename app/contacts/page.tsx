@@ -18,12 +18,10 @@ const contactsCopy: Record<Locale, any> = {
     description: 'Если хотите обсудить сайт, аудит или продвижение, оставьте заявку или напишите напрямую.',
     howToReach: 'Как связаться',
     formTitle: 'Форма обратной связи',
-    readinessKicker: 'Чтобы ответ был полезнее',
-    readinessTitle: 'Что лучше прислать сразу и в каких случаях вообще стоит писать',
     readinessCards: [
-      'Пришлите домен, краткую задачу и что уже делали: аудит, переезд, подрядчик, контент, редизайн. Это сразу убирает лишние круги согласования.',
-      'Если проблема выглядит размытой, не нужно формулировать “правильную услугу”. Достаточно описать симптом: мало заявок, слабая индексация, устаревший сайт, спор по приоритетам.',
-      'Если нужен просто ориентир по бюджету, быстрее начать с калькулятора. Если нужен выбор между форматами работ, лучше сразу писать с контекстом проекта.',
+      'Пришлите домен и короткую задачу.',
+      'Если услуга неочевидна, опишите симптом.',
+      'Для оценки бюджета можно начать с калькулятора.',
     ],
     scheduleFallback: 'Пн-Пт 09:00-17:00',
     metaTitle: 'Контакты | Shelpakov Digital',
@@ -36,12 +34,10 @@ const contactsCopy: Record<Locale, any> = {
     description: 'If you would like to discuss a website, audit, or SEO support, leave a request or reach out directly.',
     howToReach: 'How to get in touch',
     formTitle: 'Contact form',
-    readinessKicker: 'To get a more useful reply',
-    readinessTitle: 'What to send right away and when it makes sense to reach out',
     readinessCards: [
-      'Send the domain, the short task, and what has already been done: audit, migration, contractor work, content, or redesign. This removes unnecessary back-and-forth immediately.',
-      'If the problem still feels blurry, you do not need to name the “right service”. It is enough to describe the symptom: low leads, weak indexation, an outdated site, or a priority conflict.',
-      'If you only need a rough budget benchmark, the calculator is the faster route. If you need help choosing the right format of work, reaching out with project context is better.',
+      'Send the domain and a short task.',
+      'If the service is unclear, describe the symptom.',
+      'For a rough budget range, the calculator is faster.',
     ],
     scheduleFallback: 'Mon-Fri 09:00-17:00',
     metaTitle: 'Contact | Shelpakov Digital',
@@ -77,23 +73,8 @@ export default async function ContactsPage() {
       <JsonLd id="contacts-breadcrumbs-schema" data={breadcrumbSchema} />
 
       <section className="surface-grid surface-pad">
-        <span className="warm-chip">{copy.chip}</span>
-        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>
+        <h1 className="text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{localizedPage?.description || copy.description}</p>
-      </section>
-
-      <section className="reading-shell">
-        <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.readinessKicker}</p>
-          <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.readinessTitle}</h2>
-        </div>
-        <div className="uniform-grid-3 mt-6 gap-4">
-          {copy.readinessCards.map((item: string) => (
-            <div key={item} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
-              {item}
-            </div>
-          ))}
-        </div>
       </section>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
@@ -110,6 +91,14 @@ export default async function ContactsPage() {
               <Clock className="h-5 w-5 text-cyan-700" />
               <span>{workSchedule}</span>
             </div>
+          </div>
+
+          <div className="mt-6 space-y-3">
+            {copy.readinessCards.map((item: string) => (
+              <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3 text-sm leading-7 text-slate-700">
+                {item}
+              </div>
+            ))}
           </div>
 
           {pageContent && (

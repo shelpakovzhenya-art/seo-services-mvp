@@ -283,8 +283,7 @@ export default async function HomePage() {
               <div className="hidden" aria-hidden="true">
                 {verificationCode}
               </div>
-              <span className="warm-chip">{copy.heroChip}</span>
-              <h1 className="mt-4 max-w-[1100px] text-[clamp(2.15rem,3.4vw,4rem)] font-semibold leading-[0.93] tracking-[-0.045em] text-slate-950">
+              <h1 className="max-w-[1100px] text-[clamp(2.15rem,3.4vw,4rem)] font-semibold leading-[0.93] tracking-[-0.045em] text-slate-950">
                 {copy.heroTitle}
               </h1>
               <p className="mt-4 max-w-[860px] text-[0.95rem] leading-7 text-slate-600 md:text-[1.02rem] md:leading-7">{copy.heroText}</p>
@@ -367,11 +366,10 @@ export default async function HomePage() {
               featuredCases.map((item, index) => {
                 const cardContent = (
                   <>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm uppercase tracking-[0.24em] text-orange-700">{`${copy.caseLabel} ${index + 1}`}</span>
+                    <div className="flex items-center justify-end">
                       <Building2 className="h-5 w-5 text-cyan-700" />
                     </div>
-                    <h3 className="mt-5 text-3xl font-semibold text-slate-950">{item.title}</h3>
+                    <h3 className="mt-4 text-3xl font-semibold text-slate-950">{item.title}</h3>
                     <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.description || item.content || copy.caseFallback}</p>
                   </>
                 )
@@ -432,8 +430,8 @@ export default async function HomePage() {
             {reviews.length > 0 ? (
               reviews.map((review) => (
                 <div key={review.id} className="uniform-card glass-panel interactive-card p-7">
-                  <div className="text-sm uppercase tracking-[0.24em] text-orange-700">{review.author}</div>
-                  <p className="mt-5 flex-1 text-sm leading-7 text-slate-600">{review.text}</p>
+                  <div className="text-base font-semibold text-slate-950">{review.author}</div>
+                  <p className="mt-4 flex-1 text-sm leading-7 text-slate-600">{review.text}</p>
                   {(review.company || review.position) && (
                     <div className="mt-6 text-sm text-slate-400">{[review.company, review.position].filter(Boolean).join(', ')}</div>
                   )}

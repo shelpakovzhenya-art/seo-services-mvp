@@ -141,13 +141,7 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
       <section className="surface-grid surface-pad">
         <div className="grid gap-6 xl:grid-cols-[1.02fr_0.98fr] xl:items-end">
           <div>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="warm-chip">{tool.category}</span>
-              <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-medium uppercase tracking-[0.24em] text-slate-500">
-                {copy.runtimeBadge}
-              </span>
-            </div>
-            <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">
+            <h1 className="max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">
               {tool.title}
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{tool.summary}</p>
@@ -159,7 +153,7 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
                 <ToolCardIcon icon={tool.icon} className="h-6 w-6" />
               </div>
               <div>
-                <div className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.principlesTitle}</div>
+                <div className="text-sm font-medium text-slate-500">{tool.category}</div>
                 <p className="mt-3 text-sm leading-7 text-slate-600">{copy.principlesDescription}</p>
               </div>
             </div>
@@ -188,8 +182,7 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
       <section className="mt-10 reading-shell">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.relatedKicker}</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.relatedTitle}</h2>
+            <h2 className="text-3xl font-semibold text-slate-950">{copy.relatedTitle}</h2>
           </div>
           <Link
             href={prefixPathWithLocale('/tools', locale)}
@@ -207,8 +200,7 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
               href={prefixPathWithLocale(`/tools/${item.slug}`, locale)}
               className="uniform-card rounded-[28px] border border-orange-100 bg-[#fffaf5] p-5 transition hover:-translate-y-1 hover:border-cyan-200 hover:bg-white"
             >
-              <div className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-700">{item.category}</div>
-              <div className="mt-3 text-2xl font-semibold text-slate-950">{item.title}</div>
+              <div className="text-2xl font-semibold text-slate-950">{item.title}</div>
               <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.summary}</p>
             </Link>
           ))}

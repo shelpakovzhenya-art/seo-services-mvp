@@ -108,7 +108,6 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-start gap-2 py-2.5 text-[11px] font-medium text-slate-200/88 sm:flex-row sm:items-center sm:justify-between sm:gap-3 md:gap-4 md:py-3 md:text-xs">
             <div className="flex w-full min-w-0 flex-wrap items-center gap-2.5 md:gap-3">
-              <span className="warm-chip">Shelpakov Digital</span>
               <span className="inline-flex items-center rounded-full border border-white/12 bg-[#0c1727]/90 px-3 py-1.5 font-semibold text-slate-50 shadow-[0_10px_24px_rgba(2,8,23,0.22)] md:px-3.5">
                 {workSchedule}
               </span>

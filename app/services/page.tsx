@@ -207,50 +207,22 @@ export default async function ServicesIndexPage() {
         </nav>
 
         <section className="surface-grid surface-pad">
-          <div className="grid gap-6 lg:grid-cols-[1.04fr_0.96fr] lg:items-start">
-            <div>
-              <span className="warm-chip">{copy.chip}</span>
-              <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{copy.pageTitle}</h1>
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{copy.pageDescription}</p>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <a href="#contact-form">
-                  <Button size="lg" className="rounded-full px-7">
-                    {copy.cta}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </a>
-                <Link href={prefixPathWithLocale('/', locale)}>
-                  <Button size="lg" variant="outline" className="rounded-full border-slate-300 bg-white px-7 text-slate-900 hover:bg-slate-50">
-                    {copy.back}
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="glass-panel p-6">
-              <div className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.chooseKicker}</div>
-              <div className="mt-4 space-y-3">
-                {copy.chooseCards.map((item: string) => (
-                  <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
+          <h1 className="max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{copy.pageTitle}</h1>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{copy.pageDescription}</p>
+          <div className="mt-8">
+            <a href="#contact-form">
+              <Button size="lg" className="rounded-full px-7">
+                {copy.cta}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </a>
           </div>
         </section>
 
         <ServicesCatalogSection />
 
         <section className="reading-shell">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.comparisonKicker}</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.comparisonTitle}</h2>
-            </div>
-            <p className="max-w-2xl text-sm leading-7 text-slate-600">{copy.comparisonText}</p>
-          </div>
-
+          <h2 className="text-3xl font-semibold text-slate-950">{copy.comparisonTitle}</h2>
           <div className="uniform-grid-3 mt-6 gap-4">
             {copy.comparisonCards.map((item: any) => (
               <div key={item.title} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
@@ -262,13 +234,8 @@ export default async function ServicesIndexPage() {
         </section>
 
         <section className="reading-shell">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.faqKicker}</p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-950">{copy.faqTitle}</h2>
-            </div>
-            <div className="text-sm text-slate-500">{copy.faqCount}: {services.length}</div>
-          </div>
+          <h2 className="text-3xl font-semibold text-slate-950">{copy.faqTitle}</h2>
+          <div className="mt-3 text-sm text-slate-500">{copy.faqCount}: {services.length}</div>
 
           <div className="uniform-grid-2 mt-6 gap-4">
             {copy.faq.map((item: any) => (
@@ -284,13 +251,8 @@ export default async function ServicesIndexPage() {
           <div className="soft-section overflow-hidden">
             <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
               <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
-                <p className="text-sm uppercase tracking-[0.24em] text-orange-700">{copy.contactKicker}</p>
-                <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
+                <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
                 <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">{copy.contactText}</p>
-                <div className="mt-8 space-y-4">
-                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">{copy.contactNoteA}</div>
-                  <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">{copy.contactNoteB}</div>
-                </div>
               </div>
               <div className="p-5 sm:p-8">
                 <LazyContactForm />

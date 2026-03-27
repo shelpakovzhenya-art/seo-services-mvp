@@ -60,8 +60,7 @@ export default async function ReviewsPage() {
       <JsonLd id="reviews-breadcrumbs-schema" data={breadcrumbSchema} />
 
       <section className="surface-grid surface-pad">
-        <span className="warm-chip">{copy.chip}</span>
-        <h1 className="mt-4 text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>
+        <h1 className="text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{localizedPage?.description || copy.description}</p>
       </section>
 
@@ -85,8 +84,8 @@ export default async function ReviewsPage() {
                   <span key={index}>★</span>
                 ))}
               </div>
+              <p className="text-base font-semibold text-slate-950">{review.author}</p>
               <p className="flex-1 text-sm leading-7 text-slate-700">{review.text}</p>
-              <p className="mt-4 text-sm font-semibold text-slate-500">— {review.author}</p>
               {(review.company || review.position) && (
                 <p className="mt-2 text-sm text-slate-400">{[review.company, review.position].filter(Boolean).join(', ')}</p>
               )}

@@ -133,8 +133,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
       <JsonLd id={`case-article-${params.slug}`} data={caseArticleSchema} />
 
       <section className="soft-section surface-pad overflow-hidden">
-        <span className="warm-chip">{copy.chip}</span>
-        <h1 className="mt-4 max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">{caseItem.title}</h1>
+        <h1 className="max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">{caseItem.title}</h1>
         {caseItem.description ? <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{caseItem.description}</p> : null}
 
         <div className="mt-8 flex flex-wrap gap-4">
@@ -165,8 +164,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
       <section id="case-contact" className="mt-8 soft-section overflow-hidden">
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
-            <span className="warm-chip">{copy.contactChip}</span>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
+            <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
             <p className="mt-5 text-base leading-8 text-slate-600">{copy.contactDescription}</p>
           </div>
 

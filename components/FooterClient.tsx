@@ -64,7 +64,6 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
       <div className="container relative mx-auto px-4 py-16">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.75fr_0.8fr_1.1fr]">
           <div className="space-y-5">
-            <span className="warm-chip">Shelpakov Digital</span>
             <h3 className="max-w-xl text-3xl font-semibold text-white">{dictionary.footer.heading}</h3>
             <p className="max-w-xl text-sm leading-7 text-slate-400">{footerText}</p>
 

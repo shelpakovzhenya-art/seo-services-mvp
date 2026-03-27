@@ -110,19 +110,9 @@ export default async function BlogPage() {
       <JsonLd id="blog-collection-schema" data={collectionSchema} />
       <JsonLd id="blog-item-list-schema" data={itemListSchema} />
 
-      <section className="surface-cosmos surface-pad">
-        <div className="max-w-4xl">
-          <span className="warm-chip">{copy.chip}</span>
-          <h1 className="mt-4 text-4xl font-semibold text-white md:text-6xl">{copy.title}</h1>
-          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">{copy.description}</p>
-          <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-200">
-            {copy.badges.map((badge: string) => (
-              <span key={badge} className="rounded-full border border-white/12 bg-white/8 px-4 py-2">
-                {badge}
-              </span>
-            ))}
-          </div>
-        </div>
+      <section className="surface-grid surface-pad">
+        <h1 className="max-w-4xl text-4xl font-semibold text-slate-950 md:text-6xl">{copy.title}</h1>
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{copy.description}</p>
       </section>
 
       <section className="mt-8 surface-grid surface-pad">
@@ -142,10 +132,9 @@ export default async function BlogPage() {
                     ) : null}
 
                     <div className="flex flex-1 flex-col p-6 md:p-7">
-                      <div className="text-[11px] uppercase tracking-[0.24em] text-orange-700">{copy.cardKicker}</div>
-                      <h2 className="mt-4 text-2xl font-semibold leading-tight text-slate-950">{post.title}</h2>
+                      <h2 className="text-2xl font-semibold leading-tight text-slate-950">{post.title}</h2>
                       {post.excerpt ? (
-                        <p className="mt-3 flex-1 overflow-hidden text-sm leading-7 text-slate-600" style={{ display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical' }}>
+                        <p className="mt-3 flex-1 overflow-hidden text-sm leading-7 text-slate-600" style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}>
                           {post.excerpt}
                         </p>
                       ) : (
