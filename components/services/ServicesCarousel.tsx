@@ -19,14 +19,24 @@ type ServicesCarouselProps = {
   cards: ServicesCarouselCard[]
   previousLabel: string
   nextLabel: string
-  swipeHint: string
 }
 
-function readCarouselState(track: HTMLDivElement, cardsLength: number) {
+type DragState = {
+  pointerId: number
+  startX: number
+  startScrollLeft: number
+  moved: boolean
+}
+
+function getCardStep(track: HTMLDivElement) {
   const style = window.getComputedStyle(track)
   const gap = Number.parseFloat(style.columnGap || style.gap || '0')
   const firstCard = track.firstElementChild as HTMLElement | null
-  const step = firstCard ? firstCard.offsetWidth + gap : track.clientWidth
+  return firstCard ? firstCard.offsetWidth + gap : track.clientWidth
+}
+
+function readCarouselState(track: HTMLDivElement, cardsLength: number) {
+  const step = getCardStep(track)
   const nextIndex = step > 0 ? Math.round(track.scrollLeft / step) : 0
 
   return {
@@ -40,12 +50,14 @@ export default function ServicesCarousel({
   cards,
   previousLabel,
   nextLabel,
-  swipeHint,
 }: ServicesCarouselProps) {
   const trackRef = useRef<HTMLDivElement | null>(null)
+  const dragStateRef = useRef<DragState | null>(null)
+  const suppressClickRef = useRef(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [canScrollPrev, setCanScrollPrev] = useState(false)
   const [canScrollNext, setCanScrollNext] = useState(cards.length > 1)
+  const [isDragging, setIsDragging] = useState(false)
 
   function handleTrackScroll() {
     const track = trackRef.current
@@ -65,15 +77,83 @@ export default function ServicesCarousel({
       return
     }
 
-    const style = window.getComputedStyle(track)
-    const gap = Number.parseFloat(style.columnGap || style.gap || '0')
-    const firstCard = track.firstElementChild as HTMLElement | null
-    const distance = firstCard ? firstCard.offsetWidth + gap : track.clientWidth * 0.88
+    const distance = getCardStep(track) || track.clientWidth * 0.88
 
     track.scrollBy({
       left: distance * direction,
       behavior: 'smooth',
     })
+  }
+
+  function snapToNearestCard() {
+    const track = trackRef.current
+    if (!track) {
+      return
+    }
+
+    const step = getCardStep(track)
+    if (!step) {
+      return
+    }
+
+    const targetIndex = Math.max(0, Math.min(cards.length - 1, Math.round(track.scrollLeft / step)))
+    track.scrollTo({
+      left: targetIndex * step,
+      behavior: 'smooth',
+    })
+  }
+
+  function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    const track = trackRef.current
+    if (!track || event.pointerType === 'touch') {
+      return
+    }
+
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startScrollLeft: track.scrollLeft,
+      moved: false,
+    }
+    suppressClickRef.current = false
+    setIsDragging(true)
+    track.setPointerCapture(event.pointerId)
+  }
+
+  function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    const track = trackRef.current
+    const dragState = dragStateRef.current
+    if (!track || !dragState || dragState.pointerId !== event.pointerId) {
+      return
+    }
+
+    const deltaX = event.clientX - dragState.startX
+    if (Math.abs(deltaX) > 6) {
+      dragState.moved = true
+      suppressClickRef.current = true
+    }
+
+    track.scrollLeft = dragState.startScrollLeft - deltaX
+  }
+
+  function finishDragging(pointerId?: number) {
+    const track = trackRef.current
+    const dragState = dragStateRef.current
+    if (track && dragState && pointerId === dragState.pointerId && track.hasPointerCapture(pointerId)) {
+      track.releasePointerCapture(pointerId)
+    }
+
+    if (dragState?.moved) {
+      snapToNearestCard()
+      window.setTimeout(() => {
+        suppressClickRef.current = false
+      }, 120)
+    } else {
+      suppressClickRef.current = false
+    }
+
+    dragStateRef.current = null
+    setIsDragging(false)
   }
 
   useEffect(() => {
@@ -101,45 +181,48 @@ export default function ServicesCarousel({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
-          <span className="rounded-full border border-slate-200 bg-white/80 px-3 py-1 font-medium text-slate-700">
-            {`${activeIndex + 1}/${cards.length}`}
-          </span>
-          <span>{swipeHint}</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            aria-label={previousLabel}
-            onClick={() => scrollByCard(-1)}
-            disabled={!canScrollPrev}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm transition disabled:cursor-not-allowed disabled:opacity-45"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            aria-label={nextLabel}
-            onClick={() => scrollByCard(1)}
-            disabled={!canScrollNext}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm transition disabled:cursor-not-allowed disabled:opacity-45"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </div>
+      <div className="flex justify-end gap-2">
+        <button
+          type="button"
+          aria-label={previousLabel}
+          onClick={() => scrollByCard(-1)}
+          disabled={!canScrollPrev}
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm transition disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          aria-label={nextLabel}
+          onClick={() => scrollByCard(1)}
+          disabled={!canScrollNext}
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm transition disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
       </div>
 
       <div
         ref={trackRef}
         onScroll={handleTrackScroll}
-        className="services-carousel-track -mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-3 pt-1"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={(event) => finishDragging(event.pointerId)}
+        onPointerCancel={(event) => finishDragging(event.pointerId)}
+        onPointerLeave={(event) => finishDragging(event.pointerId)}
+        className={`services-carousel-track -mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-3 pt-1 ${
+          isDragging ? 'services-carousel-track--dragging' : ''
+        }`}
       >
         {cards.map((card) => (
           <Link
             key={card.slug}
             href={card.href}
+            onClickCapture={(event) => {
+              if (suppressClickRef.current) {
+                event.preventDefault()
+              }
+            }}
             className="services-carousel-card uniform-card glass-panel interactive-card min-h-[24rem] w-[86vw] max-w-[25rem] shrink-0 p-6 sm:w-[31rem]"
           >
             <div className="flex items-start justify-between gap-4">

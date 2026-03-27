@@ -1118,10 +1118,21 @@
     -ms-overflow-style: none;
     overscroll-behavior-x: contain;
     touch-action: pan-x;
+    cursor: grab;
   }
 
   .services-carousel-track::-webkit-scrollbar {
     display: none;
+  }
+
+  .services-carousel-track--dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+  }
+
+  .services-carousel-track--dragging .services-carousel-card {
+    user-select: none;
+    pointer-events: none;
   }
 
   .services-carousel-card {
