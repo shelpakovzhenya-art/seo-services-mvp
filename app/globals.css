@@ -1112,6 +1112,21 @@
     opacity: 0;
     transform: translate3d(0, 18px, 0);
   }
+
+  .services-carousel-track {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+  }
+
+  .services-carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .services-carousel-card {
+    scroll-snap-align: start;
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
