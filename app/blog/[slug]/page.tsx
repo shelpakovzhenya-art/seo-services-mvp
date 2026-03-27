@@ -14,6 +14,7 @@ import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getServicePageForLocale } from '@/lib/service-page-localization'
 import { getFullUrl, getLocaleAlternates } from '@/lib/site-url'
 import { createBlogPostingSchema, createBreadcrumbSchema } from '@/lib/structured-data'
+import { getArticleTrustCopy, getEditorialTeam, getTrustLinks } from '@/lib/trust-content'
 
 type BlogPostRecord = {
   slug?: string | null
@@ -36,7 +37,7 @@ const blogPostCopy: Record<
   {
     home: string
     blog: string
-    author: string
+    authorPrefix: string
     topic: string
     servicesLink: string
     relatedServicesKicker: string
@@ -48,12 +49,14 @@ const blogPostCopy: Record<
     metaDescriptionFallback: string
     dateLocale: string
     relatedServiceFallback: string
+    publishedLabel: string
+    updatedLabel: string
   }
 > = {
   ru: {
     home: 'Главная',
     blog: 'Блог',
-    author: 'Автор: Shelpakov Digital',
+    authorPrefix: 'Подготовлено:',
     topic: 'Тема: SEO, структура сайта и коммерческие страницы',
     servicesLink: 'Перейти к услугам',
     relatedServicesKicker: 'Связанные услуги',
@@ -67,11 +70,13 @@ const blogPostCopy: Record<
       'Материал Shelpakov Digital о SEO, структуре сайта, коммерческих страницах и росте заявок.',
     dateLocale: 'ru-RU',
     relatedServiceFallback: 'Откройте страницу услуги, чтобы перейти от чтения к внедрению.',
+    publishedLabel: 'Опубликовано',
+    updatedLabel: 'Обновлено',
   },
   en: {
     home: 'Home',
     blog: 'Blog',
-    author: 'Author: Shelpakov Digital',
+    authorPrefix: 'Prepared by:',
     topic: 'Topic: SEO, site structure, and commercial pages',
     servicesLink: 'Browse services',
     relatedServicesKicker: 'Related services',
@@ -85,6 +90,8 @@ const blogPostCopy: Record<
       'A Shelpakov Digital article on SEO, site structure, commercial pages, and lead growth.',
     dateLocale: 'en-US',
     relatedServiceFallback: 'Open the service page to move from reading to implementation.',
+    publishedLabel: 'Published',
+    updatedLabel: 'Updated',
   },
 }
 
@@ -150,6 +157,26 @@ async function getBlogPostBySlug(slug: string, locale: Locale): Promise<BlogPost
   return locale === 'en' && hasRussianBlogContent(localizedPost) ? null : localizedPost
 }
 
+function formatDate(value: Date | string | null | undefined, locale: string) {
+  if (!value) {
+    return null
+  }
+
+  return new Date(value).toLocaleDateString(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
+
+function hasMeaningfulUpdate(publishedAt?: Date | string | null, updatedAt?: Date | string | null) {
+  if (!publishedAt || !updatedAt) {
+    return false
+  }
+
+  return new Date(publishedAt).toISOString().slice(0, 10) !== new Date(updatedAt).toISOString().slice(0, 10)
+}
+
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const locale = await getRequestLocale()
   const copy = blogPostCopy[locale]
@@ -163,8 +190,14 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const content = stripLeadingMarkdownH1(post.content, post.title)
   const readingTimeLabel = getReadingTimeLabel(post.content, locale)
   const relatedServices = getRelatedServices(post.slug, locale)
+  const team = getEditorialTeam(locale)
+  const trustCopy = getArticleTrustCopy(locale)
+  const trustLinks = getTrustLinks(locale).links
   const localizedPostPath = prefixPathWithLocale(`/blog/${post.slug}`, locale)
   const articleDescription = normalizeMetaDescription(post.excerpt, copy.metaDescriptionFallback)
+  const publishedDate = formatDate(post.publishedAt, copy.dateLocale)
+  const updatedDate = formatDate(post.updatedAt, copy.dateLocale)
+  const showUpdatedDate = hasMeaningfulUpdate(post.publishedAt, post.updatedAt)
   const articleSchema = createBlogPostingSchema({
     slug: post.slug,
     path: localizedPostPath,
@@ -176,11 +209,14 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     updatedAt: post.updatedAt,
     relatedServices,
   })
-  const breadcrumbSchema = createBreadcrumbSchema([
-    { name: copy.home, path: prefixPathWithLocale('/', locale) },
-    { name: copy.blog, path: prefixPathWithLocale('/blog', locale) },
-    { name: post.title, path: localizedPostPath },
-  ], { locale })
+  const breadcrumbSchema = createBreadcrumbSchema(
+    [
+      { name: copy.home, path: prefixPathWithLocale('/', locale) },
+      { name: copy.blog, path: prefixPathWithLocale('/blog', locale) },
+      { name: post.title, path: localizedPostPath },
+    ],
+    { locale }
+  )
 
   return (
     <article className="page-shell max-w-5xl">
@@ -200,16 +236,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           </nav>
 
           <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-slate-400">
-            {post.publishedAt ? (
-              <p>
-                {new Date(post.publishedAt).toLocaleDateString(copy.dateLocale, {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </p>
-            ) : null}
-            {post.publishedAt ? <span aria-hidden="true">•</span> : null}
+            {publishedDate ? <p>{publishedDate}</p> : null}
+            {publishedDate ? <span aria-hidden="true">•</span> : null}
             <p>{readingTimeLabel}</p>
           </div>
 
@@ -217,8 +245,11 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           {post.excerpt ? <p className="mt-5 text-lg leading-8 text-slate-300">{post.excerpt}</p> : null}
 
           <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-200">
-            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">{copy.author}</span>
+            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">{`${copy.authorPrefix} ${team.name}`}</span>
             <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">{copy.topic}</span>
+            {showUpdatedDate && updatedDate ? (
+              <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2">{`${copy.updatedLabel}: ${updatedDate}`}</span>
+            ) : null}
             <Link
               href={prefixPathWithLocale('/services', locale)}
               className="rounded-full border border-cyan-300/24 bg-cyan-400/10 px-4 py-2 transition hover:border-cyan-200/50 hover:text-white"
@@ -240,6 +271,53 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       <section className="mt-8 reading-shell">
         <div className="editorial-prose max-w-none">
           <RichContent content={content} />
+        </div>
+
+        <div className="mt-10 rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_42px_rgba(15,23,42,0.08)] md:p-7">
+          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-orange-700">{trustCopy.kicker}</p>
+          <h2 className="mt-3 text-2xl font-semibold text-slate-950 md:text-3xl">{trustCopy.title}</h2>
+
+          <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-500">
+            {publishedDate ? <span>{`${copy.publishedLabel}: ${publishedDate}`}</span> : null}
+            {showUpdatedDate && updatedDate ? <span>{`${copy.updatedLabel}: ${updatedDate}`}</span> : null}
+          </div>
+
+          <div className="mt-6 rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+            <p className="text-lg font-semibold text-slate-950">{team.name}</p>
+            <p className="mt-2 text-sm font-medium text-sky-800">{team.role}</p>
+            <p className="mt-3 text-sm leading-7 text-slate-700">{team.summary}</p>
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
+            <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+              <h3 className="text-lg font-semibold text-slate-950">{trustCopy.evidenceTitle}</h3>
+              <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-700">
+                {team.trustPoints.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+              <p className="mt-4 text-sm leading-7 text-slate-600">{trustCopy.methodologyNote}</p>
+            </div>
+
+            <div className="grid gap-3">
+              {trustLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={prefixPathWithLocale(item.href, locale)}
+                  className="rounded-[22px] border border-slate-200 bg-white px-4 py-4 transition hover:border-cyan-200 hover:bg-slate-50"
+                >
+                  <p className="text-base font-semibold text-slate-950">{item.title}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p>
+                </Link>
+              ))}
+              <Link
+                href={prefixPathWithLocale('/contacts', locale)}
+                className="rounded-[22px] border border-cyan-200 bg-cyan-50 px-4 py-4 text-sky-900 transition hover:border-cyan-300 hover:bg-cyan-100/70"
+              >
+                <p className="text-base font-semibold">{team.contactLabel}</p>
+              </Link>
+            </div>
+          </div>
         </div>
 
         <div className="mt-10 rounded-[28px] border border-orange-100 bg-[linear-gradient(180deg,#fffaf5,#f7fbff)] p-6 shadow-[0_18px_42px_rgba(15,23,42,0.08)] md:p-7">

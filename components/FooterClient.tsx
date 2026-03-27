@@ -8,6 +8,7 @@ import { getDictionary } from '@/lib/dictionaries'
 import { getLocaleFromPathname, type Locale, prefixPathWithLocale } from '@/lib/i18n'
 import { getFeaturedReads } from '@/lib/public-copy'
 import { containsCyrillic } from '@/lib/text-detection'
+import { getTrustLinks } from '@/lib/trust-content'
 
 type FooterClientProps = {
   menuItems: Array<{ id: string; label: string; url: string; order: number; isActive: boolean }>
@@ -42,6 +43,7 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
   const locale = getLocaleFromPathname(pathname) || 'ru'
   const dictionary = getDictionary(locale)
   const featuredReads = getFeaturedReads(locale)
+  const trustLinks = getTrustLinks(locale)
   const currentYear = new Date().getFullYear()
   const footerText =
     locale === 'en' && containsCyrillic(settings?.footerText)
@@ -104,6 +106,20 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
                 </li>
               ))}
             </ul>
+
+            <div className="mt-8">
+              <h3 className="mb-4 text-sm uppercase tracking-[0.24em] text-slate-500">{trustLinks.heading}</h3>
+              <ul className="space-y-4">
+                {trustLinks.links.map((item) => (
+                  <li key={item.href}>
+                    <Link href={prefixPathWithLocale(item.href, locale)} className="block transition hover:text-white">
+                      <span className="block text-sm text-slate-200">{item.title}</span>
+                      <span className="mt-1 block text-xs leading-6 text-slate-500">{item.description}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <div>

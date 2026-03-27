@@ -97,6 +97,24 @@ export async function generateSitemapEntries(): Promise<SitemapEntry[]> {
       priority: 0.9,
     },
     {
+      url: getCanonicalUrl('/about'),
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.72,
+    },
+    {
+      url: getCanonicalUrl('/methodology'),
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.74,
+    },
+    {
+      url: getCanonicalUrl('/editorial-policy'),
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
       url: getCanonicalUrl('/contacts'),
       lastModified: now,
       changeFrequency: 'monthly' as const,
