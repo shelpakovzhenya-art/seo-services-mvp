@@ -21,7 +21,7 @@ const extraEnglishServicePages: ServicePageContent[] = [
     h1: 'SEO content for service pages, articles, and search scenarios that need clearer intent coverage',
     title: 'SEO content for stronger service pages and supporting articles',
     description:
-      'A content format for teams that need more than rewritten paragraphs: stronger page logic, clearer demand coverage, and content that helps the site move users toward inquiry.',
+      'A content format for businesses that need more than rewritten paragraphs: stronger page logic, clearer demand coverage, and content that helps the site move users toward inquiry.',
     intro:
       'This service is useful when the site already has pages, but they are weak at explaining the offer, matching intent, or supporting search growth.',
     heroValue:
@@ -48,7 +48,7 @@ const extraEnglishServicePages: ServicePageContent[] = [
       'A cleaner link between articles, service pages, and the next user action.',
     ],
     steps: [
-      { title: 'Map page intent', text: 'We define what each page needs to answer, prove, and guide the user toward.' },
+      { title: 'Map page intent', text: 'I define what each page needs to answer, prove, and guide the user toward.' },
       { title: 'Rebuild the message layer', text: 'The page structure, blocks, and copy are updated around demand and clarity.' },
       { title: 'Connect nearby pages', text: 'Service pages, articles, and supporting content are linked into a cleaner system.' },
       { title: 'Refine and extend', text: 'After the strongest pages improve, the same logic is applied to the next layer.' },
@@ -69,7 +69,7 @@ const extraEnglishServicePages: ServicePageContent[] = [
         answer: 'No. The service is about page logic and demand coverage first, and writing second.',
       },
       {
-        question: 'Do articles matter if we mainly care about service pages?',
+        question: 'Do supporting articles matter if service pages are the main priority?',
         answer: 'Yes, when they support earlier-stage demand and help connect users back to the right service page.',
       },
       {
@@ -124,7 +124,7 @@ const extraEnglishServicePages: ServicePageContent[] = [
       'Monitoring of how external work fits into the broader SEO roadmap.',
     ],
     steps: [
-      { title: 'Define the priority layer', text: 'We choose the pages and themes that are worth supporting first.' },
+      { title: 'Define the priority layer', text: 'I choose the pages and themes that are worth supporting first.' },
       { title: 'Align link logic', text: 'External work is matched to page roles, search demand, and SEO priorities.' },
       { title: 'Launch the placements', text: 'The plan moves from theory into placements with a cleaner strategic fit.' },
       { title: 'Review and adjust', text: 'Further work is refined around what the site still needs most.' },
@@ -170,23 +170,23 @@ const extraEnglishServicePages: ServicePageContent[] = [
     slug: 'seo-consulting',
     shortName: 'SEO Consulting',
     label: 'Strategic support and decision quality',
-    h1: 'SEO consulting for teams that need sharper priorities, stronger decisions, and a clearer growth frame',
+    h1: 'SEO consulting for businesses that need sharper priorities, stronger decisions, and a clearer growth frame',
     title: 'SEO consulting for strategy, prioritization, and expert review',
     description:
-      'A consulting format for teams that can execute internally, but need stronger guidance on priorities, tradeoffs, and SEO decision quality.',
+      'A consulting format for businesses that can execute internally, but need stronger guidance on priorities, tradeoffs, and SEO decision quality.',
     intro:
       'This is useful when the main problem is not a lack of people, but a lack of clarity around what should happen first and why.',
     heroValue:
-      'The work helps the team make better decisions around structure, content, technical priorities, migrations, and search growth tradeoffs.',
+      'The work helps the business make better decisions around structure, content, technical priorities, migrations, and search growth tradeoffs.',
     subheading:
-      'It fits internal teams, product owners, and companies that want expert support without handing the whole process to an outside executor.',
+      'It fits founders, in-house specialists, product owners, and companies that want expert support without handing the whole process to an outside executor.',
     angle: 'Strategic support without production overhead',
-    cardDescription: 'SEO consulting for prioritization, team support, and higher-quality project decisions.',
+    cardDescription: 'SEO consulting for prioritization, decision support, and higher-quality project decisions.',
     cardCta: 'Open service',
     benefits: [
-      { title: 'Sharper priorities', text: 'The team gets a clearer view of what matters first and what can wait.' },
+      { title: 'Sharper priorities', text: 'The business gets a clearer view of what matters first and what can wait.' },
       { title: 'Better decision quality', text: 'Strategy discussions become more practical and less opinion-driven.' },
-      { title: 'Support without replacement', text: 'Consulting strengthens the internal team instead of replacing it.' },
+      { title: 'Support without replacement', text: 'Consulting strengthens internal execution instead of replacing it.' },
     ],
     audience: [
       'Companies with internal marketing, product, or development teams.',
@@ -200,10 +200,10 @@ const extraEnglishServicePages: ServicePageContent[] = [
       'Support in evaluating ideas, vendors, and conflicting internal directions.',
     ],
     steps: [
-      { title: 'Review the current frame', text: 'We look at the roadmap, blockers, and decisions the team is struggling with now.' },
+      { title: 'Review the current frame', text: 'I review the roadmap, blockers, and decisions the project is struggling with now.' },
       { title: 'Separate signal from noise', text: 'The goal is to identify what is strategic and what is only distracting effort.' },
-      { title: 'Support key decisions', text: 'The team gets a stronger frame for choosing the next move with more confidence.' },
-      { title: 'Stay aligned over time', text: 'Consulting can continue as a regular strategic layer while the team executes.' },
+      { title: 'Support key decisions', text: 'The project gets a stronger frame for choosing the next move with more confidence.' },
+      { title: 'Stay aligned over time', text: 'Consulting can continue as a regular strategic layer while implementation moves forward.' },
     ],
     outcomes: [
       'More confidence in the next SEO and website decisions.',
@@ -212,7 +212,7 @@ const extraEnglishServicePages: ServicePageContent[] = [
     ],
     results: [
       { title: 'A stronger roadmap', text: 'The project moves with more clarity and fewer conflicting directions.' },
-      { title: 'Higher-quality execution', text: 'Implementation improves when the team understands the purpose behind each move.' },
+      { title: 'Higher-quality execution', text: 'Implementation improves when everyone involved understands the purpose behind each move.' },
       { title: 'Better vendor and backlog control', text: 'Consulting helps judge recommendations before they become expensive work.' },
     ],
     faq: [
@@ -221,7 +221,7 @@ const extraEnglishServicePages: ServicePageContent[] = [
         answer: 'Consulting focuses on strategic support and review, while ongoing SEO includes more direct execution ownership.',
       },
       {
-        question: 'Is this useful if we already have an SEO specialist?',
+        question: 'Is this still useful when there is already an in-house SEO specialist?',
         answer: 'Yes. Consulting is often most useful as expert support for an internal specialist or team lead.',
       },
       {
@@ -229,10 +229,10 @@ const extraEnglishServicePages: ServicePageContent[] = [
         answer: 'Yes. Some teams use consulting around migrations, relaunches, or specific decision-heavy periods only.',
       },
     ],
-    seoBlockTitle: 'Why consulting matters when the team can execute but still lacks clarity',
+    seoBlockTitle: 'Why consulting matters when the business can execute but still lacks clarity',
     seoParagraphs: [
       'Execution speed does not help much when the project keeps choosing the wrong direction.',
-      'Consulting brings an expert frame for prioritization, review, and tradeoffs so the team can move with more confidence.',
+      'Consulting brings an expert frame for prioritization, review, and tradeoffs so the project can move with more confidence.',
     ],
     ctas: {
       soft: 'Discuss SEO consulting',
@@ -276,7 +276,7 @@ const extraEnglishServicePages: ServicePageContent[] = [
       'A stronger base for SEO, content, cases, and service-page growth after launch.',
     ],
     steps: [
-      { title: 'Define the new frame', text: 'We decide what the next site has to support in terms of pages, trust, and growth.' },
+      { title: 'Define the new frame', text: 'I define what the next site has to support in terms of pages, trust, and growth.' },
       { title: 'Design the page system', text: 'Structure and templates are planned around service presentation and lead flow.' },
       { title: 'Build the new platform', text: 'The site is developed as a working base, not just a visual refresh.' },
       { title: 'Launch with room to grow', text: 'The result is prepared for future SEO, content, and structural expansion.' },

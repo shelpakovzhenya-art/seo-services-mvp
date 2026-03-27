@@ -11,7 +11,7 @@ import { getRouteLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getSiteUrl } from '@/lib/site-url'
-import { createOrganizationSchema, createWebsiteSchema } from '@/lib/structured-data'
+import { createBrandSchema, createWebsiteSchema } from '@/lib/structured-data'
 import './globals.css'
 
 const siteUrl = getSiteUrl()
@@ -94,7 +94,7 @@ export default async function RootLayout({
     }
   }
 
-  const organizationSchema = createOrganizationSchema({
+  const brandSchema = createBrandSchema({
     locale,
     email: settings?.email,
     telegramUrl: settings?.telegramUrl,
@@ -110,7 +110,7 @@ export default async function RootLayout({
         {!isAdmin && <LocaleHtmlSync />}
         {!isAdmin ? (
           <>
-            <JsonLd id="site-organization-schema" data={organizationSchema} />
+            <JsonLd id="site-brand-schema" data={brandSchema} />
             <JsonLd id="site-website-schema" data={websiteSchema} />
           </>
         ) : null}

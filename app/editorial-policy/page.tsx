@@ -30,7 +30,7 @@ export default async function EditorialPolicyPage() {
       '@id': `${getSiteUrl()}#website`,
     },
     about: {
-      '@id': `${getSiteUrl()}#organization`,
+      '@id': `${getSiteUrl()}#brand`,
     },
   }
 

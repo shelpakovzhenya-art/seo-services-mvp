@@ -559,7 +559,7 @@ export const marketExpansionEnServices = [
       'Recommendations and support around implementation and the next growth layer.',
     ],
     steps: [
-      { title: 'Map the demand', text: 'We define where Google visibility can grow and which page types deserve the first effort.' },
+      { title: 'Map the demand', text: 'I define where Google visibility can grow and which page types deserve the first effort.' },
       { title: 'Strengthen the key pages', text: 'Service pages and related content are rebuilt around intent clarity and conversion support.' },
       { title: 'Clean up the technical layer', text: 'Template and indexation issues that limit visibility are addressed in priority order.' },
       { title: 'Extend the growth system', text: 'After the strongest layer improves, the next demand clusters are added more safely.' },
@@ -653,7 +653,7 @@ export const marketExpansionEnServices = [
       'Support around implementation and the next search-growth layer.',
     ],
     steps: [
-      { title: 'Review the demand and the SERP fit', text: 'We assess what page types win in Yandex and where the site loses ground now.' },
+      { title: 'Review the demand and the SERP fit', text: 'I assess what page types win in Yandex and where the site loses ground now.' },
       { title: 'Rebuild the commercial layer', text: 'Service and regional pages are strengthened around trust, clarity, and the next step.' },
       { title: 'Clean up technical blockers', text: 'The site is checked for structural issues that limit indexation and control.' },
       { title: 'Extend the working structure', text: 'After the core pages improve, the site can expand into adjacent demand more safely.' },
@@ -722,7 +722,7 @@ export const marketExpansionEnServices = [
     heroValue:
       'The work focuses on early-stage structure, key landing pages, technical cleanliness, and the first demand map so the site can grow without expensive rework later.',
     subheading:
-      'It is a strong fit for new service websites, younger B2B projects, recent launches, and teams that want a cleaner search foundation from the start.',
+      'It is a strong fit for new service websites, younger B2B projects, recent launches, and businesses that want a cleaner search foundation from the start.',
     angle: 'A healthier SEO start',
     cardDescription:
       'SEO for new and young websites focused on launch structure, clean indexation, and the first landing-page layer.',
@@ -747,7 +747,7 @@ export const marketExpansionEnServices = [
       'Priority guidance so the young site grows from a stronger foundation.',
     ],
     steps: [
-      { title: 'Define the first demand layer', text: 'We decide which pages need to exist first and where the site cannot afford weak coverage.' },
+      { title: 'Define the first demand layer', text: 'I decide which pages need to exist first and where the site cannot afford weak coverage.' },
       { title: 'Check the launch state', text: 'The website is reviewed for indexation, template, and structural issues that are common early on.' },
       { title: 'Strengthen the first key pages', text: 'Core service pages and their message layer are rebuilt around search and inquiry logic.' },
       { title: 'Plan the next stage', text: 'The site gets a practical roadmap for safer expansion instead of improvised growth.' },
@@ -775,7 +775,7 @@ export const marketExpansionEnServices = [
           'Some early signals can appear quite fast, but the main goal is to build the right foundation rather than chase fragile short-term wins.',
       },
       {
-        question: 'Do we need many pages right away?',
+        question: 'Do many pages need to be launched right away?',
         answer:
           'Not always. The stronger move is usually launching the right pages first and expanding deliberately afterward.',
       },
@@ -841,7 +841,7 @@ export const marketExpansionEnServices = [
       'A plan for expanding the corporate SEO layer without diluting focus.',
     ],
     steps: [
-      { title: 'Review the architecture', text: 'We define how services, solutions, and supporting pages should relate to real demand.' },
+      { title: 'Review the architecture', text: 'I define how services, solutions, and supporting pages should relate to real demand.' },
       { title: 'Strengthen the key commercial layer', text: 'Core pages are rebuilt around trust, clarity, and decision support.' },
       { title: 'Connect structure and growth', text: 'Content, internal links, and implementation priorities are aligned into one roadmap.' },
       { title: 'Scale more safely', text: 'The site gets a cleaner model for adding new search entry points without structural chaos.' },

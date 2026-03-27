@@ -21,7 +21,7 @@ const englishBlogOverrides: Record<string, Partial<LocalizableBlogPostRecord>> =
       'AI answers do not kill every click equally. The pages that keep traffic are the ones that go beyond a definition and help a person choose a real next step.',
     content: `# GEO and AI search in 2026: how a site can still win traffic from answer-first SERPs
 
-If we simplify the picture, GEO does not take traffic away from every page at the same rate. The first pages to lose are the ones that only repeat a definition, summarize obvious points, or give a generic answer without a practical next step.
+In simple terms, GEO does not take traffic away from every page at the same rate. The first pages to lose are the ones that only repeat a definition, summarize obvious points, or give a generic answer without a practical next step.
 
 Pages hold value when they do more than a short AI response can package. That usually means comparison, trade-offs, diagnosis, local context, and a clear route from information to action.
 
@@ -239,7 +239,7 @@ GEO rewards websites that are easier to understand, easier to cite, and still wo
       'Brand media should not be measured by publication count alone. The useful question is whether the content explains, qualifies, and moves the reader deeper into the site.',
     content: `# SEO for brand media: how to measure whether content actually helps the business
 
-Brand media becomes expensive very quickly if it only produces volume. The right question is not "how many articles did we publish?" but "what role does this content play in the route to demand and trust?"
+Brand media becomes expensive very quickly if it only produces volume. The right question is not "how many articles were published?" but "what role does this content play in the route to demand and trust?"
 
 ## Useful roles for brand media
 

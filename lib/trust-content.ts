@@ -86,11 +86,11 @@ const editorialTeam: Record<
 > = {
   ru: {
     name: 'Shelpakov Digital',
-    role: 'SEO-стратегия, структура сайта, коммерческие страницы и архитектура под AI-поиск',
+    role: 'Независимый SEO-специалист: структура сайта, коммерческие страницы и архитектура под AI-поиск',
     summary:
-      'Материалы и рекомендации основаны на практической работе с аудитами, миграциями, шаблонными страницами, контентными сценариями и усилением коммерческого слоя сайта.',
+      'Материалы и рекомендации основаны на личной практике SEO-фрилансера: аудиты, миграции, шаблонные страницы, контентные сценарии и усиление коммерческого слоя сайтов малого и среднего бизнеса.',
     trustPoints: [
-      'Выводы опираются на реальные внедрения, а не только на пересказ общих SEO-тезисов.',
+      'Выводы опираются на личные внедрения, а не только на пересказ общих SEO-тезисов.',
       'Приоритеты связываются с бизнес-риском: индексируемость, спрос, структура, конверсия и доверие.',
       'Материалы пересматриваются, когда меняется поисковая среда, архитектура AI-поиска или рабочая методология.',
     ],
@@ -100,9 +100,9 @@ const editorialTeam: Record<
   },
   en: {
     name: 'Shelpakov Digital',
-    role: 'SEO strategy, site architecture, commercial pages, and AI-ready website systems',
+    role: 'Independent SEO consultant for site architecture, commercial pages, and AI-ready website systems',
     summary:
-      'The guidance is based on hands-on work with audits, migrations, template-heavy websites, content systems, and commercial page improvements.',
+      'The guidance is based on hands-on solo consulting work: audits, migrations, template-heavy websites, content systems, and commercial page improvements for small and mid-size businesses.',
     trustPoints: [
       'Recommendations come from implementation work, not from recycled generic SEO commentary.',
       'Priorities are tied to business risk: indexation, demand coverage, page structure, conversion, and trust.',
@@ -119,10 +119,10 @@ const aboutPageCopy: Record<Locale, TrustPageCopy> = {
     chip: 'О подходе',
     title: 'Кто отвечает за стратегию, внедрение и качество рекомендаций',
     description:
-      'Shelpakov Digital строит SEO и развитие сайта не вокруг обещаний “роста трафика”, а вокруг решений, которые улучшают структуру, индексируемость, коммерческий слой, доверие и вероятность заявки.',
+      'Shelpakov Digital — личная SEO-практика для малого и среднего бизнеса. Фокус здесь не на агентской упаковке, а на решениях, которые улучшают структуру, индексируемость, коммерческий слой, доверие и вероятность заявки.',
     introTitle: 'Что важно знать о формате работы',
     introBody: [
-      'Работа строится вокруг практической SEO-стратегии для сайтов услуг, B2B-проектов, локального спроса и сложных страниц, где важны не только позиции, но и понятность предложения.',
+      'Работа строится вокруг практической SEO-стратегии для сайтов услуг, B2B-проектов, локального спроса и сложных страниц, где важны не только позиции, но и понятность предложения. Формат рассчитан на прямую работу с собственником или небольшой внутренней командой.',
       'Фокус не на “производстве контента ради контента”, а на том, чтобы сайт был пригоден для поиска, для пользователя и для AI-ориентированной выдачи одновременно.',
     ],
     cardsTitle: 'Принципы, на которых держится слой доверия',
@@ -161,10 +161,10 @@ const aboutPageCopy: Record<Locale, TrustPageCopy> = {
     chip: 'About',
     title: 'Who is accountable for the strategy, implementation, and recommendation quality',
     description:
-      'Shelpakov Digital approaches SEO and website growth through concrete decisions that improve structure, indexation, commercial clarity, trust, and lead readiness rather than through vague traffic promises.',
+      'Shelpakov Digital is an independent SEO practice for small and mid-size businesses. The focus is on concrete decisions that improve structure, indexation, commercial clarity, trust, and lead readiness rather than on vague traffic promises.',
     introTitle: 'What matters about the work format',
     introBody: [
-      'The work is designed for service websites, B2B projects, local demand, and page systems where rankings alone are not enough and trust needs to support conversion.',
+      'The work is designed for service websites, B2B projects, local demand, and page systems where rankings alone are not enough and trust needs to support conversion. Most projects are handled directly with the owner or a compact in-house team.',
       'The goal is not content volume for its own sake, but a website that is usable for search engines, users, and AI-oriented interfaces at the same time.',
     ],
     cardsTitle: 'Principles behind the trust layer',
@@ -206,10 +206,10 @@ const methodologyPageCopy: Record<Locale, TrustPageCopy> = {
     chip: 'Методология',
     title: 'Как принимаются SEO-решения и почему рекомендации не строятся на догадках',
     description:
-      'Методология Shelpakov Digital связывает поисковый спрос, архитектуру страниц, коммерческие сигналы, техническую базу и поведение пользователя. Это нужно, чтобы рекомендации были внедряемыми, а не декоративными.',
+      'Методология Shelpakov Digital связывает поисковый спрос, архитектуру страниц, коммерческие сигналы, техническую базу и поведение пользователя. Это нужно, чтобы рекомендации независимого SEO-специалиста были внедряемыми, а не декоративными.',
     introTitle: 'Из чего складывается рабочая логика',
     introBody: [
-      'Решения принимаются не по одному сигналу. Используются данные индексации, структура сайта, шаблонные ограничения, поисковый спрос, качество коммерческого слоя, поведение пользователей и ресурс команды.',
+      'Решения принимаются не по одному сигналу. Используются данные индексации, структура сайта, шаблонные ограничения, поисковый спрос, качество коммерческого слоя, поведение пользователей и реальный ресурс проекта.',
       'Цель методологии не в том, чтобы “написать побольше текстов”, а в том, чтобы выстроить правильную очередность действий: что исправлять сейчас, что масштабировать позже и что вообще не даст эффекта в текущем контексте.',
     ],
     cardsTitle: 'Основные шаги в работе',
@@ -248,10 +248,10 @@ const methodologyPageCopy: Record<Locale, TrustPageCopy> = {
     chip: 'Methodology',
     title: 'How SEO decisions are made and why the recommendations are not guesswork',
     description:
-      'The Shelpakov Digital methodology connects demand, page architecture, commercial signals, technical foundations, and user behavior so the output is implementable rather than decorative.',
+      'The Shelpakov Digital methodology connects demand, page architecture, commercial signals, technical foundations, and user behavior so the output stays implementable rather than decorative.',
     introTitle: 'What the working logic is built from',
     introBody: [
-      'Decisions are not based on a single signal. They combine indexation data, site structure, template constraints, demand patterns, commercial clarity, user behavior, and the team’s execution capacity.',
+      'Decisions are not based on a single signal. They combine indexation data, site structure, template constraints, demand patterns, commercial clarity, user behavior, and the real implementation capacity of the project.',
       'The goal is not to publish more content for the sake of activity. It is to establish the right sequence: what to fix now, what to scale later, and what is unlikely to matter in the current situation.',
     ],
     cardsTitle: 'Core workflow steps',
@@ -322,7 +322,7 @@ const editorialPolicyPageCopy: Record<Locale, TrustPageCopy> = {
       },
       {
         title: 'Понятные ограничения',
-        text: 'Материалы по SEO не должны выдавать универсальные обещания. Результат зависит от ниши, базы сайта, конкуренции и готовности команды внедрять изменения.',
+        text: 'Материалы по SEO не должны выдавать универсальные обещания. Результат зависит от ниши, базы сайта, конкуренции и реальной готовности проекта внедрять изменения.',
       },
       {
         title: 'Фактическая ясность',
@@ -364,7 +364,7 @@ const editorialPolicyPageCopy: Record<Locale, TrustPageCopy> = {
       },
       {
         title: 'Explicit constraints',
-        text: 'SEO materials should not promise universal outcomes. Results depend on the niche, site foundation, competition, and the team’s ability to implement changes.',
+        text: 'SEO materials should not promise universal outcomes. Results depend on the niche, site foundation, competition, and the project’s ability to implement changes.',
       },
       {
         title: 'Factual clarity',
@@ -389,14 +389,14 @@ const articleTrustCopy: Record<
     title: 'Практический редакционный и методологический слой',
     evidenceTitle: 'На чем основан этот материал',
     methodologyNote:
-      'Если статья касается спорного сценария, приоритет всегда у контекста проекта: ниши, архитектуры, спроса, технических ограничений и готовности команды внедрять изменения.',
+      'Если статья касается спорного сценария, приоритет всегда у контекста проекта: ниши, архитектуры, спроса, технических ограничений и доступного ресурса на внедрение.',
   },
   en: {
     kicker: 'Why this material is trustworthy',
     title: 'Practical editorial and methodology layer',
     evidenceTitle: 'What this material is based on',
     methodologyNote:
-      'If the topic involves trade-offs, project context takes priority: niche, architecture, demand pattern, technical constraints, and the team’s implementation capacity.',
+      'If the topic involves trade-offs, project context takes priority: niche, architecture, demand pattern, technical constraints, and the implementation capacity actually available inside the project.',
   },
 }
 

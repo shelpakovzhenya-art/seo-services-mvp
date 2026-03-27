@@ -36,7 +36,7 @@ const blogCopy: Record<Locale, any> = {
     title: 'Insights on SEO and website growth',
     description:
       'Articles on migrations, service-page structure, GEO and AI search, commercial signals, and content decisions for real websites.',
-    badges: ['Migrations, GEO, and service-page structure', 'Page-level breakdowns, not generic theory', 'Materials a team can use in practice'],
+    badges: ['Migrations, GEO, and service-page structure', 'Page-level breakdowns, not generic theory', 'Materials that are useful in practice'],
     cardKicker: 'Article',
     open: 'Open',
     noDate: 'No date',
@@ -44,11 +44,11 @@ const blogCopy: Record<Locale, any> = {
     empty: 'No published articles yet.',
     collectionName: 'Blog on SEO and website growth',
     collectionDescription:
-      'Articles on structure, migrations, content, GEO, commercial pages, and SEO decisions with practical takeaways for real teams.',
+      'Articles on structure, migrations, content, GEO, commercial pages, and SEO decisions with practical takeaways for real projects.',
     itemListName: 'Shelpakov Digital blog articles',
     metaTitle: 'Blog on SEO and website growth | Shelpakov Digital',
     metaDescription:
-      'Articles on site structure, migrations, GEO, commercial signals, and content with practical takeaways for growth and website teams.',
+      'Articles on site structure, migrations, GEO, commercial signals, and content with practical takeaways for growth-focused businesses.',
     dateLocale: 'en-US',
   },
 }

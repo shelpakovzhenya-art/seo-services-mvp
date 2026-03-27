@@ -3,7 +3,7 @@ import { getFullUrl, getSiteUrl } from '@/lib/site-url'
 import type { ServiceFaqItem, ServicePageContent } from '@/lib/service-pages'
 import type { ServicePricing } from '@/lib/service-pricing'
 
-const ORGANIZATION_ID = `${getSiteUrl()}#organization`
+const BRAND_ID = `${getSiteUrl()}#brand`
 const WEBSITE_ID = `${getSiteUrl()}#website`
 const DEFAULT_EMAIL = 'shelpakovzhenya@gmail.com'
 const DEFAULT_TELEGRAM_URL = 'https://t.me/whoamikon'
@@ -58,7 +58,13 @@ function normalizeSameAs(values: Array<string | null | undefined>) {
   return values.map((value) => value?.trim()).filter((value): value is string => Boolean(value))
 }
 
-export function createOrganizationSchema(
+function getBrandDescription(locale?: Locale) {
+  return locale === 'en'
+    ? 'Independent SEO consultant for small and mid-size businesses: site structure, commercial pages, technical clarity, and AI-ready trust architecture.'
+    : 'Независимый SEO-специалист для малого и среднего бизнеса: структура сайта, коммерческие страницы, техническая ясность и trust-архитектура под AI-поиск.'
+}
+
+export function createBrandSchema(
   options?: StructuredDataLocaleOptions & {
     email?: string | null
     telegramUrl?: string | null
@@ -77,10 +83,11 @@ export function createOrganizationSchema(
 
   return {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
-    '@id': ORGANIZATION_ID,
+    '@type': 'ProfessionalService',
+    '@id': BRAND_ID,
     name: 'Shelpakov Digital',
     url: getSiteUrl(),
+    description: getBrandDescription(options?.locale),
     logo: {
       '@type': 'ImageObject',
       url: getFullUrl(DEFAULT_LOGO_PATH),
@@ -108,7 +115,7 @@ export function createWebsiteSchema(options?: StructuredDataLocaleOptions) {
     name: 'Shelpakov Digital',
     inLanguage: getSchemaLanguage(options?.locale),
     publisher: {
-      '@id': ORGANIZATION_ID,
+      '@id': BRAND_ID,
     },
   }
 }
@@ -155,10 +162,10 @@ export function createServiceSchema(service: ServicePageContent, pricing?: Servi
     description: service.description,
     areaServed: 'RU',
     provider: {
-      '@id': ORGANIZATION_ID,
+      '@id': BRAND_ID,
     },
     brand: {
-      '@id': ORGANIZATION_ID,
+      '@id': BRAND_ID,
     },
     inLanguage: getSchemaLanguage(locale),
     offers: pricing
@@ -192,7 +199,7 @@ export function createCollectionPageSchema(input: {
       '@id': WEBSITE_ID,
     },
     about: {
-      '@id': ORGANIZATION_ID,
+      '@id': BRAND_ID,
     },
     inLanguage: getSchemaLanguage(options?.locale),
   }
@@ -244,10 +251,10 @@ export function createBlogPostingSchema(input: {
     description: input.description,
     image: normalizeImage(input.coverImage) ? [normalizeImage(input.coverImage)] : undefined,
     author: {
-      '@id': ORGANIZATION_ID,
+      '@id': BRAND_ID,
     },
     publisher: {
-      '@id': ORGANIZATION_ID,
+      '@id': BRAND_ID,
     },
     datePublished: input.publishedAt ? new Date(input.publishedAt).toISOString() : undefined,
     dateModified: input.updatedAt ? new Date(input.updatedAt).toISOString() : undefined,
@@ -285,10 +292,10 @@ export function createCaseArticleSchema(input: {
     genre: 'Case Study',
     image: normalizeImage(input.image) ? [normalizeImage(input.image)] : undefined,
     author: {
-      '@id': ORGANIZATION_ID,
+      '@id': BRAND_ID,
     },
     publisher: {
-      '@id': ORGANIZATION_ID,
+      '@id': BRAND_ID,
     },
     datePublished: input.publishedAt ? new Date(input.publishedAt).toISOString() : undefined,
     dateModified: input.updatedAt ? new Date(input.updatedAt).toISOString() : undefined,

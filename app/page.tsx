@@ -46,7 +46,7 @@ const homeCopy: Record<Locale, any> = {
     trustMetrics: [
       { value: 'Трафик и заявки', label: 'Смотрим не только на позиции, но и на страницы, которые реально доводят человека до заявки.' },
       { value: 'Услуги и B2B', label: 'Подходит там, где клиент выбирает долго и ему важно быстро понять, кому можно доверять.' },
-      { value: 'Понятный план', label: 'После старта ясно, что делаем сначала, что переносим на потом и что пока не трогаем.' },
+      { value: 'Понятный план', label: 'После старта ясно, какие задачи идут первыми, что переносится на потом и что пока не трогаем.' },
     ],
     approachKicker: 'Подход к проекту',
     approachTitle: 'Где сайт обычно теряет и спрос, и заявки',
@@ -198,7 +198,7 @@ const homeCopy: Record<Locale, any> = {
     industryBlocks: ['Service websites that already get traffic but too few inquiries.', 'B2B projects with a long and complex decision cycle.', 'Local businesses competing in crowded search results.', 'Projects where the website looks weaker than the service itself.'],
     processBlocks: [
       { step: '01', title: 'I assess demand and the current state of the site', text: 'I review the structure, key pages, commercial blocks, and the user path toward a lead.' },
-      { step: '02', title: 'I assemble a working roadmap', text: 'We lock priorities: what needs urgent fixing, what should be strengthened next, and where resources should not be wasted.' },
+      { step: '02', title: 'I assemble a working roadmap', text: 'I lock priorities: what needs urgent fixing, what should be strengthened next, and where resources should not be wasted.' },
       { step: '03', title: 'I fix the site by priority', text: 'I improve pages, lead flow, and technical foundations so the site is easier to grow and easier to sell from.' },
     ],
     casesKicker: 'Case studies',

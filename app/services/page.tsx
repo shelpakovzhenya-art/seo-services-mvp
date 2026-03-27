@@ -51,8 +51,8 @@ const servicesIndexCopy: Record<Locale, any> = {
     contactTitle: 'Можно прислать сайт и задачу',
     contactText:
       'Опишите домен, задачу и последние изменения на сайте. Так быстрее понять, нужен аудит, техработы, переработка страниц или новый сайт.',
-    contactNoteA: 'Ответим в течение дня.',
-    contactNoteB: 'В ответе скажем, с чего начинать и нужен ли вообще большой объём работ.',
+    contactNoteA: 'Отвечу в течение дня.',
+    contactNoteB: 'В ответе скажу, с чего начинать и нужен ли вообще большой объём работ.',
     metaTitle: 'SEO и разработка сайтов | Shelpakov Digital',
     metaDescription:
       'SEO-услуги и разработка сайтов под заявки: аудит, техническая база, контент, перезапуск текущего сайта и создание новой площадки с основой под рост и обращения.',
@@ -93,7 +93,7 @@ const servicesIndexCopy: Record<Locale, any> = {
       'If the base is already solid, the next step is ongoing SEO, technical work, content, and stronger key pages.',
     ],
     comparisonKicker: 'What gets confused most often',
-    comparisonTitle: 'Where teams most often choose the wrong first step',
+    comparisonTitle: 'Where businesses most often choose the wrong first step',
     comparisonText:
       'This is a short comparison of adjacent services without sales language, so the first move is easier to choose.',
     comparisonCards: [
@@ -107,7 +107,7 @@ const servicesIndexCopy: Record<Locale, any> = {
       },
       {
         title: 'Content vs consulting',
-        text: 'SEO content is the right move when the pages themselves are weak. Consulting is the right move when the team can execute but lacks priorities and strategic control.',
+        text: 'SEO content is the right move when the pages themselves are weak. Consulting is the right move when in-house execution exists, but priorities and strategic control are still missing.',
       },
     ],
     faqKicker: 'FAQ',
@@ -129,7 +129,7 @@ const servicesIndexCopy: Record<Locale, any> = {
           'You can usually tell from the architecture and the page logic. If the website is hard to expand, presents services weakly, fails to guide the user toward inquiry, and limits growth, development or a relaunch is often the right move.',
       },
       {
-        question: 'Can we start with one service and expand the website later?',
+        question: 'Can a project start with one service and expand the website later?',
         answer:
           'Yes. That is a healthy scenario: a compact version can launch around the main goal first, and new sections, articles, case studies, and landing pages can be added after that.',
       },

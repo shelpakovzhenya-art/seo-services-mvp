@@ -25,7 +25,7 @@ const enServicePages: ServicePageContent[] = [
     intro:
       'This format is useful when the website already has some traction, but the search layer still feels fragmented and underperforms commercially.',
     heroValue:
-      'We treat SEO as a growth system: demand mapping, page structure, content logic, technical foundations, and a cleaner path to inquiry.',
+      'I treat SEO as a growth system: demand mapping, page structure, content logic, technical foundations, and a cleaner path to inquiry.',
     subheading:
       'It is a strong fit for service businesses and B2B websites that need growth without disconnected tasks and random monthly activity.',
     angle: 'Organic growth with commercial intent',
@@ -33,7 +33,7 @@ const enServicePages: ServicePageContent[] = [
     cardCta: 'Open service',
     benefits: [
       { title: 'One working system', text: 'Search demand, structure, content, and commercial signals are managed as one roadmap.' },
-      { title: 'Priorities before volume', text: 'The team starts with the pages and constraints that affect growth first.' },
+      { title: 'Priorities before volume', text: 'The work starts with the pages and constraints that affect growth first.' },
       { title: 'Lead-oriented execution', text: 'The work is built around visibility plus conversion, not rankings in isolation.' },
     ],
     audience: [
@@ -48,10 +48,10 @@ const enServicePages: ServicePageContent[] = [
       'A repeatable plan for expanding search coverage without creating noise.',
     ],
     steps: [
-      { title: 'Audit the current state', text: 'We review demand, templates, key pages, and the current path to inquiry.' },
+      { title: 'Audit the current state', text: 'I review demand, templates, key pages, and the current path to inquiry.' },
       { title: 'Set priorities', text: 'The first roadmap separates urgent blockers from work that can wait.' },
       { title: 'Improve the key layer', text: 'Core pages, structure, and supporting content are strengthened around actual demand.' },
-      { title: 'Measure and extend', text: 'We review impact, refine the plan, and add the next growth layer.' },
+      { title: 'Measure and extend', text: 'I review impact, refine the plan, and add the next growth layer.' },
     ],
     outcomes: [
       'A cleaner structure around core services and demand clusters.',
@@ -61,7 +61,7 @@ const enServicePages: ServicePageContent[] = [
     results: [
       { title: 'Better search coverage', text: 'The site captures more demand through clearer entry pages and stronger topic structure.' },
       { title: 'Higher commercial relevance', text: 'Traffic lands on pages that are closer to inquiry and easier to understand.' },
-      { title: 'A steadier roadmap', text: 'The team gets a practical implementation sequence instead of scattered SEO ideas.' },
+      { title: 'A steadier roadmap', text: 'The project gets a practical implementation sequence instead of scattered SEO ideas.' },
     ],
     faq: [
       {
@@ -98,15 +98,15 @@ const enServicePages: ServicePageContent[] = [
     h1: 'SEO audit that turns website problems into a practical implementation plan',
     title: 'SEO audit with priorities, evidence, and a clear next step',
     description:
-      'A practical SEO audit for teams that need to understand what blocks growth now and what should be fixed first.',
+      'A practical SEO audit for businesses that need to understand what blocks growth now and what should be fixed first.',
     intro:
-      'This format is useful when the site has multiple symptoms and the team needs a real priority map instead of another generic checklist.',
+      'This format is useful when the site has multiple symptoms and the business needs a real priority map instead of another generic checklist.',
     heroValue:
       'The goal is not just to collect issues. The goal is to show where visibility, trust, and conversion are being lost and how to act on it.',
     subheading:
-      'A good audit helps the team stop guessing between technical fixes, structure changes, and content work.',
+      'A good audit helps stop guessing between technical fixes, structure changes, and content work.',
     angle: 'Diagnosis before wider implementation',
-    cardDescription: 'A structured audit for teams that need evidence, priorities, and a cleaner implementation sequence.',
+    cardDescription: 'A structured audit for businesses that need evidence, priorities, and a cleaner implementation sequence.',
     cardCta: 'Open service',
     benefits: [
       { title: 'Clear priorities', text: 'Issues are separated into urgent blockers, next-wave tasks, and secondary items.' },
@@ -125,18 +125,18 @@ const enServicePages: ServicePageContent[] = [
       'A practical explanation of what to fix now and what can wait.',
     ],
     steps: [
-      { title: 'Collect site evidence', text: 'We review technical signals, templates, key pages, and demand structure.' },
+      { title: 'Collect site evidence', text: 'I review technical signals, templates, key pages, and demand structure.' },
       { title: 'Separate causes from symptoms', text: 'The audit shows what is fundamental and what is only background noise.' },
       { title: 'Package the findings', text: 'The output is organized for the people who actually have to implement it.' },
       { title: 'Align the next move', text: 'After the audit, it becomes clear whether the project needs SEO, technical work, or a rebuild.' },
     ],
     outcomes: [
       'A clearer picture of what blocks growth the most.',
-      'A usable roadmap for implementation across teams.',
+      'A usable roadmap for implementation across stakeholders.',
       'More confidence in choosing the right next service.',
     ],
     results: [
-      { title: 'Less waste at the start', text: 'The team spends less time on secondary fixes and more on the real blockers.' },
+      { title: 'Less waste at the start', text: 'The project spends less time on secondary fixes and more on the real blockers.' },
       { title: 'Cleaner communication', text: 'Owners, marketing, and development get the same priority map.' },
       { title: 'A better next decision', text: 'The project can move into execution with fewer assumptions and fewer false starts.' },
     ],
@@ -150,13 +150,13 @@ const enServicePages: ServicePageContent[] = [
         answer: 'Yes. The output is designed to be shared with development, marketing, and decision-makers without heavy rework.',
       },
       {
-        question: 'Can we start with an audit only?',
+        question: 'Can a project start with an audit only?',
         answer: 'Yes. For many projects, that is the safest way to understand the current state before choosing the next format.',
       },
     ],
     seoBlockTitle: 'Why a priority-first audit is often the best first move',
     seoParagraphs: [
-      'When the site has many symptoms, broad execution often wastes time because the team still does not know what matters most.',
+      'When the site has many symptoms, broad execution often wastes time because the project still does not know what matters most.',
       'A strong audit shortens that uncertainty and turns a fuzzy problem into a concrete roadmap.',
     ],
     ctas: {
@@ -201,7 +201,7 @@ const enServicePages: ServicePageContent[] = [
       'A clearer split between urgent technical risk and secondary cleanup.',
     ],
     steps: [
-      { title: 'Find the root blocker', text: 'We determine whether the loss comes from indexation, templates, migrations, or architecture.' },
+      { title: 'Find the root blocker', text: 'I determine whether the loss comes from indexation, templates, migrations, or architecture.' },
       { title: 'Prioritize the technical layer', text: 'Critical technical fixes are separated from cosmetic SEO noise.' },
       { title: 'Support implementation', text: 'The technical plan is framed so development can apply it safely.' },
       { title: 'Verify the outcome', text: 'After fixes, the site is checked again for residual template and indexation issues.' },
@@ -222,7 +222,7 @@ const enServicePages: ServicePageContent[] = [
         answer: 'When the site is unstable, noisy, or poorly indexed, content alone cannot compensate for the technical bottleneck.',
       },
       {
-        question: 'Do we need developers for this service?',
+        question: 'Do developers need to be involved in this service?',
         answer: 'In many cases, yes. The service is designed to help developers work on the right issues in the right order.',
       },
       {
@@ -277,7 +277,7 @@ const enServicePages: ServicePageContent[] = [
       'A cleaner route from local search to booking, call, or inquiry.',
     ],
     steps: [
-      { title: 'Map local demand', text: 'We identify where the site needs separate regional pages and where one page is enough.' },
+      { title: 'Map local demand', text: 'I identify where the site needs separate regional pages and where one page is enough.' },
       { title: 'Strengthen the local layer', text: 'Location logic, trust elements, and entry pages are reorganized around real demand.' },
       { title: 'Connect search and inquiry', text: 'The path from local query to action becomes easier and clearer.' },
       { title: 'Expand carefully', text: 'The regional layer grows where it brings value, not where it creates empty page volume.' },
@@ -354,7 +354,7 @@ const enServicePages: ServicePageContent[] = [
       'Guidance on balancing coverage, clean architecture, and conversion logic.',
     ],
     steps: [
-      { title: 'Audit the catalog logic', text: 'We review where the store wins, where it creates noise, and where coverage is missing.' },
+      { title: 'Audit the catalog logic', text: 'I review where the store wins, where it creates noise, and where coverage is missing.' },
       { title: 'Restructure key templates', text: 'Categories, filters, and important product flows are prioritized first.' },
       { title: 'Clarify indexation rules', text: 'Indexable combinations are separated from technical clutter.' },
       { title: 'Grow with control', text: 'The catalog expands more safely with fewer duplicate and thin-page risks.' },
@@ -431,7 +431,7 @@ const enServicePages: ServicePageContent[] = [
       'A clearer route from search visibility to contact or sales conversation.',
     ],
     steps: [
-      { title: 'Map the decision journey', text: 'We look at how search demand connects to trust, proof, and the next commercial step.' },
+      { title: 'Map the decision journey', text: 'I look at how search demand connects to trust, proof, and the next commercial step.' },
       { title: 'Strengthen the core pages', text: 'Service pages and supporting materials are improved around buyer intent.' },
       { title: 'Filter and qualify demand', text: 'The site becomes clearer about fit, constraints, and use cases.' },
       { title: 'Support long-cycle growth', text: 'SEO, content, and service architecture work together more predictably.' },

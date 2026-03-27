@@ -102,7 +102,7 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
               </div>
 
               <div className="page-card">
-                <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Why teams choose this</p>
+                <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Why this format is chosen</p>
                 <div className="mt-4 space-y-3">
                   {service.benefits.map((item) => (
                     <div key={item.title} className="rounded-2xl border border-cyan-100 bg-cyan-50/60 px-5 py-4">
@@ -119,7 +119,7 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
         {service.slug === 'seo' ? (
           <section className="mt-8 page-card">
             <p className="text-sm uppercase tracking-[0.24em] text-orange-700">Search directions</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-950">Which SEO formats teams often need separately</h2>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-950">Which SEO formats are often worth separating</h2>
             <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-600">
               Separate landing pages often outperform one oversized general service page when the site needs clearer intent coverage. These directions now break out Google, Yandex, new websites, and corporate websites into their own service layers.
             </p>

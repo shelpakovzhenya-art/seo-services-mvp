@@ -97,7 +97,7 @@ const servicesCatalogCopy: LocaleRecord<{
       'This section is meant to help choose the first practical move: an audit, technical work, page rewrites, or a new site.',
     scenarios: [
       'The site gets impressions, but fails to turn visitors into inquiries.',
-      'The team keeps making changes without knowing which issue matters most.',
+      'The business keeps making changes without knowing which issue matters most.',
       'Growth is blocked by structure, templates, regional pages, or weak key pages.',
       'The current platform now limits SEO, conversion, and future development at once.',
     ],

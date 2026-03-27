@@ -31,11 +31,11 @@ export default async function AboutPage() {
       '@id': `${getSiteUrl()}#website`,
     },
     about: {
-      '@id': `${getSiteUrl()}#organization`,
+      '@id': `${getSiteUrl()}#brand`,
     },
     mainEntity: {
-      '@type': 'Organization',
-      '@id': `${getSiteUrl()}#organization`,
+      '@type': 'ProfessionalService',
+      '@id': `${getSiteUrl()}#brand`,
       name: team.name,
       description: team.summary,
     },

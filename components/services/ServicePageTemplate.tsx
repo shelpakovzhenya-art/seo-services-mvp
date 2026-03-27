@@ -150,9 +150,9 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-600">
-                <span className="rounded-full border border-orange-200 bg-white px-4 py-2">Ответим в течение дня</span>
+                <span className="rounded-full border border-orange-200 bg-white px-4 py-2">Отвечу в течение дня</span>
                 <span className="rounded-full border border-orange-200 bg-white px-4 py-2">Без обязательств</span>
-                <span className="rounded-full border border-orange-200 bg-white px-4 py-2">Скажем, с чего начинать</span>
+                <span className="rounded-full border border-orange-200 bg-white px-4 py-2">Скажу, с чего начинать</span>
               </div>
             </div>
 
@@ -723,10 +723,10 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
                 </p>
                 <div className="mt-8 space-y-4">
                   <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
-                    Ответим в течение дня и сразу подскажем, какой формат работ здесь уместен.
+                    Отвечу в течение дня и сразу подскажу, какой формат работ здесь уместен.
                   </div>
                   <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-700">
-                    Если задача точечная, так и скажем. Если нужен большой объём, тоже обозначим это сразу.
+                    Если задача точечная, так и скажу. Если нужен большой объём, тоже обозначу это сразу.
                   </div>
                 </div>
               </div>

@@ -30,7 +30,7 @@ export default async function MethodologyPage() {
       '@id': `${getSiteUrl()}#website`,
     },
     about: {
-      '@id': `${getSiteUrl()}#organization`,
+      '@id': `${getSiteUrl()}#brand`,
     },
   }
 
