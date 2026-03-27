@@ -25,6 +25,14 @@ import ServicesCatalogSection from '@/components/services/ServicesCatalogSection
 
 const verificationCode = 'yilk8rn94r0d3m5v'
 
+function canUseHomepageCardCover(src?: string | null) {
+  if (!src) {
+    return false
+  }
+
+  return /\.(png|jpe?g|webp|avif)$/i.test(src)
+}
+
 const homeCopy: Record<Locale, any> = {
   ru: {
     metadata: {
@@ -351,8 +359,8 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-grid surface-pad">
-          <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-8">
-            <h2 className="max-w-[680px] text-[clamp(1.9rem,3.2vw,2.8rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-slate-950">{copy.casesTitle}</h2>
+          <div className="mx-auto grid w-full max-w-[1180px] gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-8">
+            <h2 className="max-w-[860px] text-[clamp(1.75rem,2.8vw,2.55rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-slate-950">{copy.casesTitle}</h2>
             <Link href={prefixPathWithLocale('/cases', locale)} className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
               {copy.casesLink}
               <ArrowRight className="h-4 w-4" />
@@ -363,17 +371,18 @@ export default async function HomePage() {
             {featuredCases.length > 0 ? (
               featuredCases.map((item, index) => {
                 const cover = getCaseCover(item)
+                const showCover = canUseHomepageCardCover(cover)
                 const cardContent = (
                   <>
-                    {cover ? (
+                    {showCover ? (
                       <div className="px-5 pt-5 md:px-6 md:pt-6">
                         <div className="relative h-40 overflow-hidden rounded-[22px] border border-slate-200/80 bg-slate-100 md:h-44">
                         <Image
-                          src={cover}
+                          src={cover!}
                           alt={item.title || copy.caseLabel}
                           fill
                           className="object-cover transition duration-500 group-hover:scale-[1.02]"
-                          unoptimized={isInlineImageAsset(cover)}
+                          unoptimized={isInlineImageAsset(cover!)}
                         />
                       </div>
                     </div>
@@ -426,8 +435,8 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-grid surface-pad">
-          <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-8">
-            <h2 className="max-w-[680px] text-[clamp(1.9rem,3.2vw,2.8rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-slate-950">{copy.blogTitle}</h2>
+          <div className="mx-auto grid w-full max-w-[1180px] gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-8">
+            <h2 className="max-w-[860px] text-[clamp(1.75rem,2.8vw,2.55rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-slate-950">{copy.blogTitle}</h2>
             <Link href={prefixPathWithLocale('/blog', locale)} className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
               {copy.blogLink}
               <ArrowRight className="h-4 w-4" />
@@ -438,6 +447,7 @@ export default async function HomePage() {
             {posts.length > 0 ? (
               posts.map((post) => {
                 const cover = getBlogCover(post)
+                const showCover = canUseHomepageCardCover(cover)
 
                 return (
                   <Link
@@ -445,15 +455,15 @@ export default async function HomePage() {
                     href={prefixPathWithLocale(`/blog/${post.slug}`, locale)}
                     className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-white/80 bg-white/92 shadow-[0_18px_44px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-[0_24px_54px_rgba(15,23,42,0.12)]"
                   >
-                    {cover ? (
+                    {showCover ? (
                       <div className="px-5 pt-5 md:px-6 md:pt-6">
                         <div className="relative h-36 overflow-hidden rounded-[22px] border border-slate-200/80 bg-slate-100 md:h-40">
                         <Image
-                          src={cover}
+                          src={cover!}
                           alt={post.title || copy.blogCardKicker}
                           fill
                           className="object-cover transition duration-500 group-hover:scale-[1.02]"
-                          unoptimized={isInlineImageAsset(cover)}
+                          unoptimized={isInlineImageAsset(cover!)}
                         />
                       </div>
                     </div>
