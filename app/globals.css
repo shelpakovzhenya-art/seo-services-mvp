@@ -1119,6 +1119,8 @@
     overscroll-behavior-x: contain;
     touch-action: pan-x;
     cursor: grab;
+    scroll-behavior: smooth;
+    scroll-padding-inline: 0.25rem;
   }
 
   .services-carousel-track::-webkit-scrollbar {
@@ -1128,6 +1130,7 @@
   .services-carousel-track--dragging {
     cursor: grabbing;
     scroll-snap-type: none;
+    scroll-behavior: auto;
   }
 
   .services-carousel-track--dragging .services-carousel-card {
@@ -1137,6 +1140,7 @@
 
   .services-carousel-card {
     scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 }
 

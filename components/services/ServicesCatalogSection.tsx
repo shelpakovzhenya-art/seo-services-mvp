@@ -54,7 +54,7 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
 
   return (
     <section className={compact ? 'section-shell' : 'page-shell'}>
-      <div className="space-y-5">
+      <div className="surface-grid surface-pad space-y-5">
         <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{sectionTitle}</h2>
 
         <ServicesCarousel

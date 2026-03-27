@@ -328,23 +328,20 @@ export default async function HomePage() {
       </section>
 
       <section className="section-shell">
-        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#07101d]/92 px-6 py-8 text-slate-300 shadow-[0_26px_70px_rgba(7,16,29,0.28)] md:px-8 md:py-10">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,176,128,0.14),transparent_26%),radial-gradient(circle_at_82%_22%,rgba(96,227,255,0.10),transparent_22%)]" />
-          <div className="relative">
-            <h2 className="text-3xl font-semibold text-white md:text-5xl">{trustLinks.heading}</h2>
+        <div className="surface-grid surface-pad">
+          <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{trustLinks.heading}</h2>
 
-            <div className="mt-6 grid gap-4 lg:grid-cols-3">
-              {trustLinks.links.map((item) => (
-                <Link
-                  key={item.href}
-                  href={prefixPathWithLocale(item.href, locale)}
-                  className="rounded-[28px] border border-white/10 bg-white/5 p-6 transition hover:border-cyan-300/40 hover:bg-white/8 hover:text-white"
-                >
-                  <h3 className="text-2xl font-semibold text-white">{item.title}</h3>
-                  <p className="mt-4 text-sm leading-7 text-slate-400">{item.description}</p>
-                </Link>
-              ))}
-            </div>
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            {trustLinks.links.map((item) => (
+              <Link
+                key={item.href}
+                href={prefixPathWithLocale(item.href, locale)}
+                className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_42px_rgba(15,23,42,0.08)] transition hover:border-cyan-200 hover:shadow-[0_24px_56px_rgba(15,23,42,0.12)]"
+              >
+                <h3 className="text-2xl font-semibold text-slate-950">{item.title}</h3>
+                <p className="mt-4 text-sm leading-7 text-slate-600">{item.description}</p>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

@@ -59,6 +59,21 @@ export default function ServicesCarousel({
   const [canScrollNext, setCanScrollNext] = useState(cards.length > 1)
   const [isDragging, setIsDragging] = useState(false)
 
+  function scrollToCard(index: number) {
+    const track = trackRef.current
+    if (!track) {
+      return
+    }
+
+    const step = getCardStep(track) || track.clientWidth * 0.88
+    const safeIndex = Math.max(0, Math.min(cards.length - 1, index))
+
+    track.scrollTo({
+      left: safeIndex * step,
+      behavior: 'smooth',
+    })
+  }
+
   function handleTrackScroll() {
     const track = trackRef.current
     if (!track) {
@@ -105,7 +120,7 @@ export default function ServicesCarousel({
 
   function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
     const track = trackRef.current
-    if (!track || event.pointerType === 'touch') {
+    if (!track || event.pointerType === 'touch' || event.button !== 0) {
       return
     }
 
@@ -117,6 +132,7 @@ export default function ServicesCarousel({
     }
     suppressClickRef.current = false
     setIsDragging(true)
+    track.style.scrollBehavior = 'auto'
     track.setPointerCapture(event.pointerId)
   }
 
@@ -131,6 +147,7 @@ export default function ServicesCarousel({
     if (Math.abs(deltaX) > 6) {
       dragState.moved = true
       suppressClickRef.current = true
+      event.preventDefault()
     }
 
     track.scrollLeft = dragState.startScrollLeft - deltaX
@@ -144,14 +161,17 @@ export default function ServicesCarousel({
     }
 
     if (dragState?.moved) {
-      snapToNearestCard()
+      requestAnimationFrame(() => snapToNearestCard())
       window.setTimeout(() => {
         suppressClickRef.current = false
-      }, 120)
+      }, 140)
     } else {
       suppressClickRef.current = false
     }
 
+    if (track) {
+      track.style.scrollBehavior = ''
+    }
     dragStateRef.current = null
     setIsDragging(false)
   }
@@ -181,25 +201,36 @@ export default function ServicesCarousel({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end gap-2">
-        <button
-          type="button"
-          aria-label={previousLabel}
-          onClick={() => scrollByCard(-1)}
-          disabled={!canScrollPrev}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm transition disabled:cursor-not-allowed disabled:opacity-45"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <button
-          type="button"
-          aria-label={nextLabel}
-          onClick={() => scrollByCard(1)}
-          disabled={!canScrollNext}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm transition disabled:cursor-not-allowed disabled:opacity-45"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 shadow-sm">
+            <span>{activeIndex + 1}</span>
+            <span className="text-slate-400">/</span>
+            <span>{cards.length}</span>
+          </div>
+          <p className="mt-2 truncate text-sm text-slate-500">{cards[activeIndex]?.title}</p>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            aria-label={previousLabel}
+            onClick={() => scrollByCard(-1)}
+            disabled={!canScrollPrev}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm transition hover:border-cyan-200 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            aria-label={nextLabel}
+            onClick={() => scrollByCard(1)}
+            disabled={!canScrollNext}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm transition hover:border-cyan-200 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       <div
@@ -209,7 +240,6 @@ export default function ServicesCarousel({
         onPointerMove={handlePointerMove}
         onPointerUp={(event) => finishDragging(event.pointerId)}
         onPointerCancel={(event) => finishDragging(event.pointerId)}
-        onPointerLeave={(event) => finishDragging(event.pointerId)}
         className={`services-carousel-track -mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-3 pt-1 ${
           isDragging ? 'services-carousel-track--dragging' : ''
         }`}
@@ -223,10 +253,11 @@ export default function ServicesCarousel({
                 event.preventDefault()
               }
             }}
-            className="services-carousel-card uniform-card glass-panel interactive-card min-h-[24rem] w-[86vw] max-w-[25rem] shrink-0 p-6 sm:w-[31rem]"
+            draggable={false}
+            className="services-carousel-card uniform-card min-h-[24rem] w-[86vw] max-w-[25rem] shrink-0 rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_54px_rgba(15,23,42,0.10)] transition hover:border-cyan-200 hover:shadow-[0_26px_64px_rgba(15,23,42,0.14)] sm:w-[31rem]"
           >
             <div className="flex items-start justify-between gap-4">
-              <span className="rounded-full border border-orange-200 bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-orange-700">
+              <span className="rounded-full border border-orange-200 bg-[#fffaf5] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-orange-700">
                 {card.label}
               </span>
               {card.pricing ? <span className="text-sm font-semibold text-slate-900">{card.pricing}</span> : null}
@@ -260,6 +291,22 @@ export default function ServicesCarousel({
           className="h-full rounded-full bg-[linear-gradient(90deg,#ffb27a,#63d9ff)] transition-[width] duration-300"
           style={{ width: `${((activeIndex + 1) / cards.length) * 100}%` }}
         />
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {cards.map((card, index) => (
+          <button
+            key={`${card.slug}-dot`}
+            type="button"
+            aria-label={card.title}
+            onClick={() => scrollToCard(index)}
+            className={`h-2.5 rounded-full transition ${
+              index === activeIndex
+                ? 'w-10 bg-cyan-500'
+                : 'w-4 bg-slate-300 hover:bg-slate-400'
+            }`}
+          />
+        ))}
       </div>
     </div>
   )
