@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -11,6 +12,7 @@ import {
 import { buildCaseListing } from '@/lib/case-listing'
 import { buildLocalizedBlogListing } from '@/lib/blog-localization'
 import { hasRussianCaseContent, localizeCaseRecord } from '@/lib/case-localization'
+import { getBlogCover, getCaseCover, isInlineImageAsset } from '@/lib/content-covers'
 import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
@@ -308,7 +310,7 @@ export default async function HomePage() {
 
       <section className="section-shell-tight !pb-10 !pt-4 md:!pb-12 md:!pt-6">
         <div className="surface-signal surface-pad">
-          <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">
+          <h2 className="max-w-3xl text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-slate-950">
             {locale === 'ru' ? 'Где теряются заявки' : 'Where leads get lost'}
           </h2>
 
@@ -329,7 +331,7 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-grid surface-pad">
-          <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{trustLinks.heading}</h2>
+          <h2 className="max-w-3xl text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-slate-950">{trustLinks.heading}</h2>
 
           <div className="mt-6 grid gap-4 lg:grid-cols-3">
             {trustLinks.links.map((item) => (
@@ -350,8 +352,8 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-grid surface-pad">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.casesTitle}</h2>
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-8">
+            <h2 className="max-w-3xl text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-slate-950">{copy.casesTitle}</h2>
             <Link href={prefixPathWithLocale('/cases', locale)} className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
               {copy.casesLink}
               <ArrowRight className="h-4 w-4" />
@@ -361,22 +363,53 @@ export default async function HomePage() {
           <div className="uniform-grid-2">
             {featuredCases.length > 0 ? (
               featuredCases.map((item, index) => {
+                const cover = getCaseCover(item)
                 const cardContent = (
                   <>
-                    <div className="flex items-center justify-end">
-                      <Building2 className="h-5 w-5 text-cyan-700" />
+                    {cover ? (
+                      <div className="relative aspect-[16/10] overflow-hidden border-b border-slate-200/80 bg-slate-100">
+                        <Image
+                          src={cover}
+                          alt={item.title || copy.caseLabel}
+                          fill
+                          className="object-cover transition duration-500 group-hover:scale-[1.02]"
+                          unoptimized={isInlineImageAsset(cover)}
+                        />
+                        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
+                          <span className="rounded-full border border-white/80 bg-white/90 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-orange-700">
+                            {`${copy.caseLabel} ${index + 1}`}
+                          </span>
+                          <span className="rounded-full border border-white/80 bg-white/90 p-2 text-cyan-700">
+                            <Building2 className="h-4 w-4" />
+                          </span>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <div className="flex flex-1 flex-col p-6 md:p-7">
+                      <h3 className="text-[1.7rem] font-semibold leading-[1.08] tracking-[-0.04em] text-slate-950 md:text-[1.95rem]">
+                        {item.title}
+                      </h3>
+                      <p
+                        className="mt-3 flex-1 text-sm leading-7 text-slate-600"
+                        style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                      >
+                        {item.description || item.content || copy.caseFallback}
+                      </p>
                     </div>
-                    <h3 className="mt-4 text-3xl font-semibold text-slate-950">{item.title}</h3>
-                    <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.description || item.content || copy.caseFallback}</p>
                   </>
                 )
 
                 return item.slug ? (
-                  <Link key={item.id} href={prefixPathWithLocale(`/cases/${item.slug}`, locale)} className="uniform-card glass-panel interactive-card group block p-8 transition hover:border-cyan-200">
+                  <Link
+                    key={item.id}
+                    href={prefixPathWithLocale(`/cases/${item.slug}`, locale)}
+                    className="uniform-card glass-panel interactive-card group block overflow-hidden p-0 transition hover:border-cyan-200"
+                  >
                     {cardContent}
                   </Link>
                 ) : (
-                  <div key={item.id} className="uniform-card glass-panel interactive-card p-8">
+                  <div key={item.id} className="uniform-card glass-panel interactive-card overflow-hidden p-0">
                     {cardContent}
                   </div>
                 )
@@ -393,8 +426,8 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-grid surface-pad">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.blogTitle}</h2>
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-8">
+            <h2 className="max-w-3xl text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-slate-950">{copy.blogTitle}</h2>
             <Link href={prefixPathWithLocale('/blog', locale)} className="inline-flex items-center gap-2 text-cyan-700 transition hover:text-slate-950">
               {copy.blogLink}
               <ArrowRight className="h-4 w-4" />
@@ -403,12 +436,46 @@ export default async function HomePage() {
 
           <div className="uniform-grid-3">
             {posts.length > 0 ? (
-              posts.map((post) => (
-                <Link key={post.id} href={prefixPathWithLocale(`/blog/${post.slug}`, locale)} className="uniform-card glass-panel interactive-card group p-7 transition hover:border-cyan-200">
-                  <h3 className="text-2xl font-semibold text-slate-950">{post.title}</h3>
-                  <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{post.excerpt || copy.blogFallback}</p>
-                </Link>
-              ))
+              posts.map((post) => {
+                const cover = getBlogCover(post)
+
+                return (
+                  <Link
+                    key={post.id}
+                    href={prefixPathWithLocale(`/blog/${post.slug}`, locale)}
+                    className="uniform-card glass-panel interactive-card group overflow-hidden p-0 transition hover:border-cyan-200"
+                  >
+                    {cover ? (
+                      <div className="relative aspect-[16/10] overflow-hidden border-b border-slate-200/80 bg-slate-100">
+                        <Image
+                          src={cover}
+                          alt={post.title || copy.blogCardKicker}
+                          fill
+                          className="object-cover transition duration-500 group-hover:scale-[1.02]"
+                          unoptimized={isInlineImageAsset(cover)}
+                        />
+                        <div className="absolute inset-x-0 top-0 p-4">
+                          <span className="rounded-full border border-white/80 bg-white/90 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-orange-700">
+                            {copy.blogCardKicker}
+                          </span>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <div className="flex flex-1 flex-col p-6 md:p-7">
+                      <h3 className="text-[1.45rem] font-semibold leading-[1.12] tracking-[-0.035em] text-slate-950 md:text-[1.65rem]">
+                        {post.title}
+                      </h3>
+                      <p
+                        className="mt-3 flex-1 text-sm leading-7 text-slate-600"
+                        style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                      >
+                        {post.excerpt || copy.blogFallback}
+                      </p>
+                    </div>
+                  </Link>
+                )
+              })
             ) : (
               <div className="glass-panel p-7 md:col-span-3">
                 <h3 className="text-2xl font-semibold text-slate-950">{copy.blogEmptyTitle}</h3>
@@ -421,7 +488,7 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="surface-signal surface-pad">
-          <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.reviewsTitle}</h2>
+          <h2 className="max-w-3xl text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-slate-950">{copy.reviewsTitle}</h2>
 
           <div className="uniform-grid-3 mt-6">
             {reviews.length > 0 ? (
@@ -449,7 +516,7 @@ export default async function HomePage() {
           <div className="surface-grid p-4 md:p-6">
             <div className="soft-section grid gap-8 overflow-hidden lg:grid-cols-[0.9fr_1.1fr]">
               <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
-                <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
+                <h2 className="max-w-3xl text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-slate-950">{copy.contactTitle}</h2>
                 <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">{copy.contactText}</p>
               </div>
 

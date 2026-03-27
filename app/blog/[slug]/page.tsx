@@ -5,6 +5,7 @@ import JsonLd from '@/components/JsonLd'
 import RichContent from '@/components/RichContent'
 import { getBuiltInBlogPostBySlug, hydrateBlogPostRecord, isPlaceholderBlogPost } from '@/lib/built-in-blog-posts'
 import { hasRussianBlogContent, localizeBlogPostRecord } from '@/lib/blog-localization'
+import { getBlogCover, isInlineImageAsset } from '@/lib/content-covers'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
@@ -107,18 +108,6 @@ const relatedServiceMap: Record<string, string[]> = {
 
 const defaultRelatedServiceSlugs = ['seo', 'seo-audit', 'seo-content']
 
-function getFallbackCover(slug: string) {
-  const coverMap: Record<string, string> = {
-    'trebovaniya-k-sovremennomu-saitu-dlya-seo-i-konversii': '/blog/seo-site-requirements-cover.svg',
-  }
-
-  return coverMap[slug] || ''
-}
-
-function isInlineImage(src: string) {
-  return src.startsWith('data:')
-}
-
 function getRelatedServices(slug: string, locale: Locale): RelatedService[] {
   const serviceSlugs = relatedServiceMap[slug] || defaultRelatedServiceSlugs
   const copy = blogPostCopy[locale]
@@ -186,7 +175,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     notFound()
   }
 
-  const coverImage = post.coverImage || getFallbackCover(post.slug)
+  const coverImage = getBlogCover(post)
   const content = stripLeadingMarkdownH1(post.content, post.title)
   const readingTimeLabel = getReadingTimeLabel(post.content, locale)
   const relatedServices = getRelatedServices(post.slug, locale)
@@ -262,7 +251,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         {coverImage ? (
           <div className="relative mt-8 overflow-hidden rounded-[30px] border border-white/12 bg-white/8 shadow-[0_24px_60px_rgba(2,8,23,0.28)]">
             <div className="relative aspect-[16/9] w-full">
-              <Image src={coverImage} alt={post.title} fill className="object-cover" unoptimized={isInlineImage(coverImage)} />
+              <Image src={coverImage} alt={post.title} fill className="object-cover" unoptimized={isInlineImageAsset(coverImage)} />
             </div>
           </div>
         ) : null}
@@ -359,7 +348,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   const alternates = getLocaleAlternates(`/blog/${params.slug}`)
   const postUrl = getFullUrl(prefixPathWithLocale(`/blog/${params.slug}`, locale))
-  const coverImage = post.coverImage || getFallbackCover(post.slug)
+  const coverImage = getBlogCover(post)
   const metaTitle = normalizeMetaTitle(post.title, copy.metaTitleSuffix)
   const metaDescription = normalizeMetaDescription(post.excerpt, copy.metaDescriptionFallback)
 

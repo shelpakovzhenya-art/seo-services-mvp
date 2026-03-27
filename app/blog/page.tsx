@@ -1,8 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import JsonLd from '@/components/JsonLd'
-import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { buildLocalizedBlogListing } from '@/lib/blog-localization'
+import { getBlogCover, isInlineImageAsset } from '@/lib/content-covers'
+import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getReadingTimeLabel } from '@/lib/reading-time'
 import { getRequestLocale } from '@/lib/request-locale'
@@ -51,22 +52,6 @@ const blogCopy: Record<Locale, any> = {
       'Articles on site structure, migrations, GEO, commercial signals, and content with practical takeaways for growth-focused businesses.',
     dateLocale: 'en-US',
   },
-}
-
-function getFallbackCover(slug: string) {
-  const coverMap: Record<string, string> = {
-    'trebovaniya-k-sovremennomu-saitu-dlya-seo-i-konversii': '/blog/seo-site-requirements-cover.svg',
-  }
-
-  return coverMap[slug] || ''
-}
-
-function isInlineImage(src: string) {
-  return src.startsWith('data:')
-}
-
-function getPostCover(post: { slug: string; coverImage?: string | null }) {
-  return post.coverImage || getFallbackCover(post.slug)
 }
 
 export default async function BlogPage() {
@@ -119,7 +104,7 @@ export default async function BlogPage() {
         {posts.length > 0 ? (
           <div className="uniform-grid-3">
             {posts.map((post) => {
-              const cover = getPostCover(post)
+              const cover = getBlogCover(post)
               const readingTimeLabel = getReadingTimeLabel(post.content || post.excerpt || post.title, locale) || copy.readingTimeFallback
 
               return (
@@ -127,7 +112,13 @@ export default async function BlogPage() {
                   <article className="uniform-card interactive-card reading-shell overflow-hidden p-0">
                     {cover ? (
                       <div className="relative h-52 w-full">
-                        <Image src={cover} alt={post.title} fill className="object-cover transition duration-500 group-hover:scale-[1.02]" unoptimized={isInlineImage(cover)} />
+                        <Image
+                          src={cover}
+                          alt={post.title}
+                          fill
+                          className="object-cover transition duration-500 group-hover:scale-[1.02]"
+                          unoptimized={isInlineImageAsset(cover)}
+                        />
                       </div>
                     ) : null}
 
