@@ -1,11 +1,22 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { defaultLocale, getLocaleFromPathname, prefixPathWithLocale, stripLocaleFromPathname } from '@/lib/i18n'
+import { getCanonicalRedirectUrl } from '@/lib/site-url'
 
 const PUBLIC_FILE = /\.[^/]+$/
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
+  const canonicalRedirectUrl = getCanonicalRedirectUrl({
+    requestUrl: request.nextUrl,
+    requestHost: request.headers.get('x-forwarded-host') || request.headers.get('host'),
+    requestProtocol: request.headers.get('x-forwarded-proto') || request.nextUrl.protocol,
+  })
+
+  if (canonicalRedirectUrl) {
+    return NextResponse.redirect(canonicalRedirectUrl, 308)
+  }
+
   const localeFromPath = getLocaleFromPathname(pathname)
   const cookieLocale = request.cookies.get('locale')?.value
   const locale = localeFromPath || (cookieLocale === 'en' ? 'en' : defaultLocale)
@@ -57,6 +68,8 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/admin/:path*',
+    '/robots.txt',
+    '/sitemap.xml',
     '/((?!api|_next/static|_next/image|.*\\..*).*)',
   ],
 }

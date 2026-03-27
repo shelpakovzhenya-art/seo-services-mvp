@@ -1,5 +1,7 @@
 import { defaultLocale, locales, type Locale } from '@/lib/i18n'
 
+const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1'])
+
 /**
  * Get the base URL of the site
  * Works in both development and production
@@ -19,6 +21,28 @@ function normalizeSiteUrl(value: string) {
   } catch {
     return trimmed
   }
+}
+
+function normalizeHostHeader(value: string | null | undefined) {
+  return (value || '').trim().toLowerCase().replace(/:\d+$/, '')
+}
+
+function normalizeProtocol(value: string | null | undefined) {
+  return (value || '').trim().toLowerCase().replace(/:$/, '')
+}
+
+function getMirrorHostname(hostname: string) {
+  const normalizedHostname = hostname.toLowerCase()
+
+  if (!normalizedHostname || LOOPBACK_HOSTS.has(normalizedHostname)) {
+    return null
+  }
+
+  return normalizedHostname.startsWith('www.') ? normalizedHostname.slice(4) : `www.${normalizedHostname}`
+}
+
+function isRailwayPublicHostname(hostname: string) {
+  return hostname.endsWith('.up.railway.app')
 }
 
 export function getSiteUrl(): string {
@@ -49,6 +73,38 @@ export function getLocalizedPath(path: string, locale: Locale = defaultLocale): 
 
 export function getLocalizedUrl(path: string, locale: Locale = defaultLocale) {
   return getFullUrl(getLocalizedPath(path, locale))
+}
+
+export function getCanonicalRedirectUrl(params: {
+  requestUrl: URL
+  requestHost?: string | null
+  requestProtocol?: string | null
+}) {
+  if (process.env.NODE_ENV === 'development') {
+    return null
+  }
+
+  const canonicalSiteUrl = new URL(getSiteUrl())
+  const requestHost = normalizeHostHeader(params.requestHost)
+  const canonicalHostname = canonicalSiteUrl.hostname.toLowerCase()
+  const requestProtocol = normalizeProtocol(params.requestProtocol || params.requestUrl.protocol)
+  const canonicalProtocol = normalizeProtocol(canonicalSiteUrl.protocol)
+  const mirrorHostname = getMirrorHostname(canonicalHostname)
+  const shouldRedirectHost =
+    requestHost === canonicalHostname ||
+    requestHost === mirrorHostname ||
+    (isRailwayPublicHostname(requestHost) && !isRailwayPublicHostname(canonicalHostname))
+  const shouldRedirectProtocol = requestProtocol && requestProtocol !== canonicalProtocol
+
+  if (!shouldRedirectHost || (requestHost === canonicalHostname && !shouldRedirectProtocol)) {
+    return null
+  }
+
+  const redirectUrl = new URL(params.requestUrl.toString())
+  redirectUrl.protocol = canonicalSiteUrl.protocol
+  redirectUrl.host = canonicalSiteUrl.host
+
+  return redirectUrl
 }
 
 export function getLocaleAlternates(path: string) {
