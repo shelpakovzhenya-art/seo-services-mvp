@@ -10,6 +10,7 @@ import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
 import { createBreadcrumbSchema, createFaqSchema, createServiceSchema } from '@/lib/structured-data'
 import { formatServiceBillingUnit, formatServicePrice, type ServicePricing } from '@/lib/service-pricing'
 import { getServicePage, type ServicePageContent } from '@/lib/service-pages'
+import { seoIntentLinksRu } from '@/lib/service-market-expansion'
 
 type ServicePageTemplateProps = {
   service: ServicePageContent
@@ -216,6 +217,28 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+            <div className="mt-8">
+              <h3 className="text-2xl font-semibold text-slate-950">Какие направления SEO чаще всего ищут отдельно</h3>
+              <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-600">
+                На рынке часто выигрывают не самые длинные страницы, а те, где отдельными посадочными закрыты Google, Яндекс, новый сайт и корпоративный сайт. Эти сценарии вынесены в самостоятельные услуги, чтобы поисковое продвижение сайта закрывало спрос точнее и не расползалось в одну слишком общую страницу.
+              </p>
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                {seoIntentLinksRu.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={localizeHref(item.href)}
+                    className="rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5 transition hover:border-cyan-200 hover:bg-cyan-50/80"
+                  >
+                    <h4 className="text-xl font-semibold text-slate-950">{item.title}</h4>
+                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
+                    <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
+                      Открыть страницу
+                      <ArrowRight className="h-4 w-4" />
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
           </section>

@@ -1,5 +1,6 @@
 import type { Locale } from '@/lib/i18n'
 import { servicePages, type ServicePageContent } from '@/lib/service-pages'
+import { marketExpansionEnServices } from '@/lib/service-market-expansion'
 
 function imageSet(slug: string, heroAlt: string, processAlt: string, resultsAlt: string) {
   return {
@@ -472,6 +473,7 @@ const enServicePages: ServicePageContent[] = [
     related: ['seo', 'seo-audit', 'seo-content', 'seo-consulting'],
     images: imageSet('b2b-seo', 'B2B SEO concept for qualified demand', 'B2B SEO workflow for service pages and trust', 'B2B SEO results for qualified inquiries'),
   },
+  ...marketExpansionEnServices,
 ]
 
 const enServicePageMap = new Map(enServicePages.map((service) => [service.slug, service] as const))

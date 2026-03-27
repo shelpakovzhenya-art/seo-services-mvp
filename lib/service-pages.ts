@@ -1,5 +1,6 @@
 import { websiteDevelopmentService } from './website-development-service-data'
 import { seoAuditService } from './seo-audit-service-data'
+import { marketExpansionRuServices } from './service-market-expansion'
 
 export type ServiceImageSet = {
   hero: string
@@ -713,6 +714,7 @@ const baseServicePages: ServicePageContent[] = [
 
 export const servicePages: ServicePageContent[] = [
   ...baseServicePages.filter((service) => service.slug !== 'seo-audit' && service.slug !== 'website-development'),
+  ...marketExpansionRuServices,
   seoAuditService,
   websiteDevelopmentService,
 ]

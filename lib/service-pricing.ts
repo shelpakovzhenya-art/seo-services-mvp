@@ -1,4 +1,5 @@
 import { websiteDevelopmentPricing } from './website-development-pricing-data'
+import { marketExpansionPricing } from './service-market-expansion'
 
 export type ServicePricing = {
   slug: string
@@ -102,6 +103,7 @@ export const servicePricing: ServicePricing[] = [
     calculatorHint: 'Подходит, если внедряет ваша команда, а вам нужна сильная SEO-экспертиза и контроль.',
     deliverables: ['Разбор проекта', 'Стратегические рекомендации', 'Сопровождение решений'],
   },
+  ...marketExpansionPricing,
   websiteDevelopmentPricing,
 ]
 
