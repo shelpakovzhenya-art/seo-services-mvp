@@ -92,6 +92,40 @@ def normalize_base_url(raw_url: str) -> str:
     return clean.geturl() or url
 
 
+LOCALE_SEGMENT_RE = re.compile(r"^[a-z]{2}(?:-[a-z]{2})?$", re.I)
+
+
+def split_locale_from_path(path: str) -> tuple[str | None, list[str]]:
+    segments = [segment for segment in (path or "").split("/") if segment]
+    if segments and LOCALE_SEGMENT_RE.fullmatch(segments[0]):
+        return segments[0].lower(), segments[1:]
+    return None, segments
+
+
+def strip_locale_path(path: str) -> str:
+    _, segments = split_locale_from_path(path)
+    return "/" + "/".join(segments) if segments else "/"
+
+
+def build_site_root_url(url: str) -> str:
+    parsed = urlparse(normalize_base_url(url))
+    clean = parsed._replace(path="", params="", query="", fragment="")
+    return clean.geturl().rstrip("/")
+
+
+def build_crawl_entry_url(url: str) -> str:
+    normalized = normalize_base_url(url)
+    parsed = urlparse(normalized)
+    locale, _ = split_locale_from_path(parsed.path)
+    if locale:
+        return f"{build_site_root_url(normalized)}/{locale}"
+    return build_site_root_url(normalized)
+
+
+def localized_join(base_url: str, path: str) -> str:
+    return urljoin(f"{base_url.rstrip('/')}/", path)
+
+
 def slugify_for_filename(value: str) -> str:
     value = re.sub(r"^https?://", "", value.strip().lower())
     value = re.sub(r"[^a-z0-9.-]+", "-", value)
@@ -248,6 +282,20 @@ def safe_get(session: requests.Session, url: str, *, allow_redirects=True, timeo
         return None, str(exc)
 
 
+def safe_get_with_retries(session: requests.Session, url: str, *, allow_redirects=True, timeout=25, attempts=3):
+    last_response = None
+    last_error = None
+    for _ in range(max(1, attempts)):
+        response, error = safe_get(session, url, allow_redirects=allow_redirects, timeout=timeout)
+        last_response = response
+        last_error = error
+        if response is not None and response.status_code < 500:
+            return response, error
+        if response is None and error is None:
+            break
+    return last_response, last_error
+
+
 def discover_sitemaps(robots_text: str, base_url: str) -> list[str]:
     found = []
     for line in robots_text.splitlines():
@@ -279,7 +327,7 @@ def parse_sitemap_urls(
         if current in seen:
             continue
         seen.add(current)
-        response, error = safe_get(session, current, timeout=35)
+        response, error = safe_get_with_retries(session, current, timeout=35, attempts=2)
         if error or response is None or response.status_code >= 400:
             continue
         processed.append(current)
@@ -469,13 +517,14 @@ def parse_jsonld_types(soup: BeautifulSoup) -> list[str]:
 
 def detect_page_type(url: str, schema_types: list[str]) -> str:
     parsed = urlparse(url)
-    if not parsed.path or parsed.path == "/":
+    normalized_path = strip_locale_path(parsed.path)
+    if not normalized_path or normalized_path == "/":
         return "Р“Р»Р°РІРЅР°СЏ"
     if "Product" in schema_types:
         return "РўРѕРІР°СЂ"
     if parsed.query:
         return "РЎР»СѓР¶РµР±РЅР°СЏ"
-    segments = [segment for segment in parsed.path.split("/") if segment]
+    segments = [segment for segment in normalized_path.split("/") if segment]
     if len(segments) == 1:
         return "РљР°С‚РµРіРѕСЂРёСЏ"
     if len(segments) == 2:
@@ -724,10 +773,10 @@ COMPETITOR_SIGNAL_LIBRARY = [
         "min_competitor_coverage": 0.25,
         "implementation_brief": (
             "Добавить в приоритетные шаблоны блок с отзывами, кейсами или примерами работ: "
-            "имя клиента или компания, задача, результат, фото или скрин, короткий CTA на заявку."
+            "имя клиента или компания, задача, результат, фото или скрин, короткий CTA на контакт или следующий шаг."
         ),
         "benefit": (
-            "Такой блок усиливает доверие, повышает коммерческий интент страницы и помогает конвертировать трафик в заявку, а не только в просмотр."
+            "Такой блок усиливает доверие, повышает коммерческий интент страницы и помогает переводить трафик в осмысленный контактный сценарий."
         ),
         "weight": 9,
     },
@@ -798,17 +847,17 @@ COMPETITOR_SIGNAL_LIBRARY = [
     },
     {
         "id": "forms",
-        "label": "Формы и заметные точки входа в заявку",
+        "label": "Формы и заметные точки контакта",
         "field": "has_forms",
         "priority": "Высокий приоритет",
         "owner": "Marketing / Frontend",
         "min_competitor_coverage": 0.3,
         "implementation_brief": (
-            "Добавить заметные формы и точки входа в заявку на главную, услуги, категории или карточки, "
-            "где пользователь уже готов оставить заявку: телефон, задача, бюджет или удобный следующий шаг."
+            "Добавить заметные формы и точки контакта на главную, услуги, категории или карточки, "
+            "где пользователь уже готов перейти к контакту: телефон, задача, бюджет или удобный следующий шаг."
         ),
         "benefit": (
-            "Даже при одинаковом трафике более заметные формы и точки входа в заявку дают больше обращений и помогают аудиту влиять не только на позиции, но и на продажи."
+            "Даже при одинаковом трафике более заметные формы и точки контакта лучше закрывают контактный сценарий и усиливают коммерческий интент страницы."
         ),
         "weight": 10,
     },
@@ -853,7 +902,7 @@ TEMPLATE_LIBRARY = [
     {"id": "category", "label": "Категории и листинги"},
     {"id": "product", "label": "Карточки товаров"},
     {"id": "service", "label": "Услуги и внутренние коммерческие страницы"},
-    {"id": "contact", "label": "Контакты и страницы заявок"},
+    {"id": "contact", "label": "Контакты и конверсионные страницы"},
 ]
 
 
@@ -864,7 +913,7 @@ SIGNAL_SHORT_LABELS = {
     "commercial": "условия",
     "comparison": "таблицы и параметры",
     "breadcrumbs": "хлебные крошки",
-    "forms": "формы заявки",
+    "forms": "формы и точки контакта",
 }
 
 
@@ -916,10 +965,10 @@ def build_snippet_metrics(pages: list[PageSnapshot]) -> dict[str, dict]:
 
 def get_template_bucket(page: PageSnapshot) -> str | None:
     parsed = urlparse(page.url)
-    path = parsed.path or "/"
-    haystack = f"{parsed.path} {parsed.query}".lower()
+    path = strip_locale_path(parsed.path)
+    haystack = f"{path} {parsed.query}".lower()
 
-    if not parsed.path or parsed.path == "/":
+    if not path or path == "/":
         return "home"
     if any(token in haystack for token in CONTACT_PATH_KEYWORDS):
         return "contact"
@@ -1306,7 +1355,7 @@ def pick_templates_for_gap(
 
 
 def build_gap_execution_details(title: str, templates: list[str]) -> dict[str, list[str]]:
-    scope = templates or ["Главная", "Услуги и внутренние коммерческие страницы", "Контакты и страницы заявок"]
+    scope = templates or ["Главная", "Услуги и внутренние коммерческие страницы", "Контакты и конверсионные страницы"]
     scope_text = ", ".join(scope)
     title_lower = title.lower()
 
@@ -1318,14 +1367,14 @@ def build_gap_execution_details(title: str, templates: list[str]) -> dict[str, l
         ]
         impact = [
             "Страница лучше отвечает на длинные и уточняющие запросы.",
-            "Пользователь быстрее снимает возражения и доходит до заявки.",
+            "Пользователь быстрее снимает возражения и доходит до целевого контакта.",
             "Коммерческий слой становится полезнее, а не просто длиннее.",
         ]
     elif "отзывы" in title_lower or "кейсы" in title_lower:
         steps = [
             f"Выбрать приоритетные шаблоны: {scope_text}.",
             "Собрать 3-5 реальных отзывов, кейсов или примеров работ с задачей, результатом и понятным подтверждением.",
-            "Разместить блок рядом с оффером и формой заявки, чтобы он усиливал решение о контакте.",
+            "Разместить блок рядом с оффером и формой контакта, чтобы он усиливал решение о следующем шаге.",
         ]
         impact = [
             "Доверие к странице и бренду растет быстрее.",
@@ -1352,7 +1401,7 @@ def build_gap_execution_details(title: str, templates: list[str]) -> dict[str, l
         impact = [
             "Поисковик видит более сильный коммерческий сигнал.",
             "Пользователь быстрее понимает, подходит ли ему предложение.",
-            "Страница лучше закрывает спрос на покупку или заявку.",
+            "Страница лучше закрывает коммерческий интент и сценарий выбора.",
         ]
     elif "сниппет" in title_lower or "каноническ" in title_lower:
         steps = [
@@ -1850,7 +1899,7 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
         issues.append(
             AuditIssue(
                 severity="High",
-                title="РљРѕРЅС‚Р°РєС‚РЅС‹Рµ Рё lead-СЃС‚СЂР°РЅРёС†С‹ РЅРµРґРѕРѕС„РѕСЂРјР»РµРЅС‹ РєР°Рє SEO-РїРѕСЃР°РґРѕС‡РЅС‹Рµ",
+                title="Контактные и конверсионные страницы недооформлены как SEO-посадочные",
                 why_it_matters=(
                     "РЎС‚СЂР°РЅРёС†С‹ РєРѕРЅС‚Р°РєС‚РѕРІ Рё Р·Р°СЏРІРѕРє СѓС‡Р°СЃС‚РІСѓСЋС‚ РЅРµ С‚РѕР»СЊРєРѕ РІ РєРѕРЅРІРµСЂСЃРёРё, РЅРѕ Рё РІ РґРѕРІРµСЂРёРё, Р±СЂРµРЅРґРѕРІРѕР№ РІС‹РґР°С‡Рµ "
                     "Рё РїРѕРЅРёРјР°РЅРёРё Р±РёР·РЅРµСЃР° РїРѕРёСЃРєРѕРІРёРєР°РјРё."
@@ -1998,7 +2047,7 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
                 ),
                 evidence=evidence,
                 recommendation=(
-                    "Собрать тематические связки между приоритетными страницами: главная -> раздел -> подраздел/услуга -> заявка, "
+                    "Собрать тематические связки между приоритетными страницами: главная -> раздел -> подраздел/услуга -> целевая контактная страница, "
                     "добавить хлебные крошки, блоки \"по теме\", релевантные анкорные ссылки из текста и сократить бессмысленные ссылки вида "
                     "\"читать далее\" или дубли ссылок на один и тот же URL."
                 ),
@@ -2216,7 +2265,7 @@ def dynamic_build_roadmap(audit: dict) -> list[tuple[str, list[str]]]:
     if profile["is_catalog"]:
         sprint_3 = [
             "Усилить категории и подкатегории коммерческим слоем: условия, гарантии, FAQ, блоки доверия и сценарии выбора.",
-            "Пересобрать карточки и листинги так, чтобы они содержали доказательства, сравнения, отзывы и вели к заявке.",
+            "Пересобрать карточки и листинги так, чтобы они содержали доказательства, сравнения, отзывы и лучше закрывали коммерческий интент.",
             "Собрать тематическую перелинковку по кластерам спроса и поддержать её хлебными крошками и блоками \"по теме\".",
         ]
     else:
@@ -2507,6 +2556,106 @@ def build_priority_matrix(audit: dict) -> list[dict]:
     return rows
 
 
+def page_business_label(template_id: str | None) -> str:
+    mapping = {
+        "home": "главная страница, которая задаёт структуру входа и распределяет внутренний вес по сайту",
+        "service": "страница, которая должна закрывать коммерческий интент по услуге",
+        "contact": "страница, которая закрывает брендовый и навигационный интент",
+        "category": "кластерная страница, которая собирает тематический спрос по разделу",
+        "product": "страница под наиболее конверсионный спрос внутри кластера",
+    }
+    return mapping.get(template_id or "", "приоритетная страница сайта")
+
+
+def collect_page_gap_labels(snapshot: PageSnapshot) -> list[str]:
+    gaps: list[str] = []
+    if not snapshot.title or not snapshot.description or len(cleaned_h1s(snapshot)) != 1 or not snapshot.canonical:
+        gaps.append("базовая SEO-обвязка и сниппет")
+    if not snapshot.has_commercial_block:
+        gaps.append("условия выбора и следующий шаг")
+    if not snapshot.has_trust_block:
+        gaps.append("доверие и доказательства")
+    if not any(bool(getattr(snapshot, field, False)) for field in MONSTER_SUPPORT_FIELDS):
+        gaps.append("FAQ, отзывы или сравнительные блоки")
+    if snapshot.internal_links <= 5:
+        gaps.append("внутренняя перелинковка")
+    if get_template_bucket(snapshot) in {"category", "product", "service", "contact"} and not snapshot.has_breadcrumbs:
+        gaps.append("breadcrumbs и навигационная цепочка")
+    if 0 < snapshot.word_count < 250:
+        gaps.append("контент слишком тонкий")
+    if snapshot.missing_alt_count > 0:
+        gaps.append("изображения без alt")
+    return gaps
+
+
+def page_first_step(snapshot: PageSnapshot) -> str:
+    if not snapshot.title or not snapshot.description or len(cleaned_h1s(snapshot)) != 1 or not snapshot.canonical:
+        return "Сначала собрать title, description, H1 и canonical по шаблону страницы."
+    if not snapshot.has_commercial_block:
+        return "Сначала добавить условия выбора: цена или диапазон, сроки, формат работы, CTA и контакты."
+    if not snapshot.has_trust_block:
+        return "Сначала добавить доверительный слой: кейсы, отзывы, гарантии, опыт или подтверждение экспертизы."
+    if not any(bool(getattr(snapshot, field, False)) for field in MONSTER_SUPPORT_FIELDS):
+        return "Сначала усилить страницу FAQ, сравнением, кейсами или блоком ответов на возражения."
+    if snapshot.internal_links <= 5:
+        return "Сначала дать странице больше внутренних входов: хлебные крошки, тематические ссылки и блоки по теме."
+    return "Сначала проверить шаблон страницы на качество интента, CTA и доказательств, затем усилить контент по потерянным запросам."
+
+
+def priority_page_score(snapshot: PageSnapshot) -> float:
+    template_id = get_template_bucket(snapshot)
+    base_score = {
+        "home": 10,
+        "service": 9,
+        "contact": 9,
+        "category": 8,
+        "product": 8,
+    }.get(template_id or "", 6)
+    score = float(base_score)
+    score += len(collect_page_gap_labels(snapshot)) * 1.4
+    if snapshot.internal_links <= 5:
+        score += 1.0
+    if 0 < snapshot.word_count < 250:
+        score += 1.0
+    if snapshot.missing_alt_count > 0:
+        score += 0.6
+    return round(score, 2)
+
+
+def build_priority_pages(audit: dict) -> list[dict]:
+    cards: list[dict] = []
+    seen: set[str] = set()
+    for snapshot in sorted(select_priority_pages(audit["sample_pages"]), key=priority_page_score, reverse=True):
+        if snapshot.url in seen:
+            continue
+        seen.add(snapshot.url)
+        template_id = get_template_bucket(snapshot)
+        gaps = collect_page_gap_labels(snapshot)
+        if not gaps:
+            continue
+        cards.append(
+            {
+                "url": snapshot.url,
+                "path": human_path(snapshot.url),
+                "template": template_id or "other",
+                "template_label": {
+                    "home": "Главная",
+                    "service": "Услуга / коммерческая страница",
+                    "contact": "Контакты / конверсионная страница",
+                    "category": "Категория / раздел",
+                    "product": "Карточка / detail page",
+                }.get(template_id or "", "Внутренняя страница"),
+                "business_value": page_business_label(template_id),
+                "gaps": gaps[:4],
+                "first_step": page_first_step(snapshot),
+                "word_count": snapshot.word_count,
+                "internal_links": snapshot.internal_links,
+                "score": priority_page_score(snapshot),
+            }
+        )
+    return cards[:6]
+
+
 def build_critical_errors(audit: dict) -> list[dict]:
     return [asdict(issue) for issue in audit.get("issues", []) if issue.severity in ("Critical", "High")][:4]
 
@@ -2612,7 +2761,7 @@ def build_quick_wins(audit: dict) -> list[dict]:
                 "title": "Проставить тематические внутренние ссылки",
                 "effort": "1-2 часа",
                 "impact": "Подтянет важные страницы и снизит навигационный шум",
-                "action": "Добавить хлебные крошки, блоки \"по теме\" и осмысленные анкоры с приоритетных страниц на соседние кластеры и страницы заявки.",
+                "action": "Добавить хлебные крошки, блоки \"по теме\" и осмысленные анкоры с приоритетных страниц на соседние кластеры и контактные страницы.",
             }
         )
 
@@ -3271,7 +3420,34 @@ def shorten_path(url: str, max_length=48) -> str:
 
 
 def dynamic_build_strengths(audit: dict) -> list[str]:
-    return []
+    strengths: list[str] = []
+    priority_pages = select_priority_pages(audit["sample_pages"])
+    contact_pages = get_contact_related_pages(audit["sample_pages"])
+
+    if audit["home_page"].status_code == 200:
+        strengths.append("Ключевая входная страница сайта стабильно отвечает по 200 коду и доступна без JS-заглушки.")
+    if audit.get("average_response_ms") and audit["average_response_ms"] < 1800:
+        strengths.append(f"Средний ответ по выборке держится на уровне {audit['average_response_ms']} ms, то есть сайт не выглядит технически перегруженным уже на старте.")
+    if audit.get("canonical_coverage_ratio", 0) >= 0.75:
+        strengths.append(f"У {math.floor(audit['canonical_coverage_ratio'] * 100)}% проверенных страниц уже есть canonical, а это хорошая база для чистой индексации.")
+    if audit.get("h1_coverage_ratio", 0) >= 0.85:
+        strengths.append(f"У {math.floor(audit['h1_coverage_ratio'] * 100)}% проверенных страниц уже собран H1, значит шаблонная структура сайта не выглядит хаотичной.")
+    if audit.get("schema_coverage_ratio", 0) >= 0.45:
+        strengths.append(f"Schema-разметка уже используется на {math.floor(audit['schema_coverage_ratio'] * 100)}% выборки, то есть база для rich results и понятной структуры уже есть.")
+    if coverage_ratio(priority_pages, lambda snapshot: snapshot.has_trust_block) >= 0.55:
+        strengths.append("На большей части приоритетных страниц уже есть доверительный слой, значит сайт можно доусилить без полной пересборки структуры.")
+    if contact_pages:
+        strengths.append("У сайта уже есть выделенные контактные и конверсионные страницы, а значит маршрут пользователя до контакта можно усиливать без изобретения новой архитектуры.")
+    if audit.get("sitemap_url_count", 0) > 0:
+        strengths.append(f"У проекта уже есть карта сайта с {audit['sitemap_url_count']} URL, поэтому индексацию можно не строить с нуля, а донастраивать.")
+    if audit.get("llms_exists"):
+        strengths.append("У проекта уже есть llms.txt, значит можно отдельно усиливать видимость и для answer-first выдачи.")
+
+    unique_strengths: list[str] = []
+    for item in strengths:
+        if item not in unique_strengths:
+            unique_strengths.append(item)
+    return unique_strengths[:6]
 
 
 def dynamic_build_growth_points(audit: dict) -> list[str]:
@@ -3449,7 +3625,7 @@ def build_monster_phase_sections(audit: dict, phase_sections: list[dict]) -> lis
                     ],
                     "priority": "HIGH" if any(issue.title == ISSUE_TITLE_INTERNAL_LINKING for issue in audit.get("issues", [])) else "MEDIUM",
                     "owner": "SEO / Frontend / Content",
-                    "recommendation": "Собрать кластеры и связки главная -> раздел -> подраздел/услуга -> заявка, добавить хлебные крошки, блоки \"по теме\" и осмысленные анкоры вместо повторяющихся служебных ссылок.",
+                    "recommendation": "Собрать кластеры и связки главная -> раздел -> подраздел/услуга -> контактная или целевая коммерческая страница, добавить хлебные крошки, блоки \"по теме\" и осмысленные анкоры вместо повторяющихся служебных ссылок.",
                 },
                 {
                     "name": "Навигационный шум и глубина доступа",
@@ -3481,12 +3657,12 @@ def build_monster_phase_sections(audit: dict, phase_sections: list[dict]) -> lis
                 {
                     "name": "Коммерческий слой на приоритетных шаблонах",
                     "checked": "Есть ли на важных страницах условия выбора: цена, сроки, оплата, доставка, гарантия, поддержка и контактные точки.",
-                    "method": "Поиск коммерческих и доверительных блоков на ключевых шаблонах: главная, категории, карточки, услуги, контакты и страницы заявок.",
+                    "method": "Поиск коммерческих и доверительных блоков на ключевых шаблонах: главная, категории, карточки, услуги, контакты и конверсионные страницы.",
                     "metrics": [
                         ("Приоритетных страниц", str(len(priority_pages))),
                         ("Без коммерческого блока", str(len(commercial_gap_pages))),
                         ("Без доверительных блоков", str(len(trust_gap_pages))),
-                        ("Контактных / lead-страниц", str(len(get_contact_related_pages(sample_pages)))),
+                        ("Контактных / конверсионных страниц", str(len(get_contact_related_pages(sample_pages)))),
                     ],
                     "findings": [
                         (
@@ -3539,23 +3715,25 @@ def build_monster_phase_sections(audit: dict, phase_sections: list[dict]) -> lis
 
 
 def build_audit(url: str, company_name: str | None, sample_size: int, competitor_urls: list[str] | None = None) -> dict:
-    base_url = normalize_base_url(url)
-    parsed = urlparse(base_url)
+    target_url = normalize_base_url(url)
+    base_url = build_crawl_entry_url(target_url)
+    site_root_url = build_site_root_url(target_url)
+    parsed = urlparse(site_root_url)
     base_domain = parsed.netloc
     session = make_session()
     requested_limit = max(sample_size, 0)
 
     homepage = analyse_page(session, base_url, base_domain)
-    robots_response, _ = safe_get(session, urljoin(f"{base_url}/", "robots.txt"))
-    llms_response, _ = safe_get(session, urljoin(f"{base_url}/", "llms.txt"))
+    robots_response, _ = safe_get_with_retries(session, localized_join(site_root_url, "robots.txt"), attempts=3)
+    llms_response, _ = safe_get_with_retries(session, localized_join(site_root_url, "llms.txt"), attempts=3)
     robots_text = robots_response.text if robots_response is not None and robots_response.status_code == 200 else ""
     sitemap_urls, processed_sitemaps, sitemap_total_entries = parse_sitemap_urls(
-        session, discover_sitemaps(robots_text, base_url), base_domain
+        session, discover_sitemaps(robots_text, site_root_url), base_domain
     )
     home_links = discover_home_links(session, base_url, base_domain)
     preferred_urls = [
-        urljoin(f"{base_url}/", "contacts"),
-        urljoin(f"{base_url}/", "index.php?route=information/contactform"),
+        localized_join(base_url, "contacts"),
+        localized_join(base_url, "index.php?route=information/contactform"),
         *home_links[:10],
     ]
     unique_urls = build_audit_url_inventory(
@@ -3579,12 +3757,14 @@ def build_audit(url: str, company_name: str | None, sample_size: int, competitor
     h1_pages = [snapshot for snapshot in html_pages if snapshot.h1s]
     canonical_pages = [snapshot for snapshot in html_pages if snapshot.canonical]
     total_missing_alt = sum(snapshot.missing_alt_count for snapshot in html_pages)
-    redirect_checks = analyze_redirects(session, base_url)
+    redirect_checks = analyze_redirects(session, site_root_url)
     company = company_name or re.sub(r"^www\.", "", base_domain)
 
     audit = {
-        "generator_version": 4,
+        "generator_version": 5,
         "base_url": base_url,
+        "site_root_url": site_root_url,
+        "requested_url": target_url,
         "domain": base_domain,
         "company_name": company,
         "generated_at": datetime.now().strftime("%d.%m.%Y %H:%M"),
@@ -3621,10 +3801,11 @@ def build_audit(url: str, company_name: str | None, sample_size: int, competitor
     issues = normalize_structure(dynamic_build_issue_list(audit))
     audit["issues"] = issues
     audit["executive_summary"] = build_executive_summary_dynamic(audit)
-    audit["strengths"] = []
+    audit["strengths"] = dynamic_build_strengths(audit)
     audit["growth_points"] = dynamic_build_growth_points(audit)
     audit["roadmap"] = dynamic_build_roadmap(audit)
     audit["priority_matrix"] = build_priority_matrix(audit)
+    audit["priority_pages"] = build_priority_pages(audit)
     audit["critical_errors"] = build_critical_errors(audit)
     audit["phase_sections"] = build_monster_phase_sections(audit, polish_phase_sections(build_phase_sections(audit)))
     audit["quick_wins"] = build_quick_wins(audit)
@@ -3993,6 +4174,39 @@ def add_action_cards_doc(doc: Document, items: list[dict], value_key: str, extra
         doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
 
+def add_priority_pages_doc(doc: Document, items: list[dict]) -> None:
+    for item in items:
+        card = doc.add_table(rows=2, cols=1)
+        card.alignment = WD_TABLE_ALIGNMENT.CENTER
+        remove_table_borders(card)
+        head = card.rows[0].cells[0]
+        body = card.rows[1].cells[0]
+        set_cell_shading(head, BRAND_SOFT)
+        set_cell_shading(body, "FFFFFF")
+        set_cell_margins(head, 90, 110, 80, 110)
+        set_cell_margins(body, 100, 110, 110, 110)
+        title_run = head.paragraphs[0].add_run(normalize_output_text(f"{item.get('template_label', 'Страница')}  |  {item.get('path', '')}"))
+        set_font(title_run, size=11.2, bold=True, color=BRAND_TEXT)
+        add_text_paragraph(body, f"Почему в приоритете: {item.get('business_value', '')}", size=10.4, color=BRAND_TEXT, bold=True, space_after=3)
+        add_text_paragraph(
+            body,
+            f"Сигналы просадки: {', '.join(item.get('gaps', []))}",
+            size=10.2,
+            color=BRAND_MUTED,
+            space_after=3,
+        )
+        add_text_paragraph(
+            body,
+            f"Внутренние ссылки: {item.get('internal_links', 0)}  |  Слова на странице: {item.get('word_count', 0)}  |  Приоритет: {item.get('score', '')}",
+            size=10.0,
+            color=BRAND_ORANGE,
+            bold=True,
+            space_after=3,
+        )
+        add_text_paragraph(body, f"Первый шаг: {item.get('first_step', '')}", size=10.3, color=BRAND_TEXT, bold=True, space_after=4)
+        doc.add_paragraph().paragraph_format.space_after = Pt(4)
+
+
 def add_competitor_comparison_doc(doc: Document, comparison: dict) -> None:
     summary = comparison.get("summary", [])
     if summary:
@@ -4145,6 +4359,24 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
         add_text_paragraph(doc, paragraph, size=11.4, color=BRAND_TEXT, space_after=6)
     add_metric_grid(doc, audit)
 
+    if audit.get("strengths"):
+        add_section_heading(
+            doc,
+            "Сильные стороны",
+            "Что уже можно считать хорошей базой",
+            "Это элементы, которые уже можно использовать как опору при дальнейшей оптимизации и не пересобирать без причины.",
+        )
+        add_bullet_list(doc, audit.get("strengths", []), size=11.0)
+
+    if audit.get("priority_pages"):
+        add_section_heading(
+            doc,
+            "Приоритетные страницы",
+            "Какие URL стоит дорабатывать первыми",
+            "Ниже страницы, которые сильнее всего влияют на качество ключевых шаблонов, распределение внутреннего веса и отработку приоритетных кластеров спроса.",
+        )
+        add_priority_pages_doc(doc, audit.get("priority_pages", []))
+
     if audit.get("priority_matrix"):
         add_section_heading(
             doc,
@@ -4160,7 +4392,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Критичные ошибки",
             "Что прямо сейчас мешает сайту расти",
-            "Здесь только те проблемы, которые заметно влияют на индекс, сниппеты, трафик и заявки.",
+            "Здесь только те проблемы, которые заметно влияют на индексацию, сниппеты, CTR и качество приоритетных страниц.",
         )
         add_issue_cards(doc, critical_issue_cards)
 
@@ -4200,8 +4432,8 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
         add_section_heading(
             doc,
             "Стратегические улучшения",
-            "Что даст рост после базовых исправлений",
-            "Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок.",
+            "Что усиливать после базовых исправлений",
+            "Это более крупные изменения, которые усиливают сайт в поиске, шаблонную базу и приоритетные кластеры спроса.",
         )
         add_action_cards_doc(doc, audit.get("strategic_moves", []), "impact", "effort")
 

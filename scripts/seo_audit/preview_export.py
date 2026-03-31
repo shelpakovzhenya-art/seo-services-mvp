@@ -354,6 +354,42 @@ def _append_action_cards(story: list, items: list[dict], kicker: str, title: str
         story.append(Spacer(1, 10))
 
 
+def _append_priority_pages(story: list, items: list[dict], styles: dict) -> None:
+    _section_header(
+        story,
+        "Приоритетные страницы",
+        "Какие URL стоит дорабатывать первыми",
+        "Ниже страницы, которые сильнее всего влияют на качество ключевых шаблонов, распределение внутреннего веса и отработку приоритетных кластеров спроса.",
+        styles,
+    )
+    for item in items:
+        card = Table(
+            [
+                [Paragraph(_escape_pdf_text(f"{item.get('template_label', 'Страница')}  |  {item.get('path', '')}"), styles["cardTitle"])],
+                [Paragraph(f"<b>Почему в приоритете:</b> {_escape_pdf_text(item.get('business_value', ''))}", styles["base"])],
+                [Paragraph(f"<b>Сигналы просадки:</b> {_escape_pdf_text(', '.join(item.get('gaps', [])))}", styles["base"])],
+                [Paragraph(f"<b>Внутренние ссылки:</b> {_escape_pdf_text(item.get('internal_links', 0))} &nbsp;&nbsp; <b>Слова:</b> {_escape_pdf_text(item.get('word_count', 0))} &nbsp;&nbsp; <b>Приоритет:</b> {_escape_pdf_text(item.get('score', ''))}", styles["small"])],
+                [Paragraph(f"<b>Первый шаг:</b> {_escape_pdf_text(item.get('first_step', ''))}", styles["base"])],
+            ],
+            colWidths=[180 * mm],
+        )
+        card.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+                    ("BOX", (0, 0), (-1, -1), 1, colors.HexColor(BRAND_LINE)),
+                    ("ROUNDEDCORNERS", [14, 14, 14, 14]),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 12),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+                    ("TOPPADDING", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+                ]
+            )
+        )
+        story.append(card)
+        story.append(Spacer(1, 10))
+
+
 def _append_phase_sections(story: list, phase_sections: list[dict], styles: dict) -> None:
     for section in phase_sections:
         header_story: list = []
@@ -1228,6 +1264,21 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
         story.extend(_paragraph_list(audit_payload.get("executive_summary", []), styles))
         story.append(Spacer(1, 10))
 
+        if audit_payload.get("strengths"):
+            _section_header(
+                story,
+                "Сильные стороны",
+                "Что уже можно считать хорошей базой",
+                "Это элементы, которые уже можно использовать как опору при дальнейшей оптимизации и не пересобирать без причины.",
+                styles,
+            )
+            story.extend(_paragraph_list(audit_payload.get("strengths", []), styles))
+            story.append(Spacer(1, 10))
+
+        if audit_payload.get("priority_pages"):
+            _append_priority_pages(story, audit_payload.get("priority_pages", []), styles)
+            story.append(Spacer(1, 10))
+
         _section_header(
             story,
             "Вектор роста",
@@ -1280,7 +1331,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             story,
             "Критические ошибки",
             "Что сейчас реально блокирует рост",
-            "Здесь только те проблемы, которые заметно влияют на индекс, сниппеты, трафик и заявки.",
+            "Здесь только те проблемы, которые заметно влияют на индексацию, сниппеты, CTR и качество приоритетных страниц.",
             styles,
         )
         _append_issue_cards(story, audit_payload.get("critical_errors") or audit_payload.get("issues", []), styles)
@@ -1304,8 +1355,8 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             story,
             audit_payload.get("strategic_moves", []),
             "Стратегические улучшения",
-            "Что даст рост после базовых исправлений",
-            "Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок.",
+            "Что усиливать после базовых исправлений",
+            "Это более крупные изменения, которые усиливают сайт в поиске, шаблонную базу и приоритетные кластеры спроса.",
             styles,
         )
         _append_roadmap(story, audit_payload.get("roadmap", []), styles)
@@ -1435,6 +1486,28 @@ def _action_cards(items: list[dict], value_key: str, extra_key: str) -> str:
               <p class="action-meta"><strong>{_escape_html_text(_action_meta_label(value_key))}:</strong> {_escape_html_text(item.get(value_key, ''))}</p>
               <p class="action-meta"><strong>{_escape_html_text(_action_meta_label(extra_key))}:</strong> {_escape_html_text(item.get(extra_key, ''))}</p>
               <p>{_escape_html_text(item.get('action') or item.get('details') or 'Подробности появятся после следующего прогона аудита.')}</p>
+            </article>
+            """
+        )
+    return "".join(cards)
+
+
+def _priority_pages_html(items: list[dict]) -> str:
+    if not items:
+        return "<p class='empty-note'>Приоритетные страницы появятся после генерации аудита.</p>"
+    cards = []
+    for item in items:
+        gap_items = "".join(f"<li>{_escape_html_text(gap)}</li>" for gap in item.get("gaps", []))
+        cards.append(
+            f"""
+            <article class="action-card">
+              <div class="section-kicker">{_escape_html_text(item.get('template_label', 'Страница'))}</div>
+              <h3>{_escape_html_text(item.get('path', ''))}</h3>
+              <p><strong>Почему в приоритете:</strong> {_escape_html_text(item.get('business_value', ''))}</p>
+              <p><strong>Сигналы просадки:</strong></p>
+              <ul>{gap_items}</ul>
+              <p class="action-meta"><strong>Внутренние ссылки:</strong> {_escape_html_text(item.get('internal_links', ''))} &nbsp;&nbsp; <strong>Слова:</strong> {_escape_html_text(item.get('word_count', ''))} &nbsp;&nbsp; <strong>Приоритет:</strong> {_escape_html_text(item.get('score', ''))}</p>
+              <p class="recommendation"><strong>Первый шаг:</strong> {_escape_html_text(item.get('first_step', ''))}</p>
             </article>
             """
         )
@@ -1786,7 +1859,9 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
     audit_payload = normalize_structure(audit_payload)
     critical_source = audit_payload.get("critical_errors") or audit_payload.get("issues", [])
     issues_html = "".join(_issue_card(issue) for issue in critical_source)
+    strengths_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in audit_payload.get("strengths", []))
     growth_html = "".join(f"<li>{_escape_html_text(item)}</li>" for item in audit_payload.get("growth_points", []))
+    priority_pages_html = _priority_pages_html(audit_payload.get("priority_pages", []))
     priority_html = _priority_table(audit_payload.get("priority_matrix", []))
     phases_html = _phase_checks_html(audit_payload.get("phase_sections", []))
     quick_wins_html = _action_cards(audit_payload.get("quick_wins", []), "effort", "impact")
@@ -2198,9 +2273,25 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       <section>
         <div class="section-kicker">Критические ошибки</div>
         <h2>Что сейчас реально блокирует рост</h2>
-        <p class="lead">Здесь только те проблемы, которые заметно влияют на индекс, сниппеты, трафик и заявки.</p>
+        <p class="lead">Здесь только те проблемы, которые заметно влияют на индексацию, сниппеты, CTR и качество приоритетных страниц.</p>
         <div class="issue-list">{issues_html}</div>
       </section>
+
+      {f'''<section>
+        <div class="section-kicker">Сильные стороны</div>
+        <h2>Что уже можно считать хорошей базой</h2>
+        <p class="lead">Это элементы, которые уже можно использовать как опору при дальнейшей оптимизации и не пересобирать без причины.</p>
+        <div class="list-card">
+          <ul>{strengths_html}</ul>
+        </div>
+      </section>''' if strengths_html else ''}
+
+      {f'''<section>
+        <div class="section-kicker">Приоритетные страницы</div>
+        <h2>Какие URL стоит дорабатывать первыми</h2>
+        <p class="lead">Ниже страницы, которые сильнее всего влияют на качество ключевых шаблонов, распределение внутреннего веса и отработку приоритетных кластеров спроса.</p>
+        <div class="action-grid">{priority_pages_html}</div>
+      </section>''' if audit_payload.get('priority_pages') else ''}
 
       <section>
         <div class="section-kicker">Вектор роста</div>
@@ -2228,8 +2319,8 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
 
       <section>
         <div class="section-kicker">Стратегические улучшения</div>
-        <h2>Что даст рост после базовых исправлений</h2>
-        <p class="lead">Это более крупные изменения, которые усиливают сайт в поиске и помогают получать больше заявок.</p>
+        <h2>Что усиливать после базовых исправлений</h2>
+        <p class="lead">Это более крупные изменения, которые усиливают сайт в поиске, шаблонную базу и приоритетные кластеры спроса.</p>
         <div class="action-grid">{strategic_html}</div>
       </section>
 
