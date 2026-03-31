@@ -533,7 +533,7 @@ def detect_page_type(url: str, schema_types: list[str]) -> str:
 
 
 def analyse_page(session: requests.Session, url: str, base_domain: str) -> PageSnapshot:
-    response, error = safe_get(session, url)
+    response, error = safe_get_with_retries(session, url, attempts=2)
     if error or response is None:
         return PageSnapshot(
             url=url,
@@ -738,11 +738,40 @@ def infer_project_profile(audit: dict) -> dict:
     product_pages = [snapshot for snapshot in sample_pages if snapshot.page_type == "РўРѕРІР°СЂ" or "Product" in snapshot.schema_types]
     category_pages = [snapshot for snapshot in sample_pages if snapshot.page_type in ("РљР°С‚РµРіРѕСЂРёСЏ", "РџРѕРґРєР°С‚РµРіРѕСЂРёСЏ")]
     form_pages = [snapshot for snapshot in sample_pages if snapshot.has_forms]
+
+    ecommerce_path_tokens = ("/catalog", "/shop", "/store", "/product", "/products", "/category", "/categories", "/cart", "/basket", "/checkout")
+    service_path_tokens = (
+        "/services",
+        "/service",
+        "/seo",
+        "/audit",
+        "/consulting",
+        "/contacts",
+        "/cases",
+        "/reviews",
+        "/about",
+        "/methodology",
+        "/editorial-policy",
+    )
+
+    ecommerce_pages = []
+    service_pages = []
+    for snapshot in sample_pages:
+        path = strip_locale_path(urlparse(snapshot.url).path).lower()
+        if any(token in path for token in ecommerce_path_tokens) or "Product" in snapshot.schema_types:
+            ecommerce_pages.append(snapshot)
+        if any(token in path for token in service_path_tokens) or get_template_bucket(snapshot) == "service":
+            service_pages.append(snapshot)
+
+    is_catalog = bool(product_pages) or (len(ecommerce_pages) >= 4 and len(ecommerce_pages) >= len(service_pages))
     return {
         "product_pages": product_pages,
         "category_pages": category_pages,
         "form_pages": form_pages,
-        "is_catalog": bool(product_pages or category_pages),
+        "service_pages": service_pages,
+        "ecommerce_pages": ecommerce_pages,
+        "is_catalog": is_catalog,
+        "is_service_site": not is_catalog,
     }
 
 
@@ -2082,16 +2111,14 @@ def dynamic_build_issue_list(audit: dict) -> list[AuditIssue]:
                 severity="Medium",
                 title="Meta description РЅР° С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС† РІРЅРµ СЂР°Р±РѕС‡РµРіРѕ РґРёР°РїР°Р·РѕРЅР°",
                 why_it_matters=(
-                    "Описание страницы — это управляемый оффер в сниппете. Когда оно слишком короткое или перегруженное, "
-                    "РїРѕРёСЃРєРѕРІРёРє С‡Р°С‰Рµ Р±РµСЂРµС‚ СЃР»СѓС‡Р°Р№РЅС‹Р№ РєСѓСЃРѕРє С‚РµРєСЃС‚Р° СЃРѕ СЃС‚СЂР°РЅРёС†С‹."
+                    "Description — это управляемый текст сниппета. Когда он слишком короткий или перегруженный, поисковик чаще берет случайный фрагмент страницы вместо подготовленного описания."
                 ),
                 evidence=[
                     f"Р’ РІС‹Р±РѕСЂРєРµ {len(problematic_descriptions)} РёР· {len(sample_pages)} СЃС‚СЂР°РЅРёС† РёРјРµСЋС‚ description РІРЅРµ РєРѕРјС„РѕСЂС‚РЅРѕРіРѕ РґРёР°РїР°Р·РѕРЅР°.",
                     *examples,
                 ],
                 recommendation=(
-                    "РЎРѕР±СЂР°С‚СЊ С€Р°Р±Р»РѕРЅС‹ description РїРѕ С‚РёРїР°Рј СЃС‚СЂР°РЅРёС†: РєР»СЋС‡, С†РµРЅРЅРѕСЃС‚СЊ, РґРѕРІРµСЂРёРµ, СЂРµРіРёРѕРЅ Рё РїСЂРёР·С‹РІ. "
-                    "РћСЂРёРµРЅС‚РёСЂ вЂ” 140вЂ“160 СЃРёРјРІРѕР»РѕРІ."
+                    "Собрать шаблоны description по типам страниц: ключ, ценность, доверие, регион и следующий шаг. Рабочий ориентир — 140–160 символов."
                 ),
             )
         )
@@ -2270,7 +2297,7 @@ def dynamic_build_roadmap(audit: dict) -> list[tuple[str, list[str]]]:
         ]
     else:
         sprint_3 = [
-            "Усилить страницы услуг и контактов: добавить доказательства, FAQ, условия выбора и сильный призыв к действию.",
+            "Усилить страницы услуг и контактов: добавить доказательства, FAQ, условия выбора и явную точку контакта.",
             "Развести ключевые направления по отдельным страницам и связать их тематической перелинковкой.",
             "Запустить повторную оптимизацию страниц с потерянными запросами: новые H2/H3, факты, кейсы, изображения и обновлённые сниппеты.",
         ]
@@ -2287,27 +2314,29 @@ def build_executive_summary_dynamic(audit: dict) -> list[str]:
         else "технические и шаблонные ограничения"
     )
     priority_pages = select_priority_pages(audit["sample_pages"])
-    commercial_gap_ratio = coverage_ratio(priority_pages, lambda snapshot: not snapshot.has_commercial_block)
-    support_gap_ratio = coverage_ratio(
-        priority_pages,
-        lambda snapshot: not any(bool(getattr(snapshot, field, False)) for field in MONSTER_SUPPORT_FIELDS),
+    preview_priority_pages = build_priority_pages(audit)
+    description_problem_count = len(
+        [snapshot for snapshot in audit["sample_pages"] if len(snapshot.description) > 160 or (0 < len(snapshot.description) < 120)]
     )
-    structure_gap_ratio = coverage_ratio(priority_pages, lambda snapshot: snapshot.internal_links <= 5)
-    project_shape = "категории, карточки и связанные посадочные" if profile["is_catalog"] else "страницы услуг, внутренние коммерческие разделы и лид-страницы"
+    breadcrumb_gap_count = len(
+        [
+            snapshot
+            for snapshot in priority_pages
+            if get_template_bucket(snapshot) in {"category", "product", "service", "contact"} and not snapshot.has_breadcrumbs
+        ]
+    )
+    priority_page_paths = ", ".join(item["path"] for item in preview_priority_pages[:3])
+    project_shape = "категории, карточки и связанные посадочные" if profile["is_catalog"] else "страницы услуг, коммерческие разделы и контактные страницы"
 
     return [
         (
-            f"Ниже вывод по основным слоям сайта: индексация, сниппеты, внутренняя структура, коммерческие факторы и качество контента. "
-            f"В выборке {len(audit['sample_pages'])} HTML-страниц, основной фокус — на шаблонах типа {project_shape}."
+            f"Проверено {len(audit['sample_pages'])} HTML-страниц. robots.txt отвечает кодом {audit['robots_status']}, sitemap содержит {audit['sitemap_url_count']} URL, средний ответ по выборке — {audit['average_response_ms']} ms. Основной фокус проверки — {project_shape}."
         ),
         (
-            f"Сильнее всего сайту мешают {top_issue_titles}. Это не косметические замечания: из-за них страдают индексация, читаемость сниппетов и сила приоритетных страниц относительно конкурентов."
+            f"Главные ограничения сейчас: {top_issue_titles}. В цифрах это выглядит так: description вне рабочего диапазона на {description_problem_count} страницах, без breadcrumbs остаются {breadcrumb_gap_count} из {len(priority_pages)} приоритетных страниц, без alt — {audit['total_missing_alt']} изображений."
         ),
         (
-            "Основной резерв — в переработке приоритетных шаблонов, а не в добавлении ещё одного общего SEO-текста: "
-            f"без условий и доверия остаются {round(commercial_gap_ratio * 100)}% ключевых страниц, "
-            f"без ответов на возражения и сравнительных блоков — {round(support_gap_ratio * 100)}%, "
-            f"а со слабой перелинковкой — {round(structure_gap_ratio * 100)}%."
+            f"Первый контур внедрения — {priority_page_paths or 'ключевые шаблоны сайта'}. На этих URL одновременно сходятся вопросы сниппета, внутренней навигации, полноты шаблона и поддержки коммерческого интента."
         ),
     ]
 
@@ -2556,7 +2585,43 @@ def build_priority_matrix(audit: dict) -> list[dict]:
     return rows
 
 
-def page_business_label(template_id: str | None) -> str:
+def page_template_label(snapshot: PageSnapshot) -> str:
+    path = strip_locale_path(urlparse(snapshot.url).path).lower()
+    if path == "/contacts":
+        return "Контакты"
+    if path == "/cases" or path.startswith("/cases/"):
+        return "Кейсы"
+    if path == "/reviews" or path.startswith("/reviews/"):
+        return "Отзывы"
+    if path == "/blog" or path.startswith("/blog/"):
+        return "Блог"
+    if path == "/tools" or path.startswith("/tools/") or path.startswith("/calculator"):
+        return "Инструменты / калькуляторы"
+
+    template_id = get_template_bucket(snapshot)
+    return {
+        "home": "Главная",
+        "service": "Услуга / коммерческая страница",
+        "contact": "Контакты / конверсионная страница",
+        "category": "Раздел / кластерная страница",
+        "product": "Карточка / детальная страница",
+    }.get(template_id or "", "Внутренняя страница")
+
+
+def page_business_label(snapshot: PageSnapshot) -> str:
+    path = strip_locale_path(urlparse(snapshot.url).path).lower()
+    if path == "/contacts":
+        return "контактная страница под брендовый, навигационный и конверсионный интент"
+    if path == "/cases" or path.startswith("/cases/"):
+        return "раздел кейсов, который поддерживает доверие и передает внутренний вес на услуги"
+    if path == "/reviews" or path.startswith("/reviews/"):
+        return "раздел отзывов, который усиливает коммерческий интент и доверительный слой сайта"
+    if path == "/blog" or path.startswith("/blog/"):
+        return "контентный раздел, который должен поддерживать тематические кластеры и внутреннюю перелинковку"
+    if path == "/tools" or path.startswith("/tools/") or path.startswith("/calculator"):
+        return "инструментальный раздел, который может собирать дополнительный спрос и поддерживать коммерческие URL"
+
+    template_id = get_template_bucket(snapshot)
     mapping = {
         "home": "главная страница, которая задаёт структуру входа и распределяет внутренний вес по сайту",
         "service": "страница, которая должна закрывать коммерческий интент по услуге",
@@ -2589,17 +2654,30 @@ def collect_page_gap_labels(snapshot: PageSnapshot) -> list[str]:
 
 
 def page_first_step(snapshot: PageSnapshot) -> str:
+    path = strip_locale_path(urlparse(snapshot.url).path).lower()
+
+    if path == "/contacts":
+        return "Собрать полноценный контактный шаблон: развернутый интро-блок, каналы связи, breadcrumbs, FAQ и переходы на приоритетные услуги."
+    if path == "/cases" or path.startswith("/cases/"):
+        return "Добавить вводный блок по типам кейсов, H2-структуру, breadcrumbs и переходы на релевантные услуги и связанные кейсы."
+    if path == "/reviews" or path.startswith("/reviews/"):
+        return "Собрать вводный блок под брендовый спрос, breadcrumbs и переходы на услуги и кейсы, чтобы раздел поддерживал коммерческие страницы, а не жил отдельно."
+    if path == "/blog" or path.startswith("/blog/"):
+        return "Усилить связку раздела с услугами и соседними кластерами: breadcrumbs, блоки по теме, FAQ и переходы на коммерческие URL."
+    if path == "/tools" or path.startswith("/tools/") or path.startswith("/calculator"):
+        return "Усилить вводный блок раздела, breadcrumbs и переходы на релевантные услуги, чтобы инструментальный трафик не оставался изолированным."
+
     if not snapshot.title or not snapshot.description or len(cleaned_h1s(snapshot)) != 1 or not snapshot.canonical:
         return "Сначала собрать title, description, H1 и canonical по шаблону страницы."
     if not snapshot.has_commercial_block:
-        return "Сначала добавить условия выбора: цена или диапазон, сроки, формат работы, CTA и контакты."
+        return "Сначала добавить условия выбора: стоимость или диапазон, сроки, формат работы, точки контакта и следующий шаг."
     if not snapshot.has_trust_block:
         return "Сначала добавить доверительный слой: кейсы, отзывы, гарантии, опыт или подтверждение экспертизы."
     if not any(bool(getattr(snapshot, field, False)) for field in MONSTER_SUPPORT_FIELDS):
         return "Сначала усилить страницу FAQ, сравнением, кейсами или блоком ответов на возражения."
     if snapshot.internal_links <= 5:
         return "Сначала дать странице больше внутренних входов: хлебные крошки, тематические ссылки и блоки по теме."
-    return "Сначала проверить шаблон страницы на качество интента, CTA и доказательств, затем усилить контент по потерянным запросам."
+    return "Сначала проверить шаблон страницы на качество интента, доказательств и внутренних переходов, затем усилить контент по потерянным запросам."
 
 
 def priority_page_score(snapshot: PageSnapshot) -> float:
@@ -2638,14 +2716,8 @@ def build_priority_pages(audit: dict) -> list[dict]:
                 "url": snapshot.url,
                 "path": human_path(snapshot.url),
                 "template": template_id or "other",
-                "template_label": {
-                    "home": "Главная",
-                    "service": "Услуга / коммерческая страница",
-                    "contact": "Контакты / конверсионная страница",
-                    "category": "Категория / раздел",
-                    "product": "Карточка / detail page",
-                }.get(template_id or "", "Внутренняя страница"),
-                "business_value": page_business_label(template_id),
+                "template_label": page_template_label(snapshot),
+                "business_value": page_business_label(snapshot),
                 "gaps": gaps[:4],
                 "first_step": page_first_step(snapshot),
                 "word_count": snapshot.word_count,
@@ -3425,23 +3497,23 @@ def dynamic_build_strengths(audit: dict) -> list[str]:
     contact_pages = get_contact_related_pages(audit["sample_pages"])
 
     if audit["home_page"].status_code == 200:
-        strengths.append("Ключевая входная страница сайта стабильно отвечает по 200 коду и доступна без JS-заглушки.")
+        strengths.append("Главная страница отвечает по 200 коду и доступна без JS-заглушки.")
     if audit.get("average_response_ms") and audit["average_response_ms"] < 1800:
-        strengths.append(f"Средний ответ по выборке держится на уровне {audit['average_response_ms']} ms, то есть сайт не выглядит технически перегруженным уже на старте.")
+        strengths.append(f"Средний ответ по выборке — {audit['average_response_ms']} ms; критической серверной перегрузки в базовом обходе не видно.")
     if audit.get("canonical_coverage_ratio", 0) >= 0.75:
-        strengths.append(f"У {math.floor(audit['canonical_coverage_ratio'] * 100)}% проверенных страниц уже есть canonical, а это хорошая база для чистой индексации.")
+        strengths.append(f"Canonical проставлен на {math.floor(audit['canonical_coverage_ratio'] * 100)}% проверенных страниц.")
     if audit.get("h1_coverage_ratio", 0) >= 0.85:
-        strengths.append(f"У {math.floor(audit['h1_coverage_ratio'] * 100)}% проверенных страниц уже собран H1, значит шаблонная структура сайта не выглядит хаотичной.")
+        strengths.append(f"H1 присутствует на {math.floor(audit['h1_coverage_ratio'] * 100)}% проверенных страниц, шаблонная структура выглядит управляемой.")
     if audit.get("schema_coverage_ratio", 0) >= 0.45:
-        strengths.append(f"Schema-разметка уже используется на {math.floor(audit['schema_coverage_ratio'] * 100)}% выборки, то есть база для rich results и понятной структуры уже есть.")
+        strengths.append(f"Schema-разметка есть на {math.floor(audit['schema_coverage_ratio'] * 100)}% выборки.")
     if coverage_ratio(priority_pages, lambda snapshot: snapshot.has_trust_block) >= 0.55:
-        strengths.append("На большей части приоритетных страниц уже есть доверительный слой, значит сайт можно доусилить без полной пересборки структуры.")
+        strengths.append("На большей части приоритетных страниц уже есть доверительный слой: кейсы, отзывы, экспертные блоки или смежные сигналы.")
     if contact_pages:
-        strengths.append("У сайта уже есть выделенные контактные и конверсионные страницы, а значит маршрут пользователя до контакта можно усиливать без изобретения новой архитектуры.")
+        strengths.append("У сайта уже есть выделенные контактные и конверсионные страницы; контактный сценарий не нужно собирать с нуля.")
     if audit.get("sitemap_url_count", 0) > 0:
-        strengths.append(f"У проекта уже есть карта сайта с {audit['sitemap_url_count']} URL, поэтому индексацию можно не строить с нуля, а донастраивать.")
+        strengths.append(f"Карта сайта содержит {audit['sitemap_url_count']} URL и уже может использоваться как рабочая база для контроля индексации.")
     if audit.get("llms_exists"):
-        strengths.append("У проекта уже есть llms.txt, значит можно отдельно усиливать видимость и для answer-first выдачи.")
+        strengths.append("На проекте уже есть llms.txt, то есть техническая база для AI-discovery не пустая.")
 
     unique_strengths: list[str] = []
     for item in strengths:
@@ -3462,7 +3534,7 @@ def dynamic_build_growth_points(audit: dict) -> list[str]:
         )
     elif profile["is_catalog"]:
         points.append(
-            "Усилить категории и карточки не SEO-текстом ради объёма, а условиями выбора: наличие, доставка, оплата, гарантия, фильтры, FAQ и блоки доверия."
+            "Усилить категории и карточки условиями выбора: наличие, доставка, оплата, гарантия, фильтры, FAQ и блоки доверия."
         )
     else:
         points.append(
@@ -3475,7 +3547,7 @@ def dynamic_build_growth_points(audit: dict) -> list[str]:
         )
     elif priority_pages:
         points.append(
-            "Доработать самые важные страницы фактами и подтверждениями: таблицы, FAQ, отзывы, кейсы, документы, сравнения и короткие answer-first блоки."
+            "Доработать самые важные страницы фактами и подтверждениями: таблицы, FAQ, отзывы, кейсы, документы, сравнения и короткие ответные блоки в начале страницы."
         )
 
     points.append("Собрать единые шаблоны для title, description, H1 и canonical по всем ключевым типам страниц.")
@@ -3499,6 +3571,9 @@ def dynamic_build_growth_points(audit: dict) -> list[str]:
 
 
 PHASE_TEXT_REPLACEMENTS = {
+    "Проверяю, насколько чисто сайт отдает поисковикам сигналы для обхода и индексации.": "Проверка сигнальных файлов, карты сайта, статусов и каноникализации.",
+    "Смотрю на скорость ответа, вес HTML и то, как медиа-слой может мешать загрузке.": "Проверка ответа сервера, веса HTML и медиаслоя. Это первичный срез; финальная оценка Core Web Vitals требует field data.",
+    "Проверяю, насколько хорошо сайт объясняет поисковику сущности бизнеса, страниц и предложений.": "Проверка schema-разметки и того, насколько корректно сайт описывает бизнес, страницы и типы сущностей.",
     "Разбираю шаблоны title, description, H1 и то, насколько страницы готовы к нормальному сниппету.": "Проверка title, описания страницы и H1 на ключевых шаблонах.",
     "По H1 каркас у выборки в целом собран неплохо.": "На проверенных страницах H1 в целом оформлен нормально.",
     "Сильно пустых страниц в выборке немного.": "Пустых страниц в выборке почти нет.",
@@ -3596,7 +3671,7 @@ def build_monster_phase_sections(audit: dict, phase_sections: list[dict]) -> lis
     if len(updated_sections) > 1:
         updated_sections[1] = {
             "title": "Этап 2 — Структура и внутренняя перелинковка",
-            "intro": "Внутренняя структура должна не просто существовать, а направлять вес и пользователя к нужным кластерам спроса. Здесь смотрим тематические связи, глубину доступа и навигационный шум.",
+            "intro": "Проверка того, как сайт распределяет внутренний вес, связывает ключевые шаблоны и поддерживает приоритетные URL.",
             "checks": [
                 {
                     "name": "Тематическая перелинковка приоритетных страниц",
@@ -3652,7 +3727,7 @@ def build_monster_phase_sections(audit: dict, phase_sections: list[dict]) -> lis
     if len(updated_sections) > 5:
         updated_sections[5] = {
             "title": "Этап 6 — Коммерческие факторы и качество контента",
-            "intro": "Для коммерческого ранжирования мало текста. Нужны условия сделки, доверие, поддержка, ответы на возражения и доказательства, что страница реально помогает выбрать.",
+            "intro": "Проверка коммерческого слоя, доказательств и полноты контента на приоритетных шаблонах.",
             "checks": [
                 {
                     "name": "Коммерческий слой на приоритетных шаблонах",
@@ -4187,10 +4262,10 @@ def add_priority_pages_doc(doc: Document, items: list[dict]) -> None:
         set_cell_margins(body, 100, 110, 110, 110)
         title_run = head.paragraphs[0].add_run(normalize_output_text(f"{item.get('template_label', 'Страница')}  |  {item.get('path', '')}"))
         set_font(title_run, size=11.2, bold=True, color=BRAND_TEXT)
-        add_text_paragraph(body, f"Почему в приоритете: {item.get('business_value', '')}", size=10.4, color=BRAND_TEXT, bold=True, space_after=3)
+        add_text_paragraph(body, f"Роль в SEO-структуре: {item.get('business_value', '')}", size=10.4, color=BRAND_TEXT, bold=True, space_after=3)
         add_text_paragraph(
             body,
-            f"Сигналы просадки: {', '.join(item.get('gaps', []))}",
+            f"Что ограничивает страницу: {', '.join(item.get('gaps', []))}",
             size=10.2,
             color=BRAND_MUTED,
             space_after=3,
@@ -4203,7 +4278,7 @@ def add_priority_pages_doc(doc: Document, items: list[dict]) -> None:
             bold=True,
             space_after=3,
         )
-        add_text_paragraph(body, f"Первый шаг: {item.get('first_step', '')}", size=10.3, color=BRAND_TEXT, bold=True, space_after=4)
+        add_text_paragraph(body, f"Что делать сначала: {item.get('first_step', '')}", size=10.3, color=BRAND_TEXT, bold=True, space_after=4)
         doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
 
@@ -4353,7 +4428,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
         doc,
         "Краткий вывод",
         "Факторы, которые не дают сайту конкурировать",
-        "Ниже коротко: какие шаблоны и сигналы мешают сайту конкурировать в выдаче и на чём стоит сосредоточиться в первую очередь.",
+        "Короткий срез по основным ограничениям: индексация, сниппеты, шаблоны и приоритетные URL.",
     )
     for paragraph in audit.get("executive_summary", []) or build_executive_summary_dynamic(audit):
         add_text_paragraph(doc, paragraph, size=11.4, color=BRAND_TEXT, space_after=6)
@@ -4364,7 +4439,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Сильные стороны",
             "Что уже можно считать хорошей базой",
-            "Это элементы, которые уже можно использовать как опору при дальнейшей оптимизации и не пересобирать без причины.",
+            "Ниже сигналы, которые уже собраны корректно и не требуют первоочередной пересборки.",
         )
         add_bullet_list(doc, audit.get("strengths", []), size=11.0)
 
@@ -4373,7 +4448,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Приоритетные страницы",
             "Какие URL стоит дорабатывать первыми",
-            "Ниже страницы, которые сильнее всего влияют на качество ключевых шаблонов, распределение внутреннего веса и отработку приоритетных кластеров спроса.",
+            "Ниже URL, где одновременно сходятся шаблонные просадки, навигация и работа по приоритетным кластерам спроса.",
         )
         add_priority_pages_doc(doc, audit.get("priority_pages", []))
 
@@ -4382,7 +4457,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Приоритеты",
             "Какие задачи делать в первую очередь",
-            "Сначала закрываем критичные и массовые проблемы, которые сильнее всего бьют по индексации, сниппетам и ключевым страницам сайта.",
+            "В матрицу вынесены задачи, которые сильнее всего влияют на индекс, сниппеты и качество ключевых шаблонов.",
         )
         add_priority_matrix_table(doc, audit.get("priority_matrix", []))
 
@@ -4392,7 +4467,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Критичные ошибки",
             "Что прямо сейчас мешает сайту расти",
-            "Здесь только те проблемы, которые заметно влияют на индексацию, сниппеты, CTR и качество приоритетных страниц.",
+            "Здесь только ошибки, которые искажают сигналы для поиска или ослабляют приоритетные страницы сайта.",
         )
         add_issue_cards(doc, critical_issue_cards)
 
@@ -4401,7 +4476,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Подробный разбор",
             "Проверка по основным слоям сайта",
-            "Аудит разбит по этапам, чтобы было понятно, где именно находятся проблемы и как они проверялись.",
+            "По каждому слою ниже указано, что проверялось, что нашли и что исправлять в первую очередь.",
         )
         add_phase_sections_doc(doc, audit.get("phase_sections", []))
 
@@ -4415,7 +4490,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Сравнение с конкурентами",
             "Чего не хватает на фоне сильных конкурентов",
-            "Сравнение показывает, какие шаблоны, блоки и коммерческие сигналы конкуренты используют лучше и что стоит внедрить в первую очередь.",
+            "Сравнение показывает, какие шаблоны и сигналы конкуренты закрывают лучше и где у сайта есть прямой зазор.",
         )
         add_competitor_comparison_doc(doc, competitor_comparison)
 
@@ -4424,7 +4499,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Быстрые исправления",
             "Что можно исправить в ближайшее время",
-            "Это задачи, которые можно внедрить быстро и без большой переделки сайта.",
+            "Задачи с небольшим объемом внедрения и быстрым эффектом для индекса, сниппета или шаблона.",
         )
         add_action_cards_doc(doc, audit.get("quick_wins", []), "effort", "impact")
 
@@ -4433,7 +4508,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Стратегические улучшения",
             "Что усиливать после базовых исправлений",
-            "Это более крупные изменения, которые усиливают сайт в поиске, шаблонную базу и приоритетные кластеры спроса.",
+            "Более крупные изменения по шаблонам, структуре и контенту после базовой технической чистки.",
         )
         add_action_cards_doc(doc, audit.get("strategic_moves", []), "impact", "effort")
 
@@ -4442,7 +4517,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "Вектор роста",
             "Что переработать после базовых исправлений",
-            "Ниже направления, которые усиливают структуру, коммерческий интент и качество контента после базовых исправлений.",
+            "Направления, которые стоит усиливать после базовой чистки индекса, сниппетов и шаблонов.",
         )
         add_bullet_list(doc, audit["growth_points"], size=11.1)
 
@@ -4451,7 +4526,7 @@ def generate_docx(audit: dict, output_path: Path, logo_path: Path) -> None:
             doc,
             "План работ",
             "План внедрения на 60 дней",
-            "Порядок выстроен так, чтобы сначала снять технические ограничения, потом усилить шаблоны и только после этого масштабировать рост.",
+            "Очередность выстроена по слоям: сначала индекс и сниппеты, затем шаблоны, затем масштабирование спроса.",
         )
         add_roadmap_table(doc, audit["roadmap"])
 

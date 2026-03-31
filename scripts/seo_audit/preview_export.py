@@ -359,17 +359,17 @@ def _append_priority_pages(story: list, items: list[dict], styles: dict) -> None
         story,
         "Приоритетные страницы",
         "Какие URL стоит дорабатывать первыми",
-        "Ниже страницы, которые сильнее всего влияют на качество ключевых шаблонов, распределение внутреннего веса и отработку приоритетных кластеров спроса.",
+        "Ниже URL, где одновременно сходятся шаблонные просадки, навигация и работа по приоритетным кластерам спроса.",
         styles,
     )
     for item in items:
         card = Table(
             [
                 [Paragraph(_escape_pdf_text(f"{item.get('template_label', 'Страница')}  |  {item.get('path', '')}"), styles["cardTitle"])],
-                [Paragraph(f"<b>Почему в приоритете:</b> {_escape_pdf_text(item.get('business_value', ''))}", styles["base"])],
-                [Paragraph(f"<b>Сигналы просадки:</b> {_escape_pdf_text(', '.join(item.get('gaps', [])))}", styles["base"])],
+                [Paragraph(f"<b>Роль в SEO-структуре:</b> {_escape_pdf_text(item.get('business_value', ''))}", styles["base"])],
+                [Paragraph(f"<b>Что ограничивает страницу:</b> {_escape_pdf_text(', '.join(item.get('gaps', [])))}", styles["base"])],
                 [Paragraph(f"<b>Внутренние ссылки:</b> {_escape_pdf_text(item.get('internal_links', 0))} &nbsp;&nbsp; <b>Слова:</b> {_escape_pdf_text(item.get('word_count', 0))} &nbsp;&nbsp; <b>Приоритет:</b> {_escape_pdf_text(item.get('score', ''))}", styles["small"])],
-                [Paragraph(f"<b>Первый шаг:</b> {_escape_pdf_text(item.get('first_step', ''))}", styles["base"])],
+                [Paragraph(f"<b>Что делать сначала:</b> {_escape_pdf_text(item.get('first_step', ''))}", styles["base"])],
             ],
             colWidths=[180 * mm],
         )
@@ -1258,7 +1258,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             story,
             "Краткий вывод",
             "Факторы, которые не дают сайту конкурировать",
-            "Ниже коротко: какие шаблоны и сигналы мешают сайту конкурировать в выдаче и на чём стоит сосредоточиться в первую очередь.",
+            "Короткий срез по основным ограничениям: индексация, сниппеты, шаблоны и приоритетные URL.",
             styles,
         )
         story.extend(_paragraph_list(audit_payload.get("executive_summary", []), styles))
@@ -1269,7 +1269,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
                 story,
                 "Сильные стороны",
                 "Что уже можно считать хорошей базой",
-                "Это элементы, которые уже можно использовать как опору при дальнейшей оптимизации и не пересобирать без причины.",
+                "Ниже сигналы, которые уже собраны корректно и не требуют первоочередной пересборки.",
                 styles,
             )
             story.extend(_paragraph_list(audit_payload.get("strengths", []), styles))
@@ -1283,7 +1283,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             story,
             "Вектор роста",
             "Что переработать после базовых исправлений",
-            "Ниже направления, которые усиливают структуру, коммерческий интент и качество контента после базовых исправлений.",
+            "Направления, которые стоит усиливать после базовой чистки индекса, сниппетов и шаблонов.",
             styles,
         )
         story.extend(_paragraph_list(audit_payload.get("growth_points", []), styles))
@@ -1293,7 +1293,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             story,
             "Приоритеты",
             "Какие задачи делать в первую очередь",
-            "Сначала закрываем критичные и массовые проблемы, которые сильнее всего бьют по индексации, сниппетам и ключевым страницам сайта.",
+            "В матрицу вынесены задачи, которые сильнее всего влияют на индекс, сниппеты и качество ключевых шаблонов.",
             styles,
         )
         for row in audit_payload.get("priority_matrix", [])[:12]:
@@ -1331,7 +1331,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             story,
             "Критические ошибки",
             "Что сейчас реально блокирует рост",
-            "Здесь только те проблемы, которые заметно влияют на индексацию, сниппеты, CTR и качество приоритетных страниц.",
+            "Здесь только ошибки, которые искажают сигналы для поиска или ослабляют приоритетные страницы сайта.",
             styles,
         )
         _append_issue_cards(story, audit_payload.get("critical_errors") or audit_payload.get("issues", []), styles)
@@ -1348,7 +1348,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             audit_payload.get("quick_wins", []),
             "Быстрые исправления",
             "Что можно исправить в ближайшее время",
-            "Это задачи, которые можно внедрить быстро и без большой переделки сайта.",
+            "Задачи с небольшим объемом внедрения и быстрым эффектом для индекса, сниппета или шаблона.",
             styles,
         )
         _append_action_cards(
@@ -1356,7 +1356,7 @@ def write_preview_pdf(audit_payload: dict, pdf_path: Path) -> bool:
             audit_payload.get("strategic_moves", []),
             "Стратегические улучшения",
             "Что усиливать после базовых исправлений",
-            "Это более крупные изменения, которые усиливают сайт в поиске, шаблонную базу и приоритетные кластеры спроса.",
+            "Более крупные изменения по шаблонам, структуре и контенту после базовой технической чистки.",
             styles,
         )
         _append_roadmap(story, audit_payload.get("roadmap", []), styles)
@@ -1503,11 +1503,11 @@ def _priority_pages_html(items: list[dict]) -> str:
             <article class="action-card">
               <div class="section-kicker">{_escape_html_text(item.get('template_label', 'Страница'))}</div>
               <h3>{_escape_html_text(item.get('path', ''))}</h3>
-              <p><strong>Почему в приоритете:</strong> {_escape_html_text(item.get('business_value', ''))}</p>
-              <p><strong>Сигналы просадки:</strong></p>
+              <p><strong>Роль в SEO-структуре:</strong> {_escape_html_text(item.get('business_value', ''))}</p>
+              <p><strong>Что ограничивает страницу:</strong></p>
               <ul>{gap_items}</ul>
               <p class="action-meta"><strong>Внутренние ссылки:</strong> {_escape_html_text(item.get('internal_links', ''))} &nbsp;&nbsp; <strong>Слова:</strong> {_escape_html_text(item.get('word_count', ''))} &nbsp;&nbsp; <strong>Приоритет:</strong> {_escape_html_text(item.get('score', ''))}</p>
-              <p class="recommendation"><strong>Первый шаг:</strong> {_escape_html_text(item.get('first_step', ''))}</p>
+              <p class="recommendation"><strong>Что делать сначала:</strong> {_escape_html_text(item.get('first_step', ''))}</p>
             </article>
             """
         )
@@ -2266,21 +2266,21 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       <section>
         <div class="section-kicker">Приоритеты</div>
         <h2>Какие задачи делать в первую очередь</h2>
-        <p class="lead">Сначала закрываем критичные и массовые проблемы, которые сильнее всего бьют по индексации, сниппетам и ключевым страницам сайта.</p>
+        <p class="lead">В матрицу вынесены задачи, которые сильнее всего влияют на индекс, сниппеты и качество ключевых шаблонов.</p>
         {priority_html}
       </section>
 
       <section>
         <div class="section-kicker">Критические ошибки</div>
         <h2>Что сейчас реально блокирует рост</h2>
-        <p class="lead">Здесь только те проблемы, которые заметно влияют на индексацию, сниппеты, CTR и качество приоритетных страниц.</p>
+        <p class="lead">Здесь только ошибки, которые искажают сигналы для поиска или ослабляют приоритетные страницы сайта.</p>
         <div class="issue-list">{issues_html}</div>
       </section>
 
       {f'''<section>
         <div class="section-kicker">Сильные стороны</div>
         <h2>Что уже можно считать хорошей базой</h2>
-        <p class="lead">Это элементы, которые уже можно использовать как опору при дальнейшей оптимизации и не пересобирать без причины.</p>
+        <p class="lead">Ниже сигналы, которые уже собраны корректно и не требуют первоочередной пересборки.</p>
         <div class="list-card">
           <ul>{strengths_html}</ul>
         </div>
@@ -2289,14 +2289,14 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       {f'''<section>
         <div class="section-kicker">Приоритетные страницы</div>
         <h2>Какие URL стоит дорабатывать первыми</h2>
-        <p class="lead">Ниже страницы, которые сильнее всего влияют на качество ключевых шаблонов, распределение внутреннего веса и отработку приоритетных кластеров спроса.</p>
+        <p class="lead">Ниже URL, где одновременно сходятся шаблонные просадки, навигация и работа по приоритетным кластерам спроса.</p>
         <div class="action-grid">{priority_pages_html}</div>
       </section>''' if audit_payload.get('priority_pages') else ''}
 
       <section>
         <div class="section-kicker">Вектор роста</div>
         <h2>Что переработать после базовых исправлений</h2>
-        <p class="lead">Ниже направления, которые усиливают структуру, коммерческий интент и качество контента после базовых исправлений.</p>
+        <p class="lead">Направления, которые стоит усиливать после базовой чистки индекса, сниппетов и шаблонов.</p>
         <div class="list-card">
           <ul>{growth_html}</ul>
         </div>
@@ -2313,21 +2313,21 @@ def write_preview_html(audit_payload: dict, html_path: Path) -> None:
       <section>
         <div class="section-kicker">Быстрые исправления</div>
         <h2>Что можно исправить в ближайшее время</h2>
-        <p class="lead">Это задачи, которые можно внедрить быстро и без большой переделки сайта.</p>
+        <p class="lead">Задачи с небольшим объемом внедрения и быстрым эффектом для индекса, сниппета или шаблона.</p>
         <div class="action-grid">{quick_wins_html}</div>
       </section>
 
       <section>
         <div class="section-kicker">Стратегические улучшения</div>
         <h2>Что усиливать после базовых исправлений</h2>
-        <p class="lead">Это более крупные изменения, которые усиливают сайт в поиске, шаблонную базу и приоритетные кластеры спроса.</p>
+        <p class="lead">Более крупные изменения по шаблонам, структуре и контенту после базовой технической чистки.</p>
         <div class="action-grid">{strategic_html}</div>
       </section>
 
       <section>
         <div class="section-kicker">План работ</div>
         <h2>План внедрения на 60 дней</h2>
-        <p class="lead">Сначала снимаем технические ограничения, потом усиливаем шаблоны и только после этого масштабируем рост.</p>
+        <p class="lead">Очередность выстроена по слоям: сначала индекс и сниппеты, затем шаблоны, затем масштабирование спроса.</p>
         <div class="roadmap">{_roadmap_columns(audit_payload.get("roadmap", []))}</div>
       </section>
     </div>
