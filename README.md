@@ -99,6 +99,30 @@ npm run prisma:generate  # Генерация Prisma Client
 npm run prisma:migrate   # Применение миграций
 ```
 
+## SEO Machine
+
+В репозиторий встроен project-local `seo-machine` workflow для работы с этим сайтом.
+
+Что доступно:
+
+- `CLAUDE.md` с картой проекта и правилами редактирования
+- `.claude/commands/` для project-aware slash-команд
+- `.opencode/commands/` для OpenCode
+- `opencode.jsonc` для запуска через OpenCode
+- `.github/workflows/opencode.yml` для запуска из GitHub comments
+
+Основные команды:
+
+```text
+/site-audit [url or route]
+/homepage-rewrite [goal]
+/service-rewrite [slug or goal]
+/blog-write [topic]
+/seo-fix [issue, url, or route]
+```
+
+Документация: `SEO-MACHINE.md`
+
 ## 📝 Функционал
 
 - ✅ Управление услугами
