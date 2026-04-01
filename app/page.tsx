@@ -522,144 +522,84 @@ export default async function HomePage() {
 
   return (
     <div className="home-page-shell overflow-hidden pb-16 md:pb-24">
-      <section className="section-shell-tight !pb-8 !pt-6 md:!pb-12 md:!pt-10">
-        <div className="relative">
-          <div className="hidden" aria-hidden="true">
-            {verificationCode}
-          </div>
+      <section className="section-grid relative border-b border-white/10">
+        <div className="section-shell-tight relative !pb-8 !pt-6 md:!pb-10 md:!pt-8">
+          <div className="hero-panel hero-sheen relative overflow-hidden rounded-[32px] border border-white/70 px-4 py-5 md:px-6 md:py-6 lg:px-8 lg:py-7">
+            <div className="hero-grid-mask" />
+            <div className="hero-orb float-slow left-[-30px] top-10 h-28 w-28 bg-[radial-gradient(circle,rgba(255,163,102,0.34),rgba(255,163,102,0))]" />
+            <div className="hero-orb float-reverse right-10 top-[-16px] h-24 w-24 bg-[radial-gradient(circle,rgba(56,189,248,0.28),rgba(56,189,248,0))]" />
+            <div className="hero-orb pulse-glow bottom-8 right-[-20px] h-40 w-40 bg-[radial-gradient(circle,rgba(255,214,153,0.3),rgba(255,214,153,0))]" />
+            <div className="hero-fragment drift-right right-[7%] top-[14%] hidden md:flex">
+              <span className="hero-fragment-line w-16" />
+              <span className="hero-fragment-line w-8" />
+            </div>
+            <div className="hero-fragment drift-left left-[56%] top-[26%] hidden lg:flex">
+              <span className="hero-fragment-dot" />
+              <span className="hero-fragment-line w-20" />
+            </div>
+            <div className="hero-beam drift-right" />
 
-          <div className="grid gap-8 xl:grid-cols-[minmax(0,1.08fr)_minmax(340px,420px)] xl:items-start xl:gap-10">
-            <div className="max-w-[760px]">
+            <div className="relative max-w-none">
+              <div className="hidden" aria-hidden="true">
+                {verificationCode}
+              </div>
+
               <SectionEyebrow>{copy.heroChip}</SectionEyebrow>
-
-              <h1 className="mt-5 max-w-[820px] text-[clamp(2.45rem,5vw,4.85rem)] font-semibold leading-[0.94] tracking-[-0.045em] text-slate-950">
+              <h1 className="mt-5 max-w-[1100px] text-[clamp(2.15rem,3.4vw,4rem)] font-semibold leading-[0.93] tracking-[-0.045em] text-slate-950">
                 {copy.heroTitle}
               </h1>
+              <p className="mt-4 max-w-[860px] text-[0.95rem] leading-7 text-slate-600 md:text-[1.02rem] md:leading-7">{copy.heroText}</p>
 
-              <p className="mt-5 max-w-[700px] text-[1.02rem] leading-8 text-slate-600 md:text-[1.1rem]">
-                {copy.heroText}
-              </p>
-
-              <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-slate-500">
+              <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-slate-600">
                 {copy.heroBadges.map((badge: string) => (
                   <span key={badge} className="inline-flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-blue-600" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-cyan-600" />
                     <span>{badge}</span>
                   </span>
                 ))}
               </div>
 
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <a
-                  href="#contact-form"
-                  className="inline-flex items-center justify-center rounded-full bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800"
-                >
+              <div className="mt-5 flex flex-wrap gap-3">
+                <a href="#contact-form" className="inline-flex items-center justify-center rounded-full bg-slate-950 px-5 py-4 text-sm font-semibold text-white transition hover:bg-slate-800">
                   {copy.primaryCta}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
-
-                <Link
-                  href={prefixPathWithLocale('/cases', locale)}
-                  className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-slate-950 transition hover:text-slate-700"
-                >
+                <Link href={prefixPathWithLocale('/cases', locale)} className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-5 py-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-50">
                   {copy.secondaryCta}
-                  <ArrowUpRight className="h-4 w-4" />
+                  <ArrowUpRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
-
-              <div className="mt-8 grid gap-3 md:grid-cols-3">
-                {heroTrustItems.map((item) => (
-                  <div key={item.value} className="home-inset-card px-4 py-4">
-                    <div className="text-[1rem] font-semibold tracking-[-0.02em] text-slate-950">{item.value}</div>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">{item.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid gap-4 xl:justify-self-end">
-              <div className="home-proof-panel p-6 md:p-7">
-                <div className="border-b border-white/10 pb-4">
-                  <div className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-slate-400">
-                    {locale === 'ru' ? 'Пример коммерческой подачи' : 'Commercial proof snapshot'}
-                  </div>
-                  <h2 className="mt-2 text-[1.45rem] font-semibold leading-[1.08] tracking-[-0.035em] text-white">
-                    {heroProofTitle}
-                  </h2>
-                </div>
-
-                <p
-                  className="mt-4 text-sm leading-7 text-slate-300"
-                  style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
-                >
-                  {heroProofText}
-                </p>
-
-                <div className="mt-6 grid gap-3">
-                  {heroProofRows.map((item) => (
-                    <div key={item.label} className="rounded-[18px] border border-white/10 bg-white/5 px-4 py-4">
-                      <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-500">{item.label}</div>
-                      <p className="mt-2 text-sm leading-6 text-slate-100">{item.value}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {leadReview ? (
-                  <div className="mt-6 rounded-[18px] border border-white/10 bg-white/5 px-5 py-5">
-                    <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                      {locale === 'ru' ? 'Клиентский сигнал' : 'Client signal'}
-                    </div>
-                    <p
-                      className="mt-3 text-sm leading-7 text-slate-100"
-                      style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
-                    >
-                      {leadReview.text}
-                    </p>
-                    <div className="mt-4 text-sm text-slate-400">{[leadReview.author, leadReview.company || leadReview.position].filter(Boolean).join(', ')}</div>
-                  </div>
-                ) : null}
-
-                <div className="mt-6 flex flex-wrap items-center gap-4">
-                  <Link href={heroProofHref} className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-slate-200">
-                    {copy.openCase}
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  <Link href={prefixPathWithLocale(trustLinks.links[0]?.href || '/methodology', locale)} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-300 transition hover:text-white">
-                    {locale === 'ru' ? 'Методология и правила работы' : 'Methodology and working principles'}
-                    <ArrowUpRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              </div>
-
-              {leadHeroPanel ? (
-                <div className="home-card p-6">
-                  <div className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-500">{leadHeroPanel.title}</div>
-                  <ul className="mt-4 space-y-3">
-                    {leadHeroPanel.items.map((item: string) => (
-                      <li key={item} className="flex gap-3 text-sm leading-7 text-slate-700">
-                        <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-blue-600" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-
-              {copy.heroPanels[1] ? (
-                <div className="home-card p-6">
-                  <div className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-500">{copy.heroPanels[1].title}</div>
-                  <div className="mt-4 space-y-3">
-                    {copy.heroPanels[1].items.map((item: string) => (
-                      <div key={item} className="flex gap-3 text-sm leading-7 text-slate-700">
-                        <span className="mt-[0.72rem] h-1.5 w-1.5 shrink-0 rounded-full bg-slate-950" />
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="section-shell-tight !pb-10 !pt-4 md:!pb-12 md:!pt-6">
+        <div className="grid gap-4 lg:grid-cols-4">
+          {heroTrustItems.map((item) => (
+            <div key={item.value} className="home-card p-5">
+              <div className="text-[0.95rem] font-semibold tracking-[-0.02em] text-slate-950">{item.value}</div>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{item.label}</p>
+            </div>
+          ))}
+
+          <Link
+            href={prefixPathWithLocale(trustLinks.links[0]?.href || '/methodology', locale)}
+            className="home-card group justify-between p-5 transition hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-[0_24px_48px_rgba(15,23,42,0.08)]"
+          >
+            <div>
+              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                {locale === 'ru' ? 'Открытый контур' : 'Open framework'}
+              </div>
+              <div className="mt-2 text-[1.05rem] font-semibold leading-6 text-slate-950">
+                {locale === 'ru' ? 'Методология, правила работы и trust-страницы' : 'Methodology, working principles, and trust pages'}
+              </div>
+            </div>
+            <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cyan-700">
+              {locale === 'ru' ? 'Открыть' : 'Open'}
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </Link>
         </div>
       </section>
 
@@ -732,6 +672,85 @@ export default async function HomePage() {
                 </div>
               )
             })}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-shell">
+        <div className="grid gap-6 xl:grid-cols-[1.02fr_0.98fr] xl:items-start">
+          <div className="surface-cosmos surface-pad text-slate-100">
+            <div className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+              {locale === 'ru' ? 'Пример коммерческой подачи' : 'Commercial proof snapshot'}
+            </div>
+            <h2 className="mt-4 max-w-3xl text-[clamp(1.95rem,3.8vw,3.15rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-white">
+              {heroProofTitle}
+            </h2>
+            <p className="mt-5 max-w-3xl text-[0.98rem] leading-8 text-slate-300">{heroProofText}</p>
+
+            <div className="mt-7 grid gap-4 md:grid-cols-3">
+              {heroProofRows.map((item) => (
+                <div key={item.label} className="rounded-[22px] border border-white/10 bg-white/6 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                  <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-400">{item.label}</div>
+                  <p className="mt-2 text-sm leading-6 text-slate-100">{item.value}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-7 flex flex-wrap items-center gap-4">
+              <Link href={heroProofHref} className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-cyan-100">
+                {copy.openCase}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link href={prefixPathWithLocale(trustLinks.links[0]?.href || '/methodology', locale)} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-300 transition hover:text-white">
+                {locale === 'ru' ? 'Методология и правила работы' : 'Methodology and working principles'}
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid gap-4">
+            {leadReview ? (
+              <div className="home-card p-6">
+                <div className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                  {locale === 'ru' ? 'Клиентский сигнал' : 'Client signal'}
+                </div>
+                <p
+                  className="mt-4 text-sm leading-7 text-slate-700"
+                  style={{ display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                >
+                  {leadReview.text}
+                </p>
+                <div className="mt-5 text-sm text-slate-500">{[leadReview.author, leadReview.company || leadReview.position].filter(Boolean).join(', ')}</div>
+              </div>
+            ) : null}
+
+            {leadHeroPanel ? (
+              <div className="home-card p-6">
+                <div className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-500">{leadHeroPanel.title}</div>
+                <ul className="mt-4 space-y-3">
+                  {leadHeroPanel.items.map((item: string) => (
+                    <li key={item} className="flex gap-3 text-sm leading-7 text-slate-700">
+                      <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-cyan-700" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {copy.heroPanels[1] ? (
+              <div className="home-card p-6">
+                <div className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-500">{copy.heroPanels[1].title}</div>
+                <div className="mt-4 space-y-3">
+                  {copy.heroPanels[1].items.map((item: string) => (
+                    <div key={item} className="flex gap-3 text-sm leading-7 text-slate-700">
+                      <span className="mt-[0.72rem] h-1.5 w-1.5 shrink-0 rounded-full bg-slate-950" />
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       </section>
