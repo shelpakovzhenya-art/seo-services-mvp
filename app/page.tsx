@@ -432,7 +432,7 @@ const homeCopy: Record<Locale, any> = {
 
 function SectionEyebrow({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+    <span className="inline-flex rounded-full border border-white/12 bg-slate-950 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-300">
       {children}
     </span>
   )
@@ -467,31 +467,84 @@ export default async function HomePage() {
     .map((caseItem) => localizeCaseRecord(caseItem, locale))
     .filter((caseItem) => (locale === 'en' ? !hasRussianCaseContent(caseItem) : true))
 
+  const leadReview = reviews[0] || null
+  const leadCase = featuredCases[0] || null
+  const heroProofItems = [
+    leadCase
+      ? {
+          label: locale === 'ru' ? 'Кейс в работе' : 'Case study',
+          title: leadCase.title,
+          text:
+            leadCase.description ||
+            leadCase.content ||
+            (locale === 'ru'
+              ? 'Показываю не только итог, но и ход изменений по структуре, страницам и SEO-логике.'
+              : 'The case shows not only the result, but the sequence of changes across structure, pages, and SEO logic.'),
+          href: leadCase.slug ? prefixPathWithLocale(`/cases/${leadCase.slug}`, locale) : prefixPathWithLocale('/cases', locale),
+          cta: copy.openCase,
+        }
+      : null,
+    leadReview
+      ? {
+          label: locale === 'ru' ? 'Отзыв клиента' : 'Client feedback',
+          title: leadReview.author,
+          text: leadReview.company || leadReview.position || leadReview.text,
+          href: '#reviews',
+          cta: locale === 'ru' ? 'Смотреть отзывы' : 'View feedback',
+        }
+      : null,
+    {
+      label: locale === 'ru' ? 'Открытый контур' : 'Open framework',
+      title: locale === 'ru' ? 'Методология, политика, подход' : 'Methodology, policy, approach',
+      text:
+        locale === 'ru'
+          ? 'Вместо декоративного позиционирования показываю, как принимаются решения и на чём держится качество работы.'
+          : 'Instead of decorative positioning, the site shows how decisions are made and what supports delivery quality.',
+      href: prefixPathWithLocale(trustLinks.links[0]?.href || '/methodology', locale),
+      cta: locale === 'ru' ? 'Открыть документы' : 'Open trust pages',
+    },
+  ].filter(Boolean) as Array<{ label: string; title: string; text: string; href: string; cta: string }>
+
+  const proofStrip = [
+    {
+      value: leadCase ? `${featuredCases.length}` : locale === 'ru' ? '01' : '01',
+      label: locale === 'ru' ? 'кейсы на первом экране доверия' : 'case studies surfaced as proof',
+    },
+    {
+      value: leadReview ? `${reviews.length}` : locale === 'ru' ? '01' : '01',
+      label: locale === 'ru' ? 'живые отзывы без шаблонной похвалы' : 'direct reviews without generic praise',
+    },
+    {
+      value: `${trustLinks.links.length}`,
+      label: locale === 'ru' ? 'страницы методологии и правил работы' : 'trust and methodology pages',
+    },
+  ]
+
   return (
-    <div className="overflow-hidden pb-16 md:pb-24">
+    <div className="home-page-shell overflow-hidden pb-16 md:pb-24">
       <section className="section-shell-tight !pb-8 !pt-5 md:!pb-12 md:!pt-8">
-        <div className="hero-panel hero-sheen relative overflow-hidden rounded-[38px] border border-slate-200 px-5 py-6 md:px-8 md:py-8 xl:px-10 xl:py-10">
+        <div className="home-hero relative overflow-hidden px-5 py-6 md:px-8 md:py-8 xl:px-10 xl:py-10">
           <div className="hero-grid-mask" />
           <div className="hidden" aria-hidden="true">
             {verificationCode}
           </div>
 
-          <div className="grid gap-8 xl:grid-cols-[1.02fr_0.98fr] xl:gap-10">
+          <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:gap-10">
             <div>
               <SectionEyebrow>{copy.heroChip}</SectionEyebrow>
 
-              <h1 className="mt-5 max-w-[920px] text-[clamp(2.4rem,5vw,4.9rem)] font-semibold leading-[0.92] tracking-[-0.055em] text-slate-950">
+              <h1 className="mt-5 max-w-[920px] text-[clamp(2.6rem,5vw,5.15rem)] font-semibold leading-[0.9] tracking-[-0.06em] text-white">
                 {copy.heroTitle}
               </h1>
 
-              <p className="mt-5 max-w-[780px] text-[1rem] leading-8 text-slate-600 md:text-[1.08rem]">
+              <p className="mt-5 max-w-[760px] text-[1rem] leading-8 text-slate-300 md:text-[1.08rem]">
                 {copy.heroText}
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
                   href="#contact-form"
-                  className="inline-flex items-center justify-center rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                  className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-200"
                 >
                   {copy.primaryCta}
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -499,7 +552,7 @@ export default async function HomePage() {
 
                 <Link
                   href={prefixPathWithLocale('/cases', locale)}
-                  className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:border-slate-950 hover:bg-slate-50"
+                  className="inline-flex items-center justify-center rounded-full border border-white/14 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:border-white/28 hover:bg-white/10"
                 >
                   {copy.secondaryCta}
                   <ArrowUpRight className="ml-2 h-4 w-4" />
@@ -510,7 +563,7 @@ export default async function HomePage() {
                 {copy.heroBadges.map((badge: string) => (
                   <span
                     key={badge}
-                    className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600"
+                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300"
                   >
                     {badge}
                   </span>
@@ -519,34 +572,71 @@ export default async function HomePage() {
 
               <div className="mt-8 grid gap-3 md:grid-cols-3">
                 {copy.heroMetrics.map((metric: any) => (
-                  <div
-                    key={metric.value}
-                    className="rounded-[26px] border border-slate-200 bg-white px-4 py-4 shadow-[0_18px_36px_rgba(15,23,42,0.06)]"
-                  >
-                    <div className="text-[1.05rem] font-semibold tracking-[-0.03em] text-slate-950">{metric.value}</div>
-                    <p className="mt-2 text-sm leading-7 text-slate-600">{metric.label}</p>
+                  <div key={metric.value} className="home-inset-card px-4 py-4">
+                    <div className="text-[1.05rem] font-semibold tracking-[-0.03em] text-white">{metric.value}</div>
+                    <p className="mt-2 text-sm leading-7 text-slate-300">{metric.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 grid gap-3 border-t border-white/10 pt-6 md:grid-cols-3">
+                {proofStrip.map((item) => (
+                  <div key={item.label}>
+                    <div className="text-[1.7rem] font-semibold tracking-[-0.05em] text-white">{item.value}</div>
+                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-slate-400">{item.label}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
-              {copy.heroPanels.map((panel: any) => (
-                <div
-                  key={panel.title}
-                  className="rounded-[30px] border border-slate-200 bg-white/95 p-6 shadow-[0_20px_44px_rgba(15,23,42,0.07)]"
-                >
-                  <h2 className="text-[1.35rem] font-semibold tracking-[-0.035em] text-slate-950">{panel.title}</h2>
-                  <ul className="mt-5 space-y-3">
-                    {panel.items.map((item: string) => (
-                      <li key={item} className="flex gap-3 text-sm leading-7 text-slate-600">
-                        <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-slate-950" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+            <div className="grid gap-4">
+              <div className="home-proof-panel p-6 md:p-7">
+                <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+                  <div>
+                    <div className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-slate-400">
+                      {locale === 'ru' ? 'Что подтверждает подачу' : 'What supports the positioning'}
+                    </div>
+                    <h2 className="mt-2 text-[1.45rem] font-semibold tracking-[-0.04em] text-white">
+                      {locale === 'ru' ? 'Кейсы, отзывы и открытая методология рядом с оффером.' : 'Case studies, feedback, and methodology placed next to the offer.'}
+                    </h2>
+                  </div>
                 </div>
-              ))}
+
+                <div className="mt-4 grid gap-3">
+                  {heroProofItems.map((item) => (
+                    <Link key={item.title} href={item.href} className="home-proof-item group">
+                      <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{item.label}</div>
+                      <h3 className="mt-2 text-lg font-semibold leading-[1.18] text-white">{item.title}</h3>
+                      <p
+                        className="mt-2 text-sm leading-6 text-slate-300"
+                        style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                      >
+                        {item.text}
+                      </p>
+                      <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white">
+                        {item.cta}
+                        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
+                {copy.heroPanels.map((panel: any) => (
+                  <div key={panel.title} className="home-subtle-card p-6">
+                    <h2 className="text-[1.2rem] font-semibold tracking-[-0.035em] text-white">{panel.title}</h2>
+                    <ul className="mt-5 space-y-3">
+                      {panel.items.map((item: string) => (
+                        <li key={item} className="flex gap-3 text-sm leading-7 text-slate-300">
+                          <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-white" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -554,7 +644,7 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr] xl:items-start">
-          <div className="surface-grid surface-pad">
+          <div className="home-surface home-surface-grid surface-pad">
             <SectionEyebrow>{copy.problemsKicker}</SectionEyebrow>
             <h2 className="mt-4 max-w-3xl text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-slate-950">
               {copy.problemsTitle}
@@ -567,9 +657,9 @@ export default async function HomePage() {
               const Icon = item.icon
 
               return (
-                <div key={item.title} className="glass-panel interactive-card p-7">
-                  <Icon className="h-8 w-8 text-slate-950" />
-                  <h3 className="mt-5 text-[1.45rem] font-semibold leading-[1.08] tracking-[-0.035em] text-slate-950">
+                <div key={item.title} className="home-card interactive-card p-6">
+                  <Icon className="h-7 w-7 text-slate-950" />
+                  <h3 className="mt-4 text-[1.35rem] font-semibold leading-[1.08] tracking-[-0.035em] text-slate-950">
                     {item.title}
                   </h3>
                   <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.text}</p>
@@ -581,7 +671,7 @@ export default async function HomePage() {
       </section>
 
       <section className="section-shell">
-        <div className="surface-signal surface-pad">
+        <div className="home-surface home-surface-accent surface-pad">
           <SectionEyebrow>{copy.formatsKicker}</SectionEyebrow>
           <div className="mt-4 grid gap-5 xl:grid-cols-[0.92fr_1.08fr] xl:items-end">
             <h2 className="max-w-3xl text-[clamp(2rem,4vw,3.3rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-slate-950">
@@ -597,15 +687,15 @@ export default async function HomePage() {
               const Icon = pkg.icon
 
               return (
-                <div key={pkg.name} className="glass-panel p-7">
+                <div key={pkg.name} className="home-card p-6">
                   <div className="flex items-start justify-between gap-4">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)]">
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-[0_16px_30px_rgba(15,23,42,0.18)]">
                       <Icon className="h-5 w-5" />
                     </span>
                     <span className="text-sm font-semibold text-slate-900">{pkg.price}</span>
                   </div>
 
-                  <h3 className="mt-6 text-[1.45rem] font-semibold leading-[1.08] tracking-[-0.04em] text-slate-950">
+                  <h3 className="mt-5 text-[1.35rem] font-semibold leading-[1.08] tracking-[-0.04em] text-slate-950">
                     {pkg.name}
                   </h3>
                   <p className="mt-3 text-sm leading-7 text-slate-600">{pkg.accent}</p>
@@ -629,7 +719,7 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="grid gap-6 xl:grid-cols-[0.92fr_1.08fr]">
-          <div className="surface-grid surface-pad">
+          <div className="home-surface home-surface-grid surface-pad">
             <SectionEyebrow>{copy.soloKicker}</SectionEyebrow>
             <h2 className="mt-4 max-w-3xl text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-slate-950">
               {copy.soloTitle}
@@ -650,7 +740,7 @@ export default async function HomePage() {
                 <h3 className="text-[1.45rem] font-semibold tracking-[-0.035em] text-slate-950">{copy.fitTitle}</h3>
               </div>
 
-              <div className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-[0_18px_36px_rgba(15,23,42,0.06)]">
+              <div className="home-card p-5">
                 <h3 className="text-lg font-semibold text-slate-950">{copy.fitGoodTitle}</h3>
                 <ul className="mt-4 space-y-3">
                   {copy.fitGoodItems.map((item: string) => (
@@ -662,7 +752,7 @@ export default async function HomePage() {
                 </ul>
               </div>
 
-              <div className="rounded-[26px] border border-slate-200 bg-slate-950 p-5 text-white shadow-[0_22px_42px_rgba(15,23,42,0.16)]">
+              <div className="home-dark-card p-5 text-white">
                 <h3 className="text-lg font-semibold">{copy.fitBadTitle}</h3>
                 <ul className="mt-4 space-y-3">
                   {copy.fitBadItems.map((item: string) => (
@@ -676,7 +766,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="surface-grid surface-pad">
+          <div className="home-surface home-surface-grid surface-pad">
             <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
               <h2 className="max-w-3xl text-[clamp(1.85rem,3.5vw,2.85rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-slate-950">
                 {copy.processTitle}
@@ -686,9 +776,9 @@ export default async function HomePage() {
 
             <div className="mt-7 grid gap-4">
               {copy.processBlocks.map((block: any) => (
-                <div key={block.step} className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_36px_rgba(15,23,42,0.06)] md:p-6">
+                <div key={block.step} className="home-card p-5 md:p-6">
                   <div className="grid gap-4 md:grid-cols-[auto_minmax(0,1fr)] md:items-start">
-                    <div className="inline-flex w-fit rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    <div className="inline-flex w-fit rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                       {block.step}
                     </div>
                     <div>
@@ -709,7 +799,7 @@ export default async function HomePage() {
                   <Link
                     key={item.href}
                     href={prefixPathWithLocale(item.href, locale)}
-                    className="group rounded-[26px] border border-slate-200 bg-white p-5 shadow-[0_16px_34px_rgba(15,23,42,0.06)] transition hover:-translate-y-1 hover:border-slate-950/12 hover:shadow-[0_22px_42px_rgba(15,23,42,0.1)]"
+                    className="home-card group p-5 transition hover:-translate-y-1 hover:border-slate-950/12 hover:shadow-[0_22px_42px_rgba(15,23,42,0.1)]"
                   >
                     <h4 className="text-lg font-semibold leading-[1.15] text-slate-950">{item.title}</h4>
                     <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
@@ -726,7 +816,7 @@ export default async function HomePage() {
       </section>
 
       <section className="section-shell">
-        <div className="surface-grid surface-pad">
+        <div className="home-surface home-surface-grid surface-pad">
           <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-8">
             <h2 className="max-w-[860px] text-[clamp(1.85rem,3.5vw,2.95rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-slate-950">
               {copy.casesTitle}
@@ -784,21 +874,18 @@ export default async function HomePage() {
                   <Link
                     key={item.id}
                     href={prefixPathWithLocale(`/cases/${item.slug}`, locale)}
-                    className="group flex h-full flex-col overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_22px_52px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:border-slate-950/12 hover:shadow-[0_28px_62px_rgba(15,23,42,0.12)]"
+                    className="home-card group flex h-full flex-col overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-slate-950/12 hover:shadow-[0_28px_62px_rgba(15,23,42,0.12)]"
                   >
                     {content}
                   </Link>
                 ) : (
-                  <div
-                    key={item.id}
-                    className="flex h-full flex-col overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_22px_52px_rgba(15,23,42,0.08)]"
-                  >
+                  <div key={item.id} className="home-card flex h-full flex-col overflow-hidden">
                     {content}
                   </div>
                 )
               })
             ) : (
-              <div className="glass-panel p-8 lg:col-span-2">
+              <div className="home-card p-8 lg:col-span-2">
                 <h3 className="text-2xl font-semibold text-slate-950">{copy.caseEmptyTitle}</h3>
                 <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">{copy.caseEmptyText}</p>
               </div>
@@ -808,7 +895,7 @@ export default async function HomePage() {
       </section>
 
       <section className="section-shell">
-        <div className="surface-grid surface-pad">
+        <div className="home-surface home-surface-grid surface-pad">
           <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-8">
             <h2 className="max-w-[860px] text-[clamp(1.85rem,3.5vw,2.95rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-slate-950">
               {copy.blogTitle}
@@ -829,7 +916,7 @@ export default async function HomePage() {
                   <Link
                     key={post.id}
                     href={prefixPathWithLocale(`/blog/${post.slug}`, locale)}
-                    className="group flex h-full flex-col overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_20px_48px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:border-slate-950/12 hover:shadow-[0_26px_58px_rgba(15,23,42,0.12)]"
+                    className="home-card group flex h-full flex-col overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-slate-950/12 hover:shadow-[0_26px_58px_rgba(15,23,42,0.12)]"
                   >
                     {showCover ? (
                       <div className="px-5 pt-5 md:px-6 md:pt-6">
@@ -867,7 +954,7 @@ export default async function HomePage() {
                 )
               })
             ) : (
-              <div className="glass-panel p-7 md:col-span-2 xl:col-span-3">
+              <div className="home-card p-7 md:col-span-2 xl:col-span-3">
                 <h3 className="text-2xl font-semibold text-slate-950">{copy.blogEmptyTitle}</h3>
                 <p className="mt-4 text-sm leading-7 text-slate-600">{copy.blogEmptyText}</p>
               </div>
@@ -876,8 +963,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section-shell">
-        <div className="surface-grid surface-pad">
+      <section id="reviews" className="section-shell scroll-mt-32">
+        <div className="home-surface home-surface-grid surface-pad">
           <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-8">
             <h2 className="max-w-[860px] text-[clamp(1.85rem,3.5vw,2.95rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-slate-950">
               {copy.reviewsTitle}
@@ -890,7 +977,7 @@ export default async function HomePage() {
           <div className="uniform-grid-3 mt-7">
             {reviews.length > 0 ? (
               reviews.map((review) => (
-                <div key={review.id} className="glass-panel p-7">
+                <div key={review.id} className="home-card p-6">
                   <div className="text-base font-semibold text-slate-950">{review.author}</div>
                   <p className="mt-4 flex-1 text-sm leading-7 text-slate-600">{review.text}</p>
                   {(review.company || review.position) && (
@@ -901,7 +988,7 @@ export default async function HomePage() {
                 </div>
               ))
             ) : (
-              <div className="glass-panel p-7 md:col-span-2 xl:col-span-3">
+              <div className="home-card p-7 md:col-span-2 xl:col-span-3">
                 <h3 className="text-2xl font-semibold text-slate-950">{copy.reviewsEmptyTitle}</h3>
                 <p className="mt-4 text-sm leading-7 text-slate-600">{copy.reviewsEmptyText}</p>
               </div>
@@ -911,8 +998,8 @@ export default async function HomePage() {
       </section>
 
       <section id="contact-form" className="scroll-mt-32 section-shell">
-        <div className="surface-grid p-4 md:p-6">
-          <div className="soft-section grid gap-0 overflow-hidden lg:grid-cols-[0.92fr_1.08fr]">
+        <div className="home-surface home-surface-grid p-4 md:p-6">
+          <div className="home-contact-shell grid gap-0 overflow-hidden lg:grid-cols-[0.92fr_1.08fr]">
             <div className="border-b border-slate-200 p-5 sm:p-8 lg:border-b-0 lg:border-r">
               <h2 className="max-w-3xl text-[clamp(2rem,4vw,3.3rem)] font-semibold leading-[0.98] tracking-[-0.05em] text-slate-950">
                 {copy.contactTitle}
@@ -926,7 +1013,7 @@ export default async function HomePage() {
                   return (
                     <div
                       key={item.title}
-                      className="rounded-[24px] border border-slate-200 bg-white px-4 py-4 shadow-[0_16px_34px_rgba(15,23,42,0.06)]"
+                      className="home-card px-4 py-4"
                     >
                       <div className="flex items-start gap-3">
                         <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white">

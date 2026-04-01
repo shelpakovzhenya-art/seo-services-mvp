@@ -91,12 +91,12 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
 
               <div className="mt-6 space-y-3">
                 {pricing ? (
-                  <div className="rounded-[24px] border border-orange-100 bg-white/90 p-5">
+                  <div className="rounded-[24px] border border-slate-200 bg-white p-5">
                     <div className="text-sm font-semibold text-slate-950">{pricing.priceLabel}</div>
                     <p className="mt-2 text-sm leading-7 text-slate-600">{pricing.calculatorHint}</p>
                   </div>
                 ) : null}
-                <div className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 text-sm leading-7 text-slate-700">
+                <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 text-sm leading-7 text-slate-700">
                   Отвечу в течение дня и помогу понять, нужен ли здесь именно этот формат работ.
                 </div>
               </div>
@@ -107,7 +107,7 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
         <section className="mt-8 surface-grid surface-pad">
           <div className="uniform-grid-3 gap-4">
             {service.benefits.slice(0, 3).map((item) => (
-              <article key={item.title} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+              <article key={item.title} className="uniform-card rounded-[24px] border border-slate-200 bg-slate-50 p-5">
                 <h2 className="text-xl font-semibold text-slate-950">{item.title}</h2>
                 <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
               </article>
@@ -133,7 +133,7 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
               <p className="mt-4 text-sm leading-7 text-slate-600">{timingContent.intro}</p>
               <div className="mt-6 grid gap-4 md:grid-cols-3">
                 {timingContent.phases.map((item) => (
-                  <div key={item.title} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+                  <div key={item.title} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
                     <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
                     <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
                   </div>
@@ -145,7 +145,7 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
               <h2 className="text-3xl font-semibold text-slate-950">{timingContent.factorsTitle}</h2>
               <div className="mt-6 space-y-4">
                 {timingContent.factors.map((item) => (
-                  <div key={item.title} className="rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5">
+                  <div key={item.title} className="rounded-[24px] border border-slate-200 bg-white p-5">
                     <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
                     <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
                   </div>
@@ -160,8 +160,8 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
             <h2 className="text-3xl font-semibold text-slate-950">Кому подходит</h2>
             <div className="mt-6 space-y-3">
               {service.audience.map((item) => (
-                <div key={item} className="flex gap-3 rounded-[24px] border border-orange-100 bg-[#fffaf5] px-5 py-4">
-                  <Check className="mt-1 h-4 w-4 shrink-0 text-cyan-700" />
+                <div key={item} className="flex gap-3 rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-4">
+                  <Check className="mt-1 h-4 w-4 shrink-0 text-slate-900" />
                   <span className="text-sm leading-7 text-slate-700">{item}</span>
                 </div>
               ))}
@@ -172,7 +172,7 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
             <h2 className="text-3xl font-semibold text-slate-950">Что входит</h2>
             <div className="mt-6 space-y-3">
               {service.includes.map((item) => (
-                <div key={item} className="rounded-[24px] border border-cyan-100 bg-cyan-50/50 px-5 py-4 text-sm leading-7 text-slate-700">
+                <div key={item} className="rounded-[24px] border border-slate-200 bg-white px-5 py-4 text-sm leading-7 text-slate-700">
                   {item}
                 </div>
               ))}
@@ -187,12 +187,12 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
               <p className="mt-4 text-sm leading-7 text-slate-600">{pricingModelContent.intro}</p>
 
               {(pricing?.deliverables ?? []).length > 0 ? (
-                <div className="mt-6 rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+                <div className="mt-6 rounded-[24px] border border-slate-200 bg-slate-50 p-5">
                   <h3 className="text-lg font-semibold text-slate-950">{pricingModelContent.includedTitle}</h3>
                   <div className="mt-4 space-y-3">
                     {(pricing?.deliverables ?? []).map((item) => (
                       <div key={`${service.slug}-deliverable-${item}`} className="flex gap-3 rounded-2xl border border-white/80 bg-white/80 px-4 py-3">
-                        <Check className="mt-1 h-4 w-4 shrink-0 text-cyan-700" />
+                        <Check className="mt-1 h-4 w-4 shrink-0 text-slate-900" />
                         <span className="text-sm leading-6 text-slate-700">{item}</span>
                       </div>
                     ))}
@@ -200,7 +200,7 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
                 </div>
               ) : null}
 
-              <div className="mt-5 rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5">
+              <div className="mt-5 rounded-[24px] border border-slate-200 bg-white p-5">
                 <h3 className="text-lg font-semibold text-slate-950">{pricingModelContent.factorTitle}</h3>
                 <div className="mt-4 space-y-3">
                   {pricingModelContent.factorItems.map((item) => (
@@ -217,7 +217,7 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
               <p className="mt-4 text-sm leading-7 text-slate-600">{deliveryModelContent.intro}</p>
               <div className="mt-6 space-y-4">
                 {deliveryModelContent.cards.map((item) => (
-                  <div key={`${service.slug}-delivery-${item.title}`} className="rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5">
+                  <div key={`${service.slug}-delivery-${item.title}`} className="rounded-[24px] border border-slate-200 bg-white p-5">
                     <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
                     <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
                   </div>
@@ -232,8 +232,8 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
             <h2 className="text-3xl font-semibold text-slate-950">Как идёт работа</h2>
             <div className="mt-6 space-y-4">
               {service.steps.map((step, index) => (
-                <div key={step.title} className="flex gap-4 rounded-[24px] border border-orange-100 bg-white/80 p-5">
-                  <div className="text-2xl font-semibold text-cyan-700">{`0${index + 1}`}</div>
+                <div key={step.title} className="flex gap-4 rounded-[24px] border border-slate-200 bg-white p-5">
+                  <div className="text-2xl font-semibold text-slate-900">{`0${index + 1}`}</div>
                   <div>
                     <h3 className="text-xl font-semibold text-slate-950">{step.title}</h3>
                     <p className="mt-2 text-sm leading-7 text-slate-600">{step.text}</p>
@@ -247,8 +247,8 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
             <h2 className="text-3xl font-semibold text-slate-950">Что меняется</h2>
             <div className="mt-6 space-y-3">
               {service.outcomes.map((item) => (
-                <div key={item} className="flex gap-3 rounded-[24px] border border-orange-100 bg-[#fffaf5] px-5 py-4">
-                  <Check className="mt-1 h-4 w-4 shrink-0 text-cyan-700" />
+                <div key={item} className="flex gap-3 rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-4">
+                  <Check className="mt-1 h-4 w-4 shrink-0 text-slate-900" />
                   <span className="text-sm leading-7 text-slate-700">{item}</span>
                 </div>
               ))}
@@ -256,7 +256,7 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
 
             <div className="mt-5 space-y-4">
               {service.results.map((item) => (
-                <div key={item.title} className="rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5">
+                <div key={item.title} className="rounded-[24px] border border-slate-200 bg-white p-5">
                   <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
                   <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
                 </div>
@@ -275,7 +275,7 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
                     <Link
                       key={`${service.slug}-${item.href}-${item.title}`}
                       href={localizeHref(item.href)}
-                      className="block rounded-[24px] border border-cyan-100 bg-cyan-50/50 p-5 transition hover:border-cyan-200 hover:bg-cyan-50/70"
+                      className="block rounded-[24px] border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:bg-slate-50"
                     >
                       <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
                       <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
@@ -293,7 +293,7 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
                     <Link
                       key={item.slug}
                       href={localizeHref(`/services/${item.slug}`)}
-                      className="block rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 transition hover:border-cyan-200 hover:bg-white"
+                      className="block rounded-[24px] border border-slate-200 bg-slate-50 p-5 transition hover:border-slate-300 hover:bg-white"
                     >
                       <h3 className="text-xl font-semibold text-slate-950">{item.shortName}</h3>
                       <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
@@ -309,7 +309,7 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
           <h2 className="text-3xl font-semibold text-slate-950">Частые вопросы</h2>
           <div className="mt-6 space-y-4">
             {service.faq.map((item) => (
-              <div key={item.question} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+              <div key={item.question} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
                 <h3 className="text-lg font-semibold text-slate-950">{item.question}</h3>
                 <p className="mt-3 text-sm leading-7 text-slate-600">{item.answer}</p>
               </div>
@@ -328,7 +328,7 @@ export default function ServicePageTemplate({ service, locale, pricing, customCo
         <section id="contact-form" className="mt-8 scroll-mt-32 surface-grid p-4 md:p-6">
           <div className="soft-section overflow-hidden">
             <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-              <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
+              <div className="border-b border-slate-200 p-5 sm:p-8 lg:border-b-0 lg:border-r">
                 <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{service.ctas.rational}</h2>
                 <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">
                   Опишите сайт и задачу. Я скажу, нужен ли здесь именно этот формат работы и с чего лучше начинать.
