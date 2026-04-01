@@ -26,14 +26,6 @@ export const metadata: Metadata = {
   manifest: '/site.webmanifest',
   title: defaultTitle,
   description: defaultDescription,
-  keywords: [
-    'seo-продвижение сайтов',
-    'поисковое продвижение',
-    'seo-аудит',
-    'структура сайта',
-    'коммерческие факторы',
-    'рост заявок',
-  ],
   authors: [{ name: 'Shelpakov Digital' }],
   creator: 'Shelpakov Digital',
   publisher: 'Shelpakov Digital',
@@ -147,7 +139,7 @@ export default async function RootLayout({
                 <img
                   src={`https://mc.yandex.ru/watch/${yandexMetrikaId}`}
                   style={{ position: 'absolute', left: '-9999px' }}
-                  alt=""
+                  alt="Yandex Metrika"
                 />
               </div>
             </noscript>

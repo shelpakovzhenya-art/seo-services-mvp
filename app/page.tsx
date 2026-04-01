@@ -43,8 +43,6 @@ const homeCopy: Record<Locale, any> = {
       title: 'Частный SEO-специалист для сайтов услуг и B2B | Shelpakov Digital',
       description:
         'Независимый SEO-специалист для небольших и средних проектов: аудит, структура сайта, ключевые страницы, техническая база и рост обращений из поиска.',
-      keywords:
-        'частный seo специалист, seo фрилансер, seo для сайтов услуг, seo для b2b, технический seo, переработка сайта под заявки',
     },
     heroChip: 'Независимый SEO-специалист',
     heroTitle:
@@ -238,8 +236,6 @@ const homeCopy: Record<Locale, any> = {
       title: 'Independent SEO consultant for service websites and B2B | Shelpakov Digital',
       description:
         'Independent SEO consultant for small and mid-size projects: audits, site structure, key pages, technical foundations, and stronger lead flow from search.',
-      keywords:
-        'independent seo consultant, seo freelancer, seo for service websites, b2b seo consultant, technical seo, website redesign for lead generation',
     },
     heroChip: 'Independent SEO consultant',
     heroTitle:
@@ -1099,7 +1095,6 @@ export async function generateMetadata() {
   return {
     title,
     description,
-    keywords: localizedPage?.keywords || copy.metadata.keywords,
     alternates,
     openGraph: {
       title,
