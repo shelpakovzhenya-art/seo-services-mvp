@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ArrowUpRight, Mail, MessageCircle, MessagesSquare } from 'lucide-react'
+import { ArrowUpRight, Mail } from 'lucide-react'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import MobileMenu from '@/components/MobileMenu'
 import { getDictionary } from '@/lib/dictionaries'
@@ -104,72 +104,22 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
 
   return (
     <>
-      <div className="relative z-40 border-b border-slate-800/80 bg-[#0b1220]/92 backdrop-blur-xl">
+      <div className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/92 shadow-[0_10px_28px_rgba(15,23,42,0.05)] backdrop-blur-xl">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col items-start gap-2 py-2.5 text-[11px] font-medium text-slate-200/88 sm:flex-row sm:items-center sm:justify-between sm:gap-3 md:gap-4 md:py-3 md:text-xs">
-            <div className="flex w-full min-w-0 flex-wrap items-center gap-2.5 md:gap-3">
-              <span className="inline-flex items-center rounded-full border border-white/10 bg-[#111b2b] px-3 py-1.5 font-semibold text-slate-100 md:px-3.5">
-                {workSchedule}
-              </span>
-              <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold ${workStatus.badgeClass}`}>
-                <span className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
-                  <span className={`absolute inset-0 inline-flex animate-ping rounded-full opacity-90 ${workStatus.pingClass}`} />
-                  <span className={`relative inline-flex h-2.5 w-2.5 rounded-full shadow-[0_0_0_2px_rgba(255,255,255,0.9)] ${workStatus.dotClass}`} />
-                </span>
-                {workStatus.text}
-              </span>
-              <a
-                href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`}
-                className="inline-flex min-w-0 max-w-full items-center gap-2 rounded-full border border-white/10 bg-[#111b2b] px-3 py-1.5 font-medium text-slate-100 transition hover:border-white/20 hover:text-white sm:w-auto sm:break-normal md:px-3.5"
-              >
-                <Mail className="h-3.5 w-3.5" />
-                <span className="min-w-0 break-all">{settings?.email || 'shelpakovzhenya@gmail.com'}</span>
-              </a>
-            </div>
-
-            {socialLinks.length > 0 ? (
-              <div className="hidden shrink-0 items-center gap-2 md:flex">
-                {socialLinks.map((item) => (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={item.label}
-                    title={item.label}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-100 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
-                  >
-                    {item.type === 'telegram' ? (
-                      <Image src="/telegram-logo.svg" alt="Telegram" width={20} height={20} className="h-5 w-5" />
-                    ) : item.type === 'vk' ? (
-                      <MessagesSquare className="h-4 w-4" />
-                    ) : (
-                      <MessageCircle className="h-4 w-4" />
-                    )}
-                  </a>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </div>
-
-      <div className="sticky top-0 z-50 bg-[#0b1220]/84 shadow-[0_14px_30px_rgba(2,8,23,0.18)] backdrop-blur-2xl">
-        <div className="container mx-auto px-4">
-          <nav className="my-2 flex items-center justify-between gap-2.5 rounded-[24px] border border-white/10 bg-[#0f1726]/96 px-3 py-2.5 shadow-[0_18px_36px_rgba(2,8,23,0.18)] md:my-3 md:mb-4 md:gap-4 md:rounded-[28px] md:px-4 md:py-4">
-            <Link href={prefixPathWithLocale('/', locale)} className="flex min-w-0 flex-1 items-center gap-2.5 pr-2 sm:gap-3 lg:flex-none">
-              <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/12 bg-white/95 shadow-[0_10px_24px_rgba(2,8,23,0.14)] sm:h-11 sm:w-11 md:h-12 md:w-12">
+          <nav className="flex min-h-[4.75rem] items-center justify-between gap-3 py-3 lg:gap-6">
+            <Link href={prefixPathWithLocale('/', locale)} className="flex min-w-0 flex-1 items-center gap-3 pr-2 lg:flex-none">
+              <span className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_22px_rgba(15,23,42,0.08)] md:h-12 md:w-12">
                 <Image src="/favicon-48.png" alt="Shelpakov Digital" width={40} height={40} className="h-[78%] w-[78%] object-contain" priority />
               </span>
               <span className="flex min-w-0 flex-col">
-                <span className="truncate text-[0.88rem] font-semibold text-white sm:text-[0.98rem] md:text-lg">Shelpakov Digital</span>
-                <span className="hidden max-w-full truncate text-[10px] font-medium tracking-[0.08em] text-slate-400 md:block md:text-xs md:tracking-[0.12em]">
+                <span className="truncate text-[0.94rem] font-semibold text-slate-950 sm:text-[1rem] md:text-lg">Shelpakov Digital</span>
+                <span className="hidden max-w-full truncate text-[10px] font-medium tracking-[0.08em] text-slate-500 md:block md:text-xs md:tracking-[0.12em]">
                   {dictionary.header.brandSubtitle}
                 </span>
               </span>
             </Link>
 
-            <ul className="hidden items-center gap-7 lg:flex">
+            <ul className="hidden items-center gap-6 xl:gap-7 lg:flex">
               {normalizedMenuItems.map((item) => (
                 <li key={`${item.url}-${item.id}`}>
                   <Link href={prefixPathWithLocale(item.url, locale)} className="site-nav-link">
@@ -180,6 +130,16 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
             </ul>
 
             <div className="hidden items-center gap-3 lg:flex">
+              <div className="hidden min-w-0 xl:flex xl:flex-col xl:items-end">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">{workStatus.text}</span>
+                <a
+                  href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`}
+                  className="mt-1 inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 transition hover:text-slate-950"
+                >
+                  <Mail className="h-3.5 w-3.5" />
+                  <span>{settings?.email || 'shelpakovzhenya@gmail.com'}</span>
+                </a>
+              </div>
               <LanguageSwitcher locale={locale} pathname={pathname} />
               <Link href={prefixPathWithLocale(CONTACT_FORM_HREF, locale)} className="site-cta-button">
                 {dictionary.header.discussProject}

@@ -63,8 +63,8 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
   ].filter((item) => item.href)
 
   return (
-    <footer className="relative mt-auto overflow-hidden border-t border-slate-800 bg-[#0b1220] text-slate-300">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(240,155,92,0.08),transparent_26%),radial-gradient(circle_at_82%_22%,rgba(59,130,246,0.08),transparent_22%)]" />
+    <footer className="relative mt-auto overflow-hidden border-t border-slate-800 bg-[#0f172a] text-slate-300">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(59,130,246,0.12),transparent_24%)]" />
       <div className="container relative mx-auto px-4 py-16">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.75fr_0.8fr_1.1fr]">
           <div className="space-y-5">
@@ -144,7 +144,7 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
                   href={prefixPathWithLocale(item.href, locale)}
                   className="block rounded-[24px] border border-white/10 bg-white/5 p-4 transition hover:border-white/18 hover:bg-white/10 hover:text-white"
                 >
-                  <div className="text-[11px] uppercase tracking-[0.22em] text-orange-300">{item.kicker}</div>
+                  <div className="text-[11px] uppercase tracking-[0.22em] text-blue-300">{item.kicker}</div>
                   <div className="mt-2 text-sm font-medium leading-6 text-slate-100">{item.title}</div>
                 </Link>
               ))}
