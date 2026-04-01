@@ -104,11 +104,11 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
 
   return (
     <>
-      <div className="relative z-40 border-b border-white/10 bg-[#07101d]/88 backdrop-blur-xl">
+      <div className="relative z-40 border-b border-slate-800/80 bg-[#0b1220]/92 backdrop-blur-xl">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-start gap-2 py-2.5 text-[11px] font-medium text-slate-200/88 sm:flex-row sm:items-center sm:justify-between sm:gap-3 md:gap-4 md:py-3 md:text-xs">
             <div className="flex w-full min-w-0 flex-wrap items-center gap-2.5 md:gap-3">
-              <span className="inline-flex items-center rounded-full border border-white/12 bg-[#0c1727]/90 px-3 py-1.5 font-semibold text-slate-50 shadow-[0_10px_24px_rgba(2,8,23,0.22)] md:px-3.5">
+              <span className="inline-flex items-center rounded-full border border-white/10 bg-[#111b2b] px-3 py-1.5 font-semibold text-slate-100 md:px-3.5">
                 {workSchedule}
               </span>
               <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold ${workStatus.badgeClass}`}>
@@ -120,7 +120,7 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
               </span>
               <a
                 href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`}
-                className="inline-flex min-w-0 max-w-full items-center gap-2 rounded-full border border-white/12 bg-[#0c1727]/90 px-3 py-1.5 font-medium text-slate-50 shadow-[0_10px_24px_rgba(2,8,23,0.22)] transition hover:border-cyan-300/30 hover:text-white sm:w-auto sm:break-normal md:px-3.5"
+                className="inline-flex min-w-0 max-w-full items-center gap-2 rounded-full border border-white/10 bg-[#111b2b] px-3 py-1.5 font-medium text-slate-100 transition hover:border-white/20 hover:text-white sm:w-auto sm:break-normal md:px-3.5"
               >
                 <Mail className="h-3.5 w-3.5" />
                 <span className="min-w-0 break-all">{settings?.email || 'shelpakovzhenya@gmail.com'}</span>
@@ -137,7 +137,7 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
                     rel="noreferrer"
                     aria-label={item.label}
                     title={item.label}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/14 bg-white/10 text-slate-100 transition hover:border-cyan-300/60 hover:bg-white/16 hover:text-cyan-100"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-100 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
                   >
                     {item.type === 'telegram' ? (
                       <Image src="/telegram-logo.svg" alt="Telegram" width={20} height={20} className="h-5 w-5" />
@@ -154,16 +154,16 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
         </div>
       </div>
 
-      <div className="sticky top-0 z-50 bg-[#07101d]/80 shadow-[0_18px_40px_rgba(2,8,23,0.26)] backdrop-blur-2xl">
+      <div className="sticky top-0 z-50 bg-[#0b1220]/84 shadow-[0_14px_30px_rgba(2,8,23,0.18)] backdrop-blur-2xl">
         <div className="container mx-auto px-4">
-          <nav className="my-2 flex items-center justify-between gap-2.5 rounded-[24px] border border-white/14 bg-[linear-gradient(145deg,rgba(11,20,37,0.9),rgba(15,28,48,0.84))] px-3 py-2.5 shadow-[0_22px_52px_rgba(2,8,23,0.28)] md:my-3 md:mb-4 md:gap-4 md:rounded-[32px] md:px-4 md:py-4">
+          <nav className="my-2 flex items-center justify-between gap-2.5 rounded-[24px] border border-white/10 bg-[#0f1726]/96 px-3 py-2.5 shadow-[0_18px_36px_rgba(2,8,23,0.18)] md:my-3 md:mb-4 md:gap-4 md:rounded-[28px] md:px-4 md:py-4">
             <Link href={prefixPathWithLocale('/', locale)} className="flex min-w-0 flex-1 items-center gap-2.5 pr-2 sm:gap-3 lg:flex-none">
-              <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/14 bg-white/95 shadow-[0_12px_30px_rgba(2,8,23,0.22)] sm:h-11 sm:w-11 md:h-12 md:w-12">
+              <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/12 bg-white/95 shadow-[0_10px_24px_rgba(2,8,23,0.14)] sm:h-11 sm:w-11 md:h-12 md:w-12">
                 <Image src="/favicon-48.png" alt="Shelpakov Digital" width={40} height={40} className="h-[78%] w-[78%] object-contain" priority />
               </span>
               <span className="flex min-w-0 flex-col">
-                <span className="truncate text-[0.82rem] font-semibold uppercase tracking-[0.08em] text-white sm:text-[0.95rem] md:text-lg md:tracking-[0.16em]">Shelpakov Digital</span>
-                <span className="hidden max-w-full truncate text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-300/86 md:block md:text-xs md:tracking-[0.2em]">
+                <span className="truncate text-[0.88rem] font-semibold text-white sm:text-[0.98rem] md:text-lg">Shelpakov Digital</span>
+                <span className="hidden max-w-full truncate text-[10px] font-medium tracking-[0.08em] text-slate-400 md:block md:text-xs md:tracking-[0.12em]">
                   {dictionary.header.brandSubtitle}
                 </span>
               </span>

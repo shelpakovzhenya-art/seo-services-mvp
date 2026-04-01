@@ -13,7 +13,7 @@ const en = {
     tools: 'Tools',
   },
   header: {
-    brandSubtitle: 'SEO, site structure, lead growth',
+    brandSubtitle: 'Independent SEO consultant',
     discussProject: 'Discuss a project',
   },
   mobileMenu: {

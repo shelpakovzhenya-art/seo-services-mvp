@@ -13,7 +13,7 @@ const ru = {
     tools: 'Инструменты',
   },
   header: {
-    brandSubtitle: 'SEO, структура сайта, заявки',
+    brandSubtitle: 'Независимый SEO-специалист',
     discussProject: 'Обсудить проект',
   },
   mobileMenu: {
@@ -29,7 +29,7 @@ const ru = {
     navigation: 'Навигация',
     contacts: 'Контакты',
     readingMore: 'Почитать дальше',
-    tools: 'SEO-tools',
+    tools: 'SEO-инструменты',
     toolsTitle: 'Аудит, стратегия, коммерческие факторы и рост заявок.',
     sitemap: 'Карта сайта',
     rights: 'Все права защищены.',
