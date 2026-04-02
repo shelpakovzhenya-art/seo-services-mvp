@@ -1,4 +1,5 @@
 import JsonLd from '@/components/JsonLd'
+import BrandPageHero from '@/components/BrandPageHero'
 import LazyCalculator from '@/components/LazyCalculator'
 import LazyContactForm from '@/components/LazyContactForm'
 import RichContent from '@/components/RichContent'
@@ -108,21 +109,19 @@ export default async function CalculatorPage() {
     <div className="page-shell">
       <JsonLd id="calculator-breadcrumbs-schema" data={breadcrumbSchema} />
 
-      <section className="surface-grid surface-pad">
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.04fr)_minmax(320px,0.96fr)] xl:items-start">
-          <div className="flex flex-col gap-8 xl:self-stretch xl:justify-between xl:pr-6">
-            <div>
-              <h1 className="max-w-5xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.heroTitle}</h1>
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{localizedPage?.description || copy.heroDescription}</p>
-            </div>
-          </div>
-
-          <div className="glass-panel self-start p-6">
-            <div className="space-y-3">
+      <BrandPageHero
+        eyebrow={locale === 'ru' ? 'Калькулятор' : 'Calculator'}
+        title={localizedPage?.h1 || copy.heroTitle}
+        description={localizedPage?.description || copy.heroDescription}
+        badges={copy.highlights}
+        aside={
+          <div className="page-aside-card">
+            <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{copy.howTo}</div>
+            <div className="mt-4 space-y-3">
               {copy.steps.map((item: any, index: number) => (
-                <div key={item.title} className="rounded-[22px] border border-orange-100 bg-white/75 px-5 py-4">
+                <div key={item.title} className="rounded-[20px] border border-slate-200 bg-white/75 px-4 py-4">
                   <div className="flex items-center gap-3">
-                    <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700">{`0${index + 1}`}</span>
+                    <span className="brand-badge text-[11px] tracking-[0.18em] uppercase">{`0${index + 1}`}</span>
                     <h2 className="text-base font-semibold text-slate-950">{item.title}</h2>
                   </div>
                   <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
@@ -130,8 +129,8 @@ export default async function CalculatorPage() {
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        }
+      />
 
       <section className="mt-8 surface-grid p-4 md:p-6">
         <h2 className="mb-6 text-3xl font-semibold text-slate-950 md:text-4xl">{copy.estimateTitle}</h2>
@@ -156,7 +155,7 @@ export default async function CalculatorPage() {
           <h2 className="text-3xl font-semibold text-slate-950">{copy.pricingTitle}</h2>
           <div className="mt-6 space-y-3">
             {copy.pricingFactors.map((item: string) => (
-              <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-sm leading-7 text-slate-700">{item}</div>
+              <div key={item} className="brand-card-soft px-5 py-4 text-sm leading-7 text-slate-700">{item}</div>
             ))}
           </div>
         </div>
@@ -165,7 +164,7 @@ export default async function CalculatorPage() {
           <h2 className="text-3xl font-semibold text-slate-950">{copy.cautionTitle}</h2>
           <div className="mt-6 space-y-3">
             {copy.cautionCards.map((item: string) => (
-              <div key={item} className="rounded-2xl border border-cyan-100 bg-cyan-50/60 px-5 py-4 text-sm leading-7 text-slate-700">
+              <div key={item} className="brand-card px-5 py-4 text-sm leading-7 text-slate-700">
                 {item}
               </div>
             ))}
@@ -176,7 +175,7 @@ export default async function CalculatorPage() {
       <section className="mt-8">
         <div id="contact-form" className="soft-section h-full scroll-mt-32 overflow-hidden md:scroll-mt-36">
           <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-            <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
+            <div className="border-b border-slate-200 p-5 sm:p-8 lg:border-b-0 lg:border-r">
               <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
               <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">{copy.contactText}</p>
             </div>

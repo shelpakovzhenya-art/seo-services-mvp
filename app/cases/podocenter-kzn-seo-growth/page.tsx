@@ -311,7 +311,7 @@ export default async function PodocenterCasePage() {
           </div>
           <div className="page-card">
             <div className="flex items-center gap-3 text-2xl font-semibold text-slate-950">
-              <MapPin className="h-6 w-6 text-cyan-700" />
+              <MapPin className="h-6 w-6 text-[#8a5630]" />
               {copy.regionTitle}
             </div>
             <p className="mt-3 text-sm leading-7 text-slate-600">{copy.regionDescription}</p>
@@ -329,7 +329,7 @@ export default async function PodocenterCasePage() {
           <ul className="mt-6 space-y-4 text-base leading-7 text-slate-700">
             {(caseData.about || []).map((item) => (
               <li key={item} className="flex gap-3">
-                <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-cyan-700" />
+                <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-[#8a5630]" />
                 <span>{item}</span>
               </li>
             ))}
@@ -343,7 +343,7 @@ export default async function PodocenterCasePage() {
               <h2 className="text-2xl font-semibold text-slate-950">{copy.problemsTitle}</h2>
               <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-600">
                 {(caseData.pointA || []).map((item) => (
-                  <li key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">
+                  <li key={item} className="brand-card-soft px-4 py-3">
                     {item}
                   </li>
                 ))}
@@ -353,7 +353,7 @@ export default async function PodocenterCasePage() {
               <h2 className="text-2xl font-semibold text-slate-950">{copy.goalsTitle}</h2>
               <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-600">
                 {(caseData.goals || []).map((item) => (
-                  <li key={item} className="rounded-2xl border border-cyan-100 bg-cyan-50/70 px-4 py-3">
+                  <li key={item} className="brand-card px-4 py-3">
                     {item}
                   </li>
                 ))}
@@ -369,7 +369,7 @@ export default async function PodocenterCasePage() {
 
         <div className="mt-10 space-y-6">
           {(caseData.work || []).map((section) => (
-            <article key={section.title} className="rounded-[28px] border border-orange-100 bg-white/85 p-6 md:p-8">
+            <article key={section.title} className="brand-card p-6 md:p-8">
               <h2 className="text-2xl font-semibold text-slate-950 md:text-3xl">{section.title}</h2>
               <div className="mt-4 space-y-4 text-base leading-8 text-slate-600">
                 {section.paragraphs.map((paragraph) => (
@@ -390,10 +390,10 @@ export default async function PodocenterCasePage() {
             {galleryImages.map((item, index) => (
               <article
                 key={item.src}
-                className="overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_18px_45px_rgba(148,107,61,0.08)]"
+                className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.08)]"
               >
-                <div className="border-b border-orange-100 bg-[linear-gradient(180deg,#fffdf8,#f7fbff)] p-3 sm:p-4">
-                  <div className="relative min-h-[220px] w-full overflow-hidden rounded-[20px] border border-orange-100 bg-white sm:min-h-[320px] lg:min-h-[420px]">
+                <div className="border-b border-slate-200 bg-[linear-gradient(180deg,#fbfaf8,#f2f4f7)] p-3 sm:p-4">
+                  <div className="relative min-h-[220px] w-full overflow-hidden rounded-[20px] border border-slate-200 bg-white sm:min-h-[320px] lg:min-h-[420px]">
                     <Image
                       src={item.src}
                       alt={item.alt}
@@ -418,7 +418,7 @@ export default async function PodocenterCasePage() {
           <h2 className="text-3xl font-semibold text-slate-950">{copy.whyTitle}</h2>
           <div className="mt-6 space-y-4">
             {(caseData.whyItWorked || []).map((item) => (
-              <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-5 py-4 text-slate-700">
+              <div key={item} className="brand-card-soft px-5 py-4 text-slate-700">
                 {item}
               </div>
             ))}
@@ -435,7 +435,7 @@ export default async function PodocenterCasePage() {
         <h2 className="text-3xl font-semibold text-slate-950">{copy.faqTitle}</h2>
         <div className="mt-8 grid gap-4">
           {(caseData.faq || []).map((item) => (
-            <details key={item.question} className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-6">
+            <details key={item.question} className="brand-card p-6">
               <summary className="cursor-pointer text-lg font-semibold text-slate-950">{item.question}</summary>
               <p className="mt-4 text-sm leading-7 text-slate-600">{item.answer}</p>
             </details>
@@ -450,9 +450,9 @@ export default async function PodocenterCasePage() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5 transition hover:-translate-y-0.5 hover:border-cyan-200"
+              className="brand-link-card p-5"
             >
-              <div className="flex items-center gap-3 text-cyan-700">
+              <div className="flex items-center gap-3 text-[#8a5630]">
                 <Search className="h-5 w-5" />
               </div>
               <h3 className="mt-4 text-xl font-semibold text-slate-950">{item.label}</h3>
@@ -464,12 +464,12 @@ export default async function PodocenterCasePage() {
 
       <section id="case-contact" className="mt-8 soft-section overflow-hidden">
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-          <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
+          <div className="border-b border-slate-200 p-5 sm:p-8 lg:border-b-0 lg:border-r">
             <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
             <p className="mt-5 text-base leading-8 text-slate-600">{copy.contactDescription}</p>
             <div className="mt-8 space-y-3 text-sm leading-7 text-slate-600">
               {copy.contactBullets.map((item) => (
-                <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-3">
+                <div key={item} className="brand-card-soft px-4 py-3">
                   {item}
                 </div>
               ))}

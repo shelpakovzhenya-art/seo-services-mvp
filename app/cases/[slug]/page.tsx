@@ -132,25 +132,46 @@ export default async function CasePage({ params }: { params: { slug: string } })
       <JsonLd id={`case-breadcrumbs-${params.slug}`} data={breadcrumbSchema} />
       <JsonLd id={`case-article-${params.slug}`} data={caseArticleSchema} />
 
-      <section className="soft-section surface-pad overflow-hidden">
-        <h1 className="max-w-5xl text-4xl font-semibold text-slate-950 md:text-6xl">{caseItem.title}</h1>
-        {caseItem.description ? <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{caseItem.description}</p> : null}
+      <section className="page-hero-shell surface-pad overflow-hidden">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,0.98fr)_minmax(320px,1.02fr)] lg:items-end">
+          <div>
+            <span className="brand-chip">{copy.chip}</span>
+            <h1 className="mt-5 max-w-5xl text-4xl font-semibold leading-[0.94] text-slate-950 md:text-6xl">{caseItem.title}</h1>
+            {caseItem.description ? <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{caseItem.description}</p> : null}
 
-        <div className="mt-8 flex flex-wrap gap-4">
-          <a href="#case-contact">
-            <Button size="lg" className="rounded-full px-7">
-              {copy.cta}
-            </Button>
-          </a>
-        </div>
-
-        {caseItem.image ? (
-          <div className="relative mt-8 overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_20px_50px_rgba(58,97,137,0.12)]">
-            <div className="relative aspect-[16/9] w-full">
-              <Image src={caseItem.image} alt={caseItem.title} fill unoptimized className="object-cover" />
+            <div className="mt-8 flex flex-wrap gap-4">
+              <a href="#case-contact">
+                <Button size="lg" className="rounded-full px-7">
+                  {copy.cta}
+                </Button>
+              </a>
             </div>
           </div>
-        ) : null}
+
+          {caseItem.image ? (
+            <div className="page-aside-card p-3 sm:p-4">
+              <div className="relative overflow-hidden rounded-[24px] border border-white/80 bg-white shadow-[0_20px_50px_rgba(58,97,137,0.1)]">
+                <div className="relative aspect-[16/10] w-full lg:aspect-[16/9]">
+                  <Image src={caseItem.image} alt={caseItem.title} fill unoptimized className="object-cover" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="page-hero-aside">
+              <div className="page-aside-card">
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{locale === 'ru' ? 'Что показывает кейс' : 'What this case shows'}</div>
+                <div className="mt-4 space-y-3">
+                  <div className="brand-list-item text-sm">
+                    <span>{locale === 'ru' ? 'Исходную проблемную зону и стартовые ограничения.' : 'The starting problem zone and the initial constraints.'}</span>
+                  </div>
+                  <div className="brand-list-item text-sm">
+                    <span>{locale === 'ru' ? 'Почему именно такие шаги дали лучший эффект для сайта.' : 'Why those specific steps created the strongest effect.'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </section>
 
       <RichContent
@@ -163,7 +184,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
 
       <section id="case-contact" className="mt-8 soft-section overflow-hidden">
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-          <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
+          <div className="border-b border-slate-200 p-5 sm:p-8 lg:border-b-0 lg:border-r">
             <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
             <p className="mt-5 text-base leading-8 text-slate-600">{copy.contactDescription}</p>
           </div>

@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import BrandPageHero from '@/components/BrandPageHero'
 import JsonLd from '@/components/JsonLd'
 import { buildLocalizedBlogListing } from '@/lib/blog-localization'
 import { getBlogCover, isInlineImageAsset } from '@/lib/content-covers'
@@ -95,10 +96,32 @@ export default async function BlogPage() {
       <JsonLd id="blog-collection-schema" data={collectionSchema} />
       <JsonLd id="blog-item-list-schema" data={itemListSchema} />
 
-      <section className="surface-grid surface-pad">
-        <h1 className="max-w-4xl text-4xl font-semibold text-slate-950 md:text-6xl">{copy.title}</h1>
-        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{copy.description}</p>
-      </section>
+      <BrandPageHero
+        eyebrow={copy.chip}
+        title={copy.title}
+        description={copy.description}
+        badges={copy.badges}
+        aside={
+          <>
+            <div className="page-aside-card">
+              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{locale === 'ru' ? 'Формат материалов' : 'Format'}</div>
+              <div className="mt-4 space-y-3">
+                <div className="brand-list-item text-sm">
+                  <span>{locale === 'ru' ? 'Практические разборы, а не поток общих SEO-советов.' : 'Practical breakdowns rather than generic SEO commentary.'}</span>
+                </div>
+                <div className="brand-list-item text-sm">
+                  <span>{locale === 'ru' ? 'Материалы связаны с услугами, кейсами и реальной методологией работы.' : 'Each article connects to services, case work, and the actual delivery methodology.'}</span>
+                </div>
+              </div>
+            </div>
+            <div className="page-aside-card--dark">
+              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#d5b08d]">{locale === 'ru' ? 'Опубликовано' : 'Published'}</div>
+              <div className="mt-3 text-3xl font-semibold text-white">{posts.length}</div>
+              <p className="mt-2 text-sm leading-7 text-slate-300">{locale === 'ru' ? 'Блог поддерживает экспертный слой сайта и помогает клиенту понять подход до заявки.' : 'The blog supports the site’s expert layer and helps visitors understand the approach before inquiry.'}</p>
+            </div>
+          </>
+        }
+      />
 
       <section className="mt-8 surface-grid surface-pad">
         {posts.length > 0 ? (
@@ -109,7 +132,7 @@ export default async function BlogPage() {
 
               return (
                 <Link key={post.id} href={prefixPathWithLocale(`/blog/${post.slug}`, locale)} className="group block h-full">
-                  <article className="uniform-card interactive-card reading-shell overflow-hidden p-0">
+                  <article className="uniform-card brand-link-card interactive-card overflow-hidden p-0">
                     {cover ? (
                       <div className="relative h-52 w-full">
                         <Image
@@ -137,7 +160,7 @@ export default async function BlogPage() {
                           <span aria-hidden="true">•</span>
                           <p>{readingTimeLabel}</p>
                         </div>
-                        <span className="text-sm font-semibold text-sky-700 transition group-hover:text-sky-600">{copy.open}</span>
+                        <span className="text-sm font-semibold text-[#8a5630] transition group-hover:text-slate-950">{copy.open}</span>
                       </div>
                     </div>
                   </article>

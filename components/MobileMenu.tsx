@@ -83,7 +83,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
           <div className="sticky top-0 z-10 border-b border-white/10 bg-[#09111f]/88 px-4 py-4 backdrop-blur-2xl sm:px-6 sm:py-5">
             <div className="flex items-center justify-between gap-4">
               <div className="min-w-0">
-                <div className="text-xs uppercase tracking-[0.24em] text-orange-300">{dictionary.mobileMenu.menuTitle}</div>
+                  <div className="text-xs uppercase tracking-[0.24em] text-[#d2ab86]">{dictionary.mobileMenu.menuTitle}</div>
                 <div className="mt-1 flex min-w-0 items-center gap-3">
                   <span className="grid h-11 w-11 place-items-center overflow-hidden rounded-2xl border border-white/12 bg-white/95 shadow-[0_10px_24px_rgba(2,8,23,0.22)]">
                     <Image src="/favicon-48.png" alt="Shelpakov Digital" width={36} height={36} className="h-[78%] w-[78%] object-contain" />

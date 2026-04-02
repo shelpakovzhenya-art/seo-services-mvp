@@ -11,12 +11,12 @@ type SeoToolWorkspaceProps = {
 }
 
 const fieldClassName =
-  'tool-input w-full rounded-[22px] border border-cyan-100 bg-white px-4 py-3 text-sm text-slate-900 shadow-[0_10px_24px_rgba(8,17,31,0.08)] outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:bg-white'
+  'tool-input w-full rounded-[22px] border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-[0_10px_24px_rgba(8,17,31,0.08)] outline-none transition placeholder:text-slate-400 focus:border-[#caa37a] focus:bg-white'
 
 const labelClassName = 'text-xs font-semibold uppercase tracking-[0.24em] text-slate-400'
 
 const copyButtonBase =
-  'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/40'
+  'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#caa37a]/30'
 
 const transliterationMap: Record<string, string> = {
   а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'yo', ж: 'zh', з: 'z', и: 'i', й: 'y',
@@ -169,7 +169,7 @@ function CopyButton({ locale, value }: { locale: Locale; value: string }) {
       className={`${copyButtonBase} ${
         copied
           ? 'border-emerald-300/30 bg-emerald-400/12 text-emerald-100'
-          : 'border-white/12 bg-white/6 text-slate-100 hover:border-cyan-300/40 hover:bg-white/10'
+          : 'border-white/12 bg-white/6 text-slate-100 hover:border-[#caa37a]/36 hover:bg-white/10'
       } ${!value ? 'cursor-not-allowed opacity-45' : ''}`}
     >
       {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
@@ -231,7 +231,7 @@ function ToolLayout({
             <div className="space-y-3">
               {tool.highlights.map((item) => (
                 <div key={item} className="flex items-start gap-3 rounded-[22px] border border-white/10 bg-[#081321]/78 px-4 py-4 text-sm leading-7 text-slate-300">
-                  <Sparkles className="mt-1 h-4 w-4 shrink-0 text-orange-300" />
+                  <Sparkles className="mt-1 h-4 w-4 shrink-0 text-[#d5b08d]" />
                   <span>{item}</span>
                 </div>
               ))}
@@ -284,7 +284,7 @@ function SlugGeneratorTool({ tool, locale }: SeoToolWorkspaceProps) {
                     onClick={() => setSeparator(item)}
                     className={`flex-1 rounded-[20px] border px-4 py-3 text-sm font-medium transition ${
                       separator === item
-                        ? 'border-cyan-300/50 bg-cyan-300/14 text-cyan-100'
+                        ? 'border-[#caa37a]/50 bg-[#caa37a]/12 text-[#f4dcc2]'
                         : 'border-white/12 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/10'
                     }`}
                   >
@@ -319,7 +319,7 @@ function SlugGeneratorTool({ tool, locale }: SeoToolWorkspaceProps) {
               {slug || t(locale, 'Здесь появится готовый slug', 'The slug will appear here')}
             </div>
             <div className="mt-4 rounded-[24px] border border-dashed border-white/10 bg-white/5 px-5 py-4 text-sm text-slate-300">
-              {t(locale, 'Предпросмотр пути', 'Path preview')}: <span className="font-medium text-cyan-100">{pathPreview}</span>
+              {t(locale, 'Предпросмотр пути', 'Path preview')}: <span className="font-medium text-[#f4dcc2]">{pathPreview}</span>
             </div>
           </ResultBlock>
 
@@ -593,7 +593,7 @@ function OpenGraphGeneratorTool({ tool, locale }: SeoToolWorkspaceProps) {
                 <div className="text-xs uppercase tracking-[0.2em] text-slate-400">{trimValue(siteName) || t(locale, 'Название сайта', 'Site name')}</div>
                 <div className="text-2xl font-semibold leading-8 text-slate-950">{trimValue(title) || t(locale, 'Заголовок превью', 'Preview title')}</div>
                 <div className="text-sm leading-7 text-slate-600">{trimValue(description) || t(locale, 'Краткое описание карточки', 'Short card description')}</div>
-                <div className="text-xs text-cyan-700">{trimValue(url) || 'https://site.com/page'}</div>
+                <div className="text-xs text-[#8a5630]">{trimValue(url) || 'https://site.com/page'}</div>
               </div>
             </div>
           </ResultBlock>

@@ -104,7 +104,7 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
 
   return (
     <>
-        <div className="relative z-40 border-b border-white/6 bg-[#0b1220]/92 backdrop-blur-xl">
+      <div className="relative z-40 border-b border-white/6 bg-[#0b1220]/92 backdrop-blur-xl">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-start gap-2 py-2.5 text-[11px] font-medium text-slate-200/88 sm:flex-row sm:items-center sm:justify-between sm:gap-3 md:gap-4 md:py-3 md:text-xs">
             <div className="flex w-full min-w-0 flex-wrap items-center gap-2.5 md:gap-3">

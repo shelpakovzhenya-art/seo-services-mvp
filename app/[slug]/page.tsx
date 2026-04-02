@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import BrandPageHero from '@/components/BrandPageHero'
 import JsonLd from '@/components/JsonLd'
 import { demoteHtmlHeadings } from '@/lib/content-headings'
 import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
@@ -101,19 +103,39 @@ export default async function DynamicPage({ params }: PageProps) {
   ], { locale })
 
   return (
-    <div className="container mx-auto px-4 py-16 md:py-24">
+    <div className="page-shell">
       <JsonLd id={`page-breadcrumbs-schema-${page.slug}`} data={breadcrumbSchema} />
 
-      <div className="mx-auto max-w-4xl">
-        <h1 className="break-words text-4xl font-semibold text-white md:text-6xl">{page.h1 || page.title}</h1>
-        {page.description && <p className="mt-6 break-words text-lg leading-8 text-slate-300">{page.description}</p>}
-        {pageContent && (
-          <article
-            className="prose prose-invert mt-10 max-w-none break-words prose-headings:text-white prose-p:text-slate-300 prose-li:text-slate-300"
-            dangerouslySetInnerHTML={{ __html: pageContent }}
-          />
-        )}
-      </div>
+      <BrandPageHero
+        eyebrow={locale === 'ru' ? 'Экспертная страница' : 'Expert page'}
+        title={page.h1 || page.title}
+        description={page.description}
+        actions={
+          <Link href={prefixPathWithLocale('/contacts#contact-form', locale)} className="inline-flex items-center justify-center rounded-full bg-slate-950 px-5 py-4 text-sm font-semibold text-white transition hover:bg-slate-800">
+            {locale === 'ru' ? 'Обсудить задачу' : 'Discuss the task'}
+          </Link>
+        }
+        aside={
+          <div className="page-aside-card">
+            <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{locale === 'ru' ? 'Формат страницы' : 'Page format'}</div>
+            <div className="mt-4 space-y-3">
+              <div className="brand-list-item text-sm">
+                <span>{locale === 'ru' ? 'Эта страница встроена в общую экспертную систему сайта и должна помогать принять следующий шаг.' : 'This page is part of the site-wide expert system and should support the next rational step.'}</span>
+              </div>
+              <div className="brand-list-item text-sm">
+                <span>{locale === 'ru' ? 'Контент здесь может работать как посадочная, отраслевой материал или дополнительное объяснение услуги.' : 'The content here can work as a landing page, industry page, or a supporting explanation around a service.'}</span>
+              </div>
+            </div>
+          </div>
+        }
+      />
+
+      {pageContent && (
+        <article
+          className="editorial-prose reading-shell mt-8 max-w-none break-words"
+          dangerouslySetInnerHTML={{ __html: pageContent }}
+        />
+      )}
     </div>
   )
 }

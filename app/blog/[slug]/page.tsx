@@ -241,7 +241,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             ) : null}
             <Link
               href={prefixPathWithLocale('/services', locale)}
-              className="rounded-full border border-cyan-300/24 bg-cyan-400/10 px-4 py-2 transition hover:border-cyan-200/50 hover:text-white"
+              className="rounded-full border border-[#d0aa84]/24 bg-white/[0.06] px-4 py-2 transition hover:border-[#d0aa84]/48 hover:text-white"
             >
               {copy.servicesLink}
             </Link>
@@ -262,8 +262,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           <RichContent content={content} />
         </div>
 
-        <div className="mt-10 rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_42px_rgba(15,23,42,0.08)] md:p-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-orange-700">{trustCopy.kicker}</p>
+        <div className="brand-card mt-10 p-6 md:p-7">
+          <p className="brand-chip">{trustCopy.kicker}</p>
           <h2 className="mt-3 text-2xl font-semibold text-slate-950 md:text-3xl">{trustCopy.title}</h2>
 
           <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-500">
@@ -271,9 +271,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             {showUpdatedDate && updatedDate ? <span>{`${copy.updatedLabel}: ${updatedDate}`}</span> : null}
           </div>
 
-          <div className="mt-6 rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+          <div className="brand-card-soft mt-6 p-5">
             <p className="text-lg font-semibold text-slate-950">{team.name}</p>
-            <p className="mt-2 text-sm font-medium text-sky-800">{team.role}</p>
+            <p className="mt-2 text-sm font-medium text-[#8a5630]">{team.role}</p>
             <p className="mt-3 text-sm leading-7 text-slate-700">{team.summary}</p>
           </div>
 
@@ -290,18 +290,14 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
             <div className="grid gap-3">
               {trustLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={prefixPathWithLocale(item.href, locale)}
-                  className="rounded-[22px] border border-slate-200 bg-white px-4 py-4 transition hover:border-cyan-200 hover:bg-slate-50"
-                >
+                <Link key={item.href} href={prefixPathWithLocale(item.href, locale)} className="brand-link-card px-4 py-4">
                   <p className="text-base font-semibold text-slate-950">{item.title}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p>
                 </Link>
               ))}
               <Link
                 href={prefixPathWithLocale('/contacts', locale)}
-                className="rounded-[22px] border border-cyan-200 bg-cyan-50 px-4 py-4 text-sky-900 transition hover:border-cyan-300 hover:bg-cyan-100/70"
+                className="brand-link-card px-4 py-4 text-slate-900"
               >
                 <p className="text-base font-semibold">{team.contactLabel}</p>
               </Link>
@@ -309,8 +305,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           </div>
         </div>
 
-        <div className="mt-10 rounded-[28px] border border-orange-100 bg-[linear-gradient(180deg,#fffaf5,#f7fbff)] p-6 shadow-[0_18px_42px_rgba(15,23,42,0.08)] md:p-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-orange-700">{copy.relatedServicesKicker}</p>
+        <div className="brand-card-soft mt-10 p-6 md:p-7">
+          <p className="brand-chip">{copy.relatedServicesKicker}</p>
           <h2 className="mt-3 text-2xl font-semibold text-slate-950 md:text-3xl">{copy.relatedServicesTitle}</h2>
           <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">{copy.relatedServicesDescription}</p>
 
@@ -319,13 +315,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               <Link
                 key={service.href}
                 href={service.href}
-                className="uniform-card group rounded-[22px] border border-white/80 bg-white/92 px-4 py-4 shadow-[0_14px_30px_rgba(15,23,42,0.06)] transition duration-200 hover:-translate-y-0.5 hover:border-cyan-200 hover:bg-white"
+                className="uniform-card brand-link-card group px-4 py-4"
               >
-                <p className="text-lg font-semibold text-slate-950 transition-colors duration-200 group-hover:text-sky-700">
+                <p className="text-lg font-semibold text-slate-950 transition-colors duration-200 group-hover:text-slate-950">
                   {service.label}
                 </p>
                 <p className="mt-2 flex-1 text-sm leading-7 text-slate-600">{service.description}</p>
-                <span className="mt-3 inline-flex items-center text-sm font-semibold text-sky-700">{copy.openService}</span>
+                <span className="mt-3 inline-flex items-center text-sm font-semibold text-[#8a5630]">{copy.openService}</span>
               </Link>
             ))}
           </div>

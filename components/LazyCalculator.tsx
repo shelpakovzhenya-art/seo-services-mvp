@@ -26,7 +26,7 @@ function CalculatorSkeleton() {
     <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
       <div className="space-y-4 animate-pulse">
         {[0, 1, 2].map((item) => (
-          <div key={item} className="rounded-[28px] border border-orange-100 bg-white/80 p-5">
+          <div key={item} className="rounded-[28px] border border-slate-200 bg-white/80 p-5">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="flex-1 space-y-3">
                 <div className="h-4 w-28 rounded-full bg-slate-200/80" />
@@ -39,7 +39,7 @@ function CalculatorSkeleton() {
           </div>
         ))}
       </div>
-      <aside className="rounded-[32px] border border-orange-100 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+      <aside className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
         <div className="animate-pulse rounded-[24px] bg-slate-100/90 p-5">
           <div className="h-4 w-40 rounded-full bg-slate-200/80" />
           <div className="mt-4 h-10 w-44 rounded-full bg-slate-200/80" />

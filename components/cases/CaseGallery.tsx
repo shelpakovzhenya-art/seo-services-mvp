@@ -106,7 +106,7 @@ export default function CaseGallery({ images, title, locale = 'ru' }: CaseGaller
           {images.map((image, index) => (
             <article
               key={`${image.src}-${index}`}
-              className="uniform-card overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_18px_45px_rgba(148,107,61,0.08)]"
+              className="uniform-card overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.08)]"
             >
               <button
                 type="button"
@@ -132,7 +132,7 @@ export default function CaseGallery({ images, title, locale = 'ru' }: CaseGaller
                 </div>
 
                 {image.caption ? (
-                  <div className="border-t border-orange-100 px-4 py-3 text-sm leading-6 text-slate-600">
+                  <div className="border-t border-slate-200 px-4 py-3 text-sm leading-6 text-slate-600">
                     {image.caption}
                   </div>
                 ) : null}

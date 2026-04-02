@@ -59,7 +59,7 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
       <div className="surface-grid surface-pad space-y-8">
         <div className="grid gap-6 xl:grid-cols-[0.92fr_1.08fr] xl:items-end">
           <div className="max-w-3xl">
-            <span className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+            <span className="brand-chip">
               {copy.kicker}
             </span>
             <h2 className="mt-4 text-[clamp(2rem,4vw,3.35rem)] font-semibold leading-[0.96] tracking-[-0.045em] text-slate-950">
@@ -70,7 +70,7 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
 
           <div className="grid gap-3 sm:grid-cols-2">
             {copy.scenarios.slice(0, 4).map((scenario) => (
-              <div key={scenario} className="rounded-[24px] border border-slate-200 bg-white px-4 py-4 text-sm leading-7 text-slate-700 shadow-[0_16px_32px_rgba(15,23,42,0.06)]">
+              <div key={scenario} className="brand-card-soft px-4 py-4 text-sm leading-7 text-slate-700">
                 {scenario}
               </div>
             ))}
@@ -83,12 +83,12 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
           countLabel={countLabel}
         />
 
-        <div className="rounded-[28px] border border-slate-200 bg-slate-950 px-5 py-5 text-white shadow-[0_26px_60px_rgba(15,23,42,0.18)] md:px-6">
+        <div className="brand-card-dark px-5 py-5 md:px-6">
           <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-6">
             <p className="text-sm leading-7 text-slate-200">{copy.compactNote}</p>
             <a
               href={prefixPathWithLocale('/contacts#contact-form', locale)}
-              className="inline-flex items-center justify-center rounded-full border border-white/14 bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+              className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
             >
               {copy.compactCta}
             </a>

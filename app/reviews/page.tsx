@@ -1,4 +1,5 @@
 import JsonLd from '@/components/JsonLd'
+import BrandPageHero from '@/components/BrandPageHero'
 import RichContent from '@/components/RichContent'
 import { stripLeadingMarkdownH1 } from '@/lib/content-headings'
 import { type Locale } from '@/lib/i18n'
@@ -59,10 +60,30 @@ export default async function ReviewsPage() {
     <div className="page-shell">
       <JsonLd id="reviews-breadcrumbs-schema" data={breadcrumbSchema} />
 
-      <section className="surface-grid surface-pad">
-        <h1 className="text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>
-        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{localizedPage?.description || copy.description}</p>
-      </section>
+      <BrandPageHero
+        eyebrow={copy.chip}
+        title={localizedPage?.h1 || copy.title}
+        description={localizedPage?.description || copy.description}
+        aside={
+          <>
+            <div className="page-aside-card">
+              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{locale === 'ru' ? 'Формат отзывов' : 'Review format'}</div>
+              <div className="mt-4 space-y-3">
+                <div className="brand-list-item text-sm">
+                  <span>{locale === 'ru' ? 'Отзывы привязаны к реальной работе по сайту, а не к абстрактному “сервису”.' : 'Reviews are tied to real project work instead of abstract service claims.'}</span>
+                </div>
+                <div className="brand-list-item text-sm">
+                  <span>{locale === 'ru' ? 'Фокус на процессе, ясности коммуникации и практическом результате.' : 'The emphasis is on process clarity, communication quality, and practical results.'}</span>
+                </div>
+              </div>
+            </div>
+            <div className="page-aside-card--dark">
+              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#d5b08d]">{locale === 'ru' ? 'Отзывы на сайте' : 'Published reviews'}</div>
+              <div className="mt-3 text-3xl font-semibold text-white">{reviews.length}</div>
+            </div>
+          </>
+        }
+      />
 
       {locale === 'ru' && settings?.yandexReviewsEmbed ? (
         <div
@@ -78,8 +99,8 @@ export default async function ReviewsPage() {
       {reviews.length > 0 ? (
         <div className="uniform-grid-3 mt-8">
           {reviews.map((review) => (
-            <div key={review.id} className="uniform-card glass-panel interactive-card p-7">
-              <div className="mb-3 flex items-center gap-1 text-xl text-orange-400">
+            <div key={review.id} className="uniform-card brand-card interactive-card p-7">
+              <div className="mb-3 flex items-center gap-1 text-xl text-[#b77842]">
                 {[...Array(review.rating)].map((_, index) => (
                   <span key={index}>★</span>
                 ))}

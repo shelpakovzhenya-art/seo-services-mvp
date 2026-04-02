@@ -25,10 +25,10 @@ function ServiceCard({ card, clone = false }: { card: ServicesCarouselCard; clon
       aria-hidden={clone}
       tabIndex={clone ? -1 : undefined}
       prefetch={false}
-      className="services-carousel-card group flex min-h-[21rem] w-[84vw] max-w-[20.5rem] shrink-0 flex-col rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_22px_50px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:border-slate-900/12 hover:shadow-[0_28px_60px_rgba(15,23,42,0.12)] md:w-[20.5rem] md:max-w-none"
+      className="services-carousel-card brand-link-card group flex min-h-[21rem] w-[84vw] max-w-[20.5rem] shrink-0 flex-col p-6 md:w-[20.5rem] md:max-w-none"
     >
       <div className="flex items-start justify-between gap-4">
-        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+        <span className="brand-badge text-[11px] tracking-[0.18em] uppercase">
           {card.label}
         </span>
         {card.pricing ? <span className="text-sm font-semibold text-slate-900">{card.pricing}</span> : null}
@@ -41,7 +41,7 @@ function ServiceCard({ card, clone = false }: { card: ServicesCarouselCard; clon
         </div>
 
         {card.signal ? (
-          <div className="mt-5 rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700">
+          <div className="mt-5 rounded-[22px] border border-slate-200/90 bg-white/75 px-4 py-3 text-sm leading-6 text-slate-700">
             {card.signal}
           </div>
         ) : null}
@@ -68,7 +68,7 @@ export default function ServicesCarousel({ cards, autoScrollNote, countLabel }: 
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
         <p className="text-sm leading-6 text-slate-500">{autoScrollNote}</p>
-        <div className="hidden rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 md:inline-flex">
+        <div className="brand-badge hidden text-xs uppercase tracking-[0.18em] md:inline-flex">
           {cards.length} {countLabel}
         </div>
       </div>

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import BrandPageHero from '@/components/BrandPageHero'
 import JsonLd from '@/components/JsonLd'
 import RichContent from '@/components/RichContent'
 import { buildCaseListing } from '@/lib/case-listing'
@@ -86,10 +87,34 @@ export default async function CasesPage() {
     <div className="page-shell">
       <JsonLd id="cases-breadcrumbs-schema" data={breadcrumbSchema} />
 
-      <section className="surface-grid surface-pad">
-        <h1 className="text-4xl font-semibold text-slate-950 md:text-6xl">{localizedPage?.h1 || copy.title}</h1>
-        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">{localizedPage?.description || copy.description}</p>
-      </section>
+      <BrandPageHero
+        eyebrow={copy.caseLabel}
+        title={localizedPage?.h1 || copy.title}
+        description={localizedPage?.description || copy.description}
+        aside={
+          <>
+            <div className="page-aside-card">
+              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{locale === 'ru' ? 'Что внутри кейсов' : 'What these cases show'}</div>
+              <div className="mt-4 space-y-3">
+                <div className="brand-list-item text-sm">
+                  <span>{locale === 'ru' ? 'Стартовая ситуация и главные ограничения проекта.' : 'The starting situation and the main project constraints.'}</span>
+                </div>
+                <div className="brand-list-item text-sm">
+                  <span>{locale === 'ru' ? 'Почему были выбраны именно эти правки и приоритеты.' : 'Why those specific priorities and fixes were chosen.'}</span>
+                </div>
+                <div className="brand-list-item text-sm">
+                  <span>{locale === 'ru' ? 'Как изменения повлияли на видимость, доверие и заявки.' : 'How the changes affected visibility, trust, and lead flow.'}</span>
+                </div>
+              </div>
+            </div>
+            <div className="page-aside-card--dark">
+              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#d5b08d]">{locale === 'ru' ? 'Опубликовано кейсов' : 'Published cases'}</div>
+              <div className="mt-3 text-3xl font-semibold text-white">{caseCards.length}</div>
+              <p className="mt-2 text-sm leading-7 text-slate-300">{locale === 'ru' ? 'Не отчеты ради отчета, а рабочая логика и реальная динамика проекта.' : 'Not vanity reports, but working logic and real project movement.'}</p>
+            </div>
+          </>
+        }
+      />
 
       {caseCards.length > 0 ? (
         <div className="uniform-grid-2 mt-8">
@@ -99,7 +124,7 @@ export default async function CasesPage() {
                 <h2 className="text-2xl font-semibold text-slate-950">{caseItem.title}</h2>
                 <p className="mt-4 flex-1 text-base leading-7 text-slate-600">{getCasePreview(caseItem, copy.previewFallback)}</p>
                 {caseItem.slug ? (
-                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-700">
+                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-[#8a5630]">
                     {copy.openCase}
                   </div>
                 ) : null}
@@ -110,12 +135,12 @@ export default async function CasesPage() {
               <Link
                 key={caseItem.id}
                 href={prefixPathWithLocale(`/cases/${caseItem.slug}`, locale)}
-                className="uniform-card reading-shell interactive-card overflow-hidden p-0"
+                className="uniform-card brand-link-card interactive-card overflow-hidden p-0"
               >
                 {cardContent}
               </Link>
             ) : (
-              <article key={caseItem.id} className="uniform-card reading-shell overflow-hidden p-0">
+              <article key={caseItem.id} className="uniform-card brand-card overflow-hidden p-0">
                 {cardContent}
               </article>
             )

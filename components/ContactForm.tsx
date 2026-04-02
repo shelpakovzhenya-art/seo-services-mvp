@@ -85,7 +85,7 @@ export default function ContactForm() {
           required
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full rounded-2xl border border-orange-100 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-200"
+          className="contact-input"
           placeholder={dictionary.form.namePlaceholder}
         />
       </div>
@@ -94,12 +94,12 @@ export default function ContactForm() {
         <label htmlFor="contact" className="mb-2 block text-sm font-medium text-slate-700">
           {dictionary.form.contactLabel}
         </label>
-        <div className="mb-3 flex flex-wrap items-center gap-3 rounded-2xl border border-cyan-100 bg-cyan-50/70 px-4 py-3 text-sm text-slate-700">
+        <div className="contact-helper-card mb-3 flex flex-wrap items-center gap-3 text-sm text-slate-700">
           <a
             href={telegramHref}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 font-medium text-cyan-800 transition hover:text-cyan-900"
+            className="inline-flex items-center gap-2 font-medium text-[#8a5630] transition hover:text-slate-950"
           >
             <Image src="/telegram-logo.svg" alt="Telegram" width={24} height={24} className="h-6 w-6" />
             {dictionary.form.telegramLabel}
@@ -113,7 +113,7 @@ export default function ContactForm() {
           autoComplete="tel"
           value={formData.contact}
           onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-          className="w-full rounded-2xl border border-orange-100 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-200"
+          className="contact-input"
           placeholder={dictionary.form.contactPlaceholder}
         />
       </div>
@@ -128,18 +128,18 @@ export default function ContactForm() {
           autoComplete="url"
           value={formData.site}
           onChange={(e) => setFormData({ ...formData, site: e.target.value })}
-          className="w-full rounded-2xl border border-orange-100 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-200"
+          className="contact-input"
           placeholder={dictionary.form.sitePlaceholder}
         />
       </div>
 
-      <div className="rounded-2xl border border-orange-100 bg-[#fffaf5] p-4 text-sm leading-7 text-slate-600">
+      <div className="contact-note-card text-sm leading-7 text-slate-600">
         {dictionary.form.note}
       </div>
 
       {message && (
         <div
-          className={`rounded-2xl p-4 text-sm ${
+          className={`contact-message text-sm ${
             message.type === 'success'
               ? 'border border-emerald-200 bg-emerald-50 text-emerald-800'
               : 'border border-red-200 bg-red-50 text-red-800'

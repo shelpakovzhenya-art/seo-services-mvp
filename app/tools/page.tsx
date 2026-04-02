@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, ChevronRight } from 'lucide-react'
+import BrandPageHero from '@/components/BrandPageHero'
 import JsonLd from '@/components/JsonLd'
 import ToolCardIcon from '@/components/tools/ToolCardIcon'
 import { Button } from '@/components/ui/button'
@@ -110,18 +111,31 @@ export default async function ToolsIndexPage() {
         <span className="text-white">{copy.tools}</span>
       </nav>
 
-      <section className="mt-8 surface-grid surface-pad">
-        <h1 className="max-w-5xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{copy.heroTitle}</h1>
-        <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{copy.heroDescription}</p>
-        <div className="mt-8">
+      <BrandPageHero
+        eyebrow={copy.chip}
+        title={copy.heroTitle}
+        description={copy.heroDescription}
+        actions={
           <Link href={prefixPathWithLocale(`/tools/${tools[0].slug}`, locale)}>
             <Button size="lg" className="rounded-full px-7">
               {copy.openFirstTool}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
-        </div>
-      </section>
+        }
+        aside={
+          <div className="page-aside-card">
+            <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{copy.fitKicker}</div>
+            <div className="mt-4 space-y-3">
+              {copy.sideNotes.map((item) => (
+                <div key={item} className="brand-list-item text-sm">
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        }
+      />
 
       <section className="mt-8">
         <div className="uniform-grid-3">
@@ -129,10 +143,10 @@ export default async function ToolsIndexPage() {
             <Link
               key={tool.slug}
               href={prefixPathWithLocale(`/tools/${tool.slug}`, locale)}
-              className="uniform-card group rounded-[28px] border border-orange-100 bg-white p-7 text-slate-700 shadow-[0_18px_40px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:border-cyan-200 hover:bg-[#fffdf9]"
+              className="uniform-card brand-link-card group p-7 text-slate-700"
             >
               <div className="flex flex-wrap items-center gap-3">
-                <span className="rounded-full border border-orange-200 bg-[#fffaf5] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-orange-700">
+                <span className="brand-badge text-[11px] uppercase tracking-[0.24em]">
                   {tool.category}
                 </span>
                 <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-slate-500">
@@ -140,14 +154,14 @@ export default async function ToolsIndexPage() {
                 </span>
               </div>
 
-              <div className="mt-6 inline-flex h-14 w-14 items-center justify-center rounded-[20px] border border-cyan-100 bg-cyan-50 text-cyan-700">
+              <div className="mt-6 inline-flex h-14 w-14 items-center justify-center rounded-[20px] border border-slate-200 bg-[#f6f2ec] text-[#8a5630]">
                 <ToolCardIcon icon={tool.icon} className="h-6 w-6" />
               </div>
 
               <h2 className="mt-8 text-3xl font-semibold leading-tight text-slate-950">{tool.title}</h2>
               <p className="mt-4 flex-1 text-sm leading-7 text-slate-600">{tool.description}</p>
 
-              <div className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-cyan-700 transition group-hover:text-slate-950">
+              <div className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-[#8a5630] transition group-hover:text-slate-950">
                 {copy.openTool}
                 <ArrowRight className="h-4 w-4" />
               </div>

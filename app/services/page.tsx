@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, ChevronRight } from 'lucide-react'
 import JsonLd from '@/components/JsonLd'
+import BrandPageHero from '@/components/BrandPageHero'
 import { Button } from '@/components/ui/button'
 import ServicesCatalogSection from '@/components/services/ServicesCatalogSection'
 import LazyContactForm from '@/components/LazyContactForm'
@@ -206,26 +207,48 @@ export default async function ServicesIndexPage() {
           <span className="text-slate-900">{locale === 'ru' ? 'Услуги' : 'Services'}</span>
         </nav>
 
-        <section className="surface-grid surface-pad">
-          <h1 className="max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{copy.pageTitle}</h1>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{copy.pageDescription}</p>
-          <div className="mt-8">
+        <BrandPageHero
+          eyebrow={copy.chip}
+          title={copy.pageTitle}
+          description={copy.pageDescription}
+          actions={
             <a href="#contact-form">
               <Button size="lg" className="rounded-full px-7">
                 {copy.cta}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </a>
-          </div>
-        </section>
+          }
+          aside={
+            <>
+              <div className="page-aside-card">
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{copy.chooseKicker}</div>
+                <div className="mt-4 space-y-3">
+                  {copy.chooseCards.map((item: string) => (
+                    <div key={item} className="brand-list-item text-sm">
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="page-aside-card--dark">
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#d5b08d]">{copy.faqKicker}</div>
+                <div className="mt-3 text-3xl font-semibold text-white">{services.length}</div>
+                <p className="mt-2 text-sm leading-7 text-slate-300">{copy.faqCount}</p>
+              </div>
+            </>
+          }
+        />
 
         <ServicesCatalogSection />
 
         <section className="reading-shell">
+          <div className="brand-chip">{copy.comparisonKicker}</div>
           <h2 className="text-3xl font-semibold text-slate-950">{copy.comparisonTitle}</h2>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600">{copy.comparisonText}</p>
           <div className="uniform-grid-3 mt-6 gap-4">
             {copy.comparisonCards.map((item: any) => (
-              <div key={item.title} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+              <div key={item.title} className="uniform-card brand-card-soft p-5">
                 <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
                 <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.text}</p>
               </div>
@@ -234,12 +257,13 @@ export default async function ServicesIndexPage() {
         </section>
 
         <section className="reading-shell">
+          <div className="brand-chip">{copy.faqKicker}</div>
           <h2 className="text-3xl font-semibold text-slate-950">{copy.faqTitle}</h2>
           <div className="mt-3 text-sm text-slate-500">{copy.faqCount}: {services.length}</div>
 
           <div className="uniform-grid-2 mt-6 gap-4">
             {copy.faq.map((item: any) => (
-              <div key={item.question} className="uniform-card rounded-[24px] border border-orange-100 bg-[#fffaf5] p-5">
+              <div key={item.question} className="uniform-card brand-card p-5">
                 <h3 className="text-lg font-semibold text-slate-950">{item.question}</h3>
                 <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{item.answer}</p>
               </div>
@@ -250,9 +274,13 @@ export default async function ServicesIndexPage() {
         <section id="contact-form" className="mt-8 scroll-mt-32 surface-grid p-4 md:p-6">
           <div className="soft-section overflow-hidden">
             <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-              <div className="border-b border-orange-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
+              <div className="border-b border-slate-200 p-5 sm:p-8 lg:border-b-0 lg:border-r">
                 <h2 className="text-3xl font-semibold text-slate-950 md:text-5xl">{copy.contactTitle}</h2>
                 <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">{copy.contactText}</p>
+                <div className="mt-6 space-y-3">
+                  <div className="brand-card-soft px-4 py-4 text-sm leading-7 text-slate-700">{copy.contactNoteA}</div>
+                  <div className="brand-card px-4 py-4 text-sm leading-7 text-slate-700">{copy.contactNoteB}</div>
+                </div>
               </div>
               <div className="p-5 sm:p-8">
                 <LazyContactForm />

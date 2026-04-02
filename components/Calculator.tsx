@@ -96,23 +96,23 @@ export default function Calculator({ locale, services }: CalculatorProps) {
               onClick={() => toggleService(serviceKey)}
               className={`uniform-card w-full rounded-[30px] border p-5 text-left transition md:p-6 ${
                 isSelected
-                  ? 'border-cyan-300 bg-cyan-50 shadow-[0_16px_40px_rgba(34,211,238,0.16)]'
-                  : 'border-orange-100 bg-white hover:border-orange-200 hover:bg-[#fffaf5]'
+                  ? 'border-[#caa37a]/55 bg-[linear-gradient(180deg,rgba(246,242,236,0.98),rgba(255,255,255,0.98))] shadow-[0_18px_42px_rgba(15,23,42,0.08)]'
+                  : 'border-slate-200 bg-white hover:border-[#caa37a]/28 hover:bg-[#fbfaf8]'
               }`}
             >
               <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div className="min-w-0 max-w-2xl">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs ${
-                        isSelected
-                          ? 'border-cyan-500 bg-cyan-500 text-white'
-                          : 'border-slate-300 bg-white text-transparent'
-                      }`}
+                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs ${
+                          isSelected
+                            ? 'border-[#8a5630] bg-[#8a5630] text-white'
+                            : 'border-slate-300 bg-white text-transparent'
+                        }`}
                     >
                       <CheckCircle2 className="h-3.5 w-3.5" />
                     </div>
-                    <div className="text-xs uppercase tracking-[0.22em] text-orange-700">{service.unit}</div>
+                    <div className="text-xs uppercase tracking-[0.22em] text-[#8a5630]">{service.unit}</div>
                   </div>
 
                   <h3 className="mt-3 text-2xl font-semibold text-slate-950">{service.name}</h3>
@@ -130,7 +130,7 @@ export default function Calculator({ locale, services }: CalculatorProps) {
               {service.deliverables && service.deliverables.length > 0 ? (
                 <div className="mt-4 flex flex-wrap gap-2">
                   {service.deliverables.map((item) => (
-                    <span key={item} className="rounded-full border border-orange-100 bg-white px-3 py-2 text-xs text-slate-600">
+                    <span key={item} className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
                       {item}
                     </span>
                   ))}
@@ -141,9 +141,9 @@ export default function Calculator({ locale, services }: CalculatorProps) {
         })}
       </div>
 
-      <aside className="h-fit rounded-[32px] border border-orange-100 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] xl:sticky xl:top-32">
-        <div className="rounded-[24px] border border-orange-100 bg-gradient-to-br from-orange-50 via-white to-cyan-50 p-5">
-          <div className="text-xs uppercase tracking-[0.22em] text-orange-700">{copy.estimateTitle}</div>
+      <aside className="h-fit rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] xl:sticky xl:top-32">
+        <div className="rounded-[24px] border border-slate-200 bg-gradient-to-br from-[#f6f2ec] via-white to-[#eef2f6] p-5">
+          <div className="text-xs uppercase tracking-[0.22em] text-[#8a5630]">{copy.estimateTitle}</div>
           <div className="mt-3 text-4xl font-semibold text-slate-950">{formatServicePrice(total)}</div>
           <p className="mt-3 text-sm leading-7 text-slate-600">{copy.estimateText}</p>
         </div>
@@ -151,7 +151,7 @@ export default function Calculator({ locale, services }: CalculatorProps) {
         <div className="mt-6">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-lg font-semibold text-slate-950">{copy.selectedTitle}</h3>
-            <span className="rounded-full border border-orange-100 bg-[#fffaf5] px-3 py-1 text-sm text-slate-700">
+            <span className="rounded-full border border-slate-200 bg-[#f8f7f4] px-3 py-1 text-sm text-slate-700">
               {selectedItems.length}
             </span>
           </div>
@@ -177,12 +177,12 @@ export default function Calculator({ locale, services }: CalculatorProps) {
           )}
         </div>
 
-        <div className="mt-6 space-y-3 text-sm text-slate-600">
-          {copy.summaryNotes.map((item) => (
-            <div key={item} className="rounded-2xl border border-orange-100 bg-[#fffaf5] px-4 py-4">
-              {item}
-            </div>
-          ))}
+          <div className="mt-6 space-y-3 text-sm text-slate-600">
+            {copy.summaryNotes.map((item) => (
+              <div key={item} className="brand-card-soft px-4 py-4">
+                {item}
+              </div>
+            ))}
         </div>
 
         <a href="#contact-form" className="mt-6 block w-full">
