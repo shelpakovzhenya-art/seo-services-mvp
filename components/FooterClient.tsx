@@ -63,8 +63,8 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
   ].filter((item) => item.href)
 
   return (
-    <footer className="relative mt-auto overflow-hidden border-t border-slate-800 bg-[#0f172a] text-slate-300">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(59,130,246,0.12),transparent_24%)]" />
+    <footer className="relative mt-auto overflow-hidden border-t border-[#253249] bg-[#0b1220] text-slate-300">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(188,144,100,0.14),transparent_24%),radial-gradient(circle_at_12%_16%,rgba(58,86,122,0.12),transparent_22%)]" />
       <div className="container relative mx-auto px-4 py-16">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.75fr_0.8fr_1.1fr]">
           <div className="space-y-5">
@@ -80,7 +80,7 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
                     target="_blank"
                     rel="noreferrer"
                     aria-label={item.label}
-                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-100 transition hover:border-white/18 hover:bg-white/10 hover:text-white"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm text-slate-100 transition hover:border-[#caa37a]/40 hover:bg-white/[0.08] hover:text-white"
                   >
                     {item.type === 'telegram' ? (
                       <Image src="/telegram-logo.svg" alt="Telegram" width={18} height={18} className="h-[18px] w-[18px]" />
@@ -124,9 +124,9 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
               <div className="pt-6">
                 <Link
                   href={prefixPathWithLocale('/tools', locale)}
-                  className="inline-flex w-fit max-w-full items-center gap-3 border border-white/10 bg-[#101826] px-5 py-4 text-sm font-medium uppercase tracking-[0.18em] text-slate-200 transition hover:border-white/18 hover:bg-[#162132] hover:text-white"
+                  className="inline-flex w-fit max-w-full items-center gap-3 border border-white/10 bg-[#10192b] px-5 py-4 text-sm font-medium uppercase tracking-[0.18em] text-slate-200 transition hover:border-[#caa37a]/36 hover:bg-[#162132] hover:text-white"
                 >
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/5 text-slate-100">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/[0.06] text-slate-100">
                     <Wrench className="h-4 w-4" />
                   </span>
                   <span className="break-words">{dictionary.footer.tools}</span>
@@ -142,9 +142,9 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
                 <Link
                   key={item.href}
                   href={prefixPathWithLocale(item.href, locale)}
-                  className="block rounded-[24px] border border-white/10 bg-white/5 p-4 transition hover:border-white/18 hover:bg-white/10 hover:text-white"
+                  className="block rounded-[24px] border border-white/10 bg-white/[0.05] p-4 transition hover:border-[#caa37a]/36 hover:bg-white/[0.08] hover:text-white"
                 >
-                  <div className="text-[11px] uppercase tracking-[0.22em] text-blue-300">{item.kicker}</div>
+                  <div className="text-[11px] uppercase tracking-[0.22em] text-[#d2ab86]">{item.kicker}</div>
                   <div className="mt-2 text-sm font-medium leading-6 text-slate-100">{item.title}</div>
                 </Link>
               ))}

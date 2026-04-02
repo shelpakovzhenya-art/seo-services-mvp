@@ -63,7 +63,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
           aria-label={open ? dictionary.mobileMenu.close : dictionary.mobileMenu.open}
           aria-expanded={open}
           onClick={() => setOpen((value) => !value)}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/16 bg-white/12 text-slate-50 shadow-[0_12px_26px_rgba(2,8,23,0.24)] transition hover:bg-white/18"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.08] text-slate-50 shadow-[0_12px_26px_rgba(2,8,23,0.24)] transition hover:bg-white/[0.14]"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -78,7 +78,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
         />
 
         <div
-          className={`absolute inset-0 h-[100dvh] w-full overflow-x-hidden overflow-y-auto bg-[radial-gradient(circle_at_18%_16%,rgba(255,182,140,0.2),transparent_24%),radial-gradient(circle_at_82%_14%,rgba(96,227,255,0.18),transparent_22%),linear-gradient(180deg,rgba(6,12,24,0.985),rgba(10,18,33,1))] transition-transform duration-300 ease-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
+          className={`absolute inset-0 h-[100dvh] w-full overflow-x-hidden overflow-y-auto bg-[radial-gradient(circle_at_18%_16%,rgba(187,137,92,0.18),transparent_24%),radial-gradient(circle_at_82%_14%,rgba(72,96,129,0.14),transparent_22%),linear-gradient(180deg,rgba(7,12,23,0.99),rgba(10,18,33,1))] transition-transform duration-300 ease-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
         >
           <div className="sticky top-0 z-10 border-b border-white/10 bg-[#09111f]/88 px-4 py-4 backdrop-blur-2xl sm:px-6 sm:py-5">
             <div className="flex items-center justify-between gap-4">
@@ -103,7 +103,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
           </div>
 
           <div className="flex min-h-[calc(100dvh-89px)] flex-col px-4 py-5 pb-8 sm:px-6 sm:py-6">
-            <div className="rounded-[30px] border border-white/12 bg-white/[0.07] p-5 shadow-[0_20px_40px_rgba(2,8,23,0.24)] backdrop-blur-xl">
+            <div className="rounded-[30px] border border-white/10 bg-white/[0.06] p-5 shadow-[0_20px_40px_rgba(2,8,23,0.24)] backdrop-blur-xl">
               <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-slate-200/88">
                 <span className="font-semibold text-slate-50/92">{workSchedule}</span>
                 <span className={`inline-flex items-center gap-2.5 rounded-full border px-3 py-1 text-[11px] font-semibold ${workStatus.badgeClass}`}>
@@ -114,8 +114,8 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
                   {workStatus.text}
                 </span>
               </div>
-              <a href={`mailto:${email}`} className="mt-4 inline-flex min-w-0 max-w-full items-center gap-2 text-sm font-medium text-slate-100 transition hover:text-cyan-100">
-                <Mail className="h-4 w-4 text-cyan-300" />
+              <a href={`mailto:${email}`} className="mt-4 inline-flex min-w-0 max-w-full items-center gap-2 text-sm font-medium text-slate-100 transition hover:text-[#d2ab86]">
+                <Mail className="h-4 w-4 text-[#d2ab86]" />
                 <span className="min-w-0 break-all">{email}</span>
               </a>
             </div>
@@ -130,17 +130,17 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
                     key={item.id}
                     href={href}
                     onClick={() => setOpen(false)}
-                    className={`flex min-w-0 items-center justify-between rounded-[30px] border px-5 py-5 text-[clamp(1.08rem,4.2vw,1.56rem)] font-bold tracking-[0.01em] shadow-[0_18px_36px_rgba(2,8,23,0.2)] backdrop-blur-xl transition ${isActive ? 'border-cyan-300/45 bg-white/[0.14] text-white' : 'border-white/12 bg-white/[0.08] text-white hover:border-cyan-300/40 hover:bg-white/[0.12]'}`}
+                    className={`flex min-w-0 items-center justify-between rounded-[30px] border px-5 py-5 text-[clamp(1.08rem,4.2vw,1.56rem)] font-bold tracking-[0.01em] shadow-[0_18px_36px_rgba(2,8,23,0.2)] backdrop-blur-xl transition ${isActive ? 'border-[#c9a47a]/55 bg-white/[0.14] text-white' : 'border-white/10 bg-white/[0.07] text-white hover:border-[#c9a47a]/40 hover:bg-white/[0.11]'}`}
                   >
                     <span className="min-w-0 break-words pr-3">{item.label}</span>
-                    <ArrowUpRight className={`h-5 w-5 ${isActive ? 'text-white' : 'text-cyan-300'}`} />
+                    <ArrowUpRight className={`h-5 w-5 ${isActive ? 'text-white' : 'text-[#d2ab86]'}`} />
                   </Link>
                 )
               })}
             </nav>
 
-            <div className="mt-6 rounded-[30px] border border-white/12 bg-[linear-gradient(145deg,rgba(255,186,140,0.15),rgba(255,255,255,0.06)_48%,rgba(96,227,255,0.08))] p-5 backdrop-blur-xl">
-              <div className="text-xs uppercase tracking-[0.22em] text-orange-300">{dictionary.mobileMenu.contactsTitle}</div>
+            <div className="mt-6 rounded-[30px] border border-white/10 bg-[linear-gradient(145deg,rgba(187,137,92,0.12),rgba(255,255,255,0.05)_48%,rgba(72,96,129,0.08))] p-5 backdrop-blur-xl">
+              <div className="text-xs uppercase tracking-[0.22em] text-[#d2ab86]">{dictionary.mobileMenu.contactsTitle}</div>
 
               {socialLinks.length > 0 ? (
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -150,7 +150,7 @@ export default function MobileMenu({ menuItems, email, workSchedule, workStatus,
                       href={item.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-3 rounded-2xl border border-white/12 bg-white/10 px-4 py-4 text-base font-medium text-slate-100 transition hover:border-cyan-300/40 hover:bg-white/14 hover:text-cyan-100"
+                      className="inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-4 text-base font-medium text-slate-100 transition hover:border-[#c9a47a]/40 hover:bg-white/[0.12] hover:text-white"
                     >
                       {item.type === 'telegram' ? (
                         <Image src="/telegram-logo.svg" alt="Telegram" width={20} height={20} className="h-5 w-5" />

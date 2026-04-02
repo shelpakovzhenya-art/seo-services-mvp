@@ -75,7 +75,7 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
           <span className="text-slate-900">{service.shortName}</span>
         </nav>
 
-        <section className="surface-grid surface-pad overflow-hidden">
+        <section className="service-hero-shell surface-grid surface-pad overflow-hidden">
           <div className="grid gap-8 lg:grid-cols-[1.04fr_0.96fr] lg:items-start">
             <div>
               <h1 className="max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{service.h1}</h1>
@@ -97,7 +97,7 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
               </div>
             </div>
 
-            <div className="glass-panel p-6">
+            <div className="glass-panel service-hero-aside p-6">
               <h2 className="text-2xl font-semibold text-slate-950">{service.shortName}</h2>
               <p className="mt-4 text-base leading-8 text-slate-700">{service.intro}</p>
 
@@ -119,7 +119,7 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
         <section className="mt-8 surface-grid surface-pad">
           <div className="uniform-grid-3 gap-4">
             {service.benefits.slice(0, 3).map((item) => (
-              <article key={item.title} className="uniform-card rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+              <article key={item.title} className="uniform-card service-feature-card p-5">
                 <h2 className="text-xl font-semibold text-slate-950">{item.title}</h2>
                 <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
               </article>

@@ -10,13 +10,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "border border-white/20 bg-[linear-gradient(135deg,rgba(96,227,255,0.96),rgba(108,203,255,0.92)_46%,rgba(255,183,137,0.94))] text-slate-950 shadow-[0_18px_40px_rgba(2,8,23,0.22)] hover:-translate-y-0.5 hover:shadow-[0_24px_54px_rgba(2,8,23,0.28)]",
+          "border border-[#c4976c]/30 bg-[linear-gradient(135deg,rgba(12,19,33,0.98),rgba(18,28,46,0.98)_56%,rgba(29,43,66,0.96))] text-white shadow-[0_18px_40px_rgba(2,8,23,0.24)] hover:-translate-y-0.5 hover:border-[#c4976c]/48 hover:shadow-[0_24px_54px_rgba(2,8,23,0.3)]",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-white/20 bg-white/85 text-slate-900 shadow-[0_12px_28px_rgba(2,8,23,0.12)] hover:border-cyan-200 hover:bg-white",
+          "border border-slate-300/90 bg-[linear-gradient(180deg,rgba(255,255,255,0.97),rgba(247,244,239,0.94))] text-slate-900 shadow-[0_12px_28px_rgba(2,8,23,0.1)] hover:border-[#c4976c]/40 hover:bg-white",
         secondary:
-          "border border-cyan-100 bg-cyan-50/85 text-slate-900 hover:bg-cyan-100/85",
+          "border border-[#eadbc8] bg-[#f5efe7] text-slate-900 hover:bg-[#efe6db]",
         ghost: "hover:bg-white/10 hover:text-slate-50",
         link: "text-primary underline-offset-4 hover:underline",
       },
