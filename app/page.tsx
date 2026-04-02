@@ -513,11 +513,6 @@ export default async function HomePage() {
       ? 'В работе важны не отдельные декоративные правки, а связка из структуры, коммерческого слоя, технической базы и сценария обращения.'
       : 'The value is not in isolated decorative edits, but in the combination of structure, commercial clarity, technical base, and conversion path.')
   const leadCaseCover = leadCase ? getCaseCover(leadCase) : null
-  const heroResultCards = copy.heroMetrics.map((item: any, index: number) => ({
-    eyebrow: copy.problemCards[index]?.title || (locale === 'ru' ? 'Результат' : 'Result'),
-    value: item.value,
-    text: item.label,
-  }))
 
   return (
     <div className="home-page-shell overflow-hidden pb-16 md:pb-24">
@@ -604,73 +599,31 @@ export default async function HomePage() {
       </section>
 
       <section className="section-shell-tight !pb-10 !pt-4 md:!pb-12 md:!pt-6">
-        <div className="surface-grid surface-pad">
-          <div className="grid gap-4 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
+        <div className="grid gap-4 lg:grid-cols-4">
+          {heroTrustItems.map((item) => (
+            <div key={item.value} className="brand-card p-5">
+              <div className="text-[0.95rem] font-semibold tracking-[-0.02em] text-slate-950">{item.value}</div>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{item.label}</p>
+            </div>
+          ))}
+
+          <Link
+            href={prefixPathWithLocale(trustLinks.links[0]?.href || '/methodology', locale)}
+            className="brand-link-card group flex justify-between p-5"
+          >
             <div>
-              <SectionEyebrow>{locale === 'ru' ? 'Первые ориентиры' : 'Early signals'}</SectionEyebrow>
-              <h2 className="mt-4 max-w-3xl text-[clamp(1.9rem,3.8vw,3.2rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-slate-950">
-                {locale === 'ru' ? 'Коммерческий рост начинается с правильной очередности действий.' : 'Commercial growth starts with the right order of actions.'}
-              </h2>
+              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                {locale === 'ru' ? 'Открытый контур' : 'Open framework'}
+              </div>
+              <div className="mt-2 text-[1.05rem] font-semibold leading-6 text-slate-950">
+                {locale === 'ru' ? 'Методология, правила работы и trust-страницы' : 'Methodology, working principles, and trust pages'}
+              </div>
             </div>
-            <p className="max-w-2xl text-[0.98rem] leading-8 text-slate-600 lg:justify-self-end">
-              {locale === 'ru'
-                ? 'Как и у сильных SEO-площадок, здесь важен не один тезис, а цепочка: кто отвечает, как ставятся приоритеты, где лежит главное узкое место и как сайт превращается в коммерческий актив.'
-                : 'Like on stronger SEO commercial pages, the point is not a single promise but the sequence: who is accountable, how priorities are set, where the bottleneck is, and how the website turns into a commercial asset.'}
-            </p>
-          </div>
-
-          <div className="uniform-grid-3 mt-7">
-            {heroResultCards.map((item: any) => (
-              <div key={`${item.eyebrow}-${item.value}`} className="brand-card p-6">
-                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-500">{item.eyebrow}</div>
-                <div className="mt-4 text-[1.8rem] font-semibold leading-none tracking-[-0.05em] text-slate-950">{item.value}</div>
-                <p className="mt-4 text-sm leading-7 text-slate-600">{item.text}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 grid gap-4 lg:grid-cols-4">
-            {heroTrustItems.map((item) => (
-              <div key={item.value} className="brand-card-soft p-5 lg:col-span-1">
-                <div className="text-[0.95rem] font-semibold tracking-[-0.02em] text-slate-950">{item.value}</div>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{item.label}</p>
-              </div>
-            ))}
-
-            <Link
-              href={prefixPathWithLocale(trustLinks.links[0]?.href || '/methodology', locale)}
-              className="brand-card-dark group flex flex-col justify-between p-5 lg:col-span-1"
-            >
-              <div>
-                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#d5b08d]">
-                  {locale === 'ru' ? 'Открытый контур' : 'Open framework'}
-                </div>
-                <div className="mt-2 text-[1.05rem] font-semibold leading-6 text-white">
-                  {locale === 'ru' ? 'Методология, правила работы и trust-страницы' : 'Methodology, working principles, and trust pages'}
-                </div>
-              </div>
-              <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#f4dcc2]">
-                {locale === 'ru' ? 'Открыть' : 'Open'}
-                <ArrowRight className="h-4 w-4" />
-              </span>
-            </Link>
-          </div>
-
-          <div className="brand-card-dark mt-6 p-6 md:p-7">
-            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
-              <div>
-                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#d5b08d]">
-                  {locale === 'ru' ? 'Следующий шаг' : 'Next step'}
-                </div>
-                <h3 className="mt-3 max-w-3xl text-[1.65rem] font-semibold leading-[1.05] tracking-[-0.04em] text-white">
-                  {locale === 'ru' ? 'Если нужен сильный SEO-сайт, начинать стоит с разборки структуры, ключевых страниц и логики заявки.' : 'If the goal is a stronger SEO website, the right start is the structure, key pages, and the conversion path.'}
-                </h3>
-              </div>
-              <a href="#contact-form" className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
-                {copy.primaryCta}
-              </a>
-            </div>
-          </div>
+            <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#8a5630]">
+              {locale === 'ru' ? 'Открыть' : 'Open'}
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </Link>
         </div>
       </section>
 
@@ -826,6 +779,85 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="section-shell">
+        <div className="home-surface home-surface-grid surface-pad">
+          <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-8">
+            <h2 className="max-w-[860px] text-[clamp(1.85rem,3.5vw,2.95rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-slate-950">
+              {copy.casesTitle}
+            </h2>
+            <Link href={prefixPathWithLocale('/cases', locale)} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-950 transition hover:text-slate-700">
+              {copy.casesLink}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="mt-7 grid grid-cols-1 gap-5 lg:grid-cols-2">
+            {featuredCases.length > 0 ? (
+              featuredCases.map((item, index) => {
+                const cover = getCaseCover(item)
+                const showCover = canUseHomepageCardCover(cover)
+
+                const content = (
+                  <>
+                    {showCover ? (
+                      <div className="px-5 pt-5 md:px-6 md:pt-6">
+                        <div className="relative h-44 overflow-hidden rounded-[24px] border border-slate-200 bg-slate-100">
+                          <Image
+                            src={cover!}
+                            alt={item.title || copy.caseLabel}
+                            fill
+                            className="object-cover transition duration-500 group-hover:scale-[1.02]"
+                            unoptimized={isInlineImageAsset(cover!)}
+                          />
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <div className="flex flex-1 flex-col p-5 md:p-6">
+                      <span className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                        {`${copy.caseLabel} ${index + 1}`}
+                      </span>
+                      <h3 className="mt-3 text-[1.45rem] font-semibold leading-[1.08] tracking-[-0.035em] text-slate-950 md:text-[1.7rem]">
+                        {item.title}
+                      </h3>
+                      <p
+                        className="mt-3 flex-1 text-[0.96rem] leading-7 text-slate-600"
+                        style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                      >
+                        {item.description || item.content || copy.caseFallback}
+                      </p>
+                      <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-950">
+                        {copy.openCase}
+                        <ArrowRight className="h-4 w-4" />
+                      </span>
+                    </div>
+                  </>
+                )
+
+                return item.slug ? (
+                  <Link
+                    key={item.id}
+                    href={prefixPathWithLocale(`/cases/${item.slug}`, locale)}
+                    className="home-card group flex h-full flex-col overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-slate-950/12 hover:shadow-[0_28px_62px_rgba(15,23,42,0.12)]"
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <div key={item.id} className="home-card flex h-full flex-col overflow-hidden">
+                    {content}
+                  </div>
+                )
+              })
+            ) : (
+              <div className="home-card p-8 lg:col-span-2">
+                <h3 className="text-2xl font-semibold text-slate-950">{copy.caseEmptyTitle}</h3>
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">{copy.caseEmptyText}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       <ServicesCatalogSection compact />
 
       <section className="section-shell">
@@ -922,85 +954,6 @@ export default async function HomePage() {
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-shell">
-        <div className="home-surface home-surface-grid surface-pad">
-          <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-8">
-            <h2 className="max-w-[860px] text-[clamp(1.85rem,3.5vw,2.95rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-slate-950">
-              {copy.casesTitle}
-            </h2>
-            <Link href={prefixPathWithLocale('/cases', locale)} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-950 transition hover:text-slate-700">
-              {copy.casesLink}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="mt-7 grid grid-cols-1 gap-5 lg:grid-cols-2">
-            {featuredCases.length > 0 ? (
-              featuredCases.map((item, index) => {
-                const cover = getCaseCover(item)
-                const showCover = canUseHomepageCardCover(cover)
-
-                const content = (
-                  <>
-                    {showCover ? (
-                      <div className="px-5 pt-5 md:px-6 md:pt-6">
-                        <div className="relative h-44 overflow-hidden rounded-[24px] border border-slate-200 bg-slate-100">
-                          <Image
-                            src={cover!}
-                            alt={item.title || copy.caseLabel}
-                            fill
-                            className="object-cover transition duration-500 group-hover:scale-[1.02]"
-                            unoptimized={isInlineImageAsset(cover!)}
-                          />
-                        </div>
-                      </div>
-                    ) : null}
-
-                    <div className="flex flex-1 flex-col p-5 md:p-6">
-                      <span className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-slate-500">
-                        {`${copy.caseLabel} ${index + 1}`}
-                      </span>
-                      <h3 className="mt-3 text-[1.45rem] font-semibold leading-[1.08] tracking-[-0.035em] text-slate-950 md:text-[1.7rem]">
-                        {item.title}
-                      </h3>
-                      <p
-                        className="mt-3 flex-1 text-[0.96rem] leading-7 text-slate-600"
-                        style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
-                      >
-                        {item.description || item.content || copy.caseFallback}
-                      </p>
-                      <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-950">
-                        {copy.openCase}
-                        <ArrowRight className="h-4 w-4" />
-                      </span>
-                    </div>
-                  </>
-                )
-
-                return item.slug ? (
-                  <Link
-                    key={item.id}
-                    href={prefixPathWithLocale(`/cases/${item.slug}`, locale)}
-                    className="home-card group flex h-full flex-col overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-slate-950/12 hover:shadow-[0_28px_62px_rgba(15,23,42,0.12)]"
-                  >
-                    {content}
-                  </Link>
-                ) : (
-                  <div key={item.id} className="home-card flex h-full flex-col overflow-hidden">
-                    {content}
-                  </div>
-                )
-              })
-            ) : (
-              <div className="home-card p-8 lg:col-span-2">
-                <h3 className="text-2xl font-semibold text-slate-950">{copy.caseEmptyTitle}</h3>
-                <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">{copy.caseEmptyText}</p>
-              </div>
-            )}
           </div>
         </div>
       </section>

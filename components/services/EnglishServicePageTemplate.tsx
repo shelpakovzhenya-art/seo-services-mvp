@@ -180,118 +180,6 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
           </div>
         </section>
 
-        <section className="mt-8 reading-shell">
-          <h2 className="text-3xl font-semibold text-slate-950">{service.seoBlockTitle}</h2>
-          <div className="mt-6 space-y-4">
-            {service.seoParagraphs.map((paragraph) => (
-              <p key={`${service.slug}-${paragraph}`} className="max-w-4xl text-base leading-8 text-slate-600">
-                {paragraph}
-              </p>
-            ))}
-          </div>
-        </section>
-
-        {timingContent ? (
-          <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-start">
-            <div className="page-card">
-              <h2 className="text-3xl font-semibold text-slate-950">{timingContent.title}</h2>
-              <p className="mt-4 text-sm leading-7 text-slate-600">{timingContent.intro}</p>
-              <div className="mt-6 grid gap-4 md:grid-cols-3">
-                {timingContent.phases.map((item) => (
-                  <div key={item.title} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                    <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="page-card">
-              <h2 className="text-3xl font-semibold text-slate-950">{timingContent.factorsTitle}</h2>
-              <div className="mt-6 space-y-4">
-                {timingContent.factors.map((item) => (
-                  <div key={item.title} className="rounded-[24px] border border-slate-200 bg-white p-5">
-                    <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        ) : null}
-
-        <section className="mt-8 grid gap-6 lg:grid-cols-[0.96fr_1.04fr] lg:items-start">
-          <div className="page-card">
-            <h2 className="text-3xl font-semibold text-slate-950">A strong fit for</h2>
-            <div className="mt-6 space-y-3">
-              {service.audience.map((item) => (
-                <div key={item} className="flex gap-3 rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-4">
-                  <Check className="mt-1 h-4 w-4 shrink-0 text-slate-900" />
-                  <span className="text-sm leading-7 text-slate-700">{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="page-card">
-            <h2 className="text-3xl font-semibold text-slate-950">What is included</h2>
-            <div className="mt-6 space-y-3">
-              {service.includes.map((item) => (
-                <div key={item} className="rounded-[24px] border border-slate-200 bg-white px-5 py-4 text-sm leading-7 text-slate-700">
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {pricingModelContent ? (
-          <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-start">
-            <div className="page-card">
-              <h2 className="text-3xl font-semibold text-slate-950">{pricingModelContent.title}</h2>
-              <p className="mt-4 text-sm leading-7 text-slate-600">{pricingModelContent.intro}</p>
-
-              {(pricing?.deliverables ?? []).length > 0 ? (
-                <div className="mt-6 rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                  <h3 className="text-lg font-semibold text-slate-950">{pricingModelContent.includedTitle}</h3>
-                  <div className="mt-4 space-y-3">
-                    {(pricing?.deliverables ?? []).map((item) => (
-                      <div key={`${service.slug}-deliverable-${item}`} className="flex gap-3 rounded-2xl border border-white/80 bg-white/80 px-4 py-3">
-                        <Check className="mt-1 h-4 w-4 shrink-0 text-slate-900" />
-                        <span className="text-sm leading-6 text-slate-700">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-
-              <div className="mt-5 rounded-[24px] border border-slate-200 bg-white p-5">
-                <h3 className="text-lg font-semibold text-slate-950">{pricingModelContent.factorTitle}</h3>
-                <div className="mt-4 space-y-3">
-                  {pricingModelContent.factorItems.map((item) => (
-                    <div key={`${service.slug}-price-factor-${item}`} className="rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-sm leading-7 text-slate-700">
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="page-card">
-              <h2 className="text-3xl font-semibold text-slate-950">{deliveryModelContent.title}</h2>
-              <p className="mt-4 text-sm leading-7 text-slate-600">{deliveryModelContent.intro}</p>
-              <div className="mt-6 space-y-4">
-                {deliveryModelContent.cards.map((item) => (
-                  <div key={`${service.slug}-delivery-${item.title}`} className="rounded-[24px] border border-slate-200 bg-white p-5">
-                    <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        ) : null}
-
         <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-start">
           <div className="page-card">
             <h2 className="text-3xl font-semibold text-slate-950">How the work moves</h2>
@@ -369,6 +257,118 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
             ) : null}
           </section>
         ) : null}
+
+        {pricingModelContent ? (
+          <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-start">
+            <div className="page-card">
+              <h2 className="text-3xl font-semibold text-slate-950">{pricingModelContent.title}</h2>
+              <p className="mt-4 text-sm leading-7 text-slate-600">{pricingModelContent.intro}</p>
+
+              {(pricing?.deliverables ?? []).length > 0 ? (
+                <div className="mt-6 rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                  <h3 className="text-lg font-semibold text-slate-950">{pricingModelContent.includedTitle}</h3>
+                  <div className="mt-4 space-y-3">
+                    {(pricing?.deliverables ?? []).map((item) => (
+                      <div key={`${service.slug}-deliverable-${item}`} className="flex gap-3 rounded-2xl border border-white/80 bg-white/80 px-4 py-3">
+                        <Check className="mt-1 h-4 w-4 shrink-0 text-slate-900" />
+                        <span className="text-sm leading-6 text-slate-700">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="mt-5 rounded-[24px] border border-slate-200 bg-white p-5">
+                <h3 className="text-lg font-semibold text-slate-950">{pricingModelContent.factorTitle}</h3>
+                <div className="mt-4 space-y-3">
+                  {pricingModelContent.factorItems.map((item) => (
+                    <div key={`${service.slug}-price-factor-${item}`} className="rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-sm leading-7 text-slate-700">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="page-card">
+              <h2 className="text-3xl font-semibold text-slate-950">{deliveryModelContent.title}</h2>
+              <p className="mt-4 text-sm leading-7 text-slate-600">{deliveryModelContent.intro}</p>
+              <div className="mt-6 space-y-4">
+                {deliveryModelContent.cards.map((item) => (
+                  <div key={`${service.slug}-delivery-${item.title}`} className="rounded-[24px] border border-slate-200 bg-white p-5">
+                    <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        {timingContent ? (
+          <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-start">
+            <div className="page-card">
+              <h2 className="text-3xl font-semibold text-slate-950">{timingContent.title}</h2>
+              <p className="mt-4 text-sm leading-7 text-slate-600">{timingContent.intro}</p>
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                {timingContent.phases.map((item) => (
+                  <div key={item.title} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                    <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="page-card">
+              <h2 className="text-3xl font-semibold text-slate-950">{timingContent.factorsTitle}</h2>
+              <div className="mt-6 space-y-4">
+                {timingContent.factors.map((item) => (
+                  <div key={item.title} className="rounded-[24px] border border-slate-200 bg-white p-5">
+                    <h3 className="text-lg font-semibold text-slate-950">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        <section className="mt-8 grid gap-6 lg:grid-cols-[0.96fr_1.04fr] lg:items-start">
+          <div className="page-card">
+            <h2 className="text-3xl font-semibold text-slate-950">A strong fit for</h2>
+            <div className="mt-6 space-y-3">
+              {service.audience.map((item) => (
+                <div key={item} className="flex gap-3 rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-4">
+                  <Check className="mt-1 h-4 w-4 shrink-0 text-slate-900" />
+                  <span className="text-sm leading-7 text-slate-700">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="page-card">
+            <h2 className="text-3xl font-semibold text-slate-950">What is included</h2>
+            <div className="mt-6 space-y-3">
+              {service.includes.map((item) => (
+                <div key={item} className="rounded-[24px] border border-slate-200 bg-white px-5 py-4 text-sm leading-7 text-slate-700">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-8 reading-shell">
+          <h2 className="text-3xl font-semibold text-slate-950">{service.seoBlockTitle}</h2>
+          <div className="mt-6 space-y-4">
+            {service.seoParagraphs.map((paragraph) => (
+              <p key={`${service.slug}-${paragraph}`} className="max-w-4xl text-base leading-8 text-slate-600">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </section>
 
         <section className="mt-8 reading-shell">
           <h2 className="text-3xl font-semibold text-slate-950">Frequently asked questions</h2>
