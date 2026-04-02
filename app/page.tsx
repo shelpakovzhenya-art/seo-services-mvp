@@ -512,6 +512,12 @@ export default async function HomePage() {
     (locale === 'ru'
       ? 'В работе важны не отдельные декоративные правки, а связка из структуры, коммерческого слоя, технической базы и сценария обращения.'
       : 'The value is not in isolated decorative edits, but in the combination of structure, commercial clarity, technical base, and conversion path.')
+  const leadCaseCover = leadCase ? getCaseCover(leadCase) : null
+  const heroResultCards = copy.heroMetrics.map((item: any, index: number) => ({
+    eyebrow: copy.problemCards[index]?.title || (locale === 'ru' ? 'Результат' : 'Result'),
+    value: item.value,
+    text: item.label,
+  }))
 
   return (
     <div className="home-page-shell overflow-hidden pb-16 md:pb-24">
@@ -578,6 +584,18 @@ export default async function HomePage() {
                       </div>
                     </div>
                   ) : null}
+
+                  {leadCaseCover && canUseHomepageCardCover(leadCaseCover) ? (
+                    <div className="relative mt-5 h-44 overflow-hidden rounded-[20px] border border-white/10 bg-white/[0.06]">
+                      <Image
+                        src={leadCaseCover}
+                        alt={heroProofTitle}
+                        fill
+                        className="object-cover"
+                        unoptimized={isInlineImageAsset(leadCaseCover)}
+                      />
+                    </div>
+                  ) : null}
                 </div>
               </>
             }
@@ -586,31 +604,73 @@ export default async function HomePage() {
       </section>
 
       <section className="section-shell-tight !pb-10 !pt-4 md:!pb-12 md:!pt-6">
-        <div className="grid gap-4 lg:grid-cols-4">
-          {heroTrustItems.map((item) => (
-            <div key={item.value} className="brand-card p-5">
-              <div className="text-[0.95rem] font-semibold tracking-[-0.02em] text-slate-950">{item.value}</div>
-              <p className="mt-2 text-sm leading-6 text-slate-600">{item.label}</p>
-            </div>
-          ))}
-
-          <Link
-            href={prefixPathWithLocale(trustLinks.links[0]?.href || '/methodology', locale)}
-            className="brand-link-card group flex justify-between p-5"
-          >
+        <div className="surface-grid surface-pad">
+          <div className="grid gap-4 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
             <div>
-              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                {locale === 'ru' ? 'Открытый контур' : 'Open framework'}
-              </div>
-              <div className="mt-2 text-[1.05rem] font-semibold leading-6 text-slate-950">
-                {locale === 'ru' ? 'Методология, правила работы и trust-страницы' : 'Methodology, working principles, and trust pages'}
-              </div>
+              <SectionEyebrow>{locale === 'ru' ? 'Первые ориентиры' : 'Early signals'}</SectionEyebrow>
+              <h2 className="mt-4 max-w-3xl text-[clamp(1.9rem,3.8vw,3.2rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-slate-950">
+                {locale === 'ru' ? 'Коммерческий рост начинается с правильной очередности действий.' : 'Commercial growth starts with the right order of actions.'}
+              </h2>
             </div>
-            <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#8a5630]">
-              {locale === 'ru' ? 'Открыть' : 'Open'}
-              <ArrowRight className="h-4 w-4" />
-            </span>
-          </Link>
+            <p className="max-w-2xl text-[0.98rem] leading-8 text-slate-600 lg:justify-self-end">
+              {locale === 'ru'
+                ? 'Как и у сильных SEO-площадок, здесь важен не один тезис, а цепочка: кто отвечает, как ставятся приоритеты, где лежит главное узкое место и как сайт превращается в коммерческий актив.'
+                : 'Like on stronger SEO commercial pages, the point is not a single promise but the sequence: who is accountable, how priorities are set, where the bottleneck is, and how the website turns into a commercial asset.'}
+            </p>
+          </div>
+
+          <div className="uniform-grid-3 mt-7">
+            {heroResultCards.map((item: any) => (
+              <div key={`${item.eyebrow}-${item.value}`} className="brand-card p-6">
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-500">{item.eyebrow}</div>
+                <div className="mt-4 text-[1.8rem] font-semibold leading-none tracking-[-0.05em] text-slate-950">{item.value}</div>
+                <p className="mt-4 text-sm leading-7 text-slate-600">{item.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-4">
+            {heroTrustItems.map((item) => (
+              <div key={item.value} className="brand-card-soft p-5 lg:col-span-1">
+                <div className="text-[0.95rem] font-semibold tracking-[-0.02em] text-slate-950">{item.value}</div>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{item.label}</p>
+              </div>
+            ))}
+
+            <Link
+              href={prefixPathWithLocale(trustLinks.links[0]?.href || '/methodology', locale)}
+              className="brand-card-dark group flex flex-col justify-between p-5 lg:col-span-1"
+            >
+              <div>
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#d5b08d]">
+                  {locale === 'ru' ? 'Открытый контур' : 'Open framework'}
+                </div>
+                <div className="mt-2 text-[1.05rem] font-semibold leading-6 text-white">
+                  {locale === 'ru' ? 'Методология, правила работы и trust-страницы' : 'Methodology, working principles, and trust pages'}
+                </div>
+              </div>
+              <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#f4dcc2]">
+                {locale === 'ru' ? 'Открыть' : 'Open'}
+                <ArrowRight className="h-4 w-4" />
+              </span>
+            </Link>
+          </div>
+
+          <div className="brand-card-dark mt-6 p-6 md:p-7">
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+              <div>
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#d5b08d]">
+                  {locale === 'ru' ? 'Следующий шаг' : 'Next step'}
+                </div>
+                <h3 className="mt-3 max-w-3xl text-[1.65rem] font-semibold leading-[1.05] tracking-[-0.04em] text-white">
+                  {locale === 'ru' ? 'Если нужен сильный SEO-сайт, начинать стоит с разборки структуры, ключевых страниц и логики заявки.' : 'If the goal is a stronger SEO website, the right start is the structure, key pages, and the conversion path.'}
+                </h3>
+              </div>
+              <a href="#contact-form" className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
+                {copy.primaryCta}
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 

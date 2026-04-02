@@ -44,6 +44,13 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
   const timingContent = getServiceTimingContent(service.slug, 'en')
   const pricingModelContent = getServicePricingModelContent(service.slug, pricing, 'en')
   const deliveryModelContent = getServiceDeliveryModelContent(pricing, 'en')
+  const heroHighlights = service.benefits.slice(0, 3).map((item) => item.title)
+  const heroResultCards = service.benefits.slice(0, 3).map((item, index) => ({
+    eyebrow: service.results[index]?.title || `0${index + 1}`,
+    title: item.title,
+    text: item.text,
+    metric: service.outcomes[index] || service.audience[index] || service.includes[index] || '',
+  }))
 
   const faqSchema = createFaqSchema(service.faq)
   const breadcrumbsSchema = createBreadcrumbSchema(
@@ -75,12 +82,21 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
           <span className="text-slate-900">{service.shortName}</span>
         </nav>
 
-        <section className="service-hero-shell surface-grid surface-pad overflow-hidden">
-          <div className="grid gap-8 lg:grid-cols-[1.04fr_0.96fr] lg:items-start">
+        <section className="page-hero-shell surface-pad overflow-hidden">
+          <div className="grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-end">
             <div>
-              <h1 className="max-w-4xl text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">{service.h1}</h1>
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{service.heroValue}</p>
+              <span className="brand-chip">{service.label}</span>
+              <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[0.94] text-slate-950 md:text-6xl">{service.h1}</h1>
+              <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{service.heroValue}</p>
               <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{service.subheading}</p>
+
+              <div className="mt-6 flex flex-wrap gap-2.5">
+                {heroHighlights.map((item) => (
+                  <span key={item} className="brand-badge">
+                    {item}
+                  </span>
+                ))}
+              </div>
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <a href="#contact-form">
@@ -97,19 +113,28 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
               </div>
             </div>
 
-            <div className="glass-panel service-hero-aside p-6">
-              <h2 className="text-2xl font-semibold text-slate-950">{service.shortName}</h2>
-              <p className="mt-4 text-base leading-8 text-slate-700">{service.intro}</p>
+            <div className="grid gap-4">
+              <div className="page-aside-card">
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">Delivery format</div>
+                <h2 className="mt-3 text-2xl font-semibold text-slate-950">{service.shortName}</h2>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{service.intro}</p>
 
-              <div className="mt-6 space-y-3">
                 {pricing ? (
-                  <div className="rounded-[24px] border border-slate-200 bg-white p-5">
+                  <div className="mt-5 rounded-[20px] border border-slate-200 bg-white px-4 py-4">
                     <div className="text-sm font-semibold text-slate-950">{pricing.priceLabel}</div>
                     <p className="mt-2 text-sm leading-7 text-slate-600">{pricing.calculatorHint}</p>
                   </div>
                 ) : null}
-                <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 text-sm leading-7 text-slate-700">
-                  Reply within one business day and help clarify whether this is the right format to start with.
+              </div>
+
+              <div className="page-aside-card--dark">
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#d5b08d]">What the work includes</div>
+                <div className="mt-4 space-y-3">
+                  {service.includes.slice(0, 3).map((item) => (
+                    <div key={item} className="rounded-[18px] border border-white/10 bg-white/[0.05] px-4 py-3 text-sm leading-7 text-slate-200">
+                      {item}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -117,13 +142,41 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
         </section>
 
         <section className="mt-8 surface-grid surface-pad">
-          <div className="uniform-grid-3 gap-4">
-            {service.benefits.slice(0, 3).map((item) => (
-              <article key={item.title} className="uniform-card service-feature-card p-5">
-                <h2 className="text-xl font-semibold text-slate-950">{item.title}</h2>
+          <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <div>
+              <span className="brand-chip">Early signals</span>
+              <h2 className="mt-4 max-w-3xl text-[clamp(1.9rem,3.6vw,3rem)] font-semibold leading-[0.96] tracking-[-0.045em] text-slate-950">
+                What usually creates traction in the first stages of SEO work
+              </h2>
+            </div>
+            <p className="max-w-2xl text-sm leading-7 text-slate-600 lg:justify-self-end">
+              Strong SEO commercial pages explain more than the service label. They show what affects the result, what changes first, and how those changes connect to trust and lead generation.
+            </p>
+          </div>
+
+          <div className="uniform-grid-3 mt-7 gap-4">
+            {heroResultCards.map((item) => (
+              <article key={`${item.eyebrow}-${item.title}`} className="uniform-card brand-card p-5">
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-500">{item.eyebrow}</div>
+                <h2 className="mt-4 text-xl font-semibold text-slate-950">{item.title}</h2>
                 <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                {item.metric ? <div className="mt-4 rounded-[18px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700">{item.metric}</div> : null}
               </article>
             ))}
+          </div>
+
+          <div className="brand-card-dark mt-6 p-6">
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+              <div>
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#d5b08d]">Next step</div>
+                <p className="mt-3 max-w-3xl text-base leading-8 text-slate-200">
+                  Send the site and the task. I will tell you whether this is the right format and which website layer should be addressed first.
+                </p>
+              </div>
+              <a href="#contact-form" className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
+                Discuss the project
+              </a>
+            </div>
           </div>
         </section>
 
