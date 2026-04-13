@@ -160,6 +160,11 @@ export default async function RootLayout({
             <span className="site-fractal site-fractal--one" />
             <span className="site-fractal site-fractal--two" />
             <span className="site-fractal site-fractal--three" />
+            <span className="site-fractal site-fractal--four" />
+            <span className="site-fractal site-fractal--five" />
+            <span className="site-fractal site-fractal--six" />
+            <span className="site-fractal site-fractal--seven" />
+            <span className="site-fractal site-fractal--eight" />
           </div>
         ) : null}
         <div className={isAdmin ? '' : 'site-frame'}>

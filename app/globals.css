@@ -2584,7 +2584,7 @@ body.site-shell [class*='to-white'],
 .site-fractal-atmosphere {
   position: fixed;
   inset: 0;
-  z-index: 70;
+  z-index: 0;
   pointer-events: none;
   overflow: hidden;
 }
@@ -2596,36 +2596,93 @@ body.site-shell [class*='to-white'],
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  opacity: 0.16;
-  filter: saturate(1.24) blur(2px);
+  opacity: 0.2;
+  filter: saturate(1.2) blur(0.8px);
   mix-blend-mode: screen;
 }
 
 .site-fractal--one {
-  left: -5%;
-  top: 8%;
-  width: 26rem;
-  height: 26rem;
+  left: 3%;
+  top: 14%;
+  width: 5.5rem;
+  height: 5.5rem;
   background-image: url('/pencil/bDogD.webp');
-  animation: homeGlowDrift 28s ease-in-out infinite;
+  animation: homeGlowDrift 16s ease-in-out infinite;
 }
 
 .site-fractal--two {
-  right: -8%;
-  top: 36%;
-  width: 32rem;
-  height: 32rem;
+  right: 4%;
+  top: 22%;
+  width: 4.5rem;
+  height: 4.5rem;
   background-image: url('/pencil/IAIjo.webp');
-  animation: homeGlowDriftDelayed 34s ease-in-out infinite;
+  animation: homeGlowDriftDelayed 18s ease-in-out infinite;
 }
 
 .site-fractal--three {
-  left: 24%;
-  bottom: -10%;
-  width: 28rem;
-  height: 28rem;
+  left: 16%;
+  top: 46%;
+  width: 3.75rem;
+  height: 3.75rem;
   background-image: url('/pencil/Xef8P.webp');
-  animation: homeGlowBreathe 26s ease-in-out infinite;
+  animation: homeGlowBreathe 13s ease-in-out infinite;
+}
+
+.site-fractal--four {
+  right: 12%;
+  top: 56%;
+  width: 5rem;
+  height: 5rem;
+  background-image: url('/pencil/bDogD.webp');
+  animation: homeGlowDriftDelayed 20s ease-in-out infinite;
+}
+
+.site-fractal--five {
+  left: 8%;
+  bottom: 12%;
+  width: 4rem;
+  height: 4rem;
+  background-image: url('/pencil/IAIjo.webp');
+  animation: homeGlowDrift 15s ease-in-out infinite;
+}
+
+.site-fractal--six {
+  right: 7%;
+  bottom: 8%;
+  width: 4.75rem;
+  height: 4.75rem;
+  background-image: url('/pencil/Xef8P.webp');
+  animation: homeGlowBreathe 12s ease-in-out infinite;
+}
+
+.site-fractal--seven {
+  left: 46%;
+  top: 10%;
+  width: 3.25rem;
+  height: 3.25rem;
+  background-image: url('/pencil/bDogD.webp');
+  animation: homeGlowDrift 17s ease-in-out infinite;
+}
+
+.site-fractal--eight {
+  left: 52%;
+  bottom: 6%;
+  width: 3rem;
+  height: 3rem;
+  background-image: url('/pencil/IAIjo.webp');
+  animation: homeGlowDriftDelayed 19s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .site-fractal {
+    opacity: 0.15;
+    filter: saturate(1.15) blur(0.6px);
+  }
+
+  .site-fractal--seven,
+  .site-fractal--eight {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2637,7 +2694,12 @@ body.site-shell [class*='to-white'],
   .home-image-breathe,
   .site-fractal--one,
   .site-fractal--two,
-  .site-fractal--three {
+  .site-fractal--three,
+  .site-fractal--four,
+  .site-fractal--five,
+  .site-fractal--six,
+  .site-fractal--seven,
+  .site-fractal--eight {
     animation: none !important;
   }
 }
