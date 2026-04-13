@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react'
+import { useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type WheelEvent as ReactWheelEvent } from 'react'
 
 export type ServicesCarouselCard = {
   slug: string
@@ -146,6 +146,35 @@ export default function ServicesCarousel({ cards, countLabel, showCountBadge = t
     suppressClickRef.current = false
   }
 
+  const handleWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
+    const track = trackRef.current
+
+    if (!track) {
+      return
+    }
+
+    const horizontalIntent = Math.abs(event.deltaX) > Math.abs(event.deltaY)
+
+    if (horizontalIntent) {
+      return
+    }
+
+    const maxScroll = track.scrollWidth - track.clientWidth
+
+    if (maxScroll <= 0) {
+      return
+    }
+
+    const nextScrollLeft = Math.min(maxScroll, Math.max(0, track.scrollLeft + event.deltaY))
+
+    if (nextScrollLeft === track.scrollLeft) {
+      return
+    }
+
+    track.scrollLeft = nextScrollLeft
+    event.preventDefault()
+  }
+
   return (
     <div className="space-y-3">
       {showCountBadge ? (
@@ -169,6 +198,7 @@ export default function ServicesCarousel({ cards, countLabel, showCountBadge = t
           onPointerCancel={handlePointerEnd}
           onLostPointerCapture={handlePointerEnd}
           onClickCapture={handleClickCapture}
+          onWheel={handleWheel}
         >
           {cards.map((card) => (
             <ServiceCard key={card.slug} card={card} />
