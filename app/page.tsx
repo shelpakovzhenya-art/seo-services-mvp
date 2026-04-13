@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { List, Mail, Rocket, Send, Target, Wrench } from 'lucide-react'
+import { List, Rocket, Target, Wrench } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
@@ -13,7 +13,6 @@ import { getServicePagesForLocale } from '@/lib/service-page-localization'
 import { getMergedServicePages } from '@/lib/service-overrides'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
-import { getWorkStatus } from '@/lib/work-status'
 
 const verificationCode = 'yilk8rn94r0d3m5v'
 
@@ -107,18 +106,6 @@ function Pill({ children }: { children: ReactNode }) {
 
 export default async function HomePage() {
   const locale = await getRequestLocale()
-  let settings: Awaited<ReturnType<typeof prisma.siteSettings.findFirst>> = null
-
-  try {
-    settings = await prisma.siteSettings.findFirst()
-  } catch {
-    settings = null
-  }
-
-  const workSchedule = settings?.workSchedule || 'Пн-Пт 09:00-17:00'
-  const workStatus = getWorkStatus(workSchedule)
-  const email = settings?.email || 'shelpakovzhenya@gmail.com'
-  const telegramUrl = settings?.telegramUrl || 'https://t.me/whoamikon'
 
   let blogCards = [...blogFallback]
   try {
@@ -154,10 +141,6 @@ export default async function HomePage() {
     pricing: null,
     cta: locale === 'ru' ? 'Перейти к услуге' : 'Open service',
   }))
-  const servicesAutoScrollNote =
-    locale === 'ru'
-      ? 'Карточки двигаются автоматически. Наведите курсор, чтобы остановить движение и выбрать услугу.'
-      : 'Cards move automatically. Hover to pause and open the needed service.'
   const servicesCountLabel = locale === 'ru' ? 'услуг' : 'services'
 
   return (
@@ -180,76 +163,7 @@ export default async function HomePage() {
               <div className="absolute right-[4%] top-[4%] h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle,rgba(164,75,255,0.28),rgba(9,9,21,0))]" />
             </div>
 
-            <div className="relative flex items-start justify-between gap-8">
-              <Link href={linkWithLocale('/', locale)} className="group inline-flex flex-col">
-                <div className="text-[22px] font-bold text-white">Shelpakov Digital</div>
-                <div className="text-xs font-medium text-[#bcc2dc] transition group-hover:text-white">Независимый SEO-специалист</div>
-              </Link>
-
-              <div className="flex flex-col items-end gap-3">
-                <div className="flex items-center gap-2.5">
-                  <span className="inline-flex rounded-full border border-white/15 bg-[#101325] px-3 py-1.5 text-[11px] font-semibold text-[#e3e8fb]">
-                    {workSchedule}
-                  </span>
-
-                  <span
-                    className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold ${workStatus.badgeClass}`}
-                  >
-                    <span className="relative flex h-3 w-3 items-center justify-center">
-                      <span className={`absolute inset-0 animate-ping rounded-full ${workStatus.pingClass}`} />
-                      <span className={`relative h-2 w-2 rounded-full ${workStatus.dotClass}`} />
-                    </span>
-                    {workStatus.text}
-                  </span>
-
-                  <a
-                    href={`mailto:${email}`}
-                    className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#101325] px-3 py-1.5 text-[11px] font-semibold text-[#e3e8fb] transition hover:border-[#d3b7ff]/45 hover:text-white"
-                  >
-                    <Mail className="h-3.5 w-3.5" />
-                    <span>{email}</span>
-                  </a>
-
-                  <a
-                    href={telegramUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-[#11142a] text-white transition hover:-translate-y-0.5 hover:border-[#d3b7ff]/45 hover:bg-[#151a34]"
-                    aria-label="Telegram"
-                    title="Telegram"
-                  >
-                    <Image src="/telegram-logo.svg" alt="Telegram" width={16} height={16} className="h-4 w-4" />
-                  </a>
-                </div>
-
-                <div className="flex items-center gap-6">
-                  <nav className="flex items-center gap-[18px] text-[13px] font-semibold text-[#d5daf0]">
-                    <Link href={linkWithLocale('/services', locale)} className="transition hover:text-white">
-                      SEO-услуги
-                    </Link>
-                    <Link href={linkWithLocale('/services', locale)} className="transition hover:text-white">
-                      Разработка
-                    </Link>
-                    <Link href={linkWithLocale('/cases', locale)} className="transition hover:text-white">
-                      Кейсы
-                    </Link>
-                    <Link href={linkWithLocale('/contacts', locale)} className="transition hover:text-white">
-                      Контакты
-                    </Link>
-                  </nav>
-                  <Link
-                    href={linkWithLocale('/contacts', locale)}
-                    className="inline-flex rounded-full border border-white/25 bg-[linear-gradient(90deg,#7f4dff,#ff4da8)] px-5 py-3 text-[13px] font-bold text-white shadow-[0_0_28px_rgba(167,80,255,0.35)] transition hover:-translate-y-0.5 hover:brightness-110"
-                  >
-                    Обсудить проект
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 h-px bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(173,146,255,0.35),rgba(255,120,197,0.35),rgba(255,255,255,0))]" />
-
-            <div className="relative mt-8 grid grid-cols-[760px_minmax(0,1fr)] gap-[22px]">
+            <div className="relative mt-2 grid grid-cols-[760px_minmax(0,1fr)] gap-[22px]">
               <div className="flex flex-col gap-[18px]">
                 <p className="text-[13px] font-bold text-[#b184ff]">SEO-продвижение под заявки</p>
                 <h1 className="text-[54px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f7f8ff]">Комплексное</h1>
@@ -360,7 +274,7 @@ export default async function HomePage() {
               </p>
 
               <div className="mt-6">
-                <ServicesCarousel cards={servicesCarouselCards} autoScrollNote={servicesAutoScrollNote} countLabel={servicesCountLabel} />
+                <ServicesCarousel cards={servicesCarouselCards} countLabel={servicesCountLabel} />
               </div>
             </div>
           </section>
@@ -442,41 +356,7 @@ export default async function HomePage() {
 
         <div className="flex flex-col gap-10 md:hidden">
           <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#090915] px-4 pb-5 pt-5">
-            <div className="flex items-center justify-between">
-              <Link href={linkWithLocale('/', locale)} className="text-[17px] font-extrabold text-[#f5f7ff]">
-                Shelpakov Digital
-              </Link>
-              <Link href={linkWithLocale('/services', locale)} className="text-[13px] font-bold text-[#c7ccdf]">
-                Меню
-              </Link>
-            </div>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="inline-flex rounded-full border border-white/15 bg-[#101325] px-2.5 py-1 text-[10px] font-semibold text-[#e3e8fb]">
-                {workSchedule}
-              </span>
-              <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold ${workStatus.badgeClass}`}>
-                <span className={`h-1.5 w-1.5 rounded-full ${workStatus.dotClass}`} />
-                {workStatus.text}
-              </span>
-              <a
-                href={`mailto:${email}`}
-                className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-[#101325] px-2.5 py-1 text-[10px] font-semibold text-[#e3e8fb]"
-              >
-                <Mail className="h-3 w-3" />
-                <span>{email}</span>
-              </a>
-              <a
-                href={telegramUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-[#11142a] px-2.5 py-1 text-[10px] font-semibold text-white"
-              >
-                <Send className="h-3 w-3" />
-                Telegram
-              </a>
-            </div>
-            <div className="mt-3 h-px bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(173,146,255,0.35),rgba(255,120,197,0.35),rgba(255,255,255,0))]" />
-            <p className="mt-3 text-xs font-bold text-[#b188ff]">SEO-продвижение под заявки</p>
+            <p className="text-xs font-bold text-[#b188ff]">SEO-продвижение под заявки</p>
             <h1 className="mt-1 text-[34px] font-extrabold leading-[0.92] tracking-[-0.03em] text-[#f6f8ff]">Комплексное</h1>
             <h1 className="bg-[linear-gradient(90deg,#7e63ff,#ff4ea8)] bg-clip-text text-[34px] font-extrabold leading-[0.92] tracking-[-0.03em] text-transparent">
               SEO-продвижение
@@ -544,7 +424,7 @@ export default async function HomePage() {
             </p>
 
             <div className="mt-4">
-              <ServicesCarousel cards={servicesCarouselCards} autoScrollNote={servicesAutoScrollNote} countLabel={servicesCountLabel} />
+              <ServicesCarousel cards={servicesCarouselCards} countLabel={servicesCountLabel} />
             </div>
           </section>
 

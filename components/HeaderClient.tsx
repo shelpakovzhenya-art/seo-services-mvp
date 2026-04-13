@@ -185,7 +185,7 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
 
             <div className="hidden items-center gap-3 xl:flex">
               <LanguageSwitcher locale={locale} pathname={pathname} />
-              <Link href={prefixPathWithLocale(CONTACT_FORM_HREF, locale)} className="site-cta-button">
+              <Link href={prefixPathWithLocale(CONTACT_FORM_HREF, locale)} className="site-cta-button whitespace-nowrap">
                 {dictionary.header.discussProject}
                 <ArrowUpRight className="h-4 w-4" />
               </Link>
