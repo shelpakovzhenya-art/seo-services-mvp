@@ -157,7 +157,11 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
       <div className="sticky top-0 z-50 bg-[#0b1220]/84 shadow-[0_18px_40px_rgba(2,8,23,0.22)] backdrop-blur-2xl">
         <div className="container mx-auto px-4">
           <nav className="my-2 flex items-center justify-between gap-2.5 rounded-[24px] border border-white/10 bg-[linear-gradient(145deg,rgba(10,17,31,0.96),rgba(15,24,40,0.94))] px-3 py-2.5 shadow-[0_22px_52px_rgba(2,8,23,0.24)] md:my-3 md:mb-4 md:gap-4 md:rounded-[28px] md:px-4 md:py-4">
-            <Link href={prefixPathWithLocale('/', locale)} className="flex min-w-0 flex-1 items-center gap-2.5 pr-2 sm:gap-3 lg:flex-none">
+            <Link
+              href={prefixPathWithLocale('/', locale)}
+              aria-label={locale === 'ru' ? 'Перейти на главную' : 'Go to homepage'}
+              className="flex min-w-0 flex-1 items-center gap-2.5 pr-2 sm:gap-3 lg:flex-none"
+            >
               <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-[18px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.97),rgba(244,239,232,0.96))] shadow-[0_12px_30px_rgba(2,8,23,0.22)] sm:h-11 sm:w-11 md:h-12 md:w-12">
                 <Image src="/favicon-48.png" alt="Shelpakov Digital" width={40} height={40} className="h-[78%] w-[78%] object-contain" priority />
               </span>

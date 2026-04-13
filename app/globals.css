@@ -2492,9 +2492,112 @@
     --tw-gradient-stops: var(--tw-gradient-from), rgba(27, 28, 58, 0.92) var(--tw-gradient-via-position), var(--tw-gradient-to) !important;
   }
 
-  body.site-shell [class*='to-white'],
+body.site-shell [class*='to-white'],
   body.site-shell [class*='to-orange-50'],
   body.site-shell [class*='to-cyan-50'] {
     --tw-gradient-to: rgba(18, 16, 44, 0.92) var(--tw-gradient-to-position) !important;
+  }
+}
+
+@keyframes homeGlowDrift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0) scale(1.05);
+  }
+}
+
+@keyframes homeGlowDriftDelayed {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, 12px, 0) scale(1.04);
+  }
+}
+
+@keyframes homeGlowBreathe {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes homeImageFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+@keyframes homeImageDrift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+  }
+  50% {
+    transform: translate3d(8px, -8px, 0) scale(1.06);
+  }
+}
+
+@keyframes homeImageBreathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.home-glow-drift {
+  animation: homeGlowDrift 12s ease-in-out infinite;
+  will-change: transform;
+}
+
+.home-glow-drift-delayed {
+  animation: homeGlowDriftDelayed 15s ease-in-out infinite;
+  will-change: transform;
+}
+
+.home-glow-breathe {
+  animation: homeGlowBreathe 9s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.home-image-float {
+  animation: homeImageFloat 11s ease-in-out infinite;
+  will-change: transform;
+}
+
+.home-image-drift {
+  animation: homeImageDrift 14s ease-in-out infinite;
+  will-change: transform;
+}
+
+.home-image-breathe {
+  animation: homeImageBreathe 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-glow-drift,
+  .home-glow-drift-delayed,
+  .home-glow-breathe,
+  .home-image-float,
+  .home-image-drift,
+  .home-image-breathe {
+    animation: none !important;
   }
 }

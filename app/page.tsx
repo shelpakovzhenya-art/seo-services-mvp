@@ -164,9 +164,9 @@ export default async function HomePage() {
   return (
     <div className="relative overflow-hidden bg-[#060611]">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-[-12%] top-[6%] h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(125,60,255,0.20),rgba(6,6,17,0))]" />
-        <div className="absolute right-[-15%] top-[2%] h-[620px] w-[620px] rounded-full bg-[radial-gradient(circle,rgba(255,77,170,0.12),rgba(6,6,17,0))]" />
-        <div className="absolute bottom-[-18%] left-[12%] h-[720px] w-[720px] rounded-full bg-[radial-gradient(circle,rgba(125,60,255,0.12),rgba(6,6,17,0))]" />
+        <div className="home-glow-drift absolute left-[-12%] top-[6%] h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(125,60,255,0.20),rgba(6,6,17,0))]" />
+        <div className="home-glow-drift-delayed absolute right-[-15%] top-[2%] h-[620px] w-[620px] rounded-full bg-[radial-gradient(circle,rgba(255,77,170,0.12),rgba(6,6,17,0))]" />
+        <div className="home-glow-breathe absolute bottom-[-18%] left-[12%] h-[720px] w-[720px] rounded-full bg-[radial-gradient(circle,rgba(125,60,255,0.12),rgba(6,6,17,0))]" />
       </div>
 
       <span className="hidden" aria-hidden="true">
@@ -182,10 +182,10 @@ export default async function HomePage() {
             </div>
 
             <div className="relative flex items-start justify-between gap-8">
-              <div>
+              <Link href={linkWithLocale('/', locale)} className="group inline-flex flex-col">
                 <div className="text-[22px] font-bold text-white">Shelpakov Digital</div>
-                <div className="text-xs font-medium text-[#bcc2dc]">Независимый SEO-специалист</div>
-              </div>
+                <div className="text-xs font-medium text-[#bcc2dc] transition group-hover:text-white">Независимый SEO-специалист</div>
+              </Link>
 
               <div className="flex flex-col items-end gap-3">
                 <div className="flex items-center gap-2.5">
@@ -248,7 +248,9 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="relative mt-7 grid grid-cols-[760px_minmax(0,1fr)] gap-[22px]">
+            <div className="mt-5 h-px bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(173,146,255,0.35),rgba(255,120,197,0.35),rgba(255,255,255,0))]" />
+
+            <div className="relative mt-8 grid grid-cols-[760px_minmax(0,1fr)] gap-[22px]">
               <div className="flex flex-col gap-[18px]">
                 <p className="text-[13px] font-bold text-[#b184ff]">SEO-продвижение под заявки</p>
                 <h1 className="text-[54px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f7f8ff]">Комплексное</h1>
@@ -282,10 +284,10 @@ export default async function HomePage() {
               </div>
 
               <div className="relative min-h-[510px] overflow-hidden rounded-3xl bg-[#0b0c18]">
-                <div className="absolute left-[6%] top-[4%] h-36 w-36 rounded-full bg-[radial-gradient(circle,rgba(117,75,255,0.30),rgba(11,12,24,0))]" />
-                <div className="absolute bottom-[8%] right-[6%] h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(255,86,170,0.25),rgba(11,12,24,0))]" />
-                <div className="absolute left-[4%] top-[8%] h-[84%] w-[92%] overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(circle_at_65%_28%,rgba(139,87,255,0.36),rgba(11,12,24,0)_60%),radial-gradient(circle_at_24%_74%,rgba(255,97,174,0.20),rgba(11,12,24,0)_66%),linear-gradient(160deg,#151935,#0b0c18)]">
-                  <Image src="/pencil/IAIjo.webp" alt="Hero visual" fill className="object-cover" sizes="(min-width: 768px) 36vw, 100vw" priority />
+                <div className="home-glow-drift absolute left-[6%] top-[4%] h-36 w-36 rounded-full bg-[radial-gradient(circle,rgba(117,75,255,0.30),rgba(11,12,24,0))]" />
+                <div className="home-glow-drift-delayed absolute bottom-[8%] right-[6%] h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(255,86,170,0.25),rgba(11,12,24,0))]" />
+                <div className="absolute left-[4%] top-[8%] h-[84%] w-[92%] overflow-hidden rounded-3xl bg-[radial-gradient(circle_at_65%_28%,rgba(139,87,255,0.36),rgba(11,12,24,0)_60%),radial-gradient(circle_at_24%_74%,rgba(255,97,174,0.20),rgba(11,12,24,0)_66%),linear-gradient(160deg,#151935,#0b0c18)]">
+                  <Image src="/pencil/IAIjo.webp" alt="Hero visual" fill className="home-image-float object-cover" sizes="(min-width: 768px) 36vw, 100vw" priority />
                 </div>
               </div>
             </div>
@@ -321,7 +323,7 @@ export default async function HomePage() {
             </div>
 
             <div className="relative overflow-hidden rounded-3xl bg-[#0b0c18]">
-              <Image src="/pencil/Xef8P.webp" alt="About visual" fill className="object-cover opacity-90" sizes="(min-width: 768px) 32vw, 100vw" />
+              <Image src="/pencil/Xef8P.webp" alt="About visual" fill className="home-image-drift object-cover opacity-90" sizes="(min-width: 768px) 32vw, 100vw" />
               <div className="absolute left-[12%] top-[15%] h-[392px] w-[392px] rounded-full border-2 border-[#9a76ff55] bg-[radial-gradient(circle,rgba(182,108,255,0.28),rgba(25,22,41,0))]" />
               <div className="absolute left-[22%] top-[24%] h-[274px] w-[274px] rounded-full border border-white/15 bg-[radial-gradient(circle,rgba(106,124,255,0.24),rgba(11,12,24,0))]" />
               <div className="absolute left-[33%] top-[33%] h-[160px] w-[160px] rounded-full border border-white/20 bg-[radial-gradient(circle,rgba(255,87,167,0.40),rgba(11,12,24,0))]" />
@@ -385,7 +387,7 @@ export default async function HomePage() {
               {pricingCards.map((card, index) => (
                 <div
                   key={card.title}
-                  className="relative flex h-[360px] flex-col gap-3 overflow-hidden rounded-[20px] border border-white/15 bg-[#111326] px-[18px] py-5 transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:shadow-[0_24px_50px_rgba(2,6,24,0.35)]"
+                  className="relative flex h-[360px] flex-col gap-3 overflow-hidden rounded-[20px] border border-white/15 bg-[#111326] pb-5 pl-[18px] pr-[118px] pt-5 transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:shadow-[0_24px_50px_rgba(2,6,24,0.35)]"
                   style={{
                     background:
                       index === 0
@@ -395,9 +397,8 @@ export default async function HomePage() {
                           : 'radial-gradient(circle at 86% 10%, rgba(255,97,173,0.24), rgba(17,19,38,0) 62%), #111326',
                   }}
                 >
-                  <div className="pointer-events-none absolute right-4 top-5 h-[90px] w-[90px] rounded-full bg-white/5" />
-                  <div className="pointer-events-none absolute right-5 top-6 h-[84px] w-[84px] overflow-hidden rounded-full">
-                    <Image src={pricingIconDesktop[index]} alt="Pricing icon" fill className="object-cover" sizes="84px" />
+                  <div className="pointer-events-none absolute right-5 top-6 h-[72px] w-[72px] overflow-hidden rounded-full opacity-95 mix-blend-screen">
+                    <Image src={pricingIconDesktop[index]} alt="Pricing icon" fill className="home-image-breathe object-cover" sizes="72px" />
                   </div>
                   <p className="text-[42px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f3f6ff]">{card.price}</p>
                   <h3 className="text-[28px] font-bold leading-[1.02] tracking-[-0.02em] text-[#f2f4ff]">{card.title}</h3>
@@ -418,8 +419,8 @@ export default async function HomePage() {
           </section>
 
           <section className="relative grid grid-cols-[790px_minmax(0,1fr)] items-center gap-[30px] overflow-hidden rounded-[30px] border border-white/10 bg-[#0a0b16] p-10">
-            <div className="pointer-events-none absolute left-[30%] top-[5%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(123,87,255,0.24),rgba(10,11,22,0))]" />
-            <div className="pointer-events-none absolute left-[42%] top-[56%] h-[320px] w-[320px] rounded-full bg-[radial-gradient(circle,rgba(255,98,176,0.18),rgba(10,11,22,0))]" />
+            <div className="home-glow-drift absolute left-[30%] top-[5%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(123,87,255,0.24),rgba(10,11,22,0))]" />
+            <div className="home-glow-drift-delayed absolute left-[42%] top-[56%] h-[320px] w-[320px] rounded-full bg-[radial-gradient(circle,rgba(255,98,176,0.18),rgba(10,11,22,0))]" />
 
             <div className="relative z-10 flex flex-col gap-4">
               <p className="text-[13px] font-bold text-[#b188ff]">Следующий шаг</p>
@@ -442,10 +443,10 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="relative h-[350px] w-[350px] justify-self-end overflow-hidden rounded-[28px] border border-white/10 bg-[#0f1222]">
-              <div className="absolute left-[16%] top-[16%] h-[234px] w-[234px] rounded-full bg-[radial-gradient(circle,rgba(162,94,255,0.28),rgba(15,18,34,0))]" />
-              <div className="absolute left-[10%] top-[8%] h-[290px] w-[290px] rounded-full bg-[radial-gradient(circle,rgba(123,87,255,0.34),rgba(15,18,34,0))]" />
-              <Image src="/pencil/bDogD.webp" alt="CTA visual" fill className="object-contain p-5" sizes="350px" />
+            <div className="relative h-[350px] w-[350px] justify-self-end overflow-hidden rounded-[28px] bg-[#0f1222]">
+              <div className="home-glow-breathe absolute left-[16%] top-[16%] h-[234px] w-[234px] rounded-full bg-[radial-gradient(circle,rgba(162,94,255,0.28),rgba(15,18,34,0))]" />
+              <div className="home-glow-drift-delayed absolute left-[10%] top-[8%] h-[290px] w-[290px] rounded-full bg-[radial-gradient(circle,rgba(123,87,255,0.34),rgba(15,18,34,0))]" />
+              <Image src="/pencil/bDogD.webp" alt="CTA visual" fill className="home-image-breathe object-contain p-5" sizes="350px" />
             </div>
           </section>
         </div>
@@ -453,7 +454,9 @@ export default async function HomePage() {
         <div className="flex flex-col gap-10 md:hidden">
           <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#090915] px-4 pb-5 pt-5">
             <div className="flex items-center justify-between">
-              <p className="text-[17px] font-extrabold text-[#f5f7ff]">Shelpakov Digital</p>
+              <Link href={linkWithLocale('/', locale)} className="text-[17px] font-extrabold text-[#f5f7ff]">
+                Shelpakov Digital
+              </Link>
               <Link href={linkWithLocale('/services', locale)} className="text-[13px] font-bold text-[#c7ccdf]">
                 Меню
               </Link>
@@ -483,7 +486,8 @@ export default async function HomePage() {
                 Telegram
               </a>
             </div>
-            <p className="mt-4 text-xs font-bold text-[#b188ff]">SEO-продвижение под заявки</p>
+            <div className="mt-3 h-px bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(173,146,255,0.35),rgba(255,120,197,0.35),rgba(255,255,255,0))]" />
+            <p className="mt-3 text-xs font-bold text-[#b188ff]">SEO-продвижение под заявки</p>
             <h1 className="mt-1 text-[34px] font-extrabold leading-[0.92] tracking-[-0.03em] text-[#f6f8ff]">Комплексное</h1>
             <h1 className="bg-[linear-gradient(90deg,#7e63ff,#ff4ea8)] bg-clip-text text-[34px] font-extrabold leading-[0.92] tracking-[-0.03em] text-transparent">
               SEO-продвижение
@@ -510,8 +514,8 @@ export default async function HomePage() {
               <Pill>Понятный первый шаг</Pill>
               <Pill>Фокус на заявках</Pill>
             </div>
-            <div className="relative mt-4 h-32 overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_66%_38%,rgba(122,84,255,0.30),rgba(11,14,27,0)_60%),linear-gradient(160deg,#151935,#0b0e1b)]">
-              <Image src="/pencil/xZcUe.webp" alt="Hero mobile visual" fill className="object-cover" sizes="100vw" />
+            <div className="relative mt-4 h-32 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_66%_38%,rgba(122,84,255,0.30),rgba(11,14,27,0)_60%),linear-gradient(160deg,#151935,#0b0e1b)]">
+              <Image src="/pencil/xZcUe.webp" alt="Hero mobile visual" fill className="home-image-float object-cover" sizes="100vw" />
             </div>
           </section>
 
@@ -587,7 +591,7 @@ export default async function HomePage() {
               {pricingCards.map((card, index) => (
                 <div
                   key={card.title}
-                  className="relative flex h-[250px] flex-col gap-2 overflow-hidden rounded-2xl border border-white/10 bg-[#111326] px-3 py-3.5 transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:shadow-[0_16px_36px_rgba(2,6,24,0.34)]"
+                  className="relative flex h-[250px] flex-col gap-2 overflow-hidden rounded-2xl border border-white/10 bg-[#111326] pb-3.5 pl-3 pr-24 pt-3.5 transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:shadow-[0_16px_36px_rgba(2,6,24,0.34)]"
                   style={{
                     background:
                       index === 0
@@ -597,8 +601,8 @@ export default async function HomePage() {
                           : 'radial-gradient(circle at 86% 10%, rgba(255,97,173,0.24), rgba(17,19,38,0) 62%), #111326',
                   }}
                 >
-                  <div className="pointer-events-none absolute right-3 top-3 h-[74px] w-[74px] overflow-hidden rounded-full bg-white/5">
-                    <Image src={pricingIconMobile[index]} alt="Pricing mobile icon" fill className="object-cover" sizes="74px" />
+                  <div className="pointer-events-none absolute right-3 top-3 h-[64px] w-[64px] overflow-hidden rounded-full opacity-95 mix-blend-screen">
+                    <Image src={pricingIconMobile[index]} alt="Pricing mobile icon" fill className="home-image-breathe object-cover" sizes="64px" />
                   </div>
                   <p className="text-[34px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f3f6ff]">{card.price}</p>
                   <h3 className="text-[22px] font-bold leading-[1.05] tracking-[-0.02em] text-[#f2f4ff]">{card.title}</h3>
@@ -633,8 +637,8 @@ export default async function HomePage() {
                 Получить разбор
               </Link>
             </div>
-            <div className="relative mx-auto mt-4 h-24 w-24 overflow-hidden rounded-full border border-white/15 bg-[#0f1222]">
-              <Image src="/pencil/bDogD.webp" alt="CTA symbol" fill className="object-cover" sizes="96px" />
+            <div className="relative mx-auto mt-4 h-24 w-24 overflow-hidden rounded-full bg-[#0f1222]">
+              <Image src="/pencil/bDogD.webp" alt="CTA symbol" fill className="home-image-breathe object-cover" sizes="96px" />
             </div>
             <div className="mt-3 flex flex-col items-center gap-2">
               <Pill>Отвечаю сам</Pill>
