@@ -123,18 +123,6 @@ export default async function ToolsIndexPage() {
             </Button>
           </Link>
         }
-        aside={
-          <div className="page-aside-card">
-            <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{copy.fitKicker}</div>
-            <div className="mt-4 space-y-3">
-              {copy.sideNotes.map((item) => (
-                <div key={item} className="brand-list-item text-sm">
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        }
       />
 
       <section className="mt-8">

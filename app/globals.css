@@ -1627,27 +1627,21 @@
   }
 
   .services-carousel-shell {
-    --services-marquee-gap: 1.25rem;
     position: relative;
     overflow: hidden;
   }
 
-  .services-carousel-track--animated {
-    display: flex;
-    width: max-content;
-    gap: var(--services-marquee-gap);
-    animation: servicesMarquee 44s linear infinite;
-    will-change: transform;
+  .services-carousel-track--draggable {
+    cursor: grab;
   }
 
-  .services-carousel-shell:hover .services-carousel-track--animated,
-  .services-carousel-shell:focus-within .services-carousel-track--animated {
-    animation-play-state: paused;
+  .services-carousel-track--dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
   }
 
-  .services-carousel-group {
-    display: flex;
-    gap: var(--services-marquee-gap);
+  .services-carousel-track--draggable .services-carousel-card {
+    user-select: none;
   }
 
   .services-carousel-card {
@@ -1839,16 +1833,6 @@
 
   50% {
     transform: translate3d(18px, -10px, 0);
-  }
-}
-
-@keyframes servicesMarquee {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  100% {
-    transform: translate3d(calc(-50% - (var(--services-marquee-gap) / 2)), 0, 0);
   }
 }
 

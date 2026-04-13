@@ -83,7 +83,7 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
         </nav>
 
         <section className="page-hero-shell surface-pad overflow-hidden">
-          <div className="grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-end">
+          <div>
             <div>
               <span className="brand-chip">{service.label}</span>
               <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[0.94] text-slate-950 md:text-6xl">{service.h1}</h1>
@@ -110,32 +110,6 @@ export default function EnglishServicePageTemplate({ service, pricing }: English
                     All services
                   </Button>
                 </Link>
-              </div>
-            </div>
-
-            <div className="grid gap-4">
-              <div className="page-aside-card">
-                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">Delivery format</div>
-                <h2 className="mt-3 text-2xl font-semibold text-slate-950">{service.shortName}</h2>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{service.intro}</p>
-
-                {pricing ? (
-                  <div className="mt-5 rounded-[20px] border border-slate-200 bg-white px-4 py-4">
-                    <div className="text-sm font-semibold text-slate-950">{pricing.priceLabel}</div>
-                    <p className="mt-2 text-sm leading-7 text-slate-600">{pricing.calculatorHint}</p>
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="page-aside-card--dark">
-                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#d5b08d]">What the work includes</div>
-                <div className="mt-4 space-y-3">
-                  {service.includes.slice(0, 3).map((item) => (
-                    <div key={item} className="rounded-[18px] border border-white/10 bg-white/[0.05] px-4 py-3 text-sm leading-7 text-slate-200">
-                      {item}
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
           </div>

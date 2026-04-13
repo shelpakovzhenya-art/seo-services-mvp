@@ -156,21 +156,7 @@ export default async function CasePage({ params }: { params: { slug: string } })
                 </div>
               </div>
             </div>
-          ) : (
-            <div className="page-hero-aside">
-              <div className="page-aside-card">
-                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{locale === 'ru' ? 'Что показывает кейс' : 'What this case shows'}</div>
-                <div className="mt-4 space-y-3">
-                  <div className="brand-list-item text-sm">
-                    <span>{locale === 'ru' ? 'Исходную проблемную зону и стартовые ограничения.' : 'The starting problem zone and the initial constraints.'}</span>
-                  </div>
-                  <div className="brand-list-item text-sm">
-                    <span>{locale === 'ru' ? 'Почему именно такие шаги дали лучший эффект для сайта.' : 'Why those specific steps created the strongest effect.'}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          ) : null}
         </div>
       </section>
 

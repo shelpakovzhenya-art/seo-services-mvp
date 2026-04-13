@@ -5,7 +5,6 @@ import { notFound } from 'next/navigation'
 import BrandPageHero from '@/components/BrandPageHero'
 import JsonLd from '@/components/JsonLd'
 import SeoToolWorkspace from '@/components/tools/SeoToolWorkspace'
-import ToolCardIcon from '@/components/tools/ToolCardIcon'
 import { Button } from '@/components/ui/button'
 import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
 import { getRequestLocale } from '@/lib/request-locale'
@@ -157,19 +156,6 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
               </Button>
             </Link>
           </>
-        }
-        aside={
-          <div className="page-aside-card">
-            <div className="flex items-start gap-4">
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-[20px] border border-slate-200 bg-[#f6f2ec] text-[#8a5630]">
-                <ToolCardIcon icon={tool.icon} className="h-6 w-6" />
-              </div>
-              <div>
-                <div className="text-sm font-medium text-slate-500">{copy.runtimeBadge}</div>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{copy.principlesDescription}</p>
-              </div>
-            </div>
-          </div>
         }
       />
 

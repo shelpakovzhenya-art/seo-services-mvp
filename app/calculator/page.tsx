@@ -114,22 +114,6 @@ export default async function CalculatorPage() {
         title={localizedPage?.h1 || copy.heroTitle}
         description={localizedPage?.description || copy.heroDescription}
         badges={copy.highlights}
-        aside={
-          <div className="page-aside-card">
-            <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{copy.howTo}</div>
-            <div className="mt-4 space-y-3">
-              {copy.steps.map((item: any, index: number) => (
-                <div key={item.title} className="rounded-[20px] border border-slate-200 bg-white/75 px-4 py-4">
-                  <div className="flex items-center gap-3">
-                    <span className="brand-badge text-[11px] tracking-[0.18em] uppercase">{`0${index + 1}`}</span>
-                    <h2 className="text-base font-semibold text-slate-950">{item.title}</h2>
-                  </div>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        }
       />
 
       <section className="mt-8 surface-grid p-4 md:p-6">

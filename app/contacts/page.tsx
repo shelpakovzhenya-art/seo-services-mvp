@@ -77,35 +77,6 @@ export default async function ContactsPage() {
         eyebrow={copy.chip}
         title={localizedPage?.h1 || copy.title}
         description={localizedPage?.description || copy.description}
-        aside={
-          <>
-            <div className="page-aside-card">
-              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{copy.howToReach}</div>
-              <div className="mt-4 space-y-4">
-                <div className="flex min-w-0 items-start gap-3 text-slate-700">
-                  <Mail className="mt-1 h-5 w-5 shrink-0 text-[#8a5630]" />
-                  <a href={`mailto:${settings?.email || 'shelpakovzhenya@gmail.com'}`} className="min-w-0 break-all hover:text-slate-950">
-                    {settings?.email || 'shelpakovzhenya@gmail.com'}
-                  </a>
-                </div>
-                <div className="flex items-center gap-3 text-slate-700">
-                  <Clock className="h-5 w-5 text-[#8a5630]" />
-                  <span>{workSchedule}</span>
-                </div>
-              </div>
-            </div>
-            <div className="page-aside-card--dark">
-              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#d5b08d]">{locale === 'ru' ? 'Что прислать' : 'What to send'}</div>
-              <div className="mt-4 space-y-3">
-                {copy.readinessCards.map((item: string) => (
-                  <div key={item} className="rounded-[18px] border border-white/10 bg-white/[0.05] px-4 py-3 text-sm leading-7 text-slate-200">
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        }
       />
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">

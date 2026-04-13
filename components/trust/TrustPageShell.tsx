@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import BrandPageHero from '@/components/BrandPageHero'
 import { prefixPathWithLocale, type Locale } from '@/lib/i18n'
-import { getEditorialTeam, getTrustLinks, type TrustPageCopy } from '@/lib/trust-content'
+import { getTrustLinks, type TrustPageCopy } from '@/lib/trust-content'
 
 type TrustPageShellProps = {
   copy: TrustPageCopy
@@ -10,7 +10,6 @@ type TrustPageShellProps = {
 
 export default function TrustPageShell({ copy, locale }: TrustPageShellProps) {
   const trustLinks = getTrustLinks(locale)
-  const team = getEditorialTeam(locale)
 
   return (
     <div className="page-shell">
@@ -18,27 +17,6 @@ export default function TrustPageShell({ copy, locale }: TrustPageShellProps) {
         eyebrow={copy.chip}
         title={copy.title}
         description={copy.description}
-        aside={
-          <>
-            <div className="page-aside-card">
-              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{team.name}</div>
-              <h2 className="mt-3 text-xl font-semibold leading-tight text-slate-950">{team.role}</h2>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{team.summary}</p>
-            </div>
-
-            <div className="page-aside-card--dark">
-              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#d5b08d]">{copy.linksTitle}</div>
-              <div className="mt-4 space-y-3">
-                {trustLinks.links.map((item) => (
-                  <Link key={item.href} href={prefixPathWithLocale(item.href, locale)} className="block rounded-[18px] border border-white/10 bg-white/[0.05] px-4 py-3 transition hover:bg-white/[0.08]">
-                    <div className="text-sm font-semibold text-white">{item.title}</div>
-                    <p className="mt-1 text-sm leading-6 text-slate-300">{item.description}</p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </>
-        }
       />
 
       <section className="reading-shell">

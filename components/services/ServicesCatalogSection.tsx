@@ -18,10 +18,6 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
   const copy = getServicesCatalogCopy(locale)
   const services = locale === 'en' ? getServicePagesForLocale(locale) : await getMergedServicePages()
   const pricingMap = await getMergedServicePricingMap(services.map((service) => service.slug))
-  const autoScrollNote =
-    locale === 'ru'
-      ? 'Карточки движутся автоматически на десктопе. Наведите курсор, чтобы остановить движение и открыть нужную услугу.'
-      : 'Cards move automatically on desktop. Hover to pause the motion and open the right service.'
   const countLabel = locale === 'ru' ? 'услуг' : 'services'
 
   function formatPricing(pricing?: ServicePricing | null) {
@@ -79,7 +75,6 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
 
         <ServicesCarousel
           cards={cards}
-          autoScrollNote={autoScrollNote}
           countLabel={countLabel}
         />
 

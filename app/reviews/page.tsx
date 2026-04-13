@@ -64,25 +64,6 @@ export default async function ReviewsPage() {
         eyebrow={copy.chip}
         title={localizedPage?.h1 || copy.title}
         description={localizedPage?.description || copy.description}
-        aside={
-          <>
-            <div className="page-aside-card">
-              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{locale === 'ru' ? 'Формат отзывов' : 'Review format'}</div>
-              <div className="mt-4 space-y-3">
-                <div className="brand-list-item text-sm">
-                  <span>{locale === 'ru' ? 'Отзывы привязаны к реальной работе по сайту, а не к абстрактному “сервису”.' : 'Reviews are tied to real project work instead of abstract service claims.'}</span>
-                </div>
-                <div className="brand-list-item text-sm">
-                  <span>{locale === 'ru' ? 'Фокус на процессе, ясности коммуникации и практическом результате.' : 'The emphasis is on process clarity, communication quality, and practical results.'}</span>
-                </div>
-              </div>
-            </div>
-            <div className="page-aside-card--dark">
-              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#d5b08d]">{locale === 'ru' ? 'Отзывы на сайте' : 'Published reviews'}</div>
-              <div className="mt-3 text-3xl font-semibold text-white">{reviews.length}</div>
-            </div>
-          </>
-        }
       />
 
       {locale === 'ru' && settings?.yandexReviewsEmbed ? (

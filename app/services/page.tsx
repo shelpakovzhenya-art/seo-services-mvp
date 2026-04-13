@@ -219,25 +219,6 @@ export default async function ServicesIndexPage() {
               </Button>
             </a>
           }
-          aside={
-            <>
-              <div className="page-aside-card">
-                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{copy.chooseKicker}</div>
-                <div className="mt-4 space-y-3">
-                  {copy.chooseCards.map((item: string) => (
-                    <div key={item} className="brand-list-item text-sm">
-                      <span>{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="page-aside-card--dark">
-                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#d5b08d]">{copy.faqKicker}</div>
-                <div className="mt-3 text-3xl font-semibold text-white">{services.length}</div>
-                <p className="mt-2 text-sm leading-7 text-slate-300">{copy.faqCount}</p>
-              </div>
-            </>
-          }
         />
 
         <ServicesCatalogSection />

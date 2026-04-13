@@ -115,19 +115,6 @@ export default async function DynamicPage({ params }: PageProps) {
             {locale === 'ru' ? 'Обсудить задачу' : 'Discuss the task'}
           </Link>
         }
-        aside={
-          <div className="page-aside-card">
-            <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{locale === 'ru' ? 'Формат страницы' : 'Page format'}</div>
-            <div className="mt-4 space-y-3">
-              <div className="brand-list-item text-sm">
-                <span>{locale === 'ru' ? 'Эта страница встроена в общую экспертную систему сайта и должна помогать принять следующий шаг.' : 'This page is part of the site-wide expert system and should support the next rational step.'}</span>
-              </div>
-              <div className="brand-list-item text-sm">
-                <span>{locale === 'ru' ? 'Контент здесь может работать как посадочная, отраслевой материал или дополнительное объяснение услуги.' : 'The content here can work as a landing page, industry page, or a supporting explanation around a service.'}</span>
-              </div>
-            </div>
-          </div>
-        }
       />
 
       {pageContent && (

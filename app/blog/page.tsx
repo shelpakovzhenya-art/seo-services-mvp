@@ -101,26 +101,6 @@ export default async function BlogPage() {
         title={copy.title}
         description={copy.description}
         badges={copy.badges}
-        aside={
-          <>
-            <div className="page-aside-card">
-              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{locale === 'ru' ? 'Формат материалов' : 'Format'}</div>
-              <div className="mt-4 space-y-3">
-                <div className="brand-list-item text-sm">
-                  <span>{locale === 'ru' ? 'Практические разборы, а не поток общих SEO-советов.' : 'Practical breakdowns rather than generic SEO commentary.'}</span>
-                </div>
-                <div className="brand-list-item text-sm">
-                  <span>{locale === 'ru' ? 'Материалы связаны с услугами, кейсами и реальной методологией работы.' : 'Each article connects to services, case work, and the actual delivery methodology.'}</span>
-                </div>
-              </div>
-            </div>
-            <div className="page-aside-card--dark">
-              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#d5b08d]">{locale === 'ru' ? 'Опубликовано' : 'Published'}</div>
-              <div className="mt-3 text-3xl font-semibold text-white">{posts.length}</div>
-              <p className="mt-2 text-sm leading-7 text-slate-300">{locale === 'ru' ? 'Блог поддерживает экспертный слой сайта и помогает клиенту понять подход до заявки.' : 'The blog supports the site’s expert layer and helps visitors understand the approach before inquiry.'}</p>
-            </div>
-          </>
-        }
       />
 
       <section className="mt-8 surface-grid surface-pad">
