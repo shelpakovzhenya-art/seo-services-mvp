@@ -287,7 +287,14 @@ export default async function HomePage() {
                 <div className="home-glow-drift absolute left-[6%] top-[4%] h-36 w-36 rounded-full bg-[radial-gradient(circle,rgba(117,75,255,0.30),rgba(11,12,24,0))]" />
                 <div className="home-glow-drift-delayed absolute bottom-[8%] right-[6%] h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(255,86,170,0.25),rgba(11,12,24,0))]" />
                 <div className="absolute left-[4%] top-[8%] h-[84%] w-[92%] overflow-hidden rounded-3xl bg-[radial-gradient(circle_at_65%_28%,rgba(139,87,255,0.36),rgba(11,12,24,0)_60%),radial-gradient(circle_at_24%_74%,rgba(255,97,174,0.20),rgba(11,12,24,0)_66%),linear-gradient(160deg,#151935,#0b0c18)]">
-                  <Image src="/pencil/IAIjo.webp" alt="Hero visual" fill className="home-image-float object-cover" sizes="(min-width: 768px) 36vw, 100vw" priority />
+                  <Image
+                    src="/pencil/IAIjo.webp"
+                    alt="Hero visual"
+                    fill
+                    className="home-image-float object-cover mix-blend-screen scale-[1.06]"
+                    sizes="(min-width: 768px) 36vw, 100vw"
+                    priority
+                  />
                 </div>
               </div>
             </div>
@@ -323,7 +330,13 @@ export default async function HomePage() {
             </div>
 
             <div className="relative overflow-hidden rounded-3xl bg-[#0b0c18]">
-              <Image src="/pencil/Xef8P.webp" alt="About visual" fill className="home-image-drift object-cover opacity-90" sizes="(min-width: 768px) 32vw, 100vw" />
+              <Image
+                src="/pencil/Xef8P.webp"
+                alt="About visual"
+                fill
+                className="home-image-drift object-cover opacity-90 mix-blend-screen scale-[1.04]"
+                sizes="(min-width: 768px) 32vw, 100vw"
+              />
               <div className="absolute left-[12%] top-[15%] h-[392px] w-[392px] rounded-full border-2 border-[#9a76ff55] bg-[radial-gradient(circle,rgba(182,108,255,0.28),rgba(25,22,41,0))]" />
               <div className="absolute left-[22%] top-[24%] h-[274px] w-[274px] rounded-full border border-white/15 bg-[radial-gradient(circle,rgba(106,124,255,0.24),rgba(11,12,24,0))]" />
               <div className="absolute left-[33%] top-[33%] h-[160px] w-[160px] rounded-full border border-white/20 bg-[radial-gradient(circle,rgba(255,87,167,0.40),rgba(11,12,24,0))]" />
@@ -443,10 +456,10 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="relative h-[350px] w-[350px] justify-self-end overflow-hidden rounded-[28px] bg-[#0f1222]">
+            <div className="relative h-[350px] w-[350px] justify-self-end">
               <div className="home-glow-breathe absolute left-[16%] top-[16%] h-[234px] w-[234px] rounded-full bg-[radial-gradient(circle,rgba(162,94,255,0.28),rgba(15,18,34,0))]" />
               <div className="home-glow-drift-delayed absolute left-[10%] top-[8%] h-[290px] w-[290px] rounded-full bg-[radial-gradient(circle,rgba(123,87,255,0.34),rgba(15,18,34,0))]" />
-              <Image src="/pencil/bDogD.webp" alt="CTA visual" fill className="home-image-breathe object-contain p-5" sizes="350px" />
+              <Image src="/pencil/bDogD.webp" alt="CTA visual" fill className="home-image-breathe object-contain p-1 mix-blend-screen" sizes="350px" />
             </div>
           </section>
         </div>
@@ -515,7 +528,7 @@ export default async function HomePage() {
               <Pill>Фокус на заявках</Pill>
             </div>
             <div className="relative mt-4 h-32 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_66%_38%,rgba(122,84,255,0.30),rgba(11,14,27,0)_60%),linear-gradient(160deg,#151935,#0b0e1b)]">
-              <Image src="/pencil/xZcUe.webp" alt="Hero mobile visual" fill className="home-image-float object-cover" sizes="100vw" />
+              <Image src="/pencil/xZcUe.webp" alt="Hero mobile visual" fill className="home-image-float object-cover mix-blend-screen scale-[1.05]" sizes="100vw" />
             </div>
           </section>
 
@@ -540,7 +553,7 @@ export default async function HomePage() {
               ))}
             </div>
             <div className="relative mt-3 h-[126px] overflow-hidden rounded-[14px] bg-[radial-gradient(circle_at_58%_24%,rgba(138,87,255,0.30),rgba(13,15,29,0)_60%),linear-gradient(160deg,#161a32,#0d0f1d)]">
-              <Image src="/pencil/Xef8P.webp" alt="About mobile visual" fill className="object-cover opacity-80" sizes="100vw" />
+              <Image src="/pencil/Xef8P.webp" alt="About mobile visual" fill className="home-image-drift object-cover opacity-80 mix-blend-screen scale-[1.04]" sizes="100vw" />
             </div>
           </section>
 
