@@ -82,8 +82,7 @@ export default async function RootLayout({
   const pathname = headersList.get('x-site-pathname') || ''
   const locale = getRouteLocale(headersList.get('x-locale'))
   const isAdmin = pathname.startsWith('/admin')
-  const isHome = ['', '/'].includes(pathname)
-  const showHeader = !isAdmin && !isHome
+  const showHeader = !isAdmin
   const showFooter = !isAdmin
   const showScrollTop = !isAdmin
   let settings: Awaited<ReturnType<typeof prisma.siteSettings.findFirst>> = null
@@ -155,6 +154,13 @@ export default async function RootLayout({
               </div>
             </noscript>
           </>
+        ) : null}
+        {!isAdmin ? (
+          <div className="site-fractal-atmosphere" aria-hidden="true">
+            <span className="site-fractal site-fractal--one" />
+            <span className="site-fractal site-fractal--two" />
+            <span className="site-fractal site-fractal--three" />
+          </div>
         ) : null}
         <div className={isAdmin ? '' : 'site-frame'}>
           {showHeader && <Header />}

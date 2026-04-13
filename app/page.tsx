@@ -4,10 +4,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import CasesBlogSwitcher from '@/components/home/CasesBlogSwitcher'
+import ServicesCarousel, { type ServicesCarouselCard } from '@/components/services/ServicesCarousel'
 import { buildLocalizedBlogListing } from '@/lib/blog-localization'
 import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
+import { getServicePagesForLocale } from '@/lib/service-page-localization'
+import { getMergedServicePages } from '@/lib/service-overrides'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
 import { getWorkStatus } from '@/lib/work-status'
@@ -32,27 +35,6 @@ const aboutRows: Array<{ icon: LucideIcon; text: string }> = [
   { icon: List, text: 'Приоритеты по влиянию на заявки' },
   { icon: Wrench, text: 'Внедрение без хаотичных правок' },
   { icon: Rocket, text: 'Прозрачный фокус: спрос и обращения' },
-]
-
-const serviceCards = [
-  {
-    tag: 'SEO для роста органического канала',
-    title: 'SEO-продвижение',
-    description: 'Системная работа над органикой, структурой сайта и коммерческой подачей без отрыва от задач бизнеса.',
-    href: '/services/seo',
-  },
-  {
-    tag: 'Техническая база',
-    title: 'Техническое SEO',
-    description: 'Устранение технических ограничений, которые мешают индексации, структуре и росту сайта.',
-    href: '/services/technical-seo',
-  },
-  {
-    tag: 'Геозапросы',
-    title: 'Local SEO',
-    description: 'Усиление сайта под локальный спрос, региональные страницы и конверсии из геозапросов.',
-    href: '/services/local-seo',
-  },
 ]
 
 const pricingCards = [
@@ -160,6 +142,23 @@ export default async function HomePage() {
   } catch {
     blogCards = [...blogFallback]
   }
+
+  const services = locale === 'en' ? getServicePagesForLocale(locale) : await getMergedServicePages()
+  const servicesCarouselCards: ServicesCarouselCard[] = services.map((service) => ({
+    slug: service.slug,
+    href: linkWithLocale(`/services/${service.slug}`, locale),
+    label: service.label,
+    title: service.shortName,
+    description: service.cardDescription || service.description,
+    signal: null,
+    pricing: null,
+    cta: locale === 'ru' ? 'Перейти к услуге' : 'Open service',
+  }))
+  const servicesAutoScrollNote =
+    locale === 'ru'
+      ? 'Карточки двигаются автоматически. Наведите курсор, чтобы остановить движение и выбрать услугу.'
+      : 'Cards move automatically. Hover to pause and open the needed service.'
+  const servicesCountLabel = locale === 'ru' ? 'услуг' : 'services'
 
   return (
     <div className="relative overflow-hidden bg-[#060611]">
@@ -291,7 +290,7 @@ export default async function HomePage() {
                     src="/pencil/IAIjo.webp"
                     alt="Hero visual"
                     fill
-                    className="home-image-float object-cover mix-blend-screen scale-[1.06]"
+                    className="home-image-float fractal-soft-edge object-cover mix-blend-screen scale-[1.14]"
                     sizes="(min-width: 768px) 36vw, 100vw"
                     priority
                   />
@@ -334,7 +333,7 @@ export default async function HomePage() {
                 src="/pencil/Xef8P.webp"
                 alt="About visual"
                 fill
-                className="home-image-drift object-cover opacity-90 mix-blend-screen scale-[1.04]"
+                className="home-image-drift fractal-soft-edge object-cover opacity-90 mix-blend-screen scale-[1.08]"
                 sizes="(min-width: 768px) 32vw, 100vw"
               />
               <div className="absolute left-[12%] top-[15%] h-[392px] w-[392px] rounded-full border-2 border-[#9a76ff55] bg-[radial-gradient(circle,rgba(182,108,255,0.28),rgba(25,22,41,0))]" />
@@ -352,7 +351,7 @@ export default async function HomePage() {
 
             <div className="relative">
               <span className="absolute right-0 top-0 inline-flex rounded-full border border-white/20 bg-[#111426] px-3 py-2 text-xs font-bold text-[#dbe0f5]">
-                14 услуг
+                {servicesCarouselCards.length} {servicesCountLabel}
               </span>
               <p className="text-[13px] font-bold text-[#b188ff]">Услуги</p>
               <h2 className="mt-2 text-[54px] font-extrabold leading-[0.94] tracking-[-0.03em] text-[#f6f8ff]">Услуги под конкретную задачу сайта</h2>
@@ -360,31 +359,8 @@ export default async function HomePage() {
                 Здесь проще выбрать первый рабочий шаг: аудит, техработы, переработку страниц или новый сайт.
               </p>
 
-              <div className="mt-6 grid grid-cols-3 gap-[18px]">
-                {serviceCards.map((card, index) => (
-                  <div
-                    key={card.title}
-                    className="flex h-[420px] flex-col gap-4 rounded-[22px] border border-white/15 bg-[#0f1020] p-5 transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:shadow-[0_24px_50px_rgba(2,6,24,0.35)]"
-                    style={{
-                      background:
-                        index === 0
-                          ? 'radial-gradient(circle at 82% 8%, rgba(126,92,255,0.26), rgba(15,16,32,0) 60%), #0f1020'
-                          : index === 1
-                            ? 'radial-gradient(circle at 82% 8%, rgba(141,102,255,0.22), rgba(15,16,32,0) 60%), #0f1020'
-                            : 'radial-gradient(circle at 82% 8%, rgba(255,98,175,0.20), rgba(15,16,32,0) 60%), #0f1020',
-                    }}
-                  >
-                    <p className="text-[13px] font-bold leading-[1.35] text-[#acb0c9]">{card.tag}</p>
-                    <h3 className="text-[38px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f6f8ff]">{card.title}</h3>
-                    <p className="flex-1 text-base font-medium leading-[1.45] text-[#d4daf0]">{card.description}</p>
-                    <Link
-                      href={linkWithLocale(card.href, locale)}
-                      className="inline-flex w-fit rounded-full border border-white/20 bg-[linear-gradient(90deg,#6d4bff,#ff4ea7)] px-3 py-2 text-sm font-bold text-white"
-                    >
-                      Перейти к услуге
-                    </Link>
-                  </div>
-                ))}
+              <div className="mt-6">
+                <ServicesCarousel cards={servicesCarouselCards} autoScrollNote={servicesAutoScrollNote} countLabel={servicesCountLabel} />
               </div>
             </div>
           </section>
@@ -459,7 +435,7 @@ export default async function HomePage() {
             <div className="relative h-[350px] w-[350px] justify-self-end">
               <div className="home-glow-breathe absolute left-[16%] top-[16%] h-[234px] w-[234px] rounded-full bg-[radial-gradient(circle,rgba(162,94,255,0.28),rgba(15,18,34,0))]" />
               <div className="home-glow-drift-delayed absolute left-[10%] top-[8%] h-[290px] w-[290px] rounded-full bg-[radial-gradient(circle,rgba(123,87,255,0.34),rgba(15,18,34,0))]" />
-              <Image src="/pencil/bDogD.webp" alt="CTA visual" fill className="home-image-breathe object-contain p-1 mix-blend-screen" sizes="350px" />
+              <Image src="/pencil/bDogD.webp" alt="CTA visual" fill className="home-image-breathe fractal-soft-edge object-contain p-1 mix-blend-screen" sizes="350px" />
             </div>
           </section>
         </div>
@@ -528,7 +504,7 @@ export default async function HomePage() {
               <Pill>Фокус на заявках</Pill>
             </div>
             <div className="relative mt-4 h-32 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_66%_38%,rgba(122,84,255,0.30),rgba(11,14,27,0)_60%),linear-gradient(160deg,#151935,#0b0e1b)]">
-              <Image src="/pencil/xZcUe.webp" alt="Hero mobile visual" fill className="home-image-float object-cover mix-blend-screen scale-[1.05]" sizes="100vw" />
+              <Image src="/pencil/xZcUe.webp" alt="Hero mobile visual" fill className="home-image-float fractal-soft-edge object-cover mix-blend-screen scale-[1.12]" sizes="100vw" />
             </div>
           </section>
 
@@ -553,13 +529,13 @@ export default async function HomePage() {
               ))}
             </div>
             <div className="relative mt-3 h-[126px] overflow-hidden rounded-[14px] bg-[radial-gradient(circle_at_58%_24%,rgba(138,87,255,0.30),rgba(13,15,29,0)_60%),linear-gradient(160deg,#161a32,#0d0f1d)]">
-              <Image src="/pencil/Xef8P.webp" alt="About mobile visual" fill className="home-image-drift object-cover opacity-80 mix-blend-screen scale-[1.04]" sizes="100vw" />
+              <Image src="/pencil/Xef8P.webp" alt="About mobile visual" fill className="home-image-drift fractal-soft-edge object-cover opacity-80 mix-blend-screen scale-[1.08]" sizes="100vw" />
             </div>
           </section>
 
           <section className="relative overflow-hidden rounded-[22px] border border-white/10 bg-[#0a0b16] px-4 pb-[18px] pt-[18px]">
             <span className="inline-flex rounded-full border border-white/15 bg-[#101326] px-3 py-1 text-[11px] font-bold text-[#d9ddf0]">
-              14 услуг
+              {servicesCarouselCards.length} {servicesCountLabel}
             </span>
             <p className="mt-2 text-xs font-bold text-[#b188ff]">Услуги</p>
             <h2 className="mt-1 text-[34px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f6f8ff]">Услуги под конкретную задачу сайта</h2>
@@ -567,31 +543,8 @@ export default async function HomePage() {
               Первый рабочий шаг: аудит, техработы, переработка страниц или новый сайт.
             </p>
 
-            <div className="mt-4 flex flex-col gap-3">
-              {serviceCards.map((card, index) => (
-                <div
-                  key={card.title}
-                  className="flex h-[250px] flex-col gap-3 rounded-2xl border border-white/10 bg-[#0f1020] px-[14px] py-4 transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:shadow-[0_16px_36px_rgba(2,6,24,0.34)]"
-                  style={{
-                    background:
-                      index === 0
-                        ? 'radial-gradient(circle at 82% 8%, rgba(126,92,255,0.26), rgba(15,16,32,0) 60%), #0f1020'
-                        : index === 1
-                          ? 'radial-gradient(circle at 82% 8%, rgba(141,102,255,0.22), rgba(15,16,32,0) 60%), #0f1020'
-                          : 'radial-gradient(circle at 82% 8%, rgba(255,98,175,0.20), rgba(15,16,32,0) 60%), #0f1020',
-                  }}
-                >
-                  <p className="text-xs font-bold text-[#aeb3cc]">{card.tag}</p>
-                  <h3 className="text-[30px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f6f8ff]">{card.title}</h3>
-                  <p className="flex-1 text-sm font-medium leading-[1.45] text-[#d4daf0]">{card.description}</p>
-                  <Link
-                    href={linkWithLocale(card.href, locale)}
-                    className="inline-flex w-fit rounded-full border border-white/20 bg-[linear-gradient(90deg,#6d4bff,#ff4ea7)] px-3 py-1.5 text-xs font-bold text-white"
-                  >
-                    Перейти к услуге
-                  </Link>
-                </div>
-              ))}
+            <div className="mt-4">
+              <ServicesCarousel cards={servicesCarouselCards} autoScrollNote={servicesAutoScrollNote} countLabel={servicesCountLabel} />
             </div>
           </section>
 
@@ -651,7 +604,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <div className="relative mx-auto mt-4 h-24 w-24 overflow-hidden rounded-full bg-[#0f1222]">
-              <Image src="/pencil/bDogD.webp" alt="CTA symbol" fill className="home-image-breathe object-cover" sizes="96px" />
+              <Image src="/pencil/bDogD.webp" alt="CTA symbol" fill className="home-image-breathe fractal-soft-edge object-cover" sizes="96px" />
             </div>
             <div className="mt-3 flex flex-col items-center gap-2">
               <Pill>Отвечаю сам</Pill>
