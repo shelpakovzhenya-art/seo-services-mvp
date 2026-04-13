@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+  <defs>
+    <linearGradient id="rocketBody" x1="92" y1="58" x2="188" y2="174" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D7F8FF"/>
+      <stop offset="0.36" stop-color="#A887FF"/>
+      <stop offset="0.72" stop-color="#6A4BD8"/>
+      <stop offset="1" stop-color="#1B2B5F"/>
+    </linearGradient>
+    <linearGradient id="rocketEdge" x1="80" y1="46" x2="196" y2="184" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4FDFF" stop-opacity="0.95"/>
+      <stop offset="0.45" stop-color="#DFB4FF" stop-opacity="0.86"/>
+      <stop offset="1" stop-color="#8DD7FF" stop-opacity="0.72"/>
+    </linearGradient>
+    <radialGradient id="rocketFlame" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(86 186) rotate(13) scale(36 24)">
+      <stop stop-color="#FF8CC9"/>
+      <stop offset="0.56" stop-color="#9A72FF"/>
+      <stop offset="1" stop-color="#5DCFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <g transform="rotate(-28 128 128)">
+    <path d="M132 36C158 52 184 88 194 126C156 138 118 128 95 104C102 78 116 52 132 36Z" fill="url(#rocketBody)"/>
+    <path d="M132 36C158 52 184 88 194 126C156 138 118 128 95 104C102 78 116 52 132 36Z" stroke="url(#rocketEdge)" stroke-width="4"/>
+
+    <path d="M96 104L64 132L96 139L111 119L96 104Z" fill="url(#rocketBody)"/>
+    <path d="M120 132L152 164L154 126L133 112L120 132Z" fill="url(#rocketBody)"/>
+
+    <circle cx="158" cy="92" r="14" fill="#D8F7FF" fill-opacity="0.68"/>
+    <circle cx="158" cy="92" r="9" fill="#72B8FF" fill-opacity="0.5"/>
+
+    <path d="M82 162L60 188L90 182L96 154L82 162Z" fill="url(#rocketFlame)"/>
+  </g>
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+  <defs>
+    <linearGradient id="mailFill" x1="40" y1="48" x2="216" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D8F8FF"/>
+      <stop offset="0.45" stop-color="#A083FF"/>
+      <stop offset="0.78" stop-color="#5D42CC"/>
+      <stop offset="1" stop-color="#1A2A57"/>
+    </linearGradient>
+    <linearGradient id="mailStroke" x1="28" y1="34" x2="232" y2="222" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5FEFF" stop-opacity="0.96"/>
+      <stop offset="0.5" stop-color="#E8C4FF" stop-opacity="0.84"/>
+      <stop offset="1" stop-color="#98DCFF" stop-opacity="0.76"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="30" y="58" width="196" height="140" rx="30" fill="url(#mailFill)"/>
+  <rect x="30" y="58" width="196" height="140" rx="30" stroke="url(#mailStroke)" stroke-width="5"/>
+  <path d="M58 92L128 146L198 92" stroke="url(#mailStroke)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M60 182L108 132" stroke="url(#mailStroke)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M196 182L148 132" stroke="url(#mailStroke)" stroke-width="6" stroke-linecap="round"/>
+</svg>

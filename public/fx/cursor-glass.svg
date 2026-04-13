@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+  <defs>
+    <linearGradient id="cursorFill" x1="58" y1="42" x2="198" y2="198" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#CFF4FF"/>
+      <stop offset="0.4" stop-color="#9E80FF"/>
+      <stop offset="0.75" stop-color="#6E4AE2"/>
+      <stop offset="1" stop-color="#1A2858"/>
+    </linearGradient>
+    <linearGradient id="cursorStroke" x1="44" y1="34" x2="214" y2="214" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4FDFF" stop-opacity="0.96"/>
+      <stop offset="0.5" stop-color="#E1B8FF" stop-opacity="0.84"/>
+      <stop offset="1" stop-color="#91D9FF" stop-opacity="0.74"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M52 34L210 126L136 146L122 220L52 34Z" fill="url(#cursorFill)"/>
+  <path d="M52 34L210 126L136 146L122 220L52 34Z" stroke="url(#cursorStroke)" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M128 152L190 214" stroke="url(#cursorStroke)" stroke-width="8" stroke-linecap="round"/>
+</svg>

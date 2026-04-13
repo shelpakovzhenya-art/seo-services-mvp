@@ -63,7 +63,7 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
   ].filter((item) => item.href)
 
   return (
-    <footer className="relative mt-auto overflow-hidden border-t border-[#253249] bg-[#0b1220] text-slate-300">
+    <footer className="apple-glass-footer relative mt-auto overflow-hidden border-t border-[#253249] bg-[#0b1220] text-slate-300">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(188,144,100,0.14),transparent_24%),radial-gradient(circle_at_12%_16%,rgba(58,86,122,0.12),transparent_22%)]" />
       <div className="container relative mx-auto px-4 py-16">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.75fr_0.8fr_1.1fr]">

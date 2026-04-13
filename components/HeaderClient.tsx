@@ -104,7 +104,7 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
 
   return (
     <>
-      <div className="relative z-40 border-b border-white/6 bg-[#0b1220]/92 backdrop-blur-xl">
+      <div className="apple-glass-strip relative z-40 border-b border-white/6 bg-[#0b1220]/92 backdrop-blur-xl">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-start gap-2 py-2.5 text-[11px] font-medium text-slate-200/88 sm:flex-row sm:items-center sm:justify-between sm:gap-3 md:gap-4 md:py-3 md:text-xs">
             <div className="flex w-full min-w-0 flex-wrap items-center gap-2.5 md:gap-3">
@@ -154,9 +154,9 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
         </div>
       </div>
 
-      <div className="sticky top-0 z-50 bg-[#0b1220]/84 shadow-[0_18px_40px_rgba(2,8,23,0.22)] backdrop-blur-2xl">
+      <div className="apple-glass-sticky sticky top-0 z-50 bg-[#0b1220]/84 shadow-[0_18px_40px_rgba(2,8,23,0.22)] backdrop-blur-2xl">
         <div className="container mx-auto px-4">
-          <nav className="my-2 flex items-center justify-between gap-2.5 rounded-[24px] border border-white/10 bg-[linear-gradient(145deg,rgba(10,17,31,0.96),rgba(15,24,40,0.94))] px-3 py-2.5 shadow-[0_22px_52px_rgba(2,8,23,0.24)] md:my-3 md:mb-4 md:gap-4 md:rounded-[28px] md:px-4 md:py-4">
+          <nav className="apple-glass-nav my-2 flex items-center justify-between gap-2.5 rounded-[24px] border border-white/10 bg-[linear-gradient(145deg,rgba(10,17,31,0.96),rgba(15,24,40,0.94))] px-3 py-2.5 shadow-[0_22px_52px_rgba(2,8,23,0.24)] md:my-3 md:mb-4 md:gap-4 md:rounded-[28px] md:px-4 md:py-4">
             <Link
               href={prefixPathWithLocale('/', locale)}
               aria-label={locale === 'ru' ? 'Перейти на главную' : 'Go to homepage'}

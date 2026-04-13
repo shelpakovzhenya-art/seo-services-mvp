@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+  <defs>
+    <radialGradient id="orbBase" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(92 78) rotate(35) scale(176)">
+      <stop stop-color="#8EE8FF"/>
+      <stop offset="0.4" stop-color="#8C68FF"/>
+      <stop offset="0.72" stop-color="#452B9F"/>
+      <stop offset="1" stop-color="#101936"/>
+    </radialGradient>
+    <linearGradient id="orbRing" x1="42" y1="38" x2="210" y2="214" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C9F5FF" stop-opacity="0.95"/>
+      <stop offset="0.46" stop-color="#C78DFF" stop-opacity="0.78"/>
+      <stop offset="1" stop-color="#88D4FF" stop-opacity="0.66"/>
+    </linearGradient>
+    <radialGradient id="orbGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(128 132) rotate(90) scale(112)">
+      <stop stop-color="#FF84D6" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#FF84D6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <circle cx="128" cy="128" r="94" fill="url(#orbBase)"/>
+  <circle cx="128" cy="128" r="90" stroke="url(#orbRing)" stroke-width="5"/>
+  <ellipse cx="102" cy="84" rx="42" ry="24" fill="#FFFFFF" fill-opacity="0.36"/>
+  <ellipse cx="148" cy="176" rx="52" ry="26" fill="#8DE3FF" fill-opacity="0.18"/>
+  <circle cx="128" cy="132" r="112" fill="url(#orbGlow)"/>
+</svg>
