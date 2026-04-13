@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
+import { Manrope } from 'next/font/google'
 import Script from 'next/script'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
@@ -12,6 +13,12 @@ import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getSiteUrl } from '@/lib/site-url'
 import { createBrandSchema, createWebsiteSchema } from '@/lib/structured-data'
 import './globals.css'
+
+const manrope = Manrope({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700', '800'],
+  display: 'swap',
+})
 
 const siteUrl = getSiteUrl()
 const yandexMetrikaId = 108185358
@@ -97,7 +104,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={isAdmin ? 'admin-theme admin-body' : 'site-shell'}>
+      <body className={`${manrope.className} ${isAdmin ? 'admin-theme admin-body' : 'site-shell'}`}>
         {!isAdmin && <LocaleHtmlSync />}
         {!isAdmin ? (
           <>

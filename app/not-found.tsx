@@ -10,12 +10,14 @@ export default async function NotFound() {
   const dictionary = getDictionary(locale)
 
   return (
-    <div className="container mx-auto px-4 py-20 text-center">
-      <h1 className="mb-4 text-4xl font-bold">404</h1>
-      <p className="mb-8 text-xl text-gray-600">{dictionary.notFound.title}</p>
-      <Link href={prefixPathWithLocale('/', locale)}>
-        <Button>{dictionary.notFound.back}</Button>
-      </Link>
+    <div className="page-shell text-center">
+      <section className="surface-grid surface-pad">
+        <h1 className="mb-4 text-4xl font-bold text-slate-100 md:text-6xl">404</h1>
+        <p className="mb-8 text-xl text-slate-300">{dictionary.notFound.title}</p>
+        <Link href={prefixPathWithLocale('/', locale)}>
+          <Button>{dictionary.notFound.back}</Button>
+        </Link>
+      </section>
     </div>
   )
 }

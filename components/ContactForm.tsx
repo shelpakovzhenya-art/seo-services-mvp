@@ -76,7 +76,7 @@ export default function ContactForm() {
       />
 
       <div>
-        <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-700">
+        <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-200">
           {dictionary.form.nameLabel}
         </label>
         <input
@@ -85,26 +85,26 @@ export default function ContactForm() {
           required
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="contact-input"
+          className="w-full rounded-2xl border border-white/16 bg-[#0f1226] px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-[#9a74ff] focus:ring-2 focus:ring-[#8d66ff]/35"
           placeholder={dictionary.form.namePlaceholder}
         />
       </div>
 
       <div>
-        <label htmlFor="contact" className="mb-2 block text-sm font-medium text-slate-700">
+        <label htmlFor="contact" className="mb-2 block text-sm font-medium text-slate-200">
           {dictionary.form.contactLabel}
         </label>
-        <div className="contact-helper-card mb-3 flex flex-wrap items-center gap-3 text-sm text-slate-700">
+        <div className="mb-3 flex flex-wrap items-center gap-3 rounded-2xl border border-white/14 bg-white/5 px-4 py-3 text-sm text-slate-300">
           <a
             href={telegramHref}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 font-medium text-[#8a5630] transition hover:text-slate-950"
+            className="inline-flex items-center gap-2 font-medium text-[#b9a6ff] transition hover:text-[#d6ccff]"
           >
             <Image src="/telegram-logo.svg" alt="Telegram" width={24} height={24} className="h-6 w-6" />
             {dictionary.form.telegramLabel}
           </a>
-          <span className="text-slate-400">{dictionary.form.telegramHint}</span>
+          <span className="text-slate-500">{dictionary.form.telegramHint}</span>
         </div>
         <input
           type="text"
@@ -113,13 +113,13 @@ export default function ContactForm() {
           autoComplete="tel"
           value={formData.contact}
           onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-          className="contact-input"
+          className="w-full rounded-2xl border border-white/16 bg-[#0f1226] px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-[#9a74ff] focus:ring-2 focus:ring-[#8d66ff]/35"
           placeholder={dictionary.form.contactPlaceholder}
         />
       </div>
 
       <div>
-        <label htmlFor="site" className="mb-2 block text-sm font-medium text-slate-700">
+        <label htmlFor="site" className="mb-2 block text-sm font-medium text-slate-200">
           {dictionary.form.siteLabel}
         </label>
         <input
@@ -128,21 +128,21 @@ export default function ContactForm() {
           autoComplete="url"
           value={formData.site}
           onChange={(e) => setFormData({ ...formData, site: e.target.value })}
-          className="contact-input"
+          className="w-full rounded-2xl border border-white/16 bg-[#0f1226] px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-[#9a74ff] focus:ring-2 focus:ring-[#8d66ff]/35"
           placeholder={dictionary.form.sitePlaceholder}
         />
       </div>
 
-      <div className="contact-note-card text-sm leading-7 text-slate-600">
+      <div className="rounded-2xl border border-white/14 bg-white/5 p-4 text-sm leading-7 text-slate-300">
         {dictionary.form.note}
       </div>
 
       {message && (
         <div
-          className={`contact-message text-sm ${
+          className={`rounded-2xl p-4 text-sm ${
             message.type === 'success'
-              ? 'border border-emerald-200 bg-emerald-50 text-emerald-800'
-              : 'border border-red-200 bg-red-50 text-red-800'
+              ? 'border border-emerald-300/35 bg-emerald-400/12 text-emerald-200'
+              : 'border border-rose-300/35 bg-rose-400/12 text-rose-200'
           }`}
         >
           {message.text}

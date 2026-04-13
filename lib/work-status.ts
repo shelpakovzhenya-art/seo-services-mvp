@@ -108,9 +108,9 @@ export function getWorkStatus(workSchedule?: string | null) {
     isWorking,
     text: isWorking ? '\u0412 \u0441\u0435\u0442\u0438' : '\u041d\u0435 \u0432 \u0441\u0435\u0442\u0438',
     badgeClass: isWorking
-      ? 'border-emerald-200 bg-emerald-50/90 text-emerald-700'
-      : 'border-red-200 bg-red-50/90 text-red-700',
-    dotClass: isWorking ? 'bg-emerald-500' : 'bg-red-500',
-    pingClass: isWorking ? 'bg-emerald-400/50' : 'bg-red-400/50',
+      ? 'border-emerald-300/35 bg-emerald-400/14 text-emerald-200'
+      : 'border-rose-300/35 bg-rose-400/14 text-rose-200',
+    dotClass: isWorking ? 'bg-emerald-400' : 'bg-rose-400',
+    pingClass: isWorking ? 'bg-emerald-300/60' : 'bg-rose-300/60',
   }
 }

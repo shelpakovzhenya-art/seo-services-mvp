@@ -106,7 +106,7 @@ export default function CaseGallery({ images, title, locale = 'ru' }: CaseGaller
           {images.map((image, index) => (
             <article
               key={`${image.src}-${index}`}
-              className="uniform-card overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.08)]"
+              className="uniform-card overflow-hidden rounded-[28px] border border-white/12 bg-[#11152b] shadow-[0_22px_48px_rgba(7,8,19,0.42)]"
             >
               <button
                 type="button"
@@ -114,8 +114,8 @@ export default function CaseGallery({ images, title, locale = 'ru' }: CaseGaller
                 className="group flex h-full flex-col text-left"
                 aria-label={copy.openImage(index, title)}
               >
-                <div className="relative aspect-[16/10] w-full bg-[linear-gradient(180deg,#fffdf8,#f7fbff)] p-3">
-                  <div className="relative h-full w-full overflow-hidden rounded-[20px] border border-white/80 bg-white">
+                <div className="relative aspect-[16/10] w-full bg-[linear-gradient(180deg,#11152b,#151a36)] p-3">
+                  <div className="relative h-full w-full overflow-hidden rounded-[20px] border border-white/14 bg-[#0c1122]">
                     <Image
                       src={image.src}
                       alt={image.caption || `${title} ${index + 1}`}
@@ -132,7 +132,7 @@ export default function CaseGallery({ images, title, locale = 'ru' }: CaseGaller
                 </div>
 
                 {image.caption ? (
-                  <div className="border-t border-slate-200 px-4 py-3 text-sm leading-6 text-slate-600">
+                  <div className="border-t border-white/10 px-4 py-3 text-sm leading-6 text-slate-300">
                     {image.caption}
                   </div>
                 ) : null}
@@ -157,12 +157,12 @@ export default function CaseGallery({ images, title, locale = 'ru' }: CaseGaller
           />
 
           <div className="relative z-10 w-full max-w-7xl">
-            <div className="overflow-hidden rounded-[32px] border border-white/20 bg-[linear-gradient(160deg,rgba(255,255,255,0.96),rgba(243,249,255,0.94)_46%,rgba(255,245,236,0.95)_100%)] p-4 shadow-[0_40px_120px_rgba(2,8,23,0.5)] md:p-6">
+            <div className="overflow-hidden rounded-[32px] border border-white/18 bg-[linear-gradient(155deg,rgba(10,12,24,0.98),rgba(19,24,47,0.96)_44%,rgba(23,18,46,0.94)_100%)] p-4 shadow-[0_40px_120px_rgba(2,8,23,0.62)] md:p-6">
               <div className="flex flex-wrap items-start justify-between gap-4 pb-4">
                 <div className="max-w-3xl">
-                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">{copy.fragment}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">{copy.fragment}</p>
                   {activeImage.caption ? (
-                    <p className="mt-2 text-sm leading-7 text-slate-700 md:text-base">{activeImage.caption}</p>
+                    <p className="mt-2 text-sm leading-7 text-slate-200 md:text-base">{activeImage.caption}</p>
                   ) : null}
                 </div>
 
@@ -172,7 +172,7 @@ export default function CaseGallery({ images, title, locale = 'ru' }: CaseGaller
                       <button
                         type="button"
                         onClick={showPrevious}
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:text-slate-950"
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-[#141933] text-slate-200 transition hover:border-[#9b7dff]/70 hover:text-white"
                         aria-label={copy.previous}
                       >
                         <ChevronLeft className="h-5 w-5" />
@@ -180,7 +180,7 @@ export default function CaseGallery({ images, title, locale = 'ru' }: CaseGaller
                       <button
                         type="button"
                         onClick={showNext}
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:text-slate-950"
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-[#141933] text-slate-200 transition hover:border-[#9b7dff]/70 hover:text-white"
                         aria-label={copy.next}
                       >
                         <ChevronRight className="h-5 w-5" />
@@ -191,7 +191,7 @@ export default function CaseGallery({ images, title, locale = 'ru' }: CaseGaller
                   <button
                     type="button"
                     onClick={() => setActiveIndex(null)}
-                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:text-slate-950"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-[#141933] text-slate-200 transition hover:border-[#9b7dff]/70 hover:text-white"
                     aria-label={copy.close}
                   >
                     <X className="h-5 w-5" />
@@ -199,7 +199,7 @@ export default function CaseGallery({ images, title, locale = 'ru' }: CaseGaller
                 </div>
               </div>
 
-              <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[24px] border border-white/80 bg-white md:aspect-[16/9]">
+              <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[24px] border border-white/14 bg-[#0c1122] md:aspect-[16/9]">
                 <Image
                   src={activeImage.src}
                   alt={activeImage.caption || `${title} ${activeSlideNumber}`}
@@ -211,7 +211,7 @@ export default function CaseGallery({ images, title, locale = 'ru' }: CaseGaller
               </div>
 
               {images.length > 1 ? (
-                <div className="mt-4 text-sm text-slate-500">{copy.slideCounter(activeSlideNumber, images.length)}</div>
+                <div className="mt-4 text-sm text-slate-400">{copy.slideCounter(activeSlideNumber, images.length)}</div>
               ) : null}
             </div>
           </div>
