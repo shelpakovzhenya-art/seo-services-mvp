@@ -17,7 +17,6 @@ export type ServicesCarouselCard = {
 
 type ServicesCarouselProps = {
   cards: ServicesCarouselCard[]
-  autoScrollNote?: string
   countLabel: string
   showCountBadge?: boolean
 }
@@ -59,7 +58,7 @@ function ServiceCard({ card }: { card: ServicesCarouselCard }) {
   )
 }
 
-export default function ServicesCarousel({ cards, autoScrollNote, countLabel, showCountBadge = true }: ServicesCarouselProps) {
+export default function ServicesCarousel({ cards, countLabel, showCountBadge = true }: ServicesCarouselProps) {
   const trackRef = useRef<HTMLDivElement | null>(null)
   const dragStateRef = useRef({
     pointerId: null as number | null,
@@ -149,9 +148,6 @@ export default function ServicesCarousel({ cards, autoScrollNote, countLabel, sh
 
   return (
     <div className="space-y-3">
-      {autoScrollNote ? (
-        <p className="text-sm leading-6 text-slate-500">{autoScrollNote}</p>
-      ) : null}
       {showCountBadge ? (
         <div className="flex justify-end">
           <div className="brand-badge text-xs uppercase tracking-[0.18em]">

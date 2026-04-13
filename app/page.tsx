@@ -142,10 +142,6 @@ export default async function HomePage() {
     cta: locale === 'ru' ? 'Перейти к услуге' : 'Open service',
   }))
   const servicesCountLabel = locale === 'ru' ? 'услуг' : 'services'
-  const servicesAutoScrollNote =
-    locale === 'ru'
-      ? 'Карточки двигаются автоматически. Наведите курсор, чтобы остановить и выбрать услугу.'
-      : 'Cards move automatically. Hover to pause and open the needed service.'
 
   return (
     <div className="relative overflow-hidden bg-[#060611]">
@@ -278,7 +274,7 @@ export default async function HomePage() {
               </p>
 
               <div className="mt-6">
-                <ServicesCarousel cards={servicesCarouselCards} autoScrollNote={servicesAutoScrollNote} countLabel={servicesCountLabel} />
+                <ServicesCarousel cards={servicesCarouselCards} countLabel={servicesCountLabel} />
               </div>
             </div>
           </section>
@@ -428,7 +424,7 @@ export default async function HomePage() {
             </p>
 
             <div className="mt-4">
-              <ServicesCarousel cards={servicesCarouselCards} autoScrollNote={servicesAutoScrollNote} countLabel={servicesCountLabel} />
+              <ServicesCarousel cards={servicesCarouselCards} countLabel={servicesCountLabel} />
             </div>
           </section>
 
