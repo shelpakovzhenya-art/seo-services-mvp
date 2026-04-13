@@ -82,6 +82,8 @@ export default async function RootLayout({
   const pathname = headersList.get('x-site-pathname') || ''
   const locale = getRouteLocale(headersList.get('x-locale'))
   const isAdmin = pathname.startsWith('/admin')
+  const isHome = ['', '/', '/ru', '/en', '/ru/', '/en/'].includes(pathname)
+  const showSiteChrome = !isAdmin && !isHome
   let settings: Awaited<ReturnType<typeof prisma.siteSettings.findFirst>> = null
 
   if (!isAdmin) {
@@ -153,10 +155,10 @@ export default async function RootLayout({
           </>
         ) : null}
         <div className={isAdmin ? '' : 'site-frame'}>
-          {!isAdmin && <Header />}
-          <main className={isAdmin ? '' : 'min-h-screen'}>{children}</main>
-          {!isAdmin && <ScrollToTopButton />}
-          {!isAdmin && <Footer />}
+          {showSiteChrome && <Header />}
+          <main className={isAdmin || isHome ? '' : 'min-h-screen'}>{children}</main>
+          {showSiteChrome && <ScrollToTopButton />}
+          {showSiteChrome && <Footer />}
         </div>
       </body>
     </html>
