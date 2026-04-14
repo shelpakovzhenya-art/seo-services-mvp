@@ -144,11 +144,11 @@ export default async function HomePage() {
   const servicesCountLabel = locale === 'ru' ? 'услуг' : 'services'
 
   return (
-    <div className="relative overflow-hidden bg-[#060611]">
+    <div className="relative overflow-hidden bg-[#0a0d1a]">
       <div className="pointer-events-none absolute inset-0">
-        <div className="home-glow-drift absolute left-[-12%] top-[6%] h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(125,60,255,0.20),rgba(6,6,17,0))]" />
-        <div className="home-glow-drift-delayed absolute right-[-15%] top-[2%] h-[620px] w-[620px] rounded-full bg-[radial-gradient(circle,rgba(255,77,170,0.12),rgba(6,6,17,0))]" />
-        <div className="home-glow-breathe absolute bottom-[-18%] left-[12%] h-[720px] w-[720px] rounded-full bg-[radial-gradient(circle,rgba(125,60,255,0.12),rgba(6,6,17,0))]" />
+        <div className="home-glow-drift absolute left-[-12%] top-[6%] h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(125,60,255,0.30),rgba(10,13,26,0))]" />
+        <div className="home-glow-drift-delayed absolute right-[-15%] top-[2%] h-[620px] w-[620px] rounded-full bg-[radial-gradient(circle,rgba(255,77,170,0.2),rgba(10,13,26,0))]" />
+        <div className="home-glow-breathe absolute bottom-[-18%] left-[12%] h-[720px] w-[720px] rounded-full bg-[radial-gradient(circle,rgba(125,60,255,0.18),rgba(10,13,26,0))]" />
       </div>
 
       <span className="hidden" aria-hidden="true">
