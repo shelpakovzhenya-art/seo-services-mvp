@@ -1,8 +1,16 @@
-"use client"
+'use client'
 
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type WheelEvent as ReactWheelEvent } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+  type PointerEvent,
+  type WheelEvent,
+} from 'react'
 
 export type ServicesCarouselCard = {
   slug: string
@@ -19,6 +27,33 @@ type ServicesCarouselProps = {
   cards: ServicesCarouselCard[]
   countLabel: string
   showCountBadge?: boolean
+}
+
+type DragState = {
+  active: boolean
+  pointerId: number | null
+  startX: number
+  startScrollLeft: number
+  lastX: number
+  lastTime: number
+  velocity: number
+  moved: boolean
+}
+
+const DRAG_THRESHOLD = 6
+const MOMENTUM_DECAY = 0.93
+const MOMENTUM_MIN_SPEED = 0.2
+const MOMENTUM_MULTIPLIER = 18
+
+const DEFAULT_DRAG_STATE: DragState = {
+  active: false,
+  pointerId: null,
+  startX: 0,
+  startScrollLeft: 0,
+  lastX: 0,
+  lastTime: 0,
+  velocity: 0,
+  moved: false,
 }
 
 function ServiceCard({ card }: { card: ServicesCarouselCard }) {
@@ -60,93 +95,219 @@ function ServiceCard({ card }: { card: ServicesCarouselCard }) {
 
 export default function ServicesCarousel({ cards, countLabel, showCountBadge = true }: ServicesCarouselProps) {
   const trackRef = useRef<HTMLDivElement | null>(null)
-  const dragStateRef = useRef({
-    pointerId: null as number | null,
-    startX: 0,
-    startScrollLeft: 0,
-    isDragging: false,
-  })
+  const dragStateRef = useRef<DragState>(DEFAULT_DRAG_STATE)
   const suppressClickRef = useRef(false)
+  const momentumFrameRef = useRef<number | null>(null)
+  const suppressClickTimeoutRef = useRef<number | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
-  if (cards.length === 0) {
-    return null
-  }
-
-  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== 'mouse' || event.button !== 0) {
+  const clearSuppressClickTimeout = useCallback(() => {
+    if (suppressClickTimeoutRef.current === null) {
       return
     }
 
-    const track = trackRef.current
+    window.clearTimeout(suppressClickTimeoutRef.current)
+    suppressClickTimeoutRef.current = null
+  }, [])
 
-    if (!track) {
+  const stopMomentum = useCallback(() => {
+    if (momentumFrameRef.current === null) {
       return
     }
 
-    dragStateRef.current.pointerId = event.pointerId
-    dragStateRef.current.startX = event.clientX
-    dragStateRef.current.startScrollLeft = track.scrollLeft
-    dragStateRef.current.isDragging = false
-    suppressClickRef.current = false
-    track.setPointerCapture(event.pointerId)
-    track.classList.add('services-carousel-track--dragging')
-  }
+    cancelAnimationFrame(momentumFrameRef.current)
+    momentumFrameRef.current = null
+  }, [])
 
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+  useEffect(() => {
+    return () => {
+      clearSuppressClickTimeout()
+      stopMomentum()
+    }
+  }, [clearSuppressClickTimeout, stopMomentum])
+
+  const scheduleSuppressClickReset = useCallback((delay = 120) => {
+    clearSuppressClickTimeout()
+
+    suppressClickTimeoutRef.current = window.setTimeout(() => {
+      suppressClickRef.current = false
+      suppressClickTimeoutRef.current = null
+    }, delay)
+  }, [clearSuppressClickTimeout])
+
+  const startMomentum = useCallback(
+    (initialVelocity: number) => {
+      stopMomentum()
+
+      let velocity = initialVelocity
+
+      const step = () => {
+        const track = trackRef.current
+
+        if (!track || dragStateRef.current.active) {
+          momentumFrameRef.current = null
+          suppressClickRef.current = false
+          return
+        }
+
+        const maxScroll = track.scrollWidth - track.clientWidth
+
+        if (maxScroll <= 0) {
+          momentumFrameRef.current = null
+          suppressClickRef.current = false
+          return
+        }
+
+        const nextScrollLeft = Math.min(maxScroll, Math.max(0, track.scrollLeft + velocity))
+        track.scrollLeft = nextScrollLeft
+
+        if (nextScrollLeft <= 0 || nextScrollLeft >= maxScroll) {
+          velocity *= 0.82
+        }
+
+        velocity *= MOMENTUM_DECAY
+
+        if (Math.abs(velocity) < MOMENTUM_MIN_SPEED) {
+          momentumFrameRef.current = null
+          scheduleSuppressClickReset()
+          return
+        }
+
+        momentumFrameRef.current = requestAnimationFrame(step)
+      }
+
+      momentumFrameRef.current = requestAnimationFrame(step)
+    },
+    [scheduleSuppressClickReset, stopMomentum]
+  )
+
+  const finishDrag = useCallback(
+    (pointerId?: number) => {
+      const track = trackRef.current
+      const state = dragStateRef.current
+
+      if (!state.active) {
+        return
+      }
+
+      if (typeof pointerId === 'number' && state.pointerId !== pointerId) {
+        return
+      }
+
+      if (track && state.pointerId !== null && track.hasPointerCapture(state.pointerId)) {
+        track.releasePointerCapture(state.pointerId)
+      }
+
+      const releaseVelocity = state.velocity
+      const shouldSuppressClick = state.moved
+
+      dragStateRef.current = { ...DEFAULT_DRAG_STATE }
+      setIsDragging(false)
+
+      if (!shouldSuppressClick) {
+        suppressClickRef.current = false
+        return
+      }
+
+      suppressClickRef.current = true
+
+      if (Math.abs(releaseVelocity) > 0.025) {
+        startMomentum(-releaseVelocity * MOMENTUM_MULTIPLIER)
+        return
+      }
+
+      scheduleSuppressClickReset()
+    },
+    [scheduleSuppressClickReset, startMomentum]
+  )
+
+  const handlePointerDown = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (event.pointerType === 'mouse' && event.button !== 0) {
+        return
+      }
+
+      const track = trackRef.current
+
+      if (!track) {
+        return
+      }
+
+      stopMomentum()
+      clearSuppressClickTimeout()
+      suppressClickRef.current = false
+
+      const timestamp = performance.now()
+
+      dragStateRef.current = {
+        active: true,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startScrollLeft: track.scrollLeft,
+        lastX: event.clientX,
+        lastTime: timestamp,
+        velocity: 0,
+        moved: false,
+      }
+
+      setIsDragging(true)
+      track.setPointerCapture(event.pointerId)
+    },
+    [clearSuppressClickTimeout, stopMomentum]
+  )
+
+  const handlePointerMove = useCallback((event: PointerEvent<HTMLDivElement>) => {
     const track = trackRef.current
     const state = dragStateRef.current
 
-    if (!track || state.pointerId !== event.pointerId) {
+    if (!track || !state.active || state.pointerId !== event.pointerId) {
       return
     }
 
     const deltaX = event.clientX - state.startX
 
-    if (!state.isDragging && Math.abs(deltaX) < 4) {
+    if (!state.moved && Math.abs(deltaX) < DRAG_THRESHOLD) {
       return
     }
 
-    state.isDragging = true
+    state.moved = true
     track.scrollLeft = state.startScrollLeft - deltaX
+
+    const timestamp = performance.now()
+    const deltaTime = timestamp - state.lastTime
+
+    if (deltaTime > 0) {
+      state.velocity = (event.clientX - state.lastX) / deltaTime
+      state.lastX = event.clientX
+      state.lastTime = timestamp
+    }
+
     event.preventDefault()
-  }
+  }, [])
 
-  const handlePointerEnd = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const track = trackRef.current
-    const state = dragStateRef.current
+  const handlePointerUp = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    finishDrag(event.pointerId)
+  }, [finishDrag])
 
-    if (state.pointerId !== event.pointerId) {
-      return
-    }
+  const handlePointerCancel = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    finishDrag(event.pointerId)
+  }, [finishDrag])
 
-    if (track?.hasPointerCapture(event.pointerId)) {
-      track.releasePointerCapture(event.pointerId)
-    }
+  const handleLostPointerCapture = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    finishDrag(event.pointerId)
+  }, [finishDrag])
 
-    track?.classList.remove('services-carousel-track--dragging')
-
-    if (state.isDragging) {
-      suppressClickRef.current = true
-      window.setTimeout(() => {
-        suppressClickRef.current = false
-      }, 0)
-    }
-
-    state.pointerId = null
-    state.isDragging = false
-  }
-
-  const handleClickCapture = (event: ReactMouseEvent<HTMLDivElement>) => {
+  const handleClickCapture = useCallback((event: MouseEvent<HTMLDivElement>) => {
     if (!suppressClickRef.current) {
       return
     }
 
     event.preventDefault()
     event.stopPropagation()
-    suppressClickRef.current = false
-  }
+    scheduleSuppressClickReset(70)
+  }, [scheduleSuppressClickReset])
 
-  const handleWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
+  const handleWheel = useCallback((event: WheelEvent<HTMLDivElement>) => {
     const track = trackRef.current
 
     if (!track) {
@@ -173,6 +334,10 @@ export default function ServicesCarousel({ cards, countLabel, showCountBadge = t
 
     track.scrollLeft = nextScrollLeft
     event.preventDefault()
+  }, [])
+
+  if (cards.length === 0) {
+    return null
   }
 
   return (
@@ -191,12 +356,12 @@ export default function ServicesCarousel({ cards, countLabel, showCountBadge = t
 
         <div
           ref={trackRef}
-          className="services-carousel-track services-carousel-track--draggable -mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-2 pt-1"
+          className={`services-carousel-track services-carousel-track--draggable -mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-2 pt-1${isDragging ? ' services-carousel-track--dragging' : ''}`}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerEnd}
-          onPointerCancel={handlePointerEnd}
-          onLostPointerCapture={handlePointerEnd}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerCancel}
+          onLostPointerCapture={handleLostPointerCapture}
           onClickCapture={handleClickCapture}
           onWheel={handleWheel}
         >

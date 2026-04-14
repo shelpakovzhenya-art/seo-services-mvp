@@ -177,13 +177,13 @@ export default async function HomePage() {
                 <div className="flex items-center gap-3">
                   <Link
                     href={linkWithLocale('/contacts', locale)}
-                    className="inline-flex rounded-full bg-[linear-gradient(90deg,#6e49ff,#ff4ea2)] px-6 py-4 text-[15px] font-bold text-white shadow-[0_10px_28px_rgba(138,80,255,0.45)]"
+                    className="button-wave inline-flex rounded-full bg-[linear-gradient(90deg,#6e49ff,#ff4ea2)] px-6 py-4 text-[15px] font-bold text-white shadow-[0_10px_28px_rgba(138,80,255,0.45)]"
                   >
                     Получить разбор сайта
                   </Link>
                   <Link
                     href={linkWithLocale('/cases', locale)}
-                    className="inline-flex rounded-full border border-white/30 bg-[linear-gradient(90deg,#6f4bff,#ff4ea8)] px-6 py-4 text-[15px] font-bold text-white shadow-[0_8px_24px_rgba(139,84,255,0.35)]"
+                    className="button-wave inline-flex rounded-full border border-white/30 bg-[linear-gradient(90deg,#6f4bff,#ff4ea8)] px-6 py-4 text-[15px] font-bold text-white shadow-[0_8px_24px_rgba(139,84,255,0.35)]"
                   >
                     Посмотреть кейсы
                   </Link>
@@ -335,7 +335,7 @@ export default async function HomePage() {
               <div className="pt-1">
                 <Link
                   href={linkWithLocale('/contacts', locale)}
-                  className="inline-flex rounded-full border border-white/25 bg-[linear-gradient(90deg,#6f4bff,#ff4da8)] px-8 py-4 text-base font-extrabold text-white shadow-[0_10px_30px_rgba(147,79,255,0.45)] transition hover:-translate-y-0.5 hover:brightness-110"
+                  className="button-wave inline-flex rounded-full border border-white/25 bg-[linear-gradient(90deg,#6f4bff,#ff4da8)] px-8 py-4 text-base font-extrabold text-white shadow-[0_10px_30px_rgba(147,79,255,0.45)] transition hover:-translate-y-0.5 hover:brightness-110"
                 >
                   Получить разбор сайта
                 </Link>
@@ -367,13 +367,13 @@ export default async function HomePage() {
             <div className="mt-4 flex flex-col gap-2.5">
               <Link
                 href={linkWithLocale('/contacts', locale)}
-                className="inline-flex justify-center rounded-full bg-[linear-gradient(90deg,#6e49ff,#ff4ea2)] px-4 py-3 text-sm font-extrabold text-white"
+                className="button-wave inline-flex justify-center rounded-full bg-[linear-gradient(90deg,#6e49ff,#ff4ea2)] px-4 py-3 text-sm font-extrabold text-white"
               >
                 Получить разбор сайта
               </Link>
               <Link
                 href={linkWithLocale('/cases', locale)}
-                className="inline-flex justify-center rounded-full border border-white/30 bg-[linear-gradient(90deg,#6f4bff,#ff4ea8)] px-4 py-3 text-sm font-extrabold text-white"
+                className="button-wave inline-flex justify-center rounded-full border border-white/30 bg-[linear-gradient(90deg,#6f4bff,#ff4ea8)] px-4 py-3 text-sm font-extrabold text-white"
               >
                 Посмотреть кейсы
               </Link>

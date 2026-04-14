@@ -83,7 +83,7 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
             <p className="text-sm leading-7 text-slate-200">{copy.compactNote}</p>
             <a
               href={prefixPathWithLocale('/contacts#contact-form', locale)}
-              className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+              className="button-wave inline-flex items-center justify-center rounded-full border border-white/12 bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
             >
               {copy.compactCta}
             </a>

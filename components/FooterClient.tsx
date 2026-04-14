@@ -7,12 +7,21 @@ import { MessageCircle, MessagesSquare, Wrench } from 'lucide-react'
 import { getDictionary } from '@/lib/dictionaries'
 import { getLocaleFromPathname, type Locale, prefixPathWithLocale } from '@/lib/i18n'
 import { getFeaturedReads } from '@/lib/public-copy'
+import { normalizeSocialUrl } from '@/lib/social-links'
 import { containsCyrillic } from '@/lib/text-detection'
 
 type FooterClientProps = {
   menuItems: Array<{ id: string; label: string; url: string; order: number; isActive: boolean }>
   settings: any
 }
+
+type SocialLink = {
+  href: string
+  label: string
+  type: 'telegram' | 'whatsapp' | 'vk' | 'max'
+}
+
+const DEFAULT_TELEGRAM_URL = 'https://t.me/whoamikon'
 
 function localizeMenuLabel(url: string, fallbackLabel: string, locale: Locale) {
   const dictionary = getDictionary(locale)
@@ -55,12 +64,13 @@ export default function FooterClient({ menuItems, settings }: FooterClientProps)
     locale === 'en' && containsCyrillic(settings?.workSchedule)
       ? 'Mon-Fri 09:00-17:00'
       : settings?.workSchedule || 'Mon-Fri 09:00-17:00'
+  const telegramHref = normalizeSocialUrl(settings?.telegramUrl, 'telegram') || DEFAULT_TELEGRAM_URL
   const socialLinks = [
-    { href: settings?.telegramUrl, label: 'Telegram', type: 'telegram' as const },
-    { href: settings?.whatsappUrl, label: 'WhatsApp', type: 'whatsapp' as const },
-    { href: settings?.vkUrl, label: 'VK', type: 'vk' as const },
-    { href: settings?.maxUrl, label: 'Messenger', type: 'max' as const },
-  ].filter((item) => item.href)
+    { href: telegramHref, label: 'Telegram', type: 'telegram' as const },
+    { href: normalizeSocialUrl(settings?.whatsappUrl, 'whatsapp'), label: 'WhatsApp', type: 'whatsapp' as const },
+    { href: normalizeSocialUrl(settings?.vkUrl, 'vk'), label: 'VK', type: 'vk' as const },
+    { href: normalizeSocialUrl(settings?.maxUrl, 'max'), label: 'Messenger', type: 'max' as const },
+  ].filter((item): item is SocialLink => Boolean(item.href))
 
   return (
     <footer className="apple-glass-footer relative mt-auto overflow-hidden border-t border-[#253249] bg-[#0b1220] text-slate-300">
