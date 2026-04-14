@@ -7,6 +7,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type DragEvent,
   type MouseEvent,
   type PointerEvent,
   type WheelEvent,
@@ -40,7 +41,7 @@ type DragState = {
   moved: boolean
 }
 
-const DRAG_THRESHOLD = 6
+const DRAG_THRESHOLD = 3
 const MOMENTUM_DECAY = 0.93
 const MOMENTUM_MIN_SPEED = 0.2
 const MOMENTUM_MULTIPLIER = 18
@@ -57,10 +58,16 @@ const DEFAULT_DRAG_STATE: DragState = {
 }
 
 function ServiceCard({ card }: { card: ServicesCarouselCard }) {
+  const handleDragStart = useCallback((event: DragEvent<HTMLAnchorElement>) => {
+    event.preventDefault()
+  }, [])
+
   return (
     <Link
       href={card.href}
       prefetch={false}
+      draggable={false}
+      onDragStart={handleDragStart}
       className="services-carousel-card brand-link-card group flex min-h-[21rem] w-[84vw] max-w-[20.5rem] shrink-0 flex-col p-6 md:w-[20.5rem] md:max-w-none"
     >
       <div className="flex items-start justify-between gap-4">

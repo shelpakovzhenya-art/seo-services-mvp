@@ -165,7 +165,7 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
 
       <div className="apple-glass-sticky sticky top-0 z-50 bg-[#0b1220]/84 shadow-[0_18px_40px_rgba(2,8,23,0.22)] backdrop-blur-2xl">
         <div className="container mx-auto px-4">
-          <nav className="apple-glass-nav my-2 flex items-center justify-between gap-2.5 rounded-[24px] border border-white/10 bg-[linear-gradient(145deg,rgba(10,17,31,0.96),rgba(15,24,40,0.94))] px-3 py-2.5 shadow-[0_22px_52px_rgba(2,8,23,0.24)] md:my-3 md:mb-4 md:gap-4 md:rounded-[28px] md:px-4 md:py-4">
+          <nav className="apple-glass-nav my-2 flex items-center justify-between gap-2.5 overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(145deg,rgba(10,17,31,0.96),rgba(15,24,40,0.94))] px-3 py-2.5 shadow-[0_22px_52px_rgba(2,8,23,0.24)] md:my-3 md:mb-4 md:gap-4 md:rounded-[28px] md:px-4 md:py-4">
             <Link
               href={prefixPathWithLocale('/', locale)}
               aria-label={locale === 'ru' ? 'Перейти на главную' : 'Go to homepage'}
@@ -182,7 +182,7 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
               </span>
             </Link>
 
-            <ul className="hidden items-center gap-4 2xl:gap-6 xl:flex">
+            <ul className="hidden min-w-0 items-center gap-3 2xl:gap-5 xl:flex">
               {normalizedMenuItems.map((item) => (
                 <li key={`${item.url}-${item.id}`}>
                   <Link href={prefixPathWithLocale(item.url, locale)} className="site-nav-link">
@@ -192,11 +192,11 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
               ))}
             </ul>
 
-            <div className="hidden items-center gap-3 xl:flex">
+            <div className="hidden shrink-0 items-center gap-2 2xl:gap-3 xl:flex">
               <LanguageSwitcher locale={locale} pathname={pathname} />
-              <Link href={prefixPathWithLocale(CONTACT_FORM_HREF, locale)} className="site-cta-button whitespace-nowrap">
+              <Link href={prefixPathWithLocale(CONTACT_FORM_HREF, locale)} className="site-cta-button site-cta-button--header">
                 {dictionary.header.discussProject}
-                <ArrowUpRight className="h-4 w-4" />
+                <ArrowUpRight className="hidden h-4 w-4 2xl:block" />
               </Link>
             </div>
 
