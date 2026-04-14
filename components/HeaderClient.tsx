@@ -8,6 +8,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher'
 import MobileMenu from '@/components/MobileMenu'
 import { getDictionary } from '@/lib/dictionaries'
 import { getLocaleFromPathname, type Locale, prefixPathWithLocale } from '@/lib/i18n'
+import { normalizeSocialUrl } from '@/lib/social-links'
 import { containsCyrillic } from '@/lib/text-detection'
 import { getWorkStatus } from '@/lib/work-status'
 
@@ -24,6 +25,12 @@ type HeaderClientProps = {
   settings: any
 }
 
+type SocialLink = {
+  href: string
+  label: string
+  type: 'telegram' | 'whatsapp' | 'vk' | 'max'
+}
+
 const DEVELOPMENT_ITEM: HeaderMenuItem = {
   id: 'development',
   label: 'Development',
@@ -33,6 +40,7 @@ const DEVELOPMENT_ITEM: HeaderMenuItem = {
 }
 
 const CONTACT_FORM_HREF = '/contacts#contact-form'
+const DEFAULT_TELEGRAM_URL = 'https://t.me/whoamikon'
 
 function localizeMenuLabel(url: string, fallbackLabel: string, locale: Locale) {
   const dictionary = getDictionary(locale)
@@ -95,12 +103,13 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
       ? 'Mon-Fri 09:00-17:00'
       : settings?.workSchedule || 'Mon-Fri 09:00-17:00'
   const workStatus = getWorkStatus(workSchedule)
+  const telegramHref = normalizeSocialUrl(settings?.telegramUrl, 'telegram') || DEFAULT_TELEGRAM_URL
   const socialLinks = [
-    { href: settings?.telegramUrl, label: 'Telegram', type: 'telegram' as const },
-    { href: settings?.whatsappUrl, label: 'WhatsApp', type: 'whatsapp' as const },
-    { href: settings?.vkUrl, label: 'VK', type: 'vk' as const },
-    { href: settings?.maxUrl, label: 'Messenger', type: 'max' as const },
-  ].filter((item) => item.href)
+    { href: telegramHref, label: 'Telegram', type: 'telegram' as const },
+    { href: normalizeSocialUrl(settings?.whatsappUrl, 'whatsapp'), label: 'WhatsApp', type: 'whatsapp' as const },
+    { href: normalizeSocialUrl(settings?.vkUrl, 'vk'), label: 'VK', type: 'vk' as const },
+    { href: normalizeSocialUrl(settings?.maxUrl, 'max'), label: 'Messenger', type: 'max' as const },
+  ].filter((item): item is SocialLink => Boolean(item.href))
 
   return (
     <>
@@ -169,7 +178,7 @@ export default function HeaderClient({ menuItems, settings }: HeaderClientProps)
               </span>
             </Link>
 
-            <ul className="hidden items-center gap-6 xl:flex">
+            <ul className="hidden items-center gap-4 2xl:gap-6 xl:flex">
               {normalizedMenuItems.map((item) => (
                 <li key={`${item.url}-${item.id}`}>
                   <Link href={prefixPathWithLocale(item.url, locale)} className="site-nav-link">

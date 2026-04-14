@@ -529,11 +529,11 @@ export default async function HomePage() {
             badges={copy.heroBadges}
             actions={
               <>
-                <a href="#contact-form" className="inline-flex items-center justify-center rounded-full bg-slate-950 px-5 py-4 text-sm font-semibold text-white transition hover:bg-slate-800">
+                <a href="#contact-form" className="button-wave inline-flex items-center justify-center rounded-full bg-slate-950 px-5 py-4 text-sm font-semibold text-white transition hover:bg-slate-800">
                   {copy.primaryCta}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
-                <Link href={prefixPathWithLocale('/cases', locale)} className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-5 py-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-50">
+                <Link href={prefixPathWithLocale('/cases', locale)} className="button-wave inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-5 py-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-50">
                   {copy.secondaryCta}
                   <ArrowUpRight className="ml-2 h-4 w-4" />
                 </Link>

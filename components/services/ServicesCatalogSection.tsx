@@ -20,8 +20,8 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
   const pricingMap = await getMergedServicePricingMap(services.map((service) => service.slug))
   const autoScrollNote =
     locale === 'ru'
-      ? 'Карточки движутся автоматически на десктопе. Наведите курсор, чтобы остановить движение и открыть нужную услугу.'
-      : 'Cards move automatically on desktop. Hover to pause the motion and open the right service.'
+      ? 'Карточки движутся автоматически на десктопе. Их можно тянуть мышкой или тачем; при наведении автодвижение ставится на паузу.'
+      : 'Cards move automatically on desktop. You can drag them with mouse or touch; hover pauses the motion.'
   const countLabel = locale === 'ru' ? 'услуг' : 'services'
 
   function formatPricing(pricing?: ServicePricing | null) {
@@ -88,7 +88,7 @@ export default async function ServicesCatalogSection({ compact = false }: Servic
             <p className="text-sm leading-7 text-slate-200">{copy.compactNote}</p>
             <a
               href={prefixPathWithLocale('/contacts#contact-form', locale)}
-              className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+              className="button-wave inline-flex items-center justify-center rounded-full border border-white/12 bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
             >
               {copy.compactCta}
             </a>
