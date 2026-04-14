@@ -74,6 +74,7 @@ function normalizeMenuItems(items: HeaderMenuItem[], locale: Locale) {
     .filter((item) => item.isActive !== false)
     .filter((item) => item.url !== '/')
     .filter((item) => item.url !== DEVELOPMENT_ITEM.url)
+    .filter((item) => item.url !== '/calculator')
     .map((item) => ({
       ...item,
       label: localizeMenuLabel(item.url, item.label, locale),
