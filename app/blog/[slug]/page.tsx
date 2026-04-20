@@ -104,6 +104,16 @@ const relatedServiceMap: Record<string, string[]> = {
   'geo-i-ii-vydacha-kak-poluchat-trafik-v-2026': ['seo', 'seo-content', 'seo-audit'],
   'seo-trendy-2026-chto-rabotaet-segodnya': ['seo', 'b2b-seo', 'technical-seo'],
   'kak-izmerit-effektivnost-seo-i-ai-trafika': ['seo-consulting', 'seo-audit', 'b2b-seo'],
+  'seo-dlya-internet-magazina-v-2026-prioritety-bez-lishnikh-raskhodov': ['ecommerce-seo', 'technical-seo', 'seo-audit'],
+  'rabota-za-protsent-v-seo-kogda-model-deystvitelno-rabotaet': ['seo-consulting', 'ecommerce-seo', 'seo-audit'],
+  'seo-strategiya-na-6-mesyatsev-dlya-sayta-uslug': ['seo', 'b2b-seo', 'seo-content'],
+  'lokalnoe-seo-dlya-filialov-kak-ne-poteryat-goroda-v-vydache': ['local-seo', 'technical-seo', 'seo-audit'],
+  'tekhnicheskiy-seo-cheklist-pered-relizom-ili-redizaynom': ['technical-seo', 'website-development', 'seo-audit'],
+  'kak-svyazat-blog-s-kommercheskimi-stranitsami-i-zayavkami': ['seo-content', 'seo', 'b2b-seo'],
+  'seo-dlya-b2b-kak-rabotat-s-dlinnym-tsiklom-sdelki': ['b2b-seo', 'seo-consulting', 'seo'],
+  'bezopasnyy-link-building-v-2026-chto-rabotaet-bez-sanktsiy': ['link-building', 'seo', 'seo-audit'],
+  'kak-vosstanovit-organiku-posle-rezkogo-padeniya-trafika': ['seo-audit', 'technical-seo', 'seo-consulting'],
+  'content-plan-dlya-seo-na-90-dney-dlya-komandy-bez-khaosa': ['seo-content', 'seo', 'seo-consulting'],
 }
 
 const defaultRelatedServiceSlugs = ['seo', 'seo-audit', 'seo-content']
