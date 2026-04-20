@@ -1,4 +1,5 @@
 import { marketExpansionServiceStrategies } from '@/lib/service-market-expansion'
+import { categoryExpansionServiceStrategies } from '@/lib/service-category-strategies'
 
 export type ServiceDiagnosticItem = {
   signal: string
@@ -40,6 +41,7 @@ export type ServicePageStrategy = {
 
 const servicePageStrategies: Record<string, ServicePageStrategy> = {
   ...marketExpansionServiceStrategies,
+  ...categoryExpansionServiceStrategies,
   seo: {
     catalogTrigger: 'Подходит, когда сайт уже живой, но органика и заявки идут слабее, чем могли бы.',
     diagnosticTitle: 'Как понять, что проекту нужно именно системное SEO',

@@ -1,5 +1,6 @@
 import { websiteDevelopmentPricing } from './website-development-pricing-data'
 import { marketExpansionPricing } from './service-market-expansion'
+import { categoryExpansionPricing } from './service-category-expansion'
 
 export type ServicePricing = {
   slug: string
@@ -17,10 +18,10 @@ export const servicePricing: ServicePricing[] = [
     slug: 'seo',
     name: 'SEO-продвижение',
     shortDescription: 'Системная работа над органическим трафиком, структурой сайта и ростом заявок.',
-    priceFrom: 60000,
+    priceFrom: 25000,
     unit: 'month',
-    priceLabel: 'от 60 000 ₽ / мес',
-    calculatorHint: 'Подходит проектам, которым нужен постоянный рост и регулярный план внедрения.',
+    priceLabel: '25 000-30 000 ₽ / мес',
+    calculatorHint: 'Стартовый диапазон для базового сопровождения. Точный бюджет зависит от объема задач и скорости внедрения.',
     deliverables: ['Стратегия роста', 'Приоритеты на месяц', 'Работа с ключевыми страницами'],
   },
   {
@@ -57,10 +58,11 @@ export const servicePricing: ServicePricing[] = [
     slug: 'ecommerce-seo',
     name: 'Ecommerce SEO',
     shortDescription: 'SEO для интернет-магазинов: категории, фильтры, карточки товаров и листинги.',
-    priceFrom: 75000,
+    priceFrom: 30000,
     unit: 'month',
-    priceLabel: 'от 75 000 ₽ / мес',
-    calculatorHint: 'Для каталогов и интернет-магазинов, где важны масштаб, шаблоны и структура спроса.',
+    priceLabel: 'от 30 000 ₽ / мес или работа за процент',
+    calculatorHint:
+      'Для интернет-магазинов возможны два формата: фиксированный ежемесячный бюджет или работа за процент при прозрачной аналитике.',
     deliverables: ['Категории и фильтры', 'Товарные шаблоны', 'Рост SEO-каталога'],
   },
   {
@@ -103,6 +105,7 @@ export const servicePricing: ServicePricing[] = [
     calculatorHint: 'Подходит, если внедряет ваша команда, а вам нужна сильная SEO-экспертиза и контроль.',
     deliverables: ['Разбор проекта', 'Стратегические рекомендации', 'Сопровождение решений'],
   },
+  ...categoryExpansionPricing,
   ...marketExpansionPricing,
   websiteDevelopmentPricing,
 ]
