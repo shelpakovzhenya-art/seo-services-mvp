@@ -1,28 +1,33 @@
 <svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1600" height="900" rx="48" fill="url(#bg)"/>
-  <rect x="122" y="128" width="520" height="74" rx="37" fill="#FFF8F1" fill-opacity="0.92"/>
-  <text x="168" y="176" fill="#C2410C" font-family="Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="6">ANALYTICS</text>
-  <text x="122" y="286" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="72" font-weight="700">Эффективность SEO</text>
-  <text x="122" y="368" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="72" font-weight="700">и AI-трафика</text>
-  <text x="122" y="446" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="34">Как считать заявки и вклад органики</text>
-  <rect x="122" y="518" width="514" height="188" rx="34" fill="#0F172A" fill-opacity="0.72" stroke="#67E8F9" stroke-opacity="0.35"/>
-  <text x="164" y="582" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="32" font-weight="700">Важные метрики</text>
-  <text x="164" y="632" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="28">Лиды из органики</text>
-  <text x="164" y="672" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="28">Качество трафика</text>
-  <text x="164" y="712" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="28">Участие страниц в пути к заявке</text>
-  <rect x="990" y="176" width="350" height="430" rx="40" fill="#FFFFFF" fill-opacity="0.92"/>
-  <rect x="1060" y="246" width="54" height="250" rx="24" fill="#7DD3FC"/>
-  <rect x="1140" y="330" width="54" height="166" rx="24" fill="#FDBA74"/>
-  <rect x="1220" y="286" width="54" height="210" rx="24" fill="#38BDF8"/>
-  <rect x="1060" y="540" width="224" height="14" rx="7" fill="#0F172A" fill-opacity="0.14"/>
-  <rect x="1060" y="574" width="184" height="14" rx="7" fill="#0F172A" fill-opacity="0.1"/>
-  <circle cx="1360" cy="170" r="88" fill="#7DD3FC" fill-opacity="0.16"/>
-  <circle cx="1320" cy="744" r="142" fill="#FDBA74" fill-opacity="0.14"/>
   <defs>
-    <linearGradient id="bg" x1="102" y1="60" x2="1502" y2="842" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0F172A"/>
-      <stop offset="0.52" stop-color="#1E293B"/>
-      <stop offset="1" stop-color="#0B2038"/>
+    <linearGradient id="bg" x1="90" y1="72" x2="1510" y2="840" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0E172D"/>
+      <stop offset="0.5" stop-color="#1A2E4F"/>
+      <stop offset="1" stop-color="#0A2238"/>
     </linearGradient>
   </defs>
+
+  <rect width="1600" height="900" rx="48" fill="url(#bg)"/>
+  <circle cx="1350" cy="162" r="96" fill="#67E8F9" fill-opacity="0.16"/>
+  <circle cx="1296" cy="742" r="164" fill="#FDBA74" fill-opacity="0.14"/>
+
+  <rect x="138" y="170" width="590" height="560" rx="48" fill="#0F172A" fill-opacity="0.65" stroke="#67E8F9" stroke-opacity="0.3" stroke-width="4"/>
+  <path d="M238 274H626" stroke="#E2E8F0" stroke-opacity="0.34" stroke-width="18" stroke-linecap="round"/>
+  <path d="M238 336H530" stroke="#CBD5E1" stroke-opacity="0.3" stroke-width="14" stroke-linecap="round"/>
+  <path d="M238 408L350 500H514L626 592" stroke="#67E8F9" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="350" cy="500" r="22" fill="#38BDF8"/>
+  <circle cx="514" cy="500" r="22" fill="#FB923C"/>
+  <circle cx="626" cy="592" r="22" fill="#38BDF8"/>
+  <path d="M238 592H360" stroke="#94A3B8" stroke-width="12" stroke-linecap="round"/>
+  <path d="M238 642H466" stroke="#94A3B8" stroke-width="12" stroke-linecap="round"/>
+
+  <rect x="900" y="170" width="538" height="560" rx="52" fill="#F8FAFC" fill-opacity="0.95"/>
+  <path d="M1018 256H1320V316L1254 386H1086L1018 316V256Z" fill="#DBEAFE"/>
+  <path d="M1090 386H1250V476L1200 548H1142L1090 476V386Z" fill="#BFDBFE"/>
+  <path d="M1136 548H1204V648H1136V548Z" fill="#0EA5E9"/>
+  <circle cx="1038" cy="620" r="76" fill="#0F172A" fill-opacity="0.06"/>
+  <circle cx="1038" cy="620" r="46" fill="#0F172A" fill-opacity="0.1"/>
+  <circle cx="1302" cy="620" r="76" fill="#0F172A" fill-opacity="0.06"/>
+  <path d="M1248 620H1354" stroke="#FB923C" stroke-width="14" stroke-linecap="round"/>
+  <path d="M1302 566V674" stroke="#FB923C" stroke-width="14" stroke-linecap="round"/>
 </svg>

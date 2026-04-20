@@ -19,6 +19,12 @@ const blogCopy: Record<Locale, any> = {
     description:
       'Здесь материалы по миграциям, структуре услуг, GEO и AI-выдаче, коммерческим факторам и контентным решениям для сайта.',
     badges: ['Миграции, GEO и структура услуг', 'Разборы страниц, а не общая теория', 'Материалы, которые можно использовать в работе'],
+    announcementsKicker: 'Анонсы',
+    announcementsTitle: 'Свежие материалы в блоге',
+    announcementsDescription:
+      'Короткие анонсы последних публикаций: по клику открывается полный разбор с практическими шагами.',
+    announcementsFallback:
+      'Короткий анонс пока не добавлен. Откройте материал, чтобы посмотреть полный разбор и рекомендации.',
     cardKicker: 'Статья',
     open: 'Открыть',
     noDate: 'Без даты',
@@ -39,6 +45,12 @@ const blogCopy: Record<Locale, any> = {
     description:
       'Articles on migrations, service-page structure, GEO and AI search, commercial signals, and content decisions for real websites.',
     badges: ['Migrations, GEO, and service-page structure', 'Page-level breakdowns, not generic theory', 'Materials that are useful in practice'],
+    announcementsKicker: 'Announcements',
+    announcementsTitle: 'Latest blog updates',
+    announcementsDescription:
+      'Short previews of the newest articles. Open any card to read the full breakdown and implementation notes.',
+    announcementsFallback:
+      'Preview text is not available yet. Open the article to view the full explanation and practical guidance.',
     cardKicker: 'Article',
     open: 'Open',
     noDate: 'No date',
@@ -70,6 +82,7 @@ export default async function BlogPage() {
   }
 
   posts = buildLocalizedBlogListing(posts, locale)
+  const announcementPosts = posts.slice(0, 3)
 
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: locale === 'ru' ? 'Главная' : 'Home', path: '/' },
@@ -104,6 +117,58 @@ export default async function BlogPage() {
       />
 
       <section className="mt-8 surface-grid surface-pad">
+        {announcementPosts.length > 0 ? (
+          <div className="mb-8 rounded-[30px] border border-slate-200 bg-gradient-to-br from-white via-slate-50/55 to-white p-5 md:p-7">
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-end">
+              <div>
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">{copy.announcementsKicker}</div>
+                <h2 className="mt-2 text-[clamp(1.45rem,2.6vw,2rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-slate-950">
+                  {copy.announcementsTitle}
+                </h2>
+              </div>
+              <p className="text-sm leading-7 text-slate-600 lg:text-right">{copy.announcementsDescription}</p>
+            </div>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {announcementPosts.map((post) => {
+                const cover = getBlogCover(post)
+
+                return (
+                  <Link
+                    key={`announcement-${post.slug || post.id}`}
+                    href={prefixPathWithLocale(`/blog/${post.slug}`, locale)}
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-slate-900/20 hover:shadow-[0_20px_42px_rgba(15,23,42,0.1)]"
+                  >
+                    {cover ? (
+                      <div className="relative h-32 w-full border-b border-slate-100 bg-slate-100">
+                        <Image
+                          src={cover}
+                          alt={post.title}
+                          fill
+                          className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                          unoptimized={isInlineImageAsset(cover)}
+                        />
+                      </div>
+                    ) : null}
+
+                    <div className="flex flex-1 flex-col p-4">
+                      <div className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-slate-400">{copy.announcementsKicker}</div>
+                      <h3 className="mt-2 text-base font-semibold leading-tight text-slate-950">{post.title}</h3>
+                      <p
+                        className="mt-2 flex-1 text-sm leading-6 text-slate-600"
+                        style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                      >
+                        {post.excerpt || copy.announcementsFallback}
+                      </p>
+                      <span className="mt-4 text-sm font-semibold text-[#8a5630] transition group-hover:text-slate-950">{copy.open}</span>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        ) : null}
+
         {posts.length > 0 ? (
           <div className="uniform-grid-3">
             {posts.map((post) => {
