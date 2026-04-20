@@ -1,32 +1,32 @@
 <svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1600" height="900" rx="48" fill="url(#bg)"/>
-  <circle cx="240" cy="180" r="130" fill="#FDBA74" fill-opacity="0.2"/>
-  <circle cx="1330" cy="730" r="170" fill="#7DD3FC" fill-opacity="0.18"/>
-  <rect x="118" y="128" width="440" height="74" rx="37" fill="#FFF8F1" fill-opacity="0.92"/>
-  <text x="162" y="176" fill="#C2410C" font-family="Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="6">SEO 2026</text>
-  <text x="118" y="286" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="72" font-weight="700">Что реально</text>
-  <text x="118" y="364" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="72" font-weight="700">работает в SEO</text>
-  <text x="118" y="442" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="34">Тренды для сайтов услуг, B2B</text>
-  <text x="118" y="486" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="34">и коммерческих страниц</text>
-  <rect x="118" y="560" width="468" height="146" rx="34" fill="#FFFFFF" fill-opacity="0.9"/>
-  <text x="162" y="618" fill="#0F172A" font-family="Arial, sans-serif" font-size="34" font-weight="700">AI-поиск</text>
-  <text x="354" y="618" fill="#334155" font-family="Arial, sans-serif" font-size="28">Структура сайта</text>
-  <text x="162" y="662" fill="#334155" font-family="Arial, sans-serif" font-size="28">Коммерческие факторы</text>
-  <rect x="936" y="170" width="360" height="470" rx="42" fill="#0F172A" fill-opacity="0.72" stroke="#F8FAFC" stroke-opacity="0.18"/>
-  <path d="M1010 560L1080 440L1160 490L1240 338L1320 380" stroke="#67E8F9" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="1080" cy="440" r="18" fill="#67E8F9"/>
-  <circle cx="1160" cy="490" r="18" fill="#67E8F9"/>
-  <circle cx="1240" cy="338" r="18" fill="#67E8F9"/>
-  <circle cx="1320" cy="380" r="18" fill="#67E8F9"/>
-  <text x="1010" y="286" fill="#E2E8F0" font-family="Arial, sans-serif" font-size="30" font-weight="700">Сильные сигналы</text>
-  <text x="1010" y="334" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="26">answer-first</text>
-  <text x="1010" y="372" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="26">кластерный контент</text>
-  <text x="1010" y="410" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="26">техническая база</text>
   <defs>
-    <linearGradient id="bg" x1="80" y1="64" x2="1500" y2="836" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#111827"/>
-      <stop offset="0.45" stop-color="#172554"/>
-      <stop offset="1" stop-color="#0F172A"/>
+    <linearGradient id="bg" x1="120" y1="86" x2="1490" y2="818" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10152C"/>
+      <stop offset="0.52" stop-color="#1E2A56"/>
+      <stop offset="1" stop-color="#0B1E33"/>
     </linearGradient>
   </defs>
+
+  <rect width="1600" height="900" rx="48" fill="url(#bg)"/>
+  <circle cx="258" cy="186" r="142" fill="#F59E0B" fill-opacity="0.2"/>
+  <circle cx="1346" cy="724" r="184" fill="#38BDF8" fill-opacity="0.18"/>
+
+  <rect x="152" y="188" width="636" height="520" rx="48" fill="#0F172A" fill-opacity="0.62" stroke="#93C5FD" stroke-opacity="0.3" stroke-width="4"/>
+  <path d="M236 602L336 514L448 552L566 402L694 450" stroke="#67E8F9" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="336" cy="514" r="20" fill="#67E8F9"/>
+  <circle cx="448" cy="552" r="20" fill="#67E8F9"/>
+  <circle cx="566" cy="402" r="20" fill="#F59E0B"/>
+  <circle cx="694" cy="450" r="20" fill="#F59E0B"/>
+  <rect x="236" y="276" width="212" height="24" rx="12" fill="#E2E8F0" fill-opacity="0.34"/>
+  <rect x="236" y="324" width="296" height="24" rx="12" fill="#E2E8F0" fill-opacity="0.24"/>
+
+  <rect x="900" y="152" width="520" height="596" rx="54" fill="#F8FAFC" fill-opacity="0.94"/>
+  <rect x="968" y="230" width="384" height="106" rx="30" fill="#E2E8F0"/>
+  <rect x="968" y="370" width="384" height="106" rx="30" fill="#DBEAFE"/>
+  <rect x="968" y="510" width="384" height="106" rx="30" fill="#FFE8CC"/>
+  <circle cx="1130" cy="282" r="24" fill="#0EA5E9"/>
+  <circle cx="1130" cy="422" r="24" fill="#6366F1"/>
+  <circle cx="1130" cy="562" r="24" fill="#FB923C"/>
+  <path d="M1288 278L1326 306L1288 334" stroke="#0F172A" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M1288 418L1326 446L1288 474" stroke="#0F172A" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
