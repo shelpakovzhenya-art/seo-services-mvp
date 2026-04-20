@@ -31,6 +31,42 @@ const servicesIndexCopy: Record<Locale, any> = {
     comparisonTitle: 'Где чаще всего выбирают не тот первый шаг',
     comparisonText:
       'Ниже короткое сравнение соседних услуг без рекламной упаковки. Оно помогает не переплатить за лишний объём на старте.',
+    marketStructureKicker: 'Структура по рынку',
+    marketStructureTitle: 'Разделы и категории, собранные по структуре конкурентов',
+    marketStructureDescription:
+      'За основу взяты публичные разделы Nimax и Victory: SEO, Digital, разработка, реклама, лидогенерация, репутация, маркетплейсы. Ниже — рабочая карта категорий и описаний, чтобы развивать каталог по понятной рыночной логике.',
+    marketSections: [
+      {
+        title: 'SEO-продвижение',
+        description: 'Индексация, структура спроса, коммерческие страницы и масштабирование органики.',
+        items: ['SEO-аудит', 'Technical SEO', 'SEO-контент', 'Системное SEO'],
+      },
+      {
+        title: 'Digital и разработка',
+        description: 'Сайты и сервисы, где архитектура и интерфейс поддерживают рост спроса и заявки.',
+        items: ['Разработка сайта', 'UX-логика страниц', 'Перезапуск и миграции'],
+      },
+      {
+        title: 'Лидогенерация и коммерческий рост',
+        description: 'Каналы и страницы, которые влияют на качество лидов, а не только на трафик.',
+        items: ['Лидогенерация', 'Performance-реклама', 'Digital Growth'],
+      },
+      {
+        title: 'Репутация и доверие',
+        description: 'Репутационные сигналы, отзывы и доказательства, усиливающие конверсию из поиска.',
+        items: ['Управление онлайн-репутацией', 'Отзывы и кейсы', 'Brand SERP'],
+      },
+      {
+        title: 'Реклама и перформанс',
+        description: 'Платные каналы как поддержка коммерческих страниц и проверки спроса.',
+        items: ['Performance-реклама', 'Контекстная реклама', 'Таргет'],
+      },
+      {
+        title: 'Маркетплейсы',
+        description: 'Категория для товарных направлений, где важны карточки, рейтинг и выдача площадки.',
+        items: ['Маркетплейсы для продавцов', 'Контент карточек', 'Репутация продавца'],
+      },
+    ],
     comparisonCards: [
       {
         title: 'Аудит vs системное SEO',
@@ -76,7 +112,7 @@ const servicesIndexCopy: Record<Locale, any> = {
       {
         question: 'Почему на сайте указаны стартовые цены, а не фиксированная стоимость?',
         answer:
-          'Итоговый бюджет зависит от структуры сайта, количества уникальных страниц, контента, сложности дизайна, интеграций и того, нужен проекту просто запуск или сразу запас под дальнейшее масштабирование.',
+          'Итоговый бюджет зависит от структуры сайта, количества уникальных страниц, контента, сложности внедрения и скорости команды. По SEO-продвижению стартовый диапазон обычно 25-30 тыс. ₽ в месяц, а для интернет-магазинов возможен и формат работы за процент при прозрачной аналитике.',
       },
     ],
   },
@@ -97,6 +133,42 @@ const servicesIndexCopy: Record<Locale, any> = {
     comparisonTitle: 'Where businesses most often choose the wrong first step',
     comparisonText:
       'This is a short comparison of adjacent services without sales language, so the first move is easier to choose.',
+    marketStructureKicker: 'Market structure',
+    marketStructureTitle: 'Sections and categories aligned with competitor structure',
+    marketStructureDescription:
+      'This structure follows public sections from Nimax and Victory: SEO, Digital, development, ads, lead generation, reputation, and marketplaces. It is used here as a practical catalog map for service positioning and descriptions.',
+    marketSections: [
+      {
+        title: 'SEO',
+        description: 'Indexation, demand architecture, commercial pages, and sustained organic growth.',
+        items: ['SEO audit', 'Technical SEO', 'SEO content', 'Ongoing SEO'],
+      },
+      {
+        title: 'Digital and development',
+        description: 'Website and product layers where architecture and UX support demand capture.',
+        items: ['Website development', 'UX page logic', 'Relaunch and migrations'],
+      },
+      {
+        title: 'Lead generation and commercial growth',
+        description: 'Acquisition and conversion logic focused on lead quality rather than traffic volume.',
+        items: ['Lead generation', 'Performance ads', 'Digital growth'],
+      },
+      {
+        title: 'Reputation and trust',
+        description: 'Reputation signals and trust assets that increase conversion from search visits.',
+        items: ['Online reputation management', 'Reviews and case studies', 'Brand SERP'],
+      },
+      {
+        title: 'Ads and performance',
+        description: 'Paid channels used to support priority pages and validate demand.',
+        items: ['Performance ads', 'Context ads', 'Targeted ads'],
+      },
+      {
+        title: 'Marketplaces',
+        description: 'A dedicated category for seller visibility, ranking, and product-card quality.',
+        items: ['Marketplace seller growth', 'Product-card content', 'Seller reputation'],
+      },
+    ],
     comparisonCards: [
       {
         title: 'Audit vs ongoing SEO',
@@ -142,7 +214,7 @@ const servicesIndexCopy: Record<Locale, any> = {
       {
         question: 'Why do you show starting prices instead of a fixed cost?',
         answer:
-          'The final budget depends on the site structure, number of unique pages, content scope, design complexity, integrations, and whether the project needs a launch-only version or room for future expansion from day one.',
+          'The final budget depends on the site structure, number of unique pages, content scope, implementation complexity, and team delivery speed. For ongoing SEO, the typical starting range is around ₽25k-₽30k per month, and for online stores a revenue-share model is also possible when analytics are transparent.',
       },
     ],
   },
@@ -151,7 +223,7 @@ const servicesIndexCopy: Record<Locale, any> = {
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale()
   const copy = servicesIndexCopy[locale]
-  const alternates = getLocaleAlternates('/services')
+  const alternates = getLocaleAlternates('/services', locale)
 
   return {
     title: normalizeMetaTitle(copy.pageTitle, copy.metaTitle),
@@ -241,6 +313,25 @@ export default async function ServicesIndexPage() {
         />
 
         <ServicesCatalogSection />
+
+        <section className="reading-shell">
+          <div className="brand-chip">{copy.marketStructureKicker}</div>
+          <h2 className="text-3xl font-semibold text-slate-950">{copy.marketStructureTitle}</h2>
+          <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-600">{copy.marketStructureDescription}</p>
+          <div className="uniform-grid-3 mt-6 gap-4">
+            {copy.marketSections.map((section: any) => (
+              <article key={section.title} className="uniform-card brand-card p-5">
+                <h3 className="text-xl font-semibold text-slate-950">{section.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{section.description}</p>
+                <ul className="mt-4 space-y-2 text-sm leading-7 text-slate-700">
+                  {section.items.map((item: string) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <section className="reading-shell">
           <div className="brand-chip">{copy.comparisonKicker}</div>
