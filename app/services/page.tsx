@@ -223,7 +223,7 @@ const servicesIndexCopy: Record<Locale, any> = {
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale()
   const copy = servicesIndexCopy[locale]
-  const alternates = getLocaleAlternates('/services', locale)
+  const alternates = getLocaleAlternates('/services')
 
   return {
     title: normalizeMetaTitle(copy.pageTitle, copy.metaTitle),
