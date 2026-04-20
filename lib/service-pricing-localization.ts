@@ -31,7 +31,8 @@ const englishServicePricingOverrides: Record<string, ServicePricingTextOverride>
   'ecommerce-seo': {
     name: 'Ecommerce SEO',
     shortDescription: 'SEO for stores and catalogs: categories, filters, product cards, and listing pages.',
-    calculatorHint: 'For catalog-heavy projects where scale, templates, and demand structure matter most.',
+    calculatorHint:
+      'For online stores where scale and templates matter, with either a fixed monthly retainer or a revenue-share model when analytics are transparent.',
     deliverables: ['Categories and filters', 'Product templates', 'SEO catalog growth'],
   },
   'b2b-seo': {
@@ -88,6 +89,37 @@ const englishServicePricingOverrides: Record<string, ServicePricingTextOverride>
     calculatorHint: 'Relevant for corporate, B2B, and expert websites with a complex service structure and a long decision cycle.',
     deliverables: ['Service and solution architecture', 'Commercial page improvements', 'Corporate SEO growth plan'],
   },
+  'lead-generation': {
+    name: 'Lead generation',
+    shortDescription: 'A managed acquisition system focused on qualified leads and predictable channel economics.',
+    calculatorHint: 'Budget depends on niche, geo, sales cycle complexity, and target SQL volume.',
+    deliverables: ['Hypothesis and media plan', 'Offer and landing-page layer', 'End-to-end MQL/SQL/CAC tracking'],
+  },
+  'online-reputation': {
+    name: 'Online reputation management',
+    shortDescription: 'Trust-layer management across reviews, branded search results, and external mentions.',
+    calculatorHint: 'Pricing depends on sentiment baseline, number of platforms, and mention frequency.',
+    deliverables: ['Reputation risk map', 'Review and platform workflow', 'Response governance and analytics'],
+  },
+  'performance-ads': {
+    name: 'Performance ads',
+    shortDescription: 'Paid growth management based on SQL quality, CAC, ROMI, and revenue contribution.',
+    calculatorHint: 'Cost depends on channel count, media budget, analytics maturity, and testing depth.',
+    deliverables: ['Channel and segment strategy', 'Campaign optimization cycle', 'Deal-level tracking integration'],
+  },
+  'digital-growth': {
+    name: 'Digital growth',
+    shortDescription: 'A unified growth layer combining SEO, content, and performance priorities.',
+    calculatorHint: 'Scope depends on channel stack, site condition, implementation depth, and team setup.',
+    deliverables: ['Growth audit and roadmap', 'Cross-channel KPI framework', 'Regular implementation sprint cycle'],
+  },
+  'marketplace-sellers': {
+    name: 'Marketplace seller growth',
+    shortDescription: 'Marketplace growth through card optimization, trust signals, and SKU-focused scaling.',
+    calculatorHint:
+      'Can be fixed monthly, fixed + revenue share, or revenue share when KPI analytics are transparent and agreed.',
+    deliverables: ['Card and assortment audit', 'Priority SKU optimization plan', 'Regular growth iterations and analytics'],
+  },
 }
 
 function formatLocalizedPrice(price: number, locale: Locale) {
@@ -105,7 +137,7 @@ export function localizeServicePricing(pricing: ServicePricing, locale: Locale):
   if (locale !== 'en') {
     return {
       ...pricing,
-      priceLabel: formatLocalizedServicePriceLabel(pricing.priceFrom, pricing.unit, locale),
+      priceLabel: pricing.priceLabel.trim() || formatLocalizedServicePriceLabel(pricing.priceFrom, pricing.unit, locale),
     }
   }
 

@@ -1,6 +1,7 @@
 import { websiteDevelopmentService } from './website-development-service-data'
 import { seoAuditService } from './seo-audit-service-data'
 import { marketExpansionRuServices } from './service-market-expansion'
+import { categoryExpansionRuServices } from './service-category-expansion'
 
 export type ServiceImageSet = {
   hero: string
@@ -417,6 +418,11 @@ const baseServicePages: ServicePageContent[] = [
       { question: 'Что важнее для магазина: категории или карточки?', answer: 'Обе зоны важны, но их роль зависит от спроса. Категории чаще закрывают общий коммерческий интент, а карточки — точечный и брендовый.' },
       { question: 'Нужно ли индексировать фильтры?', answer: 'Только те, которые действительно закрывают спрос и полезны пользователю. Остальные лучше не выводить в индекс без необходимости.' },
       { question: 'Подходит ли Ecommerce SEO небольшому каталогу?', answer: 'Да, если каталог уже растёт или должен расти. Просто структура и объём работ будут проще, чем у большого магазина.' },
+      {
+        question: 'Можно ли работать с интернет-магазином за процент?',
+        answer:
+          'Да. Для eCommerce возможен формат работы за процент или смешанная модель (фикс + процент), если заранее согласованы KPI, период оценки и прозрачная аналитика по SEO-каналу.',
+      },
       { question: 'Вы работаете только с SEO или смотрите на удобство магазина тоже?', answer: 'Смотрю на связку. У интернет-магазина плохая навигация и слабая коммерческая подача часто бьют по SEO так же сильно, как технические ошибки.' },
     ],
     seoBlockTitle: 'Почему SEO интернет-магазина нельзя свести к карточкам и метатегам',
@@ -715,6 +721,7 @@ const baseServicePages: ServicePageContent[] = [
 export const servicePages: ServicePageContent[] = [
   ...baseServicePages.filter((service) => service.slug !== 'seo-audit' && service.slug !== 'website-development'),
   ...marketExpansionRuServices,
+  ...categoryExpansionRuServices,
   seoAuditService,
   websiteDevelopmentService,
 ]
