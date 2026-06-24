@@ -337,7 +337,7 @@ function SlugGeneratorTool({ tool, locale }: SeoToolWorkspaceProps) {
 }
 
 function UtmBuilderTool({ tool, locale }: SeoToolWorkspaceProps) {
-  const [baseUrl, setBaseUrl] = useState('https://www.shelpakov.online/services/seo')
+  const [baseUrl, setBaseUrl] = useState('https://shelpakov.online/services/seo')
   const [source, setSource] = useState('telegram')
   const [medium, setMedium] = useState('post')
   const [campaign, setCampaign] = useState('spring_launch')
@@ -406,7 +406,7 @@ function MetaCounterTool({ tool, locale }: SeoToolWorkspaceProps) {
   const [description, setDescription] = useState(
     t(locale, 'SEO-продвижение, аудит и доработка структуры сайта под заявки, доверие и рост органического трафика.', 'SEO growth, audits, and site-structure work focused on trust, lead flow, and sustainable organic growth.')
   )
-  const [url, setUrl] = useState('https://www.shelpakov.online/services/seo')
+  const [url, setUrl] = useState('https://shelpakov.online/services/seo')
 
   const titleLength = title.length
   const descriptionLength = description.length
@@ -467,12 +467,12 @@ function MetaCounterTool({ tool, locale }: SeoToolWorkspaceProps) {
 }
 
 function RobotsGeneratorTool({ tool, locale }: SeoToolWorkspaceProps) {
-  const [domain, setDomain] = useState('www.shelpakov.online')
+  const [domain, setDomain] = useState('shelpakov.online')
   const [agents, setAgents] = useState('*\nGooglebot')
   const [allowLines, setAllowLines] = useState('/\n/wp-content/uploads/')
   const [disallowLines, setDisallowLines] = useState('/admin/\n/api/\n/tmp/')
   const [extraSitemaps, setExtraSitemaps] = useState('')
-  const [host, setHost] = useState('www.shelpakov.online')
+  const [host, setHost] = useState('shelpakov.online')
 
   const normalizedDomain = normalizeUrl(domain)
   const sitemapLines = [normalizedDomain ? `${normalizedDomain.replace(/\/$/, '')}/sitemap.xml` : '', ...splitLines(extraSitemaps)].filter(Boolean)
@@ -540,8 +540,8 @@ function OpenGraphGeneratorTool({ tool, locale }: SeoToolWorkspaceProps) {
   const [description, setDescription] = useState(
     t(locale, 'SEO-продвижение, аудит и доработка структуры сайта под заявки, доверие и рост органического трафика.', 'SEO growth, audits, and site-structure work focused on trust, lead flow, and stronger organic traffic.')
   )
-  const [url, setUrl] = useState('https://www.shelpakov.online/services/seo')
-  const [image, setImage] = useState('https://www.shelpakov.online/og-default.jpg')
+  const [url, setUrl] = useState('https://shelpakov.online/services/seo')
+  const [image, setImage] = useState('https://shelpakov.online/og-default.jpg')
   const [siteName, setSiteName] = useState('Shelpakov Digital')
   const [type, setType] = useState('website')
 

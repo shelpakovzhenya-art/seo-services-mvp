@@ -12,11 +12,6 @@ function normalizeSiteUrl(value: string) {
   try {
     const url = new URL(trimmed)
 
-    // Keep the canonical base on www until the apex domain is moved to Railway.
-    if (process.env.NODE_ENV !== 'development' && url.hostname === 'shelpakov.online') {
-      url.hostname = 'www.shelpakov.online'
-    }
-
     return url.toString().replace(/\/$/, '')
   } catch {
     return trimmed
@@ -54,7 +49,7 @@ export function getSiteUrl(): string {
     return 'http://localhost:3000'
   }
 
-  return 'https://www.shelpakov.online'
+  return 'https://shelpakov.online'
 }
 
 /**
