@@ -1,68 +1,90 @@
+import type { Metadata } from 'next'
 import JsonLd from '@/components/JsonLd'
-import TrustPageShell from '@/components/trust/TrustPageShell'
-import { prefixPathWithLocale } from '@/lib/i18n'
+import {
+  aboutPrinciples,
+  DashboardVisual,
+  PageHero,
+  ProjectCta,
+  ReferencePage,
+  SectionTitle,
+  StatsStrip,
+  TrustItem,
+} from '@/components/ShelpakovReference'
 import { getRequestLocale } from '@/lib/request-locale'
-import { getFullUrl, getLocaleAlternates, getSiteUrl } from '@/lib/site-url'
+import { getLocaleAlternates, getSiteUrl } from '@/lib/site-url'
 import { createBreadcrumbSchema } from '@/lib/structured-data'
-import { getAboutPageCopy, getEditorialTeam, getLocaleLanguageTag } from '@/lib/trust-content'
+
+const pageMetadata: Metadata = {
+  title: 'О нас | Shelpakov Digital',
+  description:
+    'Shelpakov Digital помогает бизнесу расти в поиске: SEO-аудит, структура сайта, техническая база, контент и прозрачная аналитика.',
+}
 
 export default async function AboutPage() {
   const locale = await getRequestLocale()
-  const copy = getAboutPageCopy(locale)
-  const team = getEditorialTeam(locale)
-  const pagePath = prefixPathWithLocale('/about', locale)
-  const pageUrl = getFullUrl(pagePath)
   const breadcrumbSchema = createBreadcrumbSchema(
     [
-      { name: locale === 'ru' ? 'Главная' : 'Home', path: '/' },
-      { name: copy.chip, path: '/about' },
+      { name: 'Главная', path: '/' },
+      { name: 'О нас', path: '/about' },
     ],
     { locale }
   )
   const aboutPageSchema = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
-    '@id': `${pageUrl}#about`,
-    url: pageUrl,
-    name: copy.title,
-    description: copy.description,
-    inLanguage: getLocaleLanguageTag(locale),
-    isPartOf: {
-      '@id': `${getSiteUrl()}#website`,
-    },
-    about: {
-      '@id': `${getSiteUrl()}#brand`,
-    },
-    mainEntity: {
-      '@type': 'ProfessionalService',
-      '@id': `${getSiteUrl()}#brand`,
-      name: team.name,
-      description: team.summary,
-    },
+    '@id': `${getSiteUrl()}/about#about`,
+    url: `${getSiteUrl()}/about`,
+    name: 'О нас | Shelpakov Digital',
+    description: pageMetadata.description,
   }
 
   return (
-    <>
+    <ReferencePage>
       <JsonLd id="about-breadcrumbs-schema" data={breadcrumbSchema} />
       <JsonLd id="about-page-schema" data={aboutPageSchema} />
-      <TrustPageShell copy={copy} locale={locale} />
-    </>
+
+      <PageHero
+        eyebrow="О нас"
+        title="Команда профессионалов, которая помогает бизнесу расти"
+        description="Мы соединяем SEO-аналитику, структуру сайта, технические доработки и понятную коммуникацию без лишнего процесса."
+        aside={<DashboardVisual />}
+      />
+
+      <section className="mt-5 grid gap-5 lg:grid-cols-[0.92fr_1.08fr]">
+        <div className="rounded-lg border border-blue-200/10 bg-[#07142b]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
+          <SectionTitle title="Подход" description="Работа строится вокруг результата: больше целевого трафика, заявок и управляемости сайта." />
+          <div className="mt-7 grid gap-4">
+            {aboutPrinciples.map((item) => (
+              <TrustItem key={item.title} title={item.title} text={item.text} />
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-blue-200/10 bg-[#061126]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
+          <SectionTitle title="Почему выбирают нас" description="Ставим приоритеты, показываем данные и объясняем, какие изменения дают рост." />
+          <div className="mt-7 grid gap-4">
+            <TrustItem title="Прозрачность" text="Показываем задачи, динамику и источники результата в понятном виде." />
+            <TrustItem title="Экспертиза" text="Работаем со структурой спроса, коммерческими страницами и технической базой." />
+            <TrustItem title="Фокус на заявках" text="Оцениваем не только позиции, но и влияние SEO на обращения и продажи." />
+          </div>
+          <div className="mt-5">
+            <StatsStrip />
+          </div>
+        </div>
+      </section>
+
+      <ProjectCta locale={locale} />
+    </ReferencePage>
   )
 }
 
-export async function generateMetadata() {
-  const locale = await getRequestLocale()
-  const copy = getAboutPageCopy(locale)
-  const alternates = getLocaleAlternates('/about')
-
+export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: locale === 'ru' ? 'О подходе Shelpakov Digital' : 'About Shelpakov Digital',
-    description: copy.description,
-    alternates,
+    ...pageMetadata,
+    alternates: getLocaleAlternates('/about'),
     openGraph: {
-      title: locale === 'ru' ? 'О подходе Shelpakov Digital' : 'About Shelpakov Digital',
-      description: copy.description,
-      url: alternates.canonical,
+      title: pageMetadata.title as string,
+      description: pageMetadata.description as string,
       type: 'website',
     },
   }

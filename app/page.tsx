@@ -1,105 +1,193 @@
-import type { LucideIcon } from 'lucide-react'
-import { List, Rocket, Target, Wrench } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import type { ReactNode } from 'react'
-import CasesBlogSwitcher from '@/components/home/CasesBlogSwitcher'
-import ServicesCarousel, { type ServicesCarouselCard } from '@/components/services/ServicesCarousel'
-import { buildLocalizedBlogListing } from '@/lib/blog-localization'
+import type { Metadata } from 'next'
+import type { LucideIcon } from 'lucide-react'
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BarChart3,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  CircleDollarSign,
+  FileSearch,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Rocket,
+  Search,
+  Send,
+  ShieldCheck,
+  Instagram,
+  Target,
+  UsersRound,
+  Wrench,
+} from 'lucide-react'
 import { type Locale, prefixPathWithLocale } from '@/lib/i18n'
-import { prisma } from '@/lib/prisma'
 import { getRequestLocale } from '@/lib/request-locale'
-import { getServicePagesForLocale } from '@/lib/service-page-localization'
-import { getMergedServicePages } from '@/lib/service-overrides'
-import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
 import { getLocaleAlternates } from '@/lib/site-url'
 
 const verificationCode = 'yilk8rn94r0d3m5v'
 
-const homeMeta: Record<Locale, { title: string; description: string }> = {
-  ru: {
-    title: 'Частный SEO-специалист для сайтов услуг и B2B | Shelpakov Digital',
-    description:
-      'Независимый SEO-специалист для небольших и средних проектов: аудит, структура сайта, ключевые страницы, техническая база и рост обращений из поиска.',
-  },
-  en: {
-    title: 'Independent SEO consultant for service websites and B2B | Shelpakov Digital',
-    description:
-      'Independent SEO consultant for small and mid-size projects: audits, site structure, key pages, technical foundations, and stronger lead flow from search.',
-  },
+type StatCard = {
+  icon: LucideIcon
+  value: string
+  text: string
 }
 
-const aboutRows: Array<{ icon: LucideIcon; text: string }> = [
-  { icon: Target, text: 'Стратегия и решения в одних руках' },
-  { icon: List, text: 'Приоритеты по влиянию на заявки' },
-  { icon: Wrench, text: 'Внедрение без хаотичных правок' },
-  { icon: Rocket, text: 'Прозрачный фокус: спрос и обращения' },
+type ServiceCard = {
+  icon: LucideIcon
+  title: string
+  text: string
+}
+
+const partners = [
+  { name: 'SIGNAL', url: 'signalmsk.com' },
+  { name: 'MY PODOLOG SHOP', url: 'mypodolog.shop' },
+  { name: 'mypodolog', url: 'mypodolog.ru' },
+  { name: 'PODO CENTER', url: 'podocenter-kzn.ru' },
 ]
 
-const pricingCards = [
-  {
-    price: '15 000 ₽',
-    title: 'Диагностика и приоритеты',
-    description: 'Когда сначала нужно увидеть узкие места сайта и получить план внедрения без лишнего шума.',
-    href: '/contacts',
-  },
-  {
-    price: '30 000 ₽',
-    title: 'Усиление ключевых страниц',
-    description: 'Когда сайт живой, но страницы услуг и сценарии заявки не дотягивают до уровня самой услуги.',
-    href: '/contacts',
-  },
-  {
-    price: '50 000 ₽',
-    title: 'Системный рост',
-    description: 'Когда нужен постоянный цикл: структура, контент, SEO и контроль внедрения по приоритетам.',
-    href: '/contacts',
-  },
+const resultStats: StatCard[] = [
+  { icon: Target, value: 'от 3 месяцев', text: 'Первые результаты уже через 90 дней' },
+  { icon: BarChart3, value: 'от 150%', text: 'Рост органического трафика в среднем' },
+  { icon: UsersRound, value: 'от 2.5x', text: 'Больше заявок с сайта' },
+  { icon: CircleDollarSign, value: 'от 30%', text: 'Снижение стоимости привлечения клиента' },
 ]
 
-const caseCards = [
-  {
-    tag: 'Кейс 1',
-    title: 'Как подологический центр в Казани собрал более сильную структуру под спрос и заявки',
-    description: 'Пересборка сайта под локальный медицинский спрос: отдельные услуги, связка со статьями, путь к записи.',
-    resultValue: '3 слоя в одной системе',
-    resultText: 'спрос, посадочные и техбаза начали усиливать друг друга',
-    href: '/cases/podocenter-kzn-seo-growth',
-  },
-  {
-    tag: 'Кейс 2',
-    title: 'SEO-аудит сайта Botiq: рабочая карта доработок для партнёрского проекта',
-    description: 'Разобрали техническую базу, шаблоны страниц, микроразметку и собрали приоритеты внедрения.',
-    resultValue: '52/100 -> план на 60 дней',
-    resultText: 'аудит превратили в управляемую очередь задач',
-    href: '/cases',
-  },
+const serviceCards: ServiceCard[] = [
+  { icon: Target, title: 'Технический аудит', text: 'Проверяем сайт на ошибки и точки роста' },
+  { icon: Search, title: 'Сбор семантики', text: 'Собираем только коммерческие запросы' },
+  { icon: Wrench, title: 'Оптимизация сайта', text: 'Делаем сайт удобным для пользователей и поисковиков' },
+  { icon: Rocket, title: 'Продвижение', text: 'Выводим сайт в топ и увеличиваем трафик' },
+  { icon: FileSearch, title: 'Аналитика и отчёты', text: 'Прозрачные отчёты и контроль результатов' },
 ]
 
-const blogFallback = [
+const cases = [
   {
-    title: 'Как перерабатывать сайт услуг под рост заявок, а не просто под трафик',
-    description: 'Разбираю связку структуры, оффера, доверия и технической базы, которая дает стабильные обращения из поиска.',
-    href: '/blog',
+    badge: 'Медицина',
+    title: 'Клиника в Москве',
+    traffic: '+210%',
+    leads: '+185%',
+    accent: 'from-sky-500/35 via-blue-600/20 to-slate-950',
   },
   {
-    title: 'Техническое SEO без лишнего процесса: что чинить первым',
-    description: 'Показываю, как выделить критичные ограничения индексации и не тратить время на косметические правки.',
-    href: '/blog',
+    badge: 'Интернет-магазин',
+    title: 'Магазин оборудования',
+    traffic: '+160%',
+    leads: '+220%',
+    accent: 'from-indigo-500/35 via-cyan-500/15 to-slate-950',
+  },
+  {
+    badge: 'Услуги',
+    title: 'Юридическая компания',
+    traffic: '+145%',
+    leads: '+190%',
+    accent: 'from-blue-600/35 via-violet-500/15 to-slate-950',
   },
 ]
 
-const pricingIconDesktop = ['/pencil/2jJr9.webp', '/pencil/E2dWH.webp', '/pencil/1c5bn.webp'] as const
-const pricingIconMobile = ['/pencil/ZVCZS.webp', '/pencil/C9R6q.webp', '/pencil/iixua.webp'] as const
+const navItems = [
+  { label: 'Услуги', href: '#services' },
+  { label: 'Кейсы', href: '#cases' },
+  { label: 'О нас', href: '#results' },
+  { label: 'Процесс', href: '#services' },
+  { label: 'Блог', href: '/blog' },
+  { label: 'Контакты', href: '/contacts' },
+]
 
 function linkWithLocale(path: string, locale: Locale) {
+  if (path.startsWith('#')) {
+    return path
+  }
+
   return prefixPathWithLocale(path, locale)
 }
 
-function Pill({ children }: { children: ReactNode }) {
+function IconTile({ icon: Icon, className = '' }: { icon: LucideIcon; className?: string }) {
   return (
-    <span className="inline-flex rounded-full border border-white/15 bg-[#111327] px-3 py-1 text-[11px] font-bold text-[#d9ddf0] md:px-3 md:py-2 md:text-xs">
-      {children}
+    <span
+      className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-blue-300/20 bg-blue-500/10 text-blue-300 shadow-[0_0_22px_rgba(58,114,255,0.38)] ${className}`}
+    >
+      <Icon className="h-5 w-5" aria-hidden="true" />
+    </span>
+  )
+}
+
+function MiniChart({ className = '' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 220 56" fill="none" aria-hidden="true">
+      <path d="M4 48H216" stroke="rgba(90,142,255,0.26)" strokeWidth="1" />
+      <path
+        d="M6 43C28 41 33 37 49 40C69 45 77 30 95 33C114 36 119 18 139 22C160 26 169 12 189 18C201 21 209 13 216 8"
+        stroke="#4d78ff"
+        strokeLinecap="round"
+        strokeWidth="3"
+      />
+      <path
+        d="M6 43C28 41 33 37 49 40C69 45 77 30 95 33C114 36 119 18 139 22C160 26 169 12 189 18C201 21 209 13 216 8"
+        stroke="#70d8ff"
+        strokeLinecap="round"
+        strokeWidth="1"
+      />
+    </svg>
+  )
+}
+
+function HeroVisual() {
+  return (
+    <div className="relative mx-auto min-h-[360px] w-full max-w-[590px] lg:min-h-[430px]">
+      <div className="absolute inset-0 rounded-lg bg-[radial-gradient(circle_at_58%_28%,rgba(52,112,255,0.26),transparent_32%),linear-gradient(135deg,rgba(4,9,20,0.2),rgba(5,12,26,0.88))]" />
+      <div className="absolute right-0 top-8 h-[300px] w-[84%] rounded-lg border border-blue-300/15 bg-slate-950/45 shadow-[0_28px_80px_rgba(0,0,0,0.42)] backdrop-blur">
+        <div className="absolute inset-x-8 top-7 flex items-center justify-between text-xs text-slate-400">
+          <span>SEO Dashboard</span>
+          <span className="rounded-md border border-blue-300/20 bg-blue-500/10 px-2 py-1 text-blue-300">live</span>
+        </div>
+        <div className="absolute left-8 right-8 top-20 rounded-lg border border-blue-300/15 bg-[#071735] p-5">
+          <p className="text-sm text-slate-300">Рост трафика</p>
+          <p className="mt-1 text-3xl font-black text-white">+178%</p>
+          <MiniChart className="mt-4 h-16 w-full" />
+        </div>
+        <div className="absolute bottom-7 left-8 right-8 grid grid-cols-3 gap-3">
+          {['ТОП-10', 'Заявки', 'CR'].map((item, index) => (
+            <div key={item} className="rounded-lg border border-blue-300/12 bg-slate-950/55 p-3">
+              <p className="text-[11px] text-slate-400">{item}</p>
+              <p className="mt-1 text-lg font-black text-blue-300">{index === 0 ? '+352' : index === 1 ? '+243%' : '8.4%'}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="absolute bottom-8 left-0 hidden w-[270px] rounded-lg border border-blue-300/15 bg-slate-950/72 p-4 shadow-[0_0_42px_rgba(42,99,255,0.28)] backdrop-blur sm:block">
+        <div className="flex items-center gap-3 rounded-md border border-blue-300/15 bg-[#071735] px-4 py-3">
+          <span className="text-sm text-slate-400">Поиск...</span>
+          <Search className="ml-auto h-5 w-5 text-cyan-300" aria-hidden="true" />
+        </div>
+      </div>
+      <div className="absolute bottom-0 right-12 h-5 w-[68%] rounded-[50%] bg-blue-400/24 blur-xl" />
+    </div>
+  )
+}
+
+function AnalyticsVisual() {
+  return (
+    <div className="relative min-h-[270px] overflow-hidden rounded-lg border border-blue-300/20 bg-gradient-to-br from-slate-950 via-[#071733] to-[#0d255e] p-6 shadow-[inset_0_0_60px_rgba(45,102,255,0.16)]">
+      <div className="absolute right-8 top-8 h-32 w-32 rounded-full bg-blue-500/20 blur-2xl" />
+      <div className="relative ml-auto mt-2 flex h-48 w-full max-w-[300px] items-end gap-4 rounded-lg border border-blue-300/25 bg-slate-950/45 p-5 shadow-[0_20px_55px_rgba(0,0,0,0.36)]">
+        <div className="absolute left-5 top-5 h-16 w-16 rounded-full border-[14px] border-blue-400/40 border-t-cyan-300" />
+        <MiniChart className="absolute left-24 top-8 h-20 w-44" />
+        <span className="h-16 w-12 rounded-t-lg bg-blue-500" />
+        <span className="h-24 w-12 rounded-t-lg bg-cyan-300" />
+        <span className="h-36 w-12 rounded-t-lg bg-slate-500" />
+      </div>
+    </div>
+  )
+}
+
+function SocialIcon({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
+  return (
+    <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-300" aria-label={label}>
+      <Icon className="h-4 w-4" aria-hidden="true" />
     </span>
   )
 }
@@ -107,411 +195,278 @@ function Pill({ children }: { children: ReactNode }) {
 export default async function HomePage() {
   const locale = await getRequestLocale()
 
-  let blogCards = [...blogFallback]
-  try {
-    const posts = await prisma.blogPost.findMany({
-      where: { published: true },
-      orderBy: { publishedAt: 'desc' },
-      take: 2,
-    })
-
-    const localized = buildLocalizedBlogListing(posts, locale)
-      .slice(0, 2)
-      .map((post) => ({
-        title: post.title,
-        description: post.excerpt || 'Практический материал по структуре сайта, SEO и коммерческим страницам.',
-        href: `/blog/${post.slug}`,
-      }))
-
-    if (localized.length > 0) {
-      blogCards = localized
-    }
-  } catch {
-    blogCards = [...blogFallback]
-  }
-
-  const services = locale === 'en' ? getServicePagesForLocale(locale) : await getMergedServicePages()
-  const servicesCarouselCards: ServicesCarouselCard[] = services.map((service) => ({
-    slug: service.slug,
-    href: linkWithLocale(`/services/${service.slug}`, locale),
-    label: service.label,
-    title: service.shortName,
-    description: service.cardDescription || service.description,
-    signal: null,
-    pricing: null,
-    cta: locale === 'ru' ? 'Перейти к услуге' : 'Open service',
-  }))
-  const servicesCountLabel = locale === 'ru' ? 'услуг' : 'services'
-
   return (
-    <div className="relative overflow-hidden bg-[#0a0d1a]">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="home-glow-drift absolute left-[-12%] top-[6%] h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(125,60,255,0.30),rgba(10,13,26,0))]" />
-        <div className="home-glow-drift-delayed absolute right-[-15%] top-[2%] h-[620px] w-[620px] rounded-full bg-[radial-gradient(circle,rgba(255,77,170,0.2),rgba(10,13,26,0))]" />
-        <div className="home-glow-breathe absolute bottom-[-18%] left-[12%] h-[720px] w-[720px] rounded-full bg-[radial-gradient(circle,rgba(125,60,255,0.18),rgba(10,13,26,0))]" />
-      </div>
-
+    <div className="min-h-screen overflow-hidden bg-[#020713] text-white">
       <span className="hidden" aria-hidden="true">
         {verificationCode}
       </span>
 
-      <div className="relative mx-auto w-full max-w-[1440px] px-4 pb-10 pt-5 md:px-[72px] md:pb-[72px] md:pt-10">
-        <div className="hidden flex-col gap-16 md:flex">
-          <section className="relative overflow-hidden rounded-[34px] border border-white/10 bg-[#090915] px-9 pb-9 pt-7 shadow-[0_24px_64px_rgba(0,0,0,0.45)]">
-            <div className="pointer-events-none absolute inset-0">
-              <div className="absolute left-[15%] top-[72%] h-[380px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(255,92,170,0.18),rgba(9,9,21,0))]" />
-              <div className="absolute right-[4%] top-[4%] h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle,rgba(164,75,255,0.28),rgba(9,9,21,0))]" />
+      <div className="pointer-events-none fixed inset-0 opacity-90" aria-hidden="true">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_65%_8%,rgba(38,92,255,0.22),transparent_32%),radial-gradient(circle_at_15%_26%,rgba(20,164,255,0.12),transparent_28%),linear-gradient(180deg,#020713_0%,#040b18_48%,#020713_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(68,111,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(68,111,255,0.045)_1px,transparent_1px)] bg-[size:72px_72px]" />
+      </div>
+
+      <div className="relative mx-auto w-full max-w-[1280px] px-4 py-4 sm:px-6 lg:px-8">
+        <section className="overflow-hidden rounded-[24px] border border-blue-200/10 bg-slate-950/72 shadow-[0_24px_90px_rgba(0,0,0,0.55)]">
+          <header className="relative z-30 flex flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-8 lg:px-12">
+            <Link href={linkWithLocale('/', locale)} className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-sm font-black lowercase text-white shadow-[0_0_28px_rgba(60,106,255,0.55)]">
+                m
+              </span>
+              <span className="text-2xl font-extrabold tracking-tight">Shelpakov Digital</span>
+            </Link>
+
+            <nav className="hidden items-center gap-7 text-sm font-semibold text-slate-200 lg:flex">
+              {navItems.map((item) => (
+                <Link key={item.label} href={linkWithLocale(item.href, locale)} className="transition hover:text-blue-300">
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="flex items-center gap-3">
+              <a href="tel:+74951293556" className="hidden text-sm font-bold text-white sm:inline">
+                +7 (495) 129-35-56
+              </a>
+              <a
+                href="https://t.me/whoamikon"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Telegram"
+                className="hidden h-9 w-9 items-center justify-center rounded-lg border border-blue-300/20 bg-blue-500/10 text-blue-200 transition hover:border-blue-300/50 hover:bg-blue-500/20 md:inline-flex"
+              >
+                <Send className="h-4 w-4" aria-hidden="true" />
+              </a>
+              <Link
+                href={linkWithLocale('/contacts', locale)}
+                aria-label="Контакты"
+                className="hidden h-9 w-9 items-center justify-center rounded-lg border border-blue-300/20 bg-blue-500/10 text-blue-200 transition hover:border-blue-300/50 hover:bg-blue-500/20 md:inline-flex"
+              >
+                <Instagram className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <Link
+                href={linkWithLocale('/contacts', locale)}
+                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-[0_12px_32px_rgba(48,91,255,0.42)] transition hover:-translate-y-0.5 hover:bg-blue-500"
+              >
+                Получить аудит
+              </Link>
             </div>
+          </header>
 
-            <div className="relative mt-2 grid grid-cols-[760px_minmax(0,1fr)] gap-[22px]">
-              <div className="flex flex-col gap-[18px]">
-                <p className="text-[13px] font-bold text-[#b184ff]">SEO-продвижение под заявки</p>
-                <h1 className="text-[54px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f7f8ff]">Комплексное</h1>
-                <h1 className="bg-[linear-gradient(90deg,#7f63ff,#ff4ea9)] bg-clip-text text-[54px] font-extrabold leading-[0.95] tracking-[-0.03em] text-transparent">
-                  SEO-продвижение
-                </h1>
-                <p className="max-w-[710px] text-[18px] font-medium leading-[1.45] text-[#ccd3ea]">
-                  Работаю с небольшими и средними проектами: аудит, структура, ключевые страницы, техническая база и сценарий заявки.
-                </p>
-
-                <div className="flex items-center gap-3">
-                  <Link
-                    href={linkWithLocale('/contacts', locale)}
-                    className="button-wave inline-flex rounded-full bg-[linear-gradient(90deg,#6e49ff,#ff4ea2)] px-6 py-4 text-[15px] font-bold text-white shadow-[0_10px_28px_rgba(138,80,255,0.45)]"
-                  >
-                    Получить разбор сайта
-                  </Link>
-                  <Link
-                    href={linkWithLocale('/cases', locale)}
-                    className="button-wave inline-flex rounded-full border border-white/30 bg-[linear-gradient(90deg,#6f4bff,#ff4ea8)] px-6 py-4 text-[15px] font-bold text-white shadow-[0_8px_24px_rgba(139,84,255,0.35)]"
-                  >
-                    Посмотреть кейсы
-                  </Link>
-                </div>
-
-                <div className="flex items-center gap-2.5">
-                  <Pill>Ответ в течение дня</Pill>
-                  <Pill>Понятный первый шаг</Pill>
-                  <Pill>Фокус на заявках</Pill>
-                </div>
-              </div>
-
-              <div className="relative min-h-[510px] overflow-hidden rounded-3xl bg-[#0b0c18]">
-                <div className="home-glow-drift absolute left-[6%] top-[4%] h-36 w-36 rounded-full bg-[radial-gradient(circle,rgba(117,75,255,0.30),rgba(11,12,24,0))]" />
-                <div className="home-glow-drift-delayed absolute bottom-[8%] right-[6%] h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(255,86,170,0.25),rgba(11,12,24,0))]" />
-                <div className="absolute left-[4%] top-[8%] h-[84%] w-[92%] overflow-hidden rounded-3xl bg-[radial-gradient(circle_at_65%_28%,rgba(139,87,255,0.36),rgba(11,12,24,0)_60%),radial-gradient(circle_at_24%_74%,rgba(255,97,174,0.20),rgba(11,12,24,0)_66%),linear-gradient(160deg,#151935,#0b0c18)]">
-                  <Image
-                    src="/pencil/IAIjo.webp"
-                    alt="Hero visual"
-                    fill
-                    className="home-image-float fractal-soft-edge object-cover mix-blend-screen scale-[1.14]"
-                    sizes="(min-width: 768px) 36vw, 100vw"
-                    priority
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="relative grid grid-cols-[730px_minmax(0,1fr)] gap-9 overflow-hidden rounded-[30px] border border-white/10 bg-[#0a0b16] p-[34px]">
-            <div className="pointer-events-none absolute right-[-8%] top-[-20%] h-[430px] w-[430px] rounded-full bg-[radial-gradient(circle,rgba(139,77,255,0.20),rgba(10,11,22,0))]" />
-
-            <div className="relative flex flex-col gap-6">
-              <p className="text-[13px] font-bold text-[#b188ff]">Как веду работу</p>
-              <div className="flex items-end gap-4">
-                <h2 className="text-[62px] font-extrabold leading-[0.94] tracking-[-0.03em] text-[#f5f7ff]">DIGITAL</h2>
-                <h2 className="bg-[linear-gradient(90deg,#7d63ff,#ff4ea9)] bg-clip-text text-[62px] font-extrabold leading-[0.94] tracking-[-0.03em] text-transparent">
-                  PRO
-                </h2>
-              </div>
-              <p className="max-w-[660px] text-[17px] font-medium leading-[1.5] text-[#cdd3e8]">
-                Работа строится от бизнес-цели: сначала нахожу ключевую точку потери заявок, затем собираю приоритетный план и довожу внедрение до результата.
+          <div className="grid gap-8 px-4 pb-8 pt-8 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:pb-10 lg:pt-12">
+            <div className="flex flex-col justify-center">
+              <p className="w-fit rounded-md border border-blue-300/20 bg-blue-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-blue-300">
+                SEO продвижение для малого и среднего бизнеса
               </p>
-              <div className="flex flex-col gap-3">
-                {aboutRows.map(({ icon: Icon, text }) => (
-                  <div
-                    key={text}
-                    className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0f1122] px-4 py-3.5 transition duration-300 hover:-translate-y-0.5 hover:border-white/25 hover:bg-[#12152a]"
-                  >
-                    <span className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[10px] border border-white/20 bg-[linear-gradient(90deg,#6f56ff,#ff53a8)] text-white">
-                      <Icon className="h-4 w-4" />
-                    </span>
-                    <span className="text-[15px] font-semibold text-[#e1e5f5]">{text}</span>
+
+              <h1 className="mt-7 max-w-[640px] text-[34px] font-extrabold leading-[1.16] tracking-normal text-white sm:text-[38px] lg:text-[42px]">
+                Выводим бизнес в топ поисковых систем и <span className="text-blue-500">увеличиваем прибыль</span>
+              </h1>
+
+              <p className="mt-6 max-w-[510px] text-base leading-8 text-slate-300 sm:text-lg">
+                Комплексное SEO-продвижение, которое приводит целевой трафик и превращает его в ваших клиентов.
+              </p>
+
+              <div className="mt-9 flex flex-col gap-4 sm:flex-row">
+                <Link
+                  href={linkWithLocale('/contacts', locale)}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-7 py-4 text-sm font-extrabold text-white shadow-[0_16px_36px_rgba(44,96,255,0.45)] transition hover:-translate-y-0.5 hover:bg-blue-500"
+                >
+                  Получить бесплатный аудит
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+                <Link
+                  href="#cases"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-blue-200/30 bg-slate-950/40 px-7 py-4 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:border-blue-300/70"
+                >
+                  Смотреть кейсы
+                </Link>
+              </div>
+
+              <div className="mt-8 grid gap-3 text-sm text-slate-300 sm:grid-cols-3">
+                {['Прозрачная отчётность', 'Без долгосрочных контрактов', 'Гарантия результата'].map((item) => (
+                  <div key={item} className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-blue-400" aria-hidden="true" />
+                    <span>{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-3xl bg-[#0b0c18]">
-              <Image
-                src="/pencil/Xef8P.webp"
-                alt="About visual"
-                fill
-                className="home-image-drift fractal-soft-edge object-cover opacity-90 mix-blend-screen scale-[1.08]"
-                sizes="(min-width: 768px) 32vw, 100vw"
-              />
-              <div className="absolute left-[12%] top-[15%] h-[392px] w-[392px] rounded-full border-2 border-[#9a76ff55] bg-[radial-gradient(circle,rgba(182,108,255,0.28),rgba(25,22,41,0))]" />
-              <div className="absolute left-[22%] top-[24%] h-[274px] w-[274px] rounded-full border border-white/15 bg-[radial-gradient(circle,rgba(106,124,255,0.24),rgba(11,12,24,0))]" />
-              <div className="absolute left-[33%] top-[33%] h-[160px] w-[160px] rounded-full border border-white/20 bg-[radial-gradient(circle,rgba(255,87,167,0.40),rgba(11,12,24,0))]" />
-              <div className="absolute bottom-[5%] left-[5%] h-[162px] w-[162px] rounded-full bg-[radial-gradient(circle,rgba(255,96,178,0.22),rgba(11,12,24,0))]" />
-            </div>
-          </section>
+            <HeroVisual />
+          </div>
 
-          <section className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#0a0b16] px-[30px] pb-[34px] pt-[30px]">
-            <div className="pointer-events-none absolute inset-0">
-              <div className="absolute left-[-60px] top-[268px] h-[180px] w-[180px] rounded-full bg-[radial-gradient(circle,rgba(123,94,255,0.32),rgba(10,11,22,0))]" />
-              <div className="absolute right-[-40px] top-[232px] h-[180px] w-[180px] rounded-full bg-[radial-gradient(circle,rgba(255,95,166,0.26),rgba(10,11,22,0))]" />
+          <div className="mx-4 mb-5 grid gap-4 rounded-lg border border-blue-200/10 bg-slate-950/55 p-5 sm:mx-8 sm:grid-cols-2 sm:p-6 lg:mx-12 lg:grid-cols-[1.1fr_repeat(4,1fr)]">
+            <div className="flex items-center text-lg font-extrabold text-white">Наши партнёры</div>
+            {partners.map((partner) => (
+              <div key={partner.url} className="min-w-0">
+                <p className="text-xl font-black uppercase leading-tight text-white">{partner.name}</p>
+                <p className="mt-1 truncate text-xs text-slate-400">{partner.url}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="results" className="mt-5 overflow-hidden rounded-[18px] border border-blue-200/10 bg-[#07142b]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.36)] sm:p-8">
+          <div className="grid gap-8 lg:grid-cols-[1.45fr_0.9fr]">
+            <div>
+              <h2 className="text-3xl font-extrabold tracking-normal text-white sm:text-4xl">SEO, которое даёт результат</h2>
+              <p className="mt-4 text-base leading-7 text-slate-300">Мы не просто продвигаем сайты - мы увеличиваем ваш доход.</p>
+
+              <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {resultStats.map((item) => (
+                  <div key={item.value} className="rounded-lg border border-blue-200/10 bg-slate-950/40 p-5">
+                    <IconTile icon={item.icon} />
+                    <p className="mt-7 text-2xl font-extrabold text-white">{item.value}</p>
+                    <p className="mt-3 text-sm leading-6 text-slate-300">{item.text}</p>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="relative">
-              <span className="absolute right-0 top-0 inline-flex rounded-full border border-white/20 bg-[#111426] px-3 py-2 text-xs font-bold text-[#dbe0f5]">
-                {servicesCarouselCards.length} {servicesCountLabel}
+            <AnalyticsVisual />
+          </div>
+        </section>
+
+        <section id="services" className="mt-5 rounded-[18px] border border-blue-200/10 bg-[#061126]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
+          <h2 className="text-2xl font-extrabold text-white sm:text-3xl">Что мы делаем</h2>
+          <p className="mt-2 text-slate-300">Комплексное SEO-продвижение под ключ</p>
+
+          <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {serviceCards.map((item) => (
+              <div key={item.title} className="rounded-lg border border-blue-200/10 bg-slate-950/38 p-5 transition hover:-translate-y-1 hover:border-blue-300/35">
+                <IconTile icon={item.icon} className="h-10 w-10" />
+                <h3 className="mt-5 text-lg font-extrabold text-white">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="cases" className="mt-5 rounded-[18px] border border-blue-200/10 bg-[#07142b]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h2 className="text-2xl font-extrabold text-white sm:text-3xl">Наши кейсы</h2>
+            <div className="flex items-center gap-3">
+              <Link href={linkWithLocale('/cases', locale)} className="rounded-lg bg-blue-500/10 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-500/20">
+                Смотреть все кейсы
+              </Link>
+              <button type="button" aria-label="Предыдущий кейс" className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-blue-200/10 bg-slate-950/45 text-slate-300">
+                <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+              </button>
+              <button type="button" aria-label="Следующий кейс" className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-blue-200/10 bg-slate-950/45 text-slate-300">
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-5 lg:grid-cols-3">
+            {cases.map((item) => (
+              <article key={item.title} className={`relative min-h-[190px] overflow-hidden rounded-lg border border-blue-200/10 bg-gradient-to-br ${item.accent} p-5`}>
+                <div className="absolute inset-0 opacity-35">
+                  <div className="absolute -right-10 top-6 h-36 w-36 rounded-full border border-blue-300/30" />
+                  <div className="absolute bottom-0 left-0 h-20 w-full bg-[linear-gradient(180deg,transparent,rgba(2,7,19,0.82))]" />
+                </div>
+                <div className="relative">
+                  <span className="rounded-md border border-blue-300/25 bg-blue-500/12 px-3 py-1 text-xs font-bold text-blue-300">{item.badge}</span>
+                  <h3 className="mt-6 text-xl font-extrabold text-white">{item.title}</h3>
+                  <div className="mt-5 grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-slate-300">Рост трафика</p>
+                      <p className="mt-1 text-2xl font-extrabold text-white">{item.traffic}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-300">Заявки</p>
+                      <p className="mt-1 text-2xl font-extrabold text-white">{item.leads}</p>
+                    </div>
+                  </div>
+                  <MiniChart className="mt-4 h-9 w-full" />
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-6 overflow-hidden rounded-[18px] border border-blue-400/35 bg-gradient-to-r from-blue-950 via-[#123170] to-blue-950 p-6 shadow-[0_18px_70px_rgba(20,82,255,0.24)] sm:p-9">
+          <div className="grid items-center gap-6 md:grid-cols-[1fr_auto_0.7fr]">
+            <div>
+              <h2 className="text-2xl font-extrabold text-white sm:text-3xl">Готовы вывести ваш бизнес на новый уровень?</h2>
+              <p className="mt-3 text-slate-200">Оставьте заявку и получите бесплатный SEO-аудит сайта</p>
+            </div>
+            <div className="hidden h-24 w-24 items-center justify-center rounded-full border border-blue-200/25 bg-slate-950/30 shadow-[0_0_40px_rgba(84,137,255,0.42)] md:flex">
+              <ArrowUpRight className="h-10 w-10 text-blue-200" aria-hidden="true" />
+            </div>
+            <div className="md:text-right">
+              <Link href={linkWithLocale('/contacts', locale)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-8 py-4 text-sm font-extrabold text-white shadow-[0_14px_34px_rgba(42,90,255,0.45)] transition hover:-translate-y-0.5 hover:bg-blue-500">
+                Получить аудит
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <footer className="grid gap-8 px-5 py-10 text-sm text-slate-400 sm:grid-cols-2 lg:grid-cols-[1.2fr_0.8fr_0.8fr_1fr] lg:px-7">
+          <div>
+            <Link href={linkWithLocale('/', locale)} className="flex items-center gap-3 text-white">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
+                <Rocket className="h-4 w-4" aria-hidden="true" />
               </span>
-              <p className="text-[13px] font-bold text-[#b188ff]">Услуги</p>
-              <h2 className="mt-2 text-[54px] font-extrabold leading-[0.94] tracking-[-0.03em] text-[#f6f8ff]">Услуги под конкретную задачу сайта</h2>
-              <p className="mt-3 text-[17px] font-medium leading-[1.48] text-[#cdd3e8]">
-                Здесь проще выбрать первый рабочий шаг: аудит, техработы, переработку страниц или новый сайт.
-              </p>
+              <span className="text-xl font-extrabold">Shelpakov Digital</span>
+            </Link>
+            <p className="mt-5 max-w-[260px] leading-6">SEO-продвижение для малого и среднего бизнеса. Превращаем трафик в прибыль.</p>
+            <p className="mt-8 text-xs">© 2026 Shelpakov Digital. Все права защищены.</p>
+          </div>
 
-              <div className="mt-6">
-                <ServicesCarousel cards={servicesCarouselCards} countLabel={servicesCountLabel} />
-              </div>
-            </div>
-          </section>
-
-          <section className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#0a0b16] px-[30px] pb-[34px] pt-[30px]">
-            <p className="text-[13px] font-bold text-[#b188ff]">Тарифы</p>
-            <h2 className="mt-2 text-[52px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f6f8ff]">Форматы работ под разную ситуацию</h2>
-            <p className="mt-3 text-[17px] font-medium leading-[1.48] text-[#cdd3e8]">
-              Можно начать с диагностики, точечной переработки страниц или полноценной системной работы.
-            </p>
-
-            <div className="mt-6 grid grid-cols-3 gap-[18px]">
-              {pricingCards.map((card, index) => (
-                <div
-                  key={card.title}
-                  className="relative flex h-[360px] flex-col gap-3 overflow-hidden rounded-[20px] border border-white/15 bg-[#111326] pb-5 pl-[18px] pr-[118px] pt-5 transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:shadow-[0_24px_50px_rgba(2,6,24,0.35)]"
-                  style={{
-                    background:
-                      index === 0
-                        ? 'radial-gradient(circle at 86% 10%, rgba(127,88,255,0.28), rgba(17,19,38,0) 62%), #111326'
-                        : index === 1
-                          ? 'radial-gradient(circle at 86% 10%, rgba(138,94,255,0.26), rgba(17,19,38,0) 62%), #111326'
-                          : 'radial-gradient(circle at 86% 10%, rgba(255,97,173,0.24), rgba(17,19,38,0) 62%), #111326',
-                  }}
-                >
-                  <div className="pointer-events-none absolute right-5 top-6 h-[72px] w-[72px] overflow-hidden rounded-full opacity-95 mix-blend-screen">
-                    <Image src={pricingIconDesktop[index]} alt="Pricing icon" fill className="home-image-breathe object-cover" sizes="72px" />
-                  </div>
-                  <p className="text-[42px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f3f6ff]">{card.price}</p>
-                  <h3 className="text-[28px] font-bold leading-[1.02] tracking-[-0.02em] text-[#f2f4ff]">{card.title}</h3>
-                  <p className="flex-1 max-w-[230px] text-[15px] font-medium leading-[1.45] text-[#d2d8ec]">{card.description}</p>
-                  <Link
-                    href={linkWithLocale(card.href, locale)}
-                    className="inline-flex w-fit rounded-full border border-white/25 bg-[linear-gradient(90deg,#6f4bff,#ff4ea8)] px-4 py-2.5 text-[13px] font-bold text-white"
-                  >
-                    Выбрать тариф
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#0a0b16] px-[30px] pb-8 pt-[30px]">
-            <CasesBlogSwitcher locale={locale} cases={caseCards} posts={blogCards} />
-          </section>
-
-          <section className="relative grid grid-cols-[790px_minmax(0,1fr)] items-center gap-[30px] overflow-hidden rounded-[30px] border border-white/10 bg-[#0a0b16] p-10">
-            <div className="home-glow-drift absolute left-[30%] top-[5%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(123,87,255,0.24),rgba(10,11,22,0))]" />
-            <div className="home-glow-drift-delayed absolute left-[42%] top-[56%] h-[320px] w-[320px] rounded-full bg-[radial-gradient(circle,rgba(255,98,176,0.18),rgba(10,11,22,0))]" />
-
-            <div className="relative z-10 flex flex-col gap-4">
-              <p className="text-[13px] font-bold text-[#b188ff]">Следующий шаг</p>
-              <h2 className="text-[72px] font-extrabold leading-[0.9] tracking-[-0.035em] text-[#f7f8ff]">Можно начать</h2>
-              <h2 className="bg-[linear-gradient(90deg,#7d63ff,#ff4ea9)] bg-clip-text text-[72px] font-extrabold leading-[0.9] tracking-[-0.035em] text-transparent">
-                с короткого разбора сайта
-              </h2>
-              <p className="max-w-[720px] text-[17px] font-medium text-[#cdd3e8]">От вас нужен домен и короткое описание задачи.</p>
-              <div className="pt-1">
-                <Link
-                  href={linkWithLocale('/contacts', locale)}
-                  className="button-wave inline-flex rounded-full border border-white/25 bg-[linear-gradient(90deg,#6f4bff,#ff4da8)] px-8 py-4 text-base font-extrabold text-white shadow-[0_10px_30px_rgba(147,79,255,0.45)] transition hover:-translate-y-0.5 hover:brightness-110"
-                >
-                  Получить разбор сайта
-                </Link>
-              </div>
-              <div className="flex items-center gap-3 pt-1">
-                <Pill>Отвечаю сам</Pill>
-                <Pill>Без лишнего процесса</Pill>
-              </div>
-            </div>
-
-            <div className="relative h-[350px] w-[350px] justify-self-end">
-              <div className="home-glow-breathe absolute left-[16%] top-[16%] h-[234px] w-[234px] rounded-full bg-[radial-gradient(circle,rgba(162,94,255,0.28),rgba(15,18,34,0))]" />
-              <div className="home-glow-drift-delayed absolute left-[10%] top-[8%] h-[290px] w-[290px] rounded-full bg-[radial-gradient(circle,rgba(123,87,255,0.34),rgba(15,18,34,0))]" />
-              <Image src="/pencil/bDogD.webp" alt="CTA visual" fill className="home-image-breathe fractal-soft-edge object-contain p-1 mix-blend-screen" sizes="350px" />
-            </div>
-          </section>
-        </div>
-
-        <div className="flex flex-col gap-10 md:hidden">
-          <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#090915] px-4 pb-5 pt-5">
-            <p className="text-xs font-bold text-[#b188ff]">SEO-продвижение под заявки</p>
-            <h1 className="mt-1 text-[34px] font-extrabold leading-[0.92] tracking-[-0.03em] text-[#f6f8ff]">Комплексное</h1>
-            <h1 className="bg-[linear-gradient(90deg,#7e63ff,#ff4ea8)] bg-clip-text text-[34px] font-extrabold leading-[0.92] tracking-[-0.03em] text-transparent">
-              SEO-продвижение
-            </h1>
-            <p className="mt-3 text-[15px] font-medium leading-[1.45] text-[#cdd3e8]">
-              Аудит, структура, ключевые страницы, техническая база и сценарий заявки.
-            </p>
-            <div className="mt-4 flex flex-col gap-2.5">
-              <Link
-                href={linkWithLocale('/contacts', locale)}
-                className="button-wave inline-flex justify-center rounded-full bg-[linear-gradient(90deg,#6e49ff,#ff4ea2)] px-4 py-3 text-sm font-extrabold text-white"
-              >
-                Получить разбор сайта
-              </Link>
-              <Link
-                href={linkWithLocale('/cases', locale)}
-                className="button-wave inline-flex justify-center rounded-full border border-white/30 bg-[linear-gradient(90deg,#6f4bff,#ff4ea8)] px-4 py-3 text-sm font-extrabold text-white"
-              >
-                Посмотреть кейсы
-              </Link>
-            </div>
-            <div className="mt-3 flex flex-col gap-2">
-              <Pill>Ответ в течение дня</Pill>
-              <Pill>Понятный первый шаг</Pill>
-              <Pill>Фокус на заявках</Pill>
-            </div>
-            <div className="relative mt-4 h-32 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_66%_38%,rgba(122,84,255,0.30),rgba(11,14,27,0)_60%),linear-gradient(160deg,#151935,#0b0e1b)]">
-              <Image src="/pencil/xZcUe.webp" alt="Hero mobile visual" fill className="home-image-float fractal-soft-edge object-cover mix-blend-screen scale-[1.12]" sizes="100vw" />
-            </div>
-          </section>
-
-          <section className="overflow-hidden rounded-[22px] border border-white/10 bg-[#0a0b16] px-4 pb-[18px] pt-[18px]">
-            <p className="text-xs font-bold text-[#b188ff]">Как веду работу</p>
-            <h2 className="mt-1 text-[52px] font-extrabold leading-[0.9] tracking-[-0.03em] text-[#f5f7ff]">DIGITAL</h2>
-            <h2 className="bg-[linear-gradient(90deg,#7d63ff,#ff4ea9)] bg-clip-text text-[52px] font-extrabold leading-[0.9] tracking-[-0.03em] text-transparent">
-              PRO
-            </h2>
-            <p className="mt-2 text-[15px] font-medium leading-[1.46] text-[#cdd3e8]">
-              Сначала нахожу главный узел, который мешает заявкам, затем собираю понятный план действий без лишнего процесса.
-            </p>
-
-            <div className="mt-3 flex flex-col gap-2">
-              {aboutRows.map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-center gap-2.5 rounded-[14px] border border-white/10 bg-[#101325] px-3 py-2.5">
-                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/20 bg-[linear-gradient(90deg,#6f56ff,#ff53a8)] text-white">
-                    <Icon className="h-[13px] w-[13px]" />
-                  </span>
-                  <span className="text-[13px] font-bold text-[#e1e5f5]">{text}</span>
-                </div>
-              ))}
-            </div>
-            <div className="relative mt-3 h-[126px] overflow-hidden rounded-[14px] bg-[radial-gradient(circle_at_58%_24%,rgba(138,87,255,0.30),rgba(13,15,29,0)_60%),linear-gradient(160deg,#161a32,#0d0f1d)]">
-              <Image src="/pencil/Xef8P.webp" alt="About mobile visual" fill className="home-image-drift fractal-soft-edge object-cover opacity-80 mix-blend-screen scale-[1.08]" sizes="100vw" />
-            </div>
-          </section>
-
-          <section className="relative overflow-hidden rounded-[22px] border border-white/10 bg-[#0a0b16] px-4 pb-[18px] pt-[18px]">
-            <span className="inline-flex rounded-full border border-white/15 bg-[#101326] px-3 py-1 text-[11px] font-bold text-[#d9ddf0]">
-              {servicesCarouselCards.length} {servicesCountLabel}
-            </span>
-            <p className="mt-2 text-xs font-bold text-[#b188ff]">Услуги</p>
-            <h2 className="mt-1 text-[34px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f6f8ff]">Услуги под конкретную задачу сайта</h2>
-            <p className="mt-2 text-sm font-medium leading-[1.45] text-[#cdd3e8]">
-              Первый рабочий шаг: аудит, техработы, переработка страниц или новый сайт.
-            </p>
-
-            <div className="mt-4">
-              <ServicesCarousel cards={servicesCarouselCards} countLabel={servicesCountLabel} />
-            </div>
-          </section>
-
-          <section className="overflow-hidden rounded-[22px] border border-white/10 bg-[#0a0b16] px-4 pb-[18px] pt-[18px]">
-            <p className="text-xs font-bold text-[#b188ff]">Тарифы</p>
-            <h2 className="mt-1 text-[34px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f6f8ff]">Форматы работ под разную ситуацию</h2>
-            <p className="mt-2 text-sm font-medium leading-[1.45] text-[#cdd3e8]">Старт: диагностика, переработка страниц или системная работа.</p>
-
+          <div>
+            <h3 className="font-extrabold text-white">Услуги</h3>
             <div className="mt-4 flex flex-col gap-3">
-              {pricingCards.map((card, index) => (
-                <div
-                  key={card.title}
-                  className="relative flex h-[250px] flex-col gap-2 overflow-hidden rounded-2xl border border-white/10 bg-[#111326] pb-3.5 pl-3 pr-24 pt-3.5 transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:shadow-[0_16px_36px_rgba(2,6,24,0.34)]"
-                  style={{
-                    background:
-                      index === 0
-                        ? 'radial-gradient(circle at 86% 10%, rgba(127,88,255,0.28), rgba(17,19,38,0) 62%), #111326'
-                        : index === 1
-                          ? 'radial-gradient(circle at 86% 10%, rgba(138,94,255,0.26), rgba(17,19,38,0) 62%), #111326'
-                          : 'radial-gradient(circle at 86% 10%, rgba(255,97,173,0.24), rgba(17,19,38,0) 62%), #111326',
-                  }}
-                >
-                  <div className="pointer-events-none absolute right-3 top-3 h-[64px] w-[64px] overflow-hidden rounded-full opacity-95 mix-blend-screen">
-                    <Image src={pricingIconMobile[index]} alt="Pricing mobile icon" fill className="home-image-breathe object-cover" sizes="64px" />
-                  </div>
-                  <p className="text-[34px] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#f3f6ff]">{card.price}</p>
-                  <h3 className="text-[22px] font-bold leading-[1.05] tracking-[-0.02em] text-[#f2f4ff]">{card.title}</h3>
-                  <p className="flex-1 text-[13px] font-medium leading-[1.4] text-[#d2d8ec]">{card.description}</p>
-                  <Link
-                    href={linkWithLocale(card.href, locale)}
-                    className="inline-flex w-fit rounded-full border border-white/20 bg-[linear-gradient(90deg,#6f4bff,#ff4ea8)] px-3 py-1.5 text-xs font-extrabold text-white"
-                  >
-                    Выбрать тариф
-                  </Link>
-                </div>
+              {['SEO-продвижение', 'Технический аудит', 'Оптимизация сайта', 'SEO-поддержка'].map((item) => (
+                <span key={item}>{item}</span>
               ))}
             </div>
-          </section>
+          </div>
 
-          <section className="overflow-hidden rounded-[22px] border border-white/10 bg-[#0a0b16] px-4 pb-[18px] pt-[18px]">
-            <CasesBlogSwitcher locale={locale} cases={caseCards} posts={blogCards} compact />
-          </section>
+          <div>
+            <h3 className="font-extrabold text-white">Компания</h3>
+            <div className="mt-4 flex flex-col gap-3">
+              {['О нас', 'Кейсы', 'Блог', 'Контакты'].map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+          </div>
 
-          <section className="relative overflow-hidden rounded-[22px] border border-white/10 bg-[#0a0b16] px-4 py-[22px] text-center">
-            <p className="text-xs font-bold text-[#b188ff]">Следующий шаг</p>
-            <h2 className="mt-1 text-[42px] font-extrabold leading-[0.9] tracking-[-0.03em] text-[#f7f8ff]">Можно начать</h2>
-            <h2 className="bg-[linear-gradient(90deg,#7d63ff,#ff4ea9)] bg-clip-text text-[42px] font-extrabold leading-[0.9] tracking-[-0.03em] text-transparent">
-              с разбора сайта
-            </h2>
-            <p className="mt-2 text-[15px] font-medium text-[#cdd3e8]">Нужен домен и короткая задача.</p>
-            <div className="mt-4">
-              <Link
-                href={linkWithLocale('/contacts', locale)}
-                className="inline-flex rounded-full border border-white/25 bg-[linear-gradient(90deg,#6f4bff,#ff4da8)] px-6 py-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:brightness-110"
-              >
-                Получить разбор
-              </Link>
+          <div>
+            <h3 className="font-extrabold text-white">Контакты</h3>
+            <div className="mt-4 flex flex-col gap-3">
+              <a href="tel:+74951293556" className="flex items-center gap-2 transition hover:text-white">
+                <Phone className="h-4 w-4" aria-hidden="true" />
+                +7 (495) 129-35-56
+              </a>
+              <a href="mailto:mail@shelpakov.online" className="flex items-center gap-2 transition hover:text-white">
+                <Mail className="h-4 w-4" aria-hidden="true" />
+                mail@shelpakov.online
+              </a>
+              <span className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" aria-hidden="true" />
+                Москва, Россия
+              </span>
             </div>
-            <div className="relative mx-auto mt-4 h-24 w-24 overflow-hidden rounded-full bg-[#0f1222]">
-              <Image src="/pencil/bDogD.webp" alt="CTA symbol" fill className="home-image-breathe fractal-soft-edge object-cover" sizes="96px" />
+            <div className="mt-6 flex gap-3">
+              <SocialIcon icon={Send} label="Telegram" />
+              <SocialIcon icon={MessageCircle} label="WhatsApp" />
+              <SocialIcon icon={ShieldCheck} label="VK" />
             </div>
-            <div className="mt-3 flex flex-col items-center gap-2">
-              <Pill>Отвечаю сам</Pill>
-              <Pill>Без лишнего процесса</Pill>
-            </div>
-          </section>
-        </div>
+          </div>
+        </footer>
       </div>
     </div>
   )
 }
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale()
-  const copy = homeMeta[locale]
-
-  let page: Awaited<ReturnType<typeof prisma.page.findUnique>> = null
-  try {
-    page = await prisma.page.findUnique({ where: { slug: 'home' } })
-  } catch {
-    page = null
-  }
-
-  const localizedPage = locale === 'ru' ? page : null
   const alternates = getLocaleAlternates('/')
-  const title = normalizeMetaTitle(localizedPage?.title, copy.title)
-  const description = normalizeMetaDescription(localizedPage?.description, copy.description)
+  const title = 'Shelpakov Digital - SEO-продвижение для роста трафика и заявок'
+  const description = 'Комплексное SEO-продвижение для малого и среднего бизнеса: аудит, семантика, оптимизация сайта, рост трафика и заявок.'
 
   return {
     title,
@@ -521,8 +476,9 @@ export async function generateMetadata() {
       title,
       description,
       url: alternates.canonical,
-      type: 'website' as const,
+      type: 'website',
       locale: locale === 'ru' ? 'ru_RU' : 'en_US',
+      siteName: 'Shelpakov Digital',
     },
   }
 }

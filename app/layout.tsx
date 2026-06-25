@@ -82,12 +82,13 @@ export default async function RootLayout({
   const pathname = headersList.get('x-site-pathname') || ''
   const locale = getRouteLocale(headersList.get('x-locale'))
   const isAdmin = pathname.startsWith('/admin')
-  const showHeader = !isAdmin
-  const showFooter = !isAdmin
-  const showScrollTop = !isAdmin
+  const isStandaloneHome = !isAdmin && (pathname === '' || pathname === '/')
+  const showHeader = !isAdmin && !isStandaloneHome
+  const showFooter = !isAdmin && !isStandaloneHome
+  const showScrollTop = !isAdmin && !isStandaloneHome
   let settings: Awaited<ReturnType<typeof prisma.siteSettings.findFirst>> = null
 
-  if (!isAdmin) {
+  if (!isAdmin && process.env.DATABASE_URL) {
     try {
       settings = await prisma.siteSettings.findFirst()
     } catch (error) {
@@ -155,7 +156,7 @@ export default async function RootLayout({
             </noscript>
           </>
         ) : null}
-        {!isAdmin ? (
+        {!isAdmin && !isStandaloneHome ? (
           <div className="site-fractal-atmosphere" aria-hidden="true">
             <span className="site-fractal site-fractal--one" />
             <span className="site-fractal site-fractal--two" />

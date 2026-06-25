@@ -16,6 +16,7 @@ type LeadPayload = {
   name?: string
   phone?: string
   site?: string
+  message?: string
   honeypot?: string
   sourceUrl?: string
   sourceTitle?: string
@@ -336,7 +337,7 @@ async function ensureLeadLogDirectory(filePath: string) {
 }
 
 async function persistLeadLog(
-  payload: { name: string; contact: string; site: string },
+  payload: { name: string; contact: string; site: string; message: string },
   meta: { ip: string; sourceUrl: string; sourceTitle: string; date: string; userAgent: string },
   status: 'sent' | 'failed'
 ) {
@@ -357,7 +358,7 @@ async function persistLeadLog(
 }
 
 async function notifyTelegram(record: {
-  payload: { name: string; contact: string; site: string }
+  payload: { name: string; contact: string; site: string; message: string }
   meta: { ip: string; sourceUrl: string; sourceTitle: string; date: string; userAgent: string }
   status: 'sent' | 'failed'
 }) {
@@ -374,6 +375,7 @@ async function notifyTelegram(record: {
     `Имя: ${escapeHtml(record.payload.name)}`,
     `Контакт: ${escapeHtml(record.payload.contact)}`,
     `Сайт: ${escapeHtml(record.payload.site || 'не указан')}`,
+    `Сообщение: ${escapeHtml(record.payload.message || 'не указано')}`,
     `Источник: ${escapeHtml(record.meta.sourceTitle)} (${escapeHtml(record.meta.sourceUrl)})`,
     `IP: ${escapeHtml(record.meta.ip)}`,
     `UA: ${escapeHtml(record.meta.userAgent)}`,
@@ -533,6 +535,7 @@ export async function POST(request: NextRequest) {
   let name = ''
   let contact = ''
   let site = ''
+  let requestMessage = ''
   let safeSourceUrl = 'Не определен'
   let safeSourceTitle = 'Не определена'
   const ip = getClientIp(request)
@@ -552,6 +555,7 @@ export async function POST(request: NextRequest) {
     name = normalizeText(body.name)
     contact = normalizeText(body.phone)
     site = normalizeText(body.site)
+    requestMessage = normalizeText(body.message)
     const honeypot = normalizeText(body.honeypot)
     const sourceUrl = normalizeText(body.sourceUrl)
     const sourceTitle = normalizeText(body.sourceTitle)
@@ -583,6 +587,7 @@ export async function POST(request: NextRequest) {
     const safeName = escapeHtml(name)
     const safeContact = escapeHtml(contact)
     const safeSite = escapeHtml(site || 'Не указан')
+    const safeMessage = escapeHtml(requestMessage || 'Не указано')
     safeSourceUrl = escapeHtml(sourceUrl || referer)
     safeSourceTitle = escapeHtml(sourceTitle || 'Не указана')
     const safeIp = escapeHtml(ip)
@@ -595,6 +600,7 @@ export async function POST(request: NextRequest) {
       `Имя: ${name}`,
       `Контакт: ${contact}`,
       `Сайт: ${site || 'Не указан'}`,
+      `Сообщение: ${requestMessage || 'Не указано'}`,
       `Страница: ${sourceTitle || 'Не указана'}`,
       `URL страницы: ${sourceUrl || referer}`,
       `Дата: ${currentDate}`,
@@ -609,6 +615,7 @@ export async function POST(request: NextRequest) {
           <tr><td style="padding:8px 0;font-weight:700;width:180px;">Имя</td><td style="padding:8px 0;">${safeName}</td></tr>
           <tr><td style="padding:8px 0;font-weight:700;">Контакт</td><td style="padding:8px 0;">${safeContact}</td></tr>
           <tr><td style="padding:8px 0;font-weight:700;">Сайт</td><td style="padding:8px 0;">${safeSite}</td></tr>
+          <tr><td style="padding:8px 0;font-weight:700;">Сообщение</td><td style="padding:8px 0;">${safeMessage}</td></tr>
           <tr><td style="padding:8px 0;font-weight:700;">Страница</td><td style="padding:8px 0;">${safeSourceTitle}</td></tr>
           <tr><td style="padding:8px 0;font-weight:700;">URL страницы</td><td style="padding:8px 0;">${safeSourceUrl}</td></tr>
           <tr><td style="padding:8px 0;font-weight:700;">Дата</td><td style="padding:8px 0;">${escapeHtml(currentDate)}</td></tr>
@@ -625,7 +632,7 @@ export async function POST(request: NextRequest) {
       html,
     })
 
-    const leadPayload = { name, contact, site }
+    const leadPayload = { name, contact, site, message: requestMessage }
     const leadMeta = { ip, sourceUrl: safeSourceUrl, sourceTitle: safeSourceTitle, date: currentDate, userAgent }
 
     console.info(
@@ -643,7 +650,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error sending lead email:', error)
 
-    const leadPayload = { name, contact, site }
+    const leadPayload = { name, contact, site, message: requestMessage }
     const leadMeta = { ip, sourceUrl: safeSourceUrl, sourceTitle: safeSourceTitle, date: currentDate, userAgent }
 
     await persistLeadLog(leadPayload, leadMeta, 'failed')

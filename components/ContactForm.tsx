@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -11,15 +10,41 @@ export default function ContactForm() {
   const pathname = usePathname()
   const locale = getRouteLocale(getLocaleFromPathname(pathname))
   const dictionary = getDictionary(locale)
+  const copy =
+    locale === 'ru'
+      ? {
+          nameLabel: 'Ваше имя',
+          namePlaceholder: 'Введите ваше имя',
+          contactLabel: 'Email, телефон или Telegram',
+          contactPlaceholder: 'Как с вами связаться',
+          siteLabel: 'Сайт',
+          sitePlaceholder: 'Адрес сайта',
+          messageLabel: 'Сообщение',
+          messagePlaceholder: 'Расскажите о вашем проекте',
+          submit: 'Отправить заявку',
+        }
+      : {
+          nameLabel: 'Your name',
+          namePlaceholder: 'Enter your name',
+          contactLabel: 'Email, phone, or Telegram',
+          contactPlaceholder: 'How to reach you',
+          siteLabel: 'Website',
+          sitePlaceholder: 'Website URL',
+          messageLabel: 'Message',
+          messagePlaceholder: 'Tell us about your project',
+          submit: 'Send request',
+        }
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
     site: '',
+    message: '',
     honeypot: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
-  const telegramHref = 'https://t.me/whoamikon'
+  const inputClass =
+    'w-full rounded-lg border border-blue-200/12 bg-slate-950/58 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,6 +66,7 @@ export default function ContactForm() {
           name: formData.name,
           phone: formData.contact,
           site: formData.site,
+          message: formData.message,
           honeypot: formData.honeypot,
           sourceUrl: window.location.href,
           sourceTitle: document.title,
@@ -52,7 +78,7 @@ export default function ContactForm() {
 
       if (response.ok) {
         setMessage({ type: 'success', text: dictionary.form.success })
-        setFormData({ name: '', contact: '', site: '', honeypot: '' })
+        setFormData({ name: '', contact: '', site: '', message: '', honeypot: '' })
       } else {
         setMessage({ type: 'error', text: dictionary.form.error })
       }
@@ -76,8 +102,8 @@ export default function ContactForm() {
       />
 
       <div>
-        <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-200">
-          {dictionary.form.nameLabel}
+        <label htmlFor="name" className="mb-2 block text-sm font-semibold text-slate-200">
+          {copy.nameLabel}
         </label>
         <input
           type="text"
@@ -85,27 +111,15 @@ export default function ContactForm() {
           required
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full rounded-2xl border border-white/16 bg-[#0f1226] px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-[#9a74ff] focus:ring-2 focus:ring-[#8d66ff]/35"
-          placeholder={dictionary.form.namePlaceholder}
+          className={inputClass}
+          placeholder={copy.namePlaceholder}
         />
       </div>
 
       <div>
-        <label htmlFor="contact" className="mb-2 block text-sm font-medium text-slate-200">
-          {dictionary.form.contactLabel}
+        <label htmlFor="contact" className="mb-2 block text-sm font-semibold text-slate-200">
+          {copy.contactLabel}
         </label>
-        <div className="mb-3 flex flex-wrap items-center gap-3 rounded-2xl border border-white/14 bg-white/5 px-4 py-3 text-sm text-slate-300">
-          <a
-            href={telegramHref}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 font-medium text-[#b9a6ff] transition hover:text-[#d6ccff]"
-          >
-            <Image src="/telegram-logo.svg" alt="Telegram" width={24} height={24} className="h-6 w-6" />
-            {dictionary.form.telegramLabel}
-          </a>
-          <span className="text-slate-500">{dictionary.form.telegramHint}</span>
-        </div>
         <input
           type="text"
           id="contact"
@@ -113,14 +127,14 @@ export default function ContactForm() {
           autoComplete="tel"
           value={formData.contact}
           onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-          className="w-full rounded-2xl border border-white/16 bg-[#0f1226] px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-[#9a74ff] focus:ring-2 focus:ring-[#8d66ff]/35"
-          placeholder={dictionary.form.contactPlaceholder}
+          className={inputClass}
+          placeholder={copy.contactPlaceholder}
         />
       </div>
 
       <div>
-        <label htmlFor="site" className="mb-2 block text-sm font-medium text-slate-200">
-          {dictionary.form.siteLabel}
+        <label htmlFor="site" className="mb-2 block text-sm font-semibold text-slate-200">
+          {copy.siteLabel}
         </label>
         <input
           type="text"
@@ -128,13 +142,23 @@ export default function ContactForm() {
           autoComplete="url"
           value={formData.site}
           onChange={(e) => setFormData({ ...formData, site: e.target.value })}
-          className="w-full rounded-2xl border border-white/16 bg-[#0f1226] px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-[#9a74ff] focus:ring-2 focus:ring-[#8d66ff]/35"
-          placeholder={dictionary.form.sitePlaceholder}
+          className={inputClass}
+          placeholder={copy.sitePlaceholder}
         />
       </div>
 
-      <div className="rounded-2xl border border-white/14 bg-white/5 p-4 text-sm leading-7 text-slate-300">
-        {dictionary.form.note}
+      <div>
+        <label htmlFor="message" className="mb-2 block text-sm font-semibold text-slate-200">
+          {copy.messageLabel}
+        </label>
+        <textarea
+          id="message"
+          rows={5}
+          value={formData.message}
+          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+          className={`${inputClass} resize-none`}
+          placeholder={copy.messagePlaceholder}
+        />
       </div>
 
       {message && (
@@ -149,8 +173,8 @@ export default function ContactForm() {
         </div>
       )}
 
-      <Button type="submit" disabled={isSubmitting} className="w-full rounded-2xl">
-        {isSubmitting ? dictionary.form.submitting : dictionary.form.submit}
+      <Button type="submit" disabled={isSubmitting} className="w-full rounded-lg">
+        {isSubmitting ? dictionary.form.submitting : copy.submit}
       </Button>
     </form>
   )
