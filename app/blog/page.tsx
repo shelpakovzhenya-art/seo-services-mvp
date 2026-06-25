@@ -4,10 +4,8 @@ import JsonLd from '@/components/JsonLd'
 import {
   BlogCover,
   localizedPath,
-  PageHero,
   ReferencePage,
   referenceBlogCards,
-  SectionTitle,
 } from '@/components/ShelpakovReference'
 import { getRequestLocale } from '@/lib/request-locale'
 import { getLocaleAlternates } from '@/lib/site-url'
@@ -54,15 +52,15 @@ export default async function BlogPage() {
       <JsonLd id="blog-collection-schema" data={collectionSchema} />
       <JsonLd id="blog-item-list-schema" data={itemListSchema} />
 
-      <PageHero
-        eyebrow="Блог"
-        title="Мысли, кейсы и полезные материалы"
-        description="Пишем о SEO и digital-маркетинге: без воды, с практическими выводами для бизнеса."
-      />
-
-      <section className="mt-5 rounded-lg border border-blue-200/10 bg-[#061126]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
+      <section className="rounded-lg border border-blue-200/10 bg-[#061126]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <SectionTitle title="Материалы" description="Подборка статей для владельцев сайтов, маркетологов и команд." />
+          <div>
+            <p className="text-sm font-extrabold uppercase text-blue-400">Блог</p>
+            <h1 className="mt-4 text-3xl font-extrabold tracking-normal text-white sm:text-4xl">Мысли, кейсы и полезные материалы</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
+              Пишем о SEO и digital-маркетинге: без воды, с практическими выводами для бизнеса.
+            </p>
+          </div>
           <div className="flex flex-wrap gap-2">
             {['Все', 'SEO', 'Аналитика', 'Кейсы', 'Инструменты'].map((chip) => (
               <span key={chip} className="rounded-md border border-blue-300/20 bg-blue-500/10 px-3 py-1 text-xs font-bold text-slate-200">

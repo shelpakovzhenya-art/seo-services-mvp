@@ -4,11 +4,9 @@ import JsonLd from '@/components/JsonLd'
 import {
   BlogCover,
   localizedPath,
-  PageHero,
   ProjectCta,
   ReferencePage,
   referenceCaseCards,
-  SectionTitle,
 } from '@/components/ShelpakovReference'
 import { getRequestLocale } from '@/lib/request-locale'
 import { getLocaleAlternates } from '@/lib/site-url'
@@ -46,15 +44,15 @@ export default async function CasesPage() {
       <JsonLd id="cases-breadcrumbs-schema" data={breadcrumbSchema} />
       <JsonLd id="cases-item-list-schema" data={itemListSchema} />
 
-      <PageHero
-        eyebrow="Кейсы"
-        title="Реальные проекты и результаты"
-        description="Показываем, что изменили в структуре, контенте и технической базе, а также какой эффект получили."
-      />
-
-      <section className="mt-5 rounded-lg border border-blue-200/10 bg-[#061126]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
+      <section className="rounded-lg border border-blue-200/10 bg-[#061126]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <SectionTitle title="Кейсы" description="Сетка результатов в формате, который быстро читается и сравнивается." />
+          <div>
+            <p className="text-sm font-extrabold uppercase text-blue-400">Кейсы</p>
+            <h1 className="mt-4 text-3xl font-extrabold tracking-normal text-white sm:text-4xl">Реальные проекты и результаты</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
+              Показываем, что изменили в структуре, контенте и технической базе, а также какой эффект получили.
+            </p>
+          </div>
           <div className="flex flex-wrap gap-2">
             {['Все', 'SEO-продвижение', 'Интернет-магазины', 'Услуги', 'Локальный бизнес'].map((chip) => (
               <span key={chip} className="rounded-md border border-blue-300/20 bg-blue-500/10 px-3 py-1 text-xs font-bold text-slate-200">

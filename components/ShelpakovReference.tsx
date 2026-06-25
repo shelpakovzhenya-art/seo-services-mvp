@@ -375,22 +375,21 @@ export function SectionTitle({
 
 export function ProjectCta({ locale }: { locale: Locale }) {
   return (
-    <section className="mt-5 overflow-hidden rounded-lg border border-blue-200/10 bg-[#07142b]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
-      <div className="grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-        <div>
-          <h2 className="text-2xl font-extrabold text-white sm:text-3xl">Есть проект? Давайте обсудим</h2>
-          <p className="mt-3 max-w-[460px] text-sm leading-7 text-slate-300">
-            Расскажите о своей задаче, и мы предложим лучшее решение.
-          </p>
-          <Link
-            href={localizedPath('/contacts', locale)}
-            className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-extrabold text-white shadow-[0_14px_34px_rgba(42,90,255,0.42)] transition hover:-translate-y-0.5 hover:bg-blue-500"
-          >
-            Получить консультацию
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
-        </div>
-        <DashboardVisual compact />
+    <section className="relative mt-5 min-h-[160px] overflow-hidden rounded-lg border border-blue-200/10 bg-[#050b16] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
+      <Image src="/reference/cta-laptop.webp" alt="" fill sizes="900px" className="object-cover object-right opacity-80" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,8,18,0.98)_0%,rgba(3,8,18,0.80)_48%,rgba(3,8,18,0.18)_100%)]" />
+      <div className="relative z-10 max-w-[460px]">
+        <h2 className="text-2xl font-extrabold text-white sm:text-3xl">Есть проект? Давайте обсудим</h2>
+        <p className="mt-3 max-w-[460px] text-sm leading-7 text-slate-300">
+          Расскажите о своей задаче, и мы предложим лучшее решение.
+        </p>
+        <Link
+          href={localizedPath('/contacts', locale)}
+          className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-extrabold text-white shadow-[0_14px_34px_rgba(42,90,255,0.42)] transition hover:-translate-y-0.5 hover:bg-blue-500"
+        >
+          Получить консультацию
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </Link>
       </div>
     </section>
   )
@@ -405,7 +404,7 @@ export function BlogCover({
 }) {
   return (
     <div className="relative h-44 overflow-hidden rounded-t-lg border-b border-blue-200/10 bg-slate-950">
-      <Image src={src} alt={title} fill className="object-cover opacity-82 mix-blend-screen" />
+      <Image src={src} alt={title} fill className="object-cover opacity-95" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(3,8,18,0.52))]" />
     </div>
   )
@@ -444,9 +443,8 @@ export function StatsStrip() {
 export function ContactMap() {
   return (
     <div className="relative min-h-[270px] overflow-hidden rounded-lg border border-blue-200/10 bg-[#061126]">
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(65,118,255,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(65,118,255,0.10)_1px,transparent_1px)] bg-[size:36px_36px]" />
-      <div className="absolute left-1/2 top-1/2 h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full border border-blue-400/25" />
-      <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/20" />
+      <Image src="/reference/contact-map.webp" alt="" fill sizes="620px" className="object-cover opacity-80" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,18,0.15),rgba(3,8,18,0.56))]" />
       <div className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-blue-600 text-white shadow-[0_0_44px_rgba(45,114,255,0.8)]">
         <MapPin className="h-6 w-6" aria-hidden="true" />
       </div>
@@ -463,37 +461,37 @@ export const referenceCaseCards = [
     title: 'Интернет-магазин мебели',
     subtitle: 'Рост трафика',
     result: '+178%',
-    image: '/blog/seo-lead-quality-cover.svg',
+    image: '/reference/cases-desk-1.webp',
   },
   {
     title: 'Сайт медицинского центра',
     subtitle: 'Заявки',
     result: '+233%',
-    image: '/cases/botiq/audit-cover.png',
+    image: '/reference/cases-desk-2.webp',
   },
   {
     title: 'Интернет-магазин техники',
     subtitle: 'Рост продаж',
     result: '+185%',
-    image: '/blog/meta-tags-practice-cover.svg',
+    image: '/reference/cases-desk-3.webp',
   },
   {
     title: 'Корпоративный сайт',
     subtitle: 'Рост трафика',
     result: '+968%',
-    image: '/blog/domain-migration-plan-cover.svg',
+    image: '/reference/blog-desk-4.webp',
   },
   {
     title: 'Локальный бизнес',
     subtitle: 'Рост заявок',
     result: '+215%',
-    image: '/blog/reputation-seo-cover.svg',
+    image: '/reference/blog-desk-5.webp',
   },
   {
     title: 'Интернет-магазин одежды',
     subtitle: 'Рост продаж',
     result: '+132%',
-    image: '/blog/seo-trends-2026-cover.svg',
+    image: '/reference/blog-desk-6.webp',
   },
 ]
 
@@ -501,32 +499,32 @@ export const referenceBlogCards = [
   {
     title: 'Как вывести сайт в топ в 2026 году',
     date: '12 мая 2026',
-    image: '/blog/seo-trends-2026-cover.svg',
+    image: '/reference/blog-desk-1.webp',
   },
   {
     title: 'Технический аудит: что проверить в первую очередь',
     date: '5 мая 2026',
-    image: '/blog/site-speed-optimization-cover.svg',
+    image: '/reference/blog-desk-2.webp',
   },
   {
     title: 'SEO для интернет-магазинов: полное руководство',
     date: '28 апреля 2026',
-    image: '/blog/seo-site-requirements-cover.svg',
+    image: '/reference/blog-desk-3.webp',
   },
   {
     title: 'Как увеличить конверсию сайта на 300%',
     date: '18 апреля 2026',
-    image: '/blog/seo-lead-quality-cover.svg',
+    image: '/reference/blog-desk-4.webp',
   },
   {
     title: 'Локальное SEO: как продвигать бизнес в регионе',
     date: '10 апреля 2026',
-    image: '/blog/geo-ai-readiness-cover.svg',
+    image: '/reference/blog-desk-5.webp',
   },
   {
     title: 'Контент-стратегия: от стратегии к результату',
     date: '2 апреля 2026',
-    image: '/blog/expert-blog-growth-cover.svg',
+    image: '/reference/blog-desk-6.webp',
   },
 ]
 

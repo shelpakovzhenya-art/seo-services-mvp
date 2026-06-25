@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
 import JsonLd from '@/components/JsonLd'
 import {
-  DashboardVisual,
-  PageHero,
   processCards,
   ProjectCta,
   ReferencePage,
@@ -58,15 +56,14 @@ export default async function ServicesIndexPage() {
       <JsonLd id="services-collection-schema" data={collectionSchema} />
       <JsonLd id="services-item-list-schema" data={itemListSchema} />
 
-      <PageHero
-        eyebrow="Услуги"
-        title="Комплексные решения для роста вашего бизнеса"
-        description="Продвигаем сайт системно: от аудита и технической базы до контента, рекламы и роста заявок."
-        aside={<DashboardVisual />}
-      />
-
-      <section className="mt-5 rounded-lg border border-blue-200/10 bg-[#061126]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
-        <SectionTitle title="Что мы делаем" description="Подбираем формат под задачу: быстрый аудит, регулярное SEO или комплексное сопровождение." />
+      <section className="rounded-lg border border-blue-200/10 bg-[#061126]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
+        <div className="max-w-2xl">
+          <p className="text-sm font-extrabold uppercase text-blue-400">Услуги</p>
+          <h1 className="mt-4 text-3xl font-extrabold tracking-normal text-white sm:text-4xl">Комплексные решения для роста вашего бизнеса</h1>
+          <p className="mt-3 text-sm leading-7 text-slate-300">
+            Продвигаем сайт системно: от аудита и технической базы до контента, рекламы и роста заявок.
+          </p>
+        </div>
         <div className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {referenceServices.map((service) => (
             <ServiceCard key={service.title} card={service} />

@@ -6,7 +6,6 @@ import {
   contactEmail,
   ContactMap,
   contactPhone,
-  PageHero,
   ReferencePage,
   SectionTitle,
   telegramUrl,
@@ -34,15 +33,16 @@ export default async function ContactsPage() {
     <ReferencePage>
       <JsonLd id="contacts-breadcrumbs-schema" data={breadcrumbSchema} />
 
-      <PageHero
-        eyebrow="Контакты"
-        title="Готовы обсудить ваш проект"
-        description="Напишите нам удобным способом, и мы свяжемся с вами в ближайшее время."
-      />
-
-      <section className="mt-5 grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+      <section className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-lg border border-blue-200/10 bg-[#07142b]/88 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.32)] sm:p-8">
+          <p className="text-sm font-extrabold uppercase text-blue-400">Контакты</p>
+          <h1 className="mt-4 text-3xl font-extrabold tracking-normal text-white sm:text-4xl">Готовы обсудить ваш проект</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
+            Напишите нам удобным способом, и мы свяжемся с вами в ближайшее время.
+          </p>
+          <div className="mt-7">
           <SectionTitle title="Контакты" description="Готовы обсудить сайт, аудит или регулярное SEO-сопровождение." />
+          </div>
 
           <div className="mt-7 grid gap-4">
             <a href={`mailto:${contactEmail}`} className="flex items-center gap-4 rounded-lg border border-blue-200/10 bg-slate-950/42 p-4 text-slate-200 transition hover:border-blue-300/35 hover:text-white">
