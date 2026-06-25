@@ -8,12 +8,10 @@ import {
   Briefcase,
   CheckCircle2,
   ClipboardCheck,
-  Instagram,
   Mail,
   MapPin,
   Phone,
   Search,
-  Send,
   Target,
   UsersRound,
   Wrench,
@@ -45,6 +43,9 @@ const partners = [
   { name: 'MY PODOLOG', url: 'mypodolog.ru' },
   { name: 'PODOCENTER', url: 'podocenter-kzn.ru' },
 ]
+
+const telegramUrl = 'https://t.me/whoamikon'
+const maxUrl = 'https://max.ru/whoamikon'
 
 const resultCards: Card[] = [
   { icon: Target, title: 'от 3 месяцев', text: 'Первые результаты уже через 90 дней' },
@@ -122,21 +123,23 @@ function Header({ locale }: { locale: Locale }) {
           +7 (495) 129-35-56
         </a>
         <a
-          href="https://t.me/whoamikon"
+          href={telegramUrl}
           target="_blank"
           rel="noreferrer"
           aria-label="Telegram"
           className="hidden h-8 w-8 place-items-center rounded-md border border-[#2369ff]/30 bg-[#0a1c42] text-[#63c7ff] md:grid"
         >
-          <Send className="h-3.5 w-3.5" aria-hidden="true" />
+          <Image src="/telegram-logo.svg" alt="" width={18} height={18} className="h-[18px] w-[18px]" />
         </a>
-        <Link
-          href={pathFor('/contacts', locale)}
-          aria-label="Instagram"
-          className="hidden h-8 w-8 place-items-center rounded-md border border-[#2369ff]/30 bg-[#0a1c42] text-[#8da6ff] md:grid"
+        <a
+          href={maxUrl}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Max"
+          className="hidden h-8 min-w-8 place-items-center rounded-md border border-[#2369ff]/30 bg-[#0a1c42] px-1.5 text-[9px] font-black uppercase tracking-normal text-[#8db5ff] md:grid"
         >
-          <Instagram className="h-3.5 w-3.5" aria-hidden="true" />
-        </Link>
+          MAX
+        </a>
         <Link
           href={pathFor('/contacts', locale)}
           className="hidden rounded-md bg-[#2368ff] px-4 py-2 text-[11px] font-extrabold text-white shadow-[0_10px_28px_rgba(35,104,255,0.38)] transition hover:bg-[#2f77ff] sm:inline-flex"
@@ -157,10 +160,10 @@ function Hero({ locale }: { locale: Locale }) {
         fill
         priority
         sizes="(max-width: 768px) 100vw, 720px"
-        className="origin-right scale-[1.24] object-contain object-right opacity-95"
+        className="origin-right scale-[1.18] object-contain object-right opacity-100 brightness-125 contrast-110"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,#020713_0%,#020713_42%,rgba(2,7,19,0.78)_57%,rgba(2,7,19,0.22)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_28%,rgba(25,86,255,0.18),transparent_32%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,#020713_0%,#020713_42%,rgba(2,7,19,0.62)_57%,rgba(2,7,19,0.04)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_28%,rgba(25,86,255,0.08),transparent_34%)]" />
       <div className="relative z-10 px-5 py-8 sm:px-7 lg:px-8 lg:py-9">
         <div className="max-w-[540px]">
           <span className="inline-flex rounded-md border border-[#2d72ff]/40 bg-[#0b2b6f]/45 px-2.5 py-1 text-[10px] font-extrabold uppercase text-[#3b86ff]">
@@ -211,11 +214,18 @@ function Partners() {
           Наши партнёры
         </div>
         {partners.map((partner) => (
-          <div key={partner.url} className="relative min-h-[48px] border-t border-[#163155] px-4 py-2.5 sm:border-r sm:border-t-0">
-            <span className="absolute right-3 top-3 h-1.5 w-1.5 rounded-full bg-[#2d72ff]" />
+          <a
+            key={partner.url}
+            href={`https://${partner.url}`}
+            target="_blank"
+            rel="noreferrer"
+            className="group relative min-h-[48px] border-t border-[#163155] px-4 py-2.5 outline-none transition duration-200 hover:border-[#2d72ff]/70 hover:bg-[#0a1c3b] active:scale-[0.99] focus-visible:border-[#5a96ff] focus-visible:bg-[#0a1c3b] sm:border-r sm:border-t-0"
+          >
+            <span className="absolute right-3 top-3 h-1.5 w-1.5 rounded-full bg-[#2d72ff] transition group-hover:scale-125 group-hover:shadow-[0_0_16px_rgba(45,114,255,0.9)]" />
+            <span className="absolute bottom-3 right-3 text-[11px] font-black text-[#5a96ff] opacity-0 transition group-hover:opacity-100">↗</span>
             <p className="text-[13px] font-black uppercase leading-tight text-white">{partner.name}</p>
-            <p className="mt-1 text-[10px] text-slate-400">{partner.url}</p>
-          </div>
+            <p className="mt-1 text-[10px] text-slate-400 transition group-hover:text-slate-200">{partner.url}</p>
+          </a>
         ))}
       </div>
     </section>

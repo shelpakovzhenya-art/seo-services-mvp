@@ -1,5 +1,6 @@
+import Image from 'next/image'
 import type { Metadata } from 'next'
-import { Mail, MapPin, Phone, Send } from 'lucide-react'
+import { Mail, MapPin, Phone } from 'lucide-react'
 import JsonLd from '@/components/JsonLd'
 import LazyContactForm from '@/components/LazyContactForm'
 import {
@@ -56,7 +57,7 @@ export default async function ContactsPage() {
             </a>
             <a href={telegramUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 rounded-lg border border-blue-200/10 bg-slate-950/42 p-4 text-slate-200 transition hover:border-blue-300/35 hover:text-white">
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-blue-300/20 bg-blue-500/10 text-blue-300">
-                <Send className="h-5 w-5" aria-hidden="true" />
+                <Image src="/telegram-logo.svg" alt="" width={20} height={20} className="h-5 w-5" />
               </span>
               <span>
                 <span className="block text-xs text-slate-400">Telegram</span>

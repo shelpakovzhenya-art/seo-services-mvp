@@ -8,7 +8,6 @@ import {
   Briefcase,
   ClipboardCheck,
   FileSearch,
-  Instagram,
   Link2,
   Mail,
   MapPin,
@@ -17,7 +16,6 @@ import {
   PenTool,
   Phone,
   Search,
-  Send,
   Settings2,
   ShieldCheck,
   Sparkles,
@@ -36,6 +34,7 @@ export type ReferenceCard = {
 export const contactEmail = 'mail@shelpakov.online'
 export const contactPhone = '+7 (495) 129-35-56'
 export const telegramUrl = 'https://t.me/whoamikon'
+export const maxUrl = 'https://max.ru/whoamikon'
 
 export const referenceServices: ReferenceCard[] = [
   {
@@ -155,15 +154,17 @@ export function ShelpakovHeader({ locale }: { locale: Locale }) {
             aria-label="Telegram"
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-blue-300/20 bg-blue-500/10 text-blue-200 transition hover:border-blue-300/55 hover:bg-blue-500/20"
           >
-            <Send className="h-4 w-4" aria-hidden="true" />
+            <Image src="/telegram-logo.svg" alt="" width={18} height={18} className="h-[18px] w-[18px]" />
           </a>
-          <Link
-            href={localizedPath('/contacts', locale)}
-            aria-label="Контакты"
+          <a
+            href={maxUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Max"
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-blue-300/20 bg-blue-500/10 text-blue-200 transition hover:border-blue-300/55 hover:bg-blue-500/20"
           >
-            <Instagram className="h-4 w-4" aria-hidden="true" />
-          </Link>
+            <span className="text-[9px] font-black uppercase tracking-normal text-blue-200">MAX</span>
+          </a>
           <Link
             href={localizedPath('/contacts', locale)}
             className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-extrabold text-white shadow-[0_12px_30px_rgba(44,92,255,0.38)] transition hover:-translate-y-0.5 hover:bg-blue-500"
