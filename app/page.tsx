@@ -190,7 +190,7 @@ function Hero({ locale }: { locale: Locale }) {
   return (
     <section className="relative overflow-hidden">
       <Image
-        src="/reference/hero-laptop-banner.webp"
+        src="/reference/hero-laptop-hq.webp"
         alt=""
         fill
         priority
