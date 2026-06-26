@@ -82,7 +82,8 @@ export default async function RootLayout({
   const pathname = headersList.get('x-site-pathname') || ''
   const locale = getRouteLocale(headersList.get('x-locale'))
   const isAdmin = pathname.startsWith('/admin')
-  const isStandaloneHome = !isAdmin && (pathname === '' || pathname === '/')
+  const normalizedPathname = pathname.replace(/\/$/, '') || '/'
+  const isStandaloneHome = !isAdmin && (normalizedPathname === '/' || normalizedPathname === '/ru' || normalizedPathname === '/en')
   const showHeader = !isAdmin && !isStandaloneHome
   const showFooter = !isAdmin && !isStandaloneHome
   const showScrollTop = !isAdmin && !isStandaloneHome

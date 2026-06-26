@@ -15,6 +15,7 @@ import {
   Menu,
   PenTool,
   Phone,
+  Rocket,
   Search,
   Settings2,
   ShieldCheck,
@@ -31,8 +32,9 @@ export type ReferenceCard = {
   icon: LucideIcon
 }
 
-export const contactEmail = 'mail@shelpakov.online'
-export const contactPhone = '+7 (495) 129-35-56'
+export const contactEmail = 'shelpakovzhenya@gmail.com'
+export const contactPhone = '+7 901 682-33-71'
+export const contactPhoneHref = 'tel:+79016823371'
 export const telegramUrl = 'https://t.me/whoamikon'
 export const maxUrl = 'https://max.ru/whoamikon'
 
@@ -73,7 +75,7 @@ export const processCards: ReferenceCard[] = [
   {
     title: 'Технический аудит',
     text: 'Проверяем сайт на ошибки и технические проблемы.',
-    icon: Search,
+    icon: FileSearch,
   },
   {
     title: 'Сбор семантики',
@@ -88,7 +90,7 @@ export const processCards: ReferenceCard[] = [
   {
     title: 'Продвижение',
     text: 'Выводим сайт в топ и увеличиваем трафик.',
-    icon: BarChart3,
+    icon: Rocket,
   },
   {
     title: 'Аналитика и отчёты',
@@ -117,8 +119,8 @@ export function localizedPath(path: string, locale: Locale) {
 export function LogoLockup({ compact = false }: { compact?: boolean }) {
   return (
     <span className="flex min-w-0 items-center gap-3">
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-sm font-black lowercase text-white shadow-[0_0_28px_rgba(61,107,255,0.52)]">
-        m
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-blue-300/25 bg-white shadow-[0_0_28px_rgba(61,107,255,0.52)]">
+        <Image src="/favicon-48.png" alt="" width={28} height={28} className="h-7 w-7 object-contain" />
       </span>
       <span className={compact ? 'truncate text-sm font-extrabold text-white' : 'truncate text-lg font-extrabold text-white'}>
         Shelpakov Digital
@@ -130,21 +132,21 @@ export function LogoLockup({ compact = false }: { compact?: boolean }) {
 export function ShelpakovHeader({ locale }: { locale: Locale }) {
   return (
     <header className="sticky top-0 z-50 border-b border-blue-200/10 bg-[#030814]/94 backdrop-blur-xl">
-      <div className="mx-auto flex min-h-[70px] w-full max-w-[1280px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-[70px] w-full max-w-[1280px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <Link href={localizedPath('/', locale)} aria-label="Shelpakov Digital" className="min-w-0">
           <LogoLockup />
         </Link>
 
-        <nav className="hidden items-center gap-7 text-sm font-semibold text-slate-300 lg:flex">
+        <nav className="hidden min-w-0 items-center gap-4 text-xs font-semibold text-slate-300 lg:flex xl:gap-6 xl:text-sm">
           {navItems.map((item) => (
-            <Link key={item.href} href={localizedPath(item.href, locale)} className="transition hover:text-blue-300">
+            <Link key={item.href} href={localizedPath(item.href, locale)} className="whitespace-nowrap transition hover:text-blue-300">
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
-          <a href={`tel:${contactPhone.replace(/[^\d+]/g, '')}`} className="text-sm font-bold text-white">
+        <div className="hidden items-center gap-2.5 lg:flex xl:gap-3">
+          <a href={contactPhoneHref} className="whitespace-nowrap text-xs font-bold text-white xl:text-sm">
             {contactPhone}
           </a>
           <a
@@ -163,11 +165,11 @@ export function ShelpakovHeader({ locale }: { locale: Locale }) {
             aria-label="Max"
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-blue-300/20 bg-blue-500/10 text-blue-200 transition hover:border-blue-300/55 hover:bg-blue-500/20"
           >
-            <span className="text-[9px] font-black uppercase tracking-normal text-blue-200">MAX</span>
+            <Image src="/max-logo.svg" alt="" width={20} height={20} className="h-5 w-5" />
           </a>
           <Link
             href={localizedPath('/contacts', locale)}
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-extrabold text-white shadow-[0_12px_30px_rgba(44,92,255,0.38)] transition hover:-translate-y-0.5 hover:bg-blue-500"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-blue-600 px-4 py-3 text-xs font-extrabold text-white shadow-[0_12px_30px_rgba(44,92,255,0.38)] transition hover:-translate-y-0.5 hover:bg-blue-500 xl:px-5 xl:text-sm"
           >
             Получить аудит
           </Link>
@@ -184,7 +186,7 @@ export function ShelpakovHeader({ locale }: { locale: Locale }) {
                   {item.label}
                 </Link>
               ))}
-              <a href={`tel:${contactPhone.replace(/[^\d+]/g, '')}`} className="rounded-md px-3 py-2 text-sm font-semibold text-slate-200 hover:bg-blue-500/10">
+              <a href={contactPhoneHref} className="rounded-md px-3 py-2 text-sm font-semibold text-slate-200 hover:bg-blue-500/10">
                 {contactPhone}
               </a>
               <Link href={localizedPath('/contacts', locale)} className="mt-2 rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-extrabold text-white">
@@ -201,7 +203,7 @@ export function ShelpakovHeader({ locale }: { locale: Locale }) {
 export function ShelpakovFooter({ locale }: { locale: Locale }) {
   return (
     <footer className="border-t border-blue-200/10 bg-[#030814] text-slate-400">
-      <div className="mx-auto grid w-full max-w-[1280px] gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.1fr_0.8fr_0.8fr_1fr] lg:px-8">
+      <div className="mx-auto grid w-full max-w-[1280px] gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.1fr_0.78fr_0.9fr_0.85fr_1fr] lg:px-8">
         <div>
           <Link href={localizedPath('/', locale)}>
             <LogoLockup />
@@ -215,35 +217,51 @@ export function ShelpakovFooter({ locale }: { locale: Locale }) {
         <div>
           <h3 className="text-sm font-extrabold text-white">Услуги</h3>
           <div className="mt-4 grid gap-3 text-sm">
-            {referenceServices.slice(0, 4).map((item) => (
-              <Link key={item.title} href={localizedPath('/services', locale)} className="transition hover:text-white">
-                {item.title}
-              </Link>
-            ))}
+            <Link href={localizedPath('/services/seo', locale)} className="transition hover:text-white">SEO-продвижение</Link>
+            <Link href={localizedPath('/services/seo-audit', locale)} className="transition hover:text-white">SEO-аудит</Link>
+            <Link href={localizedPath('/services/technical-seo', locale)} className="transition hover:text-white">Техническое SEO</Link>
+            <Link href={localizedPath('/services/seo-content', locale)} className="transition hover:text-white">SEO-контент</Link>
           </div>
         </div>
 
         <div>
-          <h3 className="text-sm font-extrabold text-white">Разделы</h3>
+          <h3 className="text-sm font-extrabold text-white">Страницы</h3>
           <div className="mt-4 grid gap-3 text-sm">
-            {navItems.map((item) => (
-              <Link key={item.href} href={localizedPath(item.href, locale)} className="transition hover:text-white">
-                {item.label}
-              </Link>
-            ))}
+            <Link href={localizedPath('/services/local-seo', locale)} className="transition hover:text-white">Локальное SEO</Link>
+            <Link href={localizedPath('/services/ecommerce-seo', locale)} className="transition hover:text-white">Коммерческие страницы</Link>
+            <Link href={localizedPath('/services/b2b-seo', locale)} className="transition hover:text-white">B2B SEO</Link>
+            <Link href={localizedPath('/services/link-building', locale)} className="transition hover:text-white">Линкбилдинг</Link>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-extrabold text-white">Материалы</h3>
+          <div className="mt-4 grid gap-3 text-sm">
+            <Link href={localizedPath('/cases', locale)} className="transition hover:text-white">Кейсы</Link>
+            <Link href={localizedPath('/blog', locale)} className="transition hover:text-white">Блог</Link>
+            <Link href={localizedPath('/tools', locale)} className="transition hover:text-white">SEO-инструменты</Link>
+            <Link href="/sitemap.xml" className="transition hover:text-white">Карта сайта</Link>
           </div>
         </div>
 
         <div>
           <h3 className="text-sm font-extrabold text-white">Контакты</h3>
           <div className="mt-4 grid gap-3 text-sm">
-            <a href={`tel:${contactPhone.replace(/[^\d+]/g, '')}`} className="flex items-center gap-2 transition hover:text-white">
+            <a href={contactPhoneHref} className="flex items-center gap-2 transition hover:text-white">
               <Phone className="h-4 w-4" aria-hidden="true" />
               {contactPhone}
             </a>
             <a href={`mailto:${contactEmail}`} className="flex items-center gap-2 transition hover:text-white">
               <Mail className="h-4 w-4" aria-hidden="true" />
               {contactEmail}
+            </a>
+            <a href={telegramUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 transition hover:text-white">
+              <Image src="/telegram-logo.svg" alt="" width={16} height={16} className="h-4 w-4" />
+              @whoamikon
+            </a>
+            <a href={maxUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 transition hover:text-white">
+              <Image src="/max-logo.svg" alt="" width={16} height={16} className="h-4 w-4" />
+              MAX
             </a>
             <span className="flex items-center gap-2">
               <MapPin className="h-4 w-4" aria-hidden="true" />
