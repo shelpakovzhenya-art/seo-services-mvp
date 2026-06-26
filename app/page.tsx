@@ -142,7 +142,7 @@ function IconTile({ icon: Icon }: { icon: LucideIcon }) {
 
 function Header({ locale }: { locale: Locale }) {
   return (
-    <header className="flex min-h-[54px] items-center justify-between gap-3 border-b border-[#163155]/75 px-5 sm:px-7">
+    <header className="flex min-h-[54px] items-center justify-between gap-3 px-5 sm:px-7">
       <Link href={pathFor('/', locale)} aria-label="Shelpakov Digital">
         <Logo />
       </Link>
@@ -188,19 +188,16 @@ function Header({ locale }: { locale: Locale }) {
 
 function Hero({ locale }: { locale: Locale }) {
   return (
-    <section className="relative overflow-hidden border-b border-[#163155]/75">
-      <div className="absolute inset-y-0 right-0 w-full overflow-hidden sm:w-[64%]">
-        <Image
-          src="/reference/hero-laptop.webp"
-          alt=""
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, 760px"
-          className="object-cover object-right opacity-100 brightness-115 contrast-125 saturate-[1.1]"
-        />
-        <div className="absolute inset-y-0 left-0 w-[42%] bg-[linear-gradient(90deg,#020713_0%,rgba(2,7,19,0.70)_48%,rgba(2,7,19,0)_100%)]" />
-      </div>
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,#020713_0%,#020713_40%,rgba(2,7,19,0.46)_62%,rgba(2,7,19,0.04)_100%)]" />
+    <section className="relative overflow-hidden">
+      <Image
+        src="/reference/hero-laptop-banner.webp"
+        alt=""
+        fill
+        priority
+        sizes="1320px"
+        className="object-cover object-center opacity-100 brightness-110 contrast-115 saturate-[1.06]"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,#020713_0%,rgba(2,7,19,0.98)_38%,rgba(2,7,19,0.40)_62%,rgba(2,7,19,0.06)_100%)]" />
       <div className="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,#020713_0%,rgba(2,7,19,0)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(0deg,#020713_0%,rgba(2,7,19,0)_100%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_28%,rgba(25,86,255,0.14),transparent_34%)]" />
@@ -251,7 +248,7 @@ function Hero({ locale }: { locale: Locale }) {
 function Partners() {
   return (
     <section className="px-5 pt-5 sm:px-7">
-      <div className="grid overflow-hidden rounded-md border border-[#224779]/80 bg-[linear-gradient(135deg,rgba(7,18,37,0.94),rgba(4,10,22,0.92))] shadow-[inset_0_1px_0_rgba(120,170,255,0.10),0_18px_60px_rgba(0,0,0,0.28)] sm:grid-cols-2 lg:grid-cols-[1.05fr_repeat(4,1fr)]">
+      <div className="seo-hover-surface grid overflow-hidden rounded-md border border-[#224779]/80 bg-[linear-gradient(135deg,rgba(7,18,37,0.94),rgba(4,10,22,0.92))] shadow-[inset_0_1px_0_rgba(120,170,255,0.10),0_18px_60px_rgba(0,0,0,0.28)] sm:grid-cols-2 lg:grid-cols-[1.05fr_repeat(4,1fr)]">
         <div className="flex min-h-[56px] items-center border-b border-[#163155] px-4 text-[12px] font-extrabold uppercase tracking-[0.16em] text-blue-100 sm:border-r lg:border-b-0">
           Наши партнёры
         </div>
@@ -261,7 +258,7 @@ function Partners() {
             href={`https://${partner.url}`}
             target="_blank"
             rel="noreferrer"
-            className="group relative min-h-[56px] overflow-hidden border-t border-[#163155] px-4 py-3 outline-none transition duration-300 hover:border-[#2d72ff]/70 hover:bg-[#0a1c3b] active:scale-[0.99] focus-visible:border-[#5a96ff] focus-visible:bg-[#0a1c3b] sm:border-r sm:border-t-0"
+            className="seo-hover-card group relative min-h-[56px] overflow-hidden border-t border-[#163155] px-4 py-3 outline-none transition duration-300 hover:border-[#2d72ff]/70 hover:bg-[#0a1c3b] active:scale-[0.99] focus-visible:border-[#5a96ff] focus-visible:bg-[#0a1c3b] sm:border-r sm:border-t-0"
           >
             <span className="absolute inset-0 translate-x-[-120%] bg-[linear-gradient(105deg,transparent,rgba(81,145,255,0.18),transparent)] transition duration-700 group-hover:translate-x-[120%]" />
             <span className="absolute right-3 top-3 h-1.5 w-1.5 rounded-full bg-[#2d72ff] transition group-hover:scale-125 group-hover:shadow-[0_0_16px_rgba(45,114,255,0.9)]" />
@@ -287,7 +284,7 @@ function ResultSection() {
         </p>
         <div className="relative mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {resultCards.map((card) => (
-            <article key={card.title} className="group/card relative min-h-[108px] overflow-hidden rounded-md border border-[#1f4778] bg-[#08142a]/84 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:shadow-[0_18px_45px_rgba(23,96,255,0.18)]">
+            <article key={card.title} className="seo-hover-card group/card relative min-h-[108px] overflow-hidden rounded-md border border-[#1f4778] bg-[#08142a]/84 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:shadow-[0_18px_45px_rgba(23,96,255,0.18)]">
               <span className="absolute inset-0 opacity-0 transition duration-300 group-hover/card:opacity-100 bg-[radial-gradient(circle_at_24%_0%,rgba(74,139,255,0.22),transparent_42%)]" />
               <IconTile icon={card.icon} />
               <h3 className="relative mt-4 text-[13px] font-extrabold text-white">{card.title}</h3>
@@ -303,12 +300,12 @@ function ResultSection() {
 function ProcessSection() {
   return (
     <section id="process" className="px-5 pt-5 sm:px-7">
-      <div className="rounded-md border border-[#163155] bg-[#06101f]/86 p-5 sm:p-7">
+      <div className="seo-hover-surface rounded-md border border-[#163155] bg-[#06101f]/86 p-5 sm:p-7">
         <h2 className="text-[22px] font-extrabold tracking-normal text-white">Что мы делаем</h2>
         <p className="mt-2 text-[12px] leading-6 text-slate-300">Комплексное SEO-продвижение под ключ</p>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {processCards.map((card) => (
-            <article key={card.title} className="group relative min-h-[132px] overflow-hidden rounded-md border border-[#17345e] bg-[#08142a]/76 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:bg-[#0a1b39]/90">
+            <article key={card.title} className="seo-hover-card group relative min-h-[132px] overflow-hidden rounded-md border border-[#17345e] bg-[#08142a]/76 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:bg-[#0a1b39]/90">
               <span className="absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100 bg-[linear-gradient(135deg,rgba(33,103,255,0.18),transparent_48%)]" />
               <IconTile icon={card.icon} />
               <h3 className="relative mt-4 text-[12px] font-extrabold text-white">{card.title}</h3>
@@ -324,7 +321,7 @@ function ProcessSection() {
 function ServicesCarousel({ locale }: { locale: Locale }) {
   return (
     <section id="services" className="px-5 pt-5 sm:px-7">
-      <div className="rounded-md border border-[#163155] bg-[#06101f]/86 p-5 sm:p-7">
+      <div className="seo-hover-surface rounded-md border border-[#163155] bg-[#06101f]/86 p-5 sm:p-7">
         <div className="flex items-end justify-between gap-4">
           <div>
             <h2 className="text-[22px] font-extrabold tracking-normal text-white">Услуги</h2>
@@ -339,7 +336,7 @@ function ServicesCarousel({ locale }: { locale: Locale }) {
             <Link
               key={card.title}
               href={pathFor(card.href, locale)}
-              className="group relative min-h-[168px] w-[210px] shrink-0 snap-start overflow-hidden rounded-md border border-[#17345e] bg-[#08142a]/80 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:shadow-[0_18px_45px_rgba(23,96,255,0.20)]"
+              className="seo-hover-card group relative min-h-[168px] w-[210px] shrink-0 snap-start overflow-hidden rounded-md border border-[#17345e] bg-[#08142a]/80 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:shadow-[0_18px_45px_rgba(23,96,255,0.20)]"
             >
               <span className="absolute inset-0 translate-x-[-120%] bg-[linear-gradient(105deg,transparent,rgba(84,152,255,0.18),transparent)] transition duration-700 group-hover:translate-x-[120%]" />
               <IconTile icon={card.icon} />
@@ -357,7 +354,7 @@ function ServicesCarousel({ locale }: { locale: Locale }) {
 function CasesSection({ locale }: { locale: Locale }) {
   return (
     <section id="cases" className="px-5 pt-5 sm:px-7">
-      <div className="rounded-md border border-[#163155] bg-[#071225]/86 p-5 sm:p-7">
+      <div className="seo-hover-surface rounded-md border border-[#163155] bg-[#071225]/86 p-5 sm:p-7">
         <div className="flex items-end justify-between gap-4">
           <div>
             <h2 className="text-[22px] font-extrabold tracking-normal text-white">Кейсы</h2>
@@ -369,7 +366,7 @@ function CasesSection({ locale }: { locale: Locale }) {
         </div>
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           {caseCards.map((item) => (
-            <Link key={item.title} href={pathFor('/cases', locale)} className="group overflow-hidden rounded-md border border-[#17345e] bg-[#08142a]/80 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:shadow-[0_18px_45px_rgba(23,96,255,0.20)]">
+            <Link key={item.title} href={pathFor('/cases', locale)} className="seo-hover-card group relative overflow-hidden rounded-md border border-[#17345e] bg-[#08142a]/80 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:shadow-[0_18px_45px_rgba(23,96,255,0.20)]">
               <div className="relative h-28 overflow-hidden border-b border-[#17345e]">
                 <Image src={item.image} alt="" fill sizes="360px" className="object-cover opacity-90 transition duration-500 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,18,0.05),rgba(3,8,18,0.62))]" />
@@ -390,7 +387,7 @@ function CasesSection({ locale }: { locale: Locale }) {
 function BlogSection({ locale }: { locale: Locale }) {
   return (
     <section id="blog" className="px-5 pt-5 sm:px-7">
-      <div className="rounded-md border border-[#163155] bg-[#06101f]/86 p-5 sm:p-7">
+      <div className="seo-hover-surface rounded-md border border-[#163155] bg-[#06101f]/86 p-5 sm:p-7">
         <div className="flex items-end justify-between gap-4">
           <div>
             <h2 className="text-[22px] font-extrabold tracking-normal text-white">Блог</h2>
@@ -402,7 +399,7 @@ function BlogSection({ locale }: { locale: Locale }) {
         </div>
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           {blogCards.map((post) => (
-            <Link key={post.href} href={pathFor(post.href, locale)} className="group overflow-hidden rounded-md border border-[#17345e] bg-[#08142a]/80 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:shadow-[0_18px_45px_rgba(23,96,255,0.20)]">
+            <Link key={post.href} href={pathFor(post.href, locale)} className="seo-hover-card group relative overflow-hidden rounded-md border border-[#17345e] bg-[#08142a]/80 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:shadow-[0_18px_45px_rgba(23,96,255,0.20)]">
               <div className="relative h-28 overflow-hidden border-b border-[#17345e]">
                 <Image src={post.image} alt="" fill sizes="360px" className="object-cover opacity-90 transition duration-500 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,18,0.05),rgba(3,8,18,0.68))]" />
@@ -423,7 +420,7 @@ function BlogSection({ locale }: { locale: Locale }) {
 function PhotoCta({ locale }: { locale: Locale }) {
   return (
     <section className="px-5 py-5 sm:px-7">
-      <div className="relative min-h-[180px] overflow-hidden rounded-md border border-[#163155] bg-[#050b16] p-5 sm:p-7">
+      <div className="relative min-h-[180px] overflow-hidden rounded-md border border-[#163155] bg-[#050b16] p-5 transition duration-500 hover:border-[#3f86ff]/80 hover:shadow-[0_20px_70px_rgba(23,96,255,0.18)] sm:p-7">
         <Image src="/reference/home-keyboard.webp" alt="" fill sizes="1200px" className="object-cover object-center opacity-90" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,7,19,0.97)_0%,rgba(2,7,19,0.83)_42%,rgba(2,7,19,0.18)_100%)]" />
         <div className="relative z-10 max-w-[455px]">

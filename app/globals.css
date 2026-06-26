@@ -44,6 +44,81 @@
   }
 }
 
+.seo-hover-surface {
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 420ms ease,
+    box-shadow 420ms ease,
+    background 420ms ease;
+}
+
+.seo-hover-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(75, 134, 255, 0.18) 42%,
+    rgba(105, 219, 255, 0.12) 52%,
+    transparent 68%
+  );
+  transform: translateX(-125%);
+  transition: transform 1000ms ease;
+}
+
+.seo-hover-surface:hover,
+.seo-hover-surface:focus-within {
+  border-color: rgba(63, 134, 255, 0.82);
+  box-shadow:
+    inset 0 1px 0 rgba(125, 178, 255, 0.12),
+    0 22px 72px rgba(23, 96, 255, 0.16),
+    0 18px 64px rgba(0, 0, 0, 0.28);
+}
+
+.seo-hover-surface:hover::before,
+.seo-hover-surface:focus-within::before {
+  transform: translateX(125%);
+}
+
+.seo-hover-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.seo-hover-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 24% 0%, rgba(74, 139, 255, 0.22), transparent 42%),
+    linear-gradient(105deg, transparent 0%, rgba(84, 152, 255, 0.16) 46%, rgba(105, 219, 255, 0.10) 54%, transparent 72%);
+  opacity: 0;
+  transform: translateX(-42%);
+  transition:
+    opacity 320ms ease,
+    transform 760ms ease;
+}
+
+.seo-hover-card:hover::before,
+.seo-hover-card:focus-visible::before,
+.seo-hover-card:focus-within::before {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seo-hover-surface,
+  .seo-hover-surface::before,
+  .seo-hover-card,
+  .seo-hover-card::before {
+    transition-duration: 1ms;
+  }
+}
+
 @layer base {
   :root {
     --background: 40 26% 96%;
