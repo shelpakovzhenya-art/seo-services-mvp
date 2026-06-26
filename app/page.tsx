@@ -91,28 +91,28 @@ const serviceCards: LinkCard[] = [
 ]
 
 const caseCards = [
-  { title: 'SIGNAL', subtitle: 'Рост трафика', result: '+1919%', image: '/reference/cases-desk-1.webp' },
-  { title: 'MY PODOLOG', subtitle: 'Рост трафика', result: '+220%', image: '/reference/cases-desk-2.webp' },
-  { title: 'PODOCENTER', subtitle: 'Рост трафика', result: '+252%', image: '/reference/cases-desk-3.webp' },
+  { title: 'SIGNAL', subtitle: 'Рост трафика', result: '+1919%', image: '/reference/case-signal-site-2026.webp' },
+  { title: 'MY PODOLOG', subtitle: 'Рост трафика', result: '+220%', image: '/reference/case-mypodolog-site-2026.webp' },
+  { title: 'PODOCENTER', subtitle: 'Рост трафика', result: '+252%', image: '/reference/case-podocenter-site-2026.webp' },
 ]
 
 const blogCards = [
   {
     title: 'Каким должен быть современный сайт для SEO и заявок',
     date: 'Блог',
-    image: '/reference/blog-desk-1.webp',
+    image: '/reference/blog-workstation-audit-2026.webp',
     href: '/blog/trebovaniya-k-sovremennomu-saitu-dlya-seo-i-konversii',
   },
   {
     title: 'Подготовка сайта к GEO и AI-выдаче',
     date: 'Блог',
-    image: '/reference/blog-desk-2.webp',
+    image: '/reference/blog-ai-search-meeting-2026.webp',
     href: '/blog/kak-podgotovit-sait-k-geo-i-ii-vydache',
   },
   {
     title: 'Контент-план для SEO: как не делать статьи в пустоту',
     date: 'Блог',
-    image: '/reference/blog-desk-3.webp',
+    image: '/reference/blog-content-team-2026.webp',
     href: '/blog/content-plan-dlya-seo-na-90-dney-dlya-komandy-bez-khaosa',
   },
 ]

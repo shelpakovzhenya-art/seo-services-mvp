@@ -480,37 +480,37 @@ export const referenceCaseCards = [
     title: 'SIGNAL',
     subtitle: 'Рост трафика',
     result: '+1919%',
-    image: '/reference/cases-desk-1.webp',
+    image: '/reference/case-signal-site-2026.webp',
   },
   {
     title: 'MY PODOLOG',
     subtitle: 'Рост трафика',
     result: '+220%',
-    image: '/reference/cases-desk-2.webp',
+    image: '/reference/case-mypodolog-site-2026.webp',
   },
   {
     title: 'PODOCENTER',
     subtitle: 'Рост трафика',
     result: '+252%',
-    image: '/reference/cases-desk-3.webp',
+    image: '/reference/case-podocenter-site-2026.webp',
   },
   {
     title: 'Корпоративный сайт',
     subtitle: 'Рост трафика',
     result: '+968%',
-    image: '/reference/blog-desk-4.webp',
+    image: '/reference/blog-keyboard-dashboard-2026.webp',
   },
   {
     title: 'Локальный бизнес',
     subtitle: 'Рост заявок',
     result: '+215%',
-    image: '/reference/blog-desk-5.webp',
+    image: '/reference/blog-consultant-dashboard-2026.webp',
   },
   {
     title: 'Интернет-магазин одежды',
     subtitle: 'Рост продаж',
     result: '+132%',
-    image: '/reference/blog-desk-6.webp',
+    image: '/reference/blog-laptop-dashboard-2026.webp',
   },
 ]
 
@@ -518,32 +518,32 @@ export const referenceBlogCards = [
   {
     title: 'Как вывести сайт в топ в 2026 году',
     date: '12 мая 2026',
-    image: '/reference/blog-desk-1.webp',
+    image: '/reference/blog-workstation-audit-2026.webp',
   },
   {
     title: 'Технический аудит: что проверить в первую очередь',
     date: '5 мая 2026',
-    image: '/reference/blog-desk-2.webp',
+    image: '/reference/blog-ai-search-meeting-2026.webp',
   },
   {
     title: 'SEO для интернет-магазинов: полное руководство',
     date: '28 апреля 2026',
-    image: '/reference/blog-desk-3.webp',
+    image: '/reference/blog-content-team-2026.webp',
   },
   {
     title: 'Как увеличить конверсию сайта на 300%',
     date: '18 апреля 2026',
-    image: '/reference/blog-desk-4.webp',
+    image: '/reference/blog-keyboard-dashboard-2026.webp',
   },
   {
     title: 'Локальное SEO: как продвигать бизнес в регионе',
     date: '10 апреля 2026',
-    image: '/reference/blog-desk-5.webp',
+    image: '/reference/blog-consultant-dashboard-2026.webp',
   },
   {
     title: 'Контент-стратегия: от стратегии к результату',
     date: '2 апреля 2026',
-    image: '/reference/blog-desk-6.webp',
+    image: '/reference/blog-laptop-dashboard-2026.webp',
   },
 ]
 
