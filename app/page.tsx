@@ -331,7 +331,7 @@ function ServicesCarousel({ locale }: { locale: Locale }) {
             Все услуги →
           </Link>
         </div>
-        <div className="-mx-1 mt-3 flex snap-x gap-3 overflow-x-auto px-1 pb-6 pt-2 [scroll-padding-inline:4px] [scrollbar-width:thin] [scrollbar-color:#24528b_transparent]">
+        <div className="-mx-5 -mt-4 flex snap-x gap-3 overflow-x-auto px-5 pb-12 pt-10 [scroll-padding-inline:20px] [scrollbar-width:thin] [scrollbar-color:#24528b_transparent]">
           {serviceCards.map((card) => (
             <Link
               key={card.title}
