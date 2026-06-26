@@ -91,9 +91,9 @@ const serviceCards: LinkCard[] = [
 ]
 
 const caseCards = [
-  { title: 'Интернет-магазин мебели', subtitle: 'Рост трафика', result: '+178%', image: '/reference/cases-desk-1.webp' },
-  { title: 'Сайт медицинского центра', subtitle: 'Заявки', result: '+233%', image: '/reference/cases-desk-2.webp' },
-  { title: 'Интернет-магазин техники', subtitle: 'Рост продаж', result: '+185%', image: '/reference/cases-desk-3.webp' },
+  { title: 'SIGNAL', subtitle: 'Рост трафика', result: '+1919%', image: '/reference/cases-desk-1.webp' },
+  { title: 'MY PODOLOG', subtitle: 'Рост трафика', result: '+220%', image: '/reference/cases-desk-2.webp' },
+  { title: 'PODOCENTER', subtitle: 'Рост трафика', result: '+252%', image: '/reference/cases-desk-3.webp' },
 ]
 
 const blogCards = [
@@ -173,7 +173,7 @@ function Header({ locale }: { locale: Locale }) {
           aria-label="Max"
           className="hidden h-8 w-8 place-items-center rounded-md border border-[#2369ff]/30 bg-[#0a1c42] text-[#8db5ff] transition hover:border-[#5a96ff]/70 hover:bg-[#0c285d] md:grid"
         >
-          <Image src="/max-logo.svg" alt="" width={18} height={18} className="h-[18px] w-[18px]" />
+          <Image src="/max-logo.png" alt="" width={18} height={18} className="h-[18px] w-[18px] rounded-[4px]" />
         </a>
         <Link
           href={pathFor('/contacts', locale)}
@@ -189,16 +189,18 @@ function Header({ locale }: { locale: Locale }) {
 function Hero({ locale }: { locale: Locale }) {
   return (
     <section className="relative overflow-hidden border-b border-[#163155]/75">
-      <Image
-        src="/reference/hero-laptop.webp"
-        alt=""
-        fill
-        priority
-        sizes="(max-width: 768px) 100vw, 720px"
-        className="object-cover object-right opacity-95 brightness-110 contrast-110 saturate-[1.08]"
-      />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,#020713_0%,#020713_42%,rgba(2,7,19,0.68)_56%,rgba(2,7,19,0.10)_100%)]" />
-      <div className="absolute inset-y-0 left-[39%] w-[190px] bg-[linear-gradient(90deg,#020713_0%,rgba(2,7,19,0.88)_28%,rgba(2,7,19,0.18)_100%)] blur-sm" />
+      <div className="absolute inset-y-0 right-0 w-full overflow-hidden sm:w-[64%]">
+        <Image
+          src="/reference/hero-laptop.webp"
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 768px) 100vw, 760px"
+          className="object-cover object-right opacity-100 brightness-115 contrast-125 saturate-[1.1]"
+        />
+        <div className="absolute inset-y-0 left-0 w-[42%] bg-[linear-gradient(90deg,#020713_0%,rgba(2,7,19,0.70)_48%,rgba(2,7,19,0)_100%)]" />
+      </div>
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,#020713_0%,#020713_40%,rgba(2,7,19,0.46)_62%,rgba(2,7,19,0.04)_100%)]" />
       <div className="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,#020713_0%,rgba(2,7,19,0)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(0deg,#020713_0%,rgba(2,7,19,0)_100%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_28%,rgba(25,86,255,0.14),transparent_34%)]" />
@@ -494,7 +496,7 @@ function Footer({ locale }: { locale: Locale }) {
             @whoamikon
           </a>
           <a href={maxUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-white">
-            <Image src="/max-logo.svg" alt="" width={14} height={14} className="h-3.5 w-3.5" />
+            <Image src="/max-logo.png" alt="" width={14} height={14} className="h-3.5 w-3.5 rounded-[3px]" />
             MAX
           </a>
           <span className="flex items-center gap-2">
@@ -519,8 +521,8 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_4%,rgba(22,87,255,0.17),transparent_34%),linear-gradient(180deg,#020713_0%,#030814_52%,#020713_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(42,83,143,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(42,83,143,0.08)_1px,transparent_1px)] bg-[size:56px_56px] opacity-45" />
       </div>
-      <div className="relative mx-auto w-full max-w-[1320px] px-2 py-2 sm:px-3 sm:py-3">
-        <div className="overflow-hidden rounded-md border border-[#1a355d] bg-[#030814]/92 shadow-[0_26px_90px_rgba(0,0,0,0.48)]">
+      <div className="relative mx-auto w-full max-w-[1320px]">
+        <div className="overflow-hidden bg-[#030814]/92">
           <Header locale={locale} />
           <Hero locale={locale} />
           <Partners />

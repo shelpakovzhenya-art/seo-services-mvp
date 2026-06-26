@@ -165,7 +165,7 @@ export function ShelpakovHeader({ locale }: { locale: Locale }) {
             aria-label="Max"
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-blue-300/20 bg-blue-500/10 text-blue-200 transition hover:border-blue-300/55 hover:bg-blue-500/20"
           >
-            <Image src="/max-logo.svg" alt="" width={20} height={20} className="h-5 w-5" />
+            <Image src="/max-logo.png" alt="" width={20} height={20} className="h-5 w-5 rounded-[4px]" />
           </a>
           <Link
             href={localizedPath('/contacts', locale)}
@@ -260,7 +260,7 @@ export function ShelpakovFooter({ locale }: { locale: Locale }) {
               @whoamikon
             </a>
             <a href={maxUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 transition hover:text-white">
-              <Image src="/max-logo.svg" alt="" width={16} height={16} className="h-4 w-4" />
+              <Image src="/max-logo.png" alt="" width={16} height={16} className="h-4 w-4 rounded-[3px]" />
               MAX
             </a>
             <span className="flex items-center gap-2">
@@ -477,21 +477,21 @@ export function ContactMap() {
 
 export const referenceCaseCards = [
   {
-    title: 'Интернет-магазин мебели',
+    title: 'SIGNAL',
     subtitle: 'Рост трафика',
-    result: '+178%',
+    result: '+1919%',
     image: '/reference/cases-desk-1.webp',
   },
   {
-    title: 'Сайт медицинского центра',
-    subtitle: 'Заявки',
-    result: '+233%',
+    title: 'MY PODOLOG',
+    subtitle: 'Рост трафика',
+    result: '+220%',
     image: '/reference/cases-desk-2.webp',
   },
   {
-    title: 'Интернет-магазин техники',
-    subtitle: 'Рост продаж',
-    result: '+185%',
+    title: 'PODOCENTER',
+    subtitle: 'Рост трафика',
+    result: '+252%',
     image: '/reference/cases-desk-3.webp',
   },
   {

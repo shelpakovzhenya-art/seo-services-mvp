@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+.static {
+  position: static;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.relative {
+  position: relative;
+}
+
+.sticky {
+  position: sticky;
+}
+
 @layer utilities {
   .static {
     position: static;
