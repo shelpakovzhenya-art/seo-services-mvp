@@ -7,6 +7,7 @@ import Header from '@/components/Header'
 import JsonLd from '@/components/JsonLd'
 import LocaleHtmlSync from '@/components/LocaleHtmlSync'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
+import SiteChromeGate from '@/components/SiteChromeGate'
 import { getRouteLocale } from '@/lib/i18n'
 import { prisma } from '@/lib/prisma'
 import { normalizeMetaDescription, normalizeMetaTitle } from '@/lib/seo-meta'
@@ -82,11 +83,6 @@ export default async function RootLayout({
   const pathname = headersList.get('x-site-pathname') || ''
   const locale = getRouteLocale(headersList.get('x-locale'))
   const isAdmin = pathname.startsWith('/admin')
-  const normalizedPathname = pathname.replace(/\/$/, '') || '/'
-  const isStandaloneHome = !isAdmin && (normalizedPathname === '/' || normalizedPathname === '/ru' || normalizedPathname === '/en')
-  const showHeader = !isAdmin && !isStandaloneHome
-  const showFooter = !isAdmin && !isStandaloneHome
-  const showScrollTop = !isAdmin && !isStandaloneHome
   let settings: Awaited<ReturnType<typeof prisma.siteSettings.findFirst>> = null
 
   if (!isAdmin && process.env.DATABASE_URL) {
@@ -157,27 +153,34 @@ export default async function RootLayout({
             </noscript>
           </>
         ) : null}
-        {!isAdmin && !isStandaloneHome ? (
-          <div className="site-fractal-atmosphere" aria-hidden="true">
-            <span className="site-fractal site-fractal--one" />
-            <span className="site-fractal site-fractal--two" />
-            <span className="site-fractal site-fractal--three" />
-            <span className="site-fractal site-fractal--four" />
-            <span className="site-fractal site-fractal--five" />
-            <span className="site-fractal site-fractal--six" />
-            <span className="site-fractal site-fractal--seven" />
-            <span className="site-fractal site-fractal--eight" />
-            <span className="site-fractal site-fractal--nine" />
-            <span className="site-fractal site-fractal--ten" />
-            <span className="site-fractal site-fractal--eleven" />
-            <span className="site-fractal site-fractal--twelve" />
-          </div>
-        ) : null}
         <div className={isAdmin ? '' : 'site-frame'}>
-          {showHeader && <Header />}
-          <main className={isAdmin ? '' : 'min-h-screen'}>{children}</main>
-          {showScrollTop && <ScrollToTopButton />}
-          {showFooter && <Footer />}
+          {isAdmin ? (
+            <main>{children}</main>
+          ) : (
+            <SiteChromeGate
+              atmosphere={
+                <div className="site-fractal-atmosphere" aria-hidden="true">
+                  <span className="site-fractal site-fractal--one" />
+                  <span className="site-fractal site-fractal--two" />
+                  <span className="site-fractal site-fractal--three" />
+                  <span className="site-fractal site-fractal--four" />
+                  <span className="site-fractal site-fractal--five" />
+                  <span className="site-fractal site-fractal--six" />
+                  <span className="site-fractal site-fractal--seven" />
+                  <span className="site-fractal site-fractal--eight" />
+                  <span className="site-fractal site-fractal--nine" />
+                  <span className="site-fractal site-fractal--ten" />
+                  <span className="site-fractal site-fractal--eleven" />
+                  <span className="site-fractal site-fractal--twelve" />
+                </div>
+              }
+              footer={<Footer />}
+              header={<Header />}
+              scrollTop={<ScrollToTopButton />}
+            >
+              <main className="min-h-screen">{children}</main>
+            </SiteChromeGate>
+          )}
         </div>
       </body>
     </html>
