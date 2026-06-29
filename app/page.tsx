@@ -189,14 +189,16 @@ function Header({ locale }: { locale: Locale }) {
 function Hero({ locale }: { locale: Locale }) {
   return (
     <section className="relative overflow-hidden">
-      <Image
-        src="/reference/hero-laptop-hq.webp"
-        alt=""
-        fill
-        priority
-        sizes="1320px"
-        className="home-hero-photo object-cover object-center opacity-100 brightness-110 contrast-115 saturate-[1.06]"
-      />
+      <div className="absolute inset-y-0 left-0 right-5 overflow-hidden sm:right-7 lg:right-8">
+        <Image
+          src="/reference/hero-laptop-hq.webp"
+          alt=""
+          fill
+          priority
+          sizes="1288px"
+          className="home-hero-photo object-cover object-center opacity-100 brightness-110 contrast-115 saturate-[1.06]"
+        />
+      </div>
       <div className="absolute inset-0 bg-[linear-gradient(90deg,#020713_0%,rgba(2,7,19,0.98)_36%,rgba(2,7,19,0.24)_58%,rgba(2,7,19,0)_72%)]" />
       <div className="absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,#020713_0%,rgba(2,7,19,0)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 h-28 bg-[linear-gradient(0deg,#020713_0%,rgba(2,7,19,0.44)_22%,rgba(2,7,19,0)_100%)]" />
