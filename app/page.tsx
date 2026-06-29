@@ -189,7 +189,7 @@ function Header({ locale }: { locale: Locale }) {
 function Hero({ locale }: { locale: Locale }) {
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-y-0 left-0 right-0 overflow-hidden">
+      <div className="absolute inset-y-0 left-0 right-5 overflow-hidden sm:right-7">
         <Image
           src="/reference/hero-laptop-hq.webp"
           alt=""
