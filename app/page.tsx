@@ -142,18 +142,18 @@ function IconTile({ icon: Icon }: { icon: LucideIcon }) {
 
 function Header({ locale }: { locale: Locale }) {
   return (
-    <header className="mx-5 flex min-h-[54px] items-center justify-between gap-3 sm:mx-7">
-      <Link href={pathFor('/', locale)} aria-label="Shelpakov Digital">
+    <header className="mx-5 grid min-h-[54px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:mx-7">
+      <Link href={pathFor('/', locale)} aria-label="Shelpakov Digital" className="min-w-0 justify-self-start">
         <Logo />
       </Link>
-      <nav className="hidden min-w-0 items-center gap-3 text-[10px] font-semibold text-slate-300 lg:flex xl:gap-5 xl:text-[11px]">
+      <nav className="hidden min-w-0 items-center justify-center gap-3 text-[10px] font-semibold text-slate-300 lg:flex xl:gap-5 xl:text-[11px]">
         {navItems.map((item) => (
           <Link key={item.label} href={pathFor(item.href, locale)} className="whitespace-nowrap transition hover:text-[#3f86ff]">
             {item.label}
           </Link>
         ))}
       </nav>
-      <div className="flex items-center gap-2.5">
+      <div className="flex min-w-0 items-center justify-end gap-2.5 justify-self-end">
         <a href={contactPhoneHref} className="hidden whitespace-nowrap text-[10px] font-extrabold text-white sm:inline xl:text-[11px]">
           {contactPhone}
         </a>
