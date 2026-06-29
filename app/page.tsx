@@ -195,12 +195,12 @@ function Hero({ locale }: { locale: Locale }) {
         fill
         priority
         sizes="1320px"
-        className="object-cover object-center opacity-100 brightness-110 contrast-115 saturate-[1.06]"
+        className="home-hero-photo object-cover object-center opacity-100 brightness-110 contrast-115 saturate-[1.06]"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,#020713_0%,rgba(2,7,19,0.98)_36%,rgba(2,7,19,0.34)_61%,rgba(2,7,19,0.18)_78%,#020713_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,#020713_0%,rgba(2,7,19,0.98)_36%,rgba(2,7,19,0.28)_58%,rgba(2,7,19,0)_76%)]" />
       <div className="absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,#020713_0%,rgba(2,7,19,0)_100%)]" />
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(0deg,#020713_0%,rgba(2,7,19,0.92)_18%,rgba(2,7,19,0)_100%)]" />
-      <div className="absolute inset-y-0 right-0 w-[36%] bg-[linear-gradient(90deg,rgba(2,7,19,0)_0%,rgba(2,7,19,0.74)_62%,#020713_100%)]" />
+      <div className="absolute inset-x-0 bottom-0 h-28 bg-[linear-gradient(0deg,#020713_0%,rgba(2,7,19,0.56)_22%,rgba(2,7,19,0)_100%)]" />
+      <div className="absolute inset-y-0 right-0 w-[14%] bg-[linear-gradient(90deg,rgba(2,7,19,0)_0%,rgba(2,7,19,0.28)_62%,#020713_100%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_28%,rgba(25,86,255,0.14),transparent_34%)]" />
       <div className="relative z-10 px-5 py-9 sm:px-7 lg:px-8 lg:py-11">
         <div className="max-w-[565px]">
