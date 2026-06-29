@@ -142,7 +142,7 @@ function IconTile({ icon: Icon }: { icon: LucideIcon }) {
 
 function Header({ locale }: { locale: Locale }) {
   return (
-    <header className="flex min-h-[54px] items-center justify-between gap-3 px-5 sm:px-7">
+    <header className="mx-5 flex min-h-[54px] items-center justify-between gap-3 sm:mx-7">
       <Link href={pathFor('/', locale)} aria-label="Shelpakov Digital">
         <Logo />
       </Link>
