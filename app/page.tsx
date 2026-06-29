@@ -188,8 +188,8 @@ function Header({ locale }: { locale: Locale }) {
 
 function Hero({ locale }: { locale: Locale }) {
   return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-x-5 inset-y-0 overflow-hidden sm:inset-x-7">
+    <section className="relative mx-5 overflow-hidden sm:mx-7">
+      <div className="absolute inset-0 overflow-hidden">
         <Image
           src="/reference/hero-laptop-hq.webp"
           alt=""
@@ -203,7 +203,7 @@ function Hero({ locale }: { locale: Locale }) {
       <div className="absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,#020713_0%,rgba(2,7,19,0)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 h-28 bg-[linear-gradient(0deg,#020713_0%,rgba(2,7,19,0.44)_22%,rgba(2,7,19,0)_100%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_28%,rgba(25,86,255,0.14),transparent_34%)]" />
-      <div className="relative z-10 px-5 py-9 sm:px-7 lg:py-11">
+      <div className="relative z-10 py-9 lg:py-11">
         <div className="max-w-[565px]">
           <span className="inline-flex rounded-md border border-[#2d72ff]/40 bg-[#0b2b6f]/45 px-3 py-1.5 text-[10px] font-extrabold uppercase text-[#3b86ff] sm:text-[11px]">
             SEO продвижение для малого и среднего бизнеса
