@@ -189,7 +189,7 @@ function Header({ locale }: { locale: Locale }) {
 function Hero({ locale }: { locale: Locale }) {
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-y-0 left-0 right-5 overflow-hidden sm:right-7">
+      <div className="absolute inset-x-5 inset-y-0 overflow-hidden sm:inset-x-7">
         <Image
           src="/reference/hero-laptop-hq.webp"
           alt=""
@@ -203,7 +203,7 @@ function Hero({ locale }: { locale: Locale }) {
       <div className="absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,#020713_0%,rgba(2,7,19,0)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 h-28 bg-[linear-gradient(0deg,#020713_0%,rgba(2,7,19,0.44)_22%,rgba(2,7,19,0)_100%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_28%,rgba(25,86,255,0.14),transparent_34%)]" />
-      <div className="relative z-10 px-5 py-9 sm:px-7 lg:px-8 lg:py-11">
+      <div className="relative z-10 px-5 py-9 sm:px-7 lg:py-11">
         <div className="max-w-[565px]">
           <span className="inline-flex rounded-md border border-[#2d72ff]/40 bg-[#0b2b6f]/45 px-3 py-1.5 text-[10px] font-extrabold uppercase text-[#3b86ff] sm:text-[11px]">
             SEO продвижение для малого и среднего бизнеса
@@ -260,7 +260,7 @@ function Partners() {
             href={`https://${partner.url}`}
             target="_blank"
             rel="noreferrer"
-            className="seo-hover-card group relative min-h-[56px] overflow-hidden border-t border-[#163155] px-4 py-3 outline-none transition duration-300 hover:border-[#2d72ff]/70 hover:bg-[#0a1c3b] active:scale-[0.99] focus-visible:border-[#5a96ff] focus-visible:bg-[#0a1c3b] sm:border-r sm:border-t-0"
+            className="seo-hover-card group relative min-h-[56px] overflow-hidden border-t border-[#163155] px-4 py-3 outline-none transition duration-300 hover:border-[#2d72ff]/70 hover:bg-[#0a1c3b] active:scale-[0.99] focus-visible:border-[#5a96ff] focus-visible:bg-[#0a1c3b] sm:border-r sm:border-t-0 sm:last:border-r-0"
           >
             <span className="absolute inset-0 translate-x-[-120%] bg-[linear-gradient(105deg,transparent,rgba(81,145,255,0.18),transparent)] transition duration-700 group-hover:translate-x-[120%]" />
             <span className="absolute right-3 top-3 h-1.5 w-1.5 rounded-full bg-[#2d72ff] transition group-hover:scale-125 group-hover:shadow-[0_0_16px_rgba(45,114,255,0.9)]" />
@@ -333,12 +333,12 @@ function ServicesCarousel({ locale }: { locale: Locale }) {
             Все услуги →
           </Link>
         </div>
-        <div className="-mx-5 -mt-4 flex snap-x gap-3 overflow-x-auto px-5 pb-12 pt-10 [scroll-padding-inline:20px] [scrollbar-width:thin] [scrollbar-color:#24528b_transparent]">
+        <div className="home-services-track -mt-4 pb-12 pt-10">
           {serviceCards.map((card) => (
             <Link
               key={card.title}
               href={pathFor(card.href, locale)}
-              className="seo-hover-card group relative min-h-[178px] w-[222px] shrink-0 snap-start overflow-hidden rounded-md border border-[#17345e] bg-[#08142a]/80 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:shadow-[0_18px_45px_rgba(23,96,255,0.20)]"
+              className="seo-hover-card group relative min-h-[178px] w-full overflow-hidden rounded-md border border-[#17345e] bg-[#08142a]/80 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#4b91ff] hover:shadow-[0_18px_45px_rgba(23,96,255,0.20)]"
             >
               <span className="absolute inset-0 translate-x-[-120%] bg-[linear-gradient(105deg,transparent,rgba(84,152,255,0.18),transparent)] transition duration-700 group-hover:translate-x-[120%]" />
               <IconTile icon={card.icon} />
@@ -512,7 +512,7 @@ export default async function HomePage() {
   const locale = await getRequestLocale()
 
   return (
-    <div className="min-h-screen bg-[#020713] text-white">
+    <div className="min-h-screen overflow-x-hidden bg-[#020713] text-white">
       <span className="hidden" aria-hidden="true">
         {verificationCode}
       </span>

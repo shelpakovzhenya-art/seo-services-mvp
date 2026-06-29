@@ -121,6 +121,37 @@
   mask-composite: intersect;
 }
 
+.home-services-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  gap: 0.75rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-padding-inline: 0;
+  scroll-snap-type: x proximity;
+  scrollbar-color: #24528b transparent;
+  scrollbar-width: thin;
+}
+
+.home-services-track > * {
+  min-width: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .home-services-track {
+    grid-auto-columns: calc((100% - 1.5rem) / 3);
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-services-track {
+    grid-auto-columns: calc((100% - 3rem) / 5);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .seo-hover-surface,
   .seo-hover-surface::before,
